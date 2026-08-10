@@ -13,7 +13,8 @@ export default function Header() {
   // Greeting
   // ----------------------------------------------------------
 
-  const hour = new Date().getHours();
+  const hour =
+    new Date().getHours();
 
   const greeting =
     hour < 12
@@ -27,8 +28,25 @@ export default function Header() {
   // ----------------------------------------------------------
 
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
+    <header
+      className="
+        border-b
+        border-slate-200
+        bg-white
+        pt-[env(safe-area-inset-top)]
+      "
+    >
+      <div
+        className="
+          mx-auto
+          flex
+          max-w-5xl
+          items-center
+          justify-between
+          px-4
+          py-4
+        "
+      >
         {/* ------------------------------------------------
             App Title / Greeting
         ------------------------------------------------- */}

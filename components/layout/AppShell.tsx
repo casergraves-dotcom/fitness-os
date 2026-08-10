@@ -1,5 +1,9 @@
 "use client";
 
+// ============================================================
+// Imports
+// ============================================================
+
 import {
   ReactNode,
   useEffect,
@@ -14,9 +18,17 @@ import {
   migrateExerciseIds,
 } from "@/features/workout/migrateExerciseIds";
 
+// ============================================================
+// Types
+// ============================================================
+
 interface AppShellProps {
   children: ReactNode;
 }
+
+// ============================================================
+// App Shell
+// ============================================================
 
 export default function AppShell({
   children,
@@ -33,9 +45,12 @@ export default function AppShell({
   useEffect(() => {
     // Run any one-time localStorage migrations before
     // rendering screens that depend on workout data.
+
     migrateExerciseIds();
 
-    setMigrationsComplete(true);
+    setMigrationsComplete(
+      true
+    );
   }, []);
 
   // ----------------------------------------------------------
@@ -44,10 +59,8 @@ export default function AppShell({
 
   if (!migrationsComplete) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <div className="p-4 text-sm text-slate-500">
-          Loading...
-        </div>
+      <div className="flex min-h-screen items-center justify-center">
+        Loading...
       </div>
     );
   }
@@ -57,12 +70,18 @@ export default function AppShell({
   // ----------------------------------------------------------
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen bg-slate-50">
       <Header />
 
-      <PageContainer>
-        {children}
-      </PageContainer>
+      <main
+        className="
+          pb-[calc(5rem+env(safe-area-inset-bottom))]
+        "
+      >
+        <PageContainer>
+          {children}
+        </PageContainer>
+      </main>
 
       <BottomNav />
     </div>
