@@ -18,6 +18,11 @@ import {
   migrateExerciseIds,
 } from "@/features/workout/migrateExerciseIds";
 
+import {
+  SignInScreen,
+  useAuth,
+} from "@/features/auth";
+
 // ============================================================
 // Types
 // ============================================================
@@ -33,6 +38,16 @@ interface AppShellProps {
 export default function AppShell({
   children,
 }: AppShellProps) {
+  // ----------------------------------------------------------
+  // Authentication
+  // ----------------------------------------------------------
+
+  const {
+  user,
+  loaded:
+    authLoaded,
+} = useAuth();
+
   // ----------------------------------------------------------
   // Data Migration
   // ----------------------------------------------------------
@@ -53,17 +68,30 @@ export default function AppShell({
     );
   }, []);
 
-  // ----------------------------------------------------------
-  // Wait For Migration
-  // ----------------------------------------------------------
+// ----------------------------------------------------------
+// Wait For Initialization
+// ----------------------------------------------------------
 
-  if (!migrationsComplete) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        Loading...
-      </div>
-    );
-  }
+if (
+  !authLoaded ||
+  !migrationsComplete
+) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      Loading...
+    </div>
+  );
+}
+
+// ----------------------------------------------------------
+// Authentication Gate
+// ----------------------------------------------------------
+
+if (!user) {
+  return (
+    <SignInScreen />
+  );
+}
 
   // ----------------------------------------------------------
   // App Layout
