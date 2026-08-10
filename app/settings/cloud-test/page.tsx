@@ -13,6 +13,11 @@ import {
   createLocalStorageSnapshot,
 } from "@/lib/storage/snapshot";
 
+import {
+  readCloudData,
+  saveCloudData,
+} from "@/lib/supabase/cloudStorage";
+
 // ============================================================
 // Cloud Test Page
 // ============================================================
@@ -31,6 +36,59 @@ export default function CloudTestPage() {
     setLoading,
   ] =
     useState(false);
+
+
+    // ----------------------------------------------------------
+// Test Cloud Storage Service
+// ----------------------------------------------------------
+
+async function testCloudStorage() {
+  setLoading(true);
+
+  try {
+    const testData = {
+      message:
+        "Fitness OS cloud storage service test",
+      testedAt:
+        new Date().toISOString(),
+      device:
+        navigator.userAgent,
+    };
+
+    await saveCloudData(
+      "fitness-os-sync-test",
+      testData
+    );
+
+    const cloudRecord =
+      await readCloudData(
+        "fitness-os-sync-test"
+      );
+
+    setResult(
+      JSON.stringify(
+        cloudRecord,
+        null,
+        2
+      )
+    );
+  } catch (error) {
+    console.error(
+      "Fitness OS cloud storage test failed:",
+      error
+    );
+
+    setResult(
+      JSON.stringify(
+        error,
+        null,
+        2
+      )
+    );
+  } finally {
+    setLoading(false);
+  }
+}
 
     // ----------------------------------------------------------
 // Preview Local Snapshot
@@ -193,6 +251,15 @@ function previewLocalSnapshot() {
   className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
 >
   Preview Local Data
+</button>
+
+<button
+  type="button"
+  onClick={testCloudStorage}
+  disabled={loading}
+  className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
+>
+  Test Storage Service
 </button>
 
         <pre className="mt-6 overflow-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100">
