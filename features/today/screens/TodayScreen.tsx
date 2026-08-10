@@ -1,0 +1,315 @@
+"use client";
+
+import AppShell from "@/components/layout/AppShell";
+
+import {
+  CoachCard,
+  getCoachRecommendation,
+} from "@/features/coach";
+
+import {
+  MissionCard,
+  WeeklyProgress,
+  today,
+} from "@/features/today";
+
+import {
+  useTrainingPlanState,
+} from "@/features/workout/hooks/useTrainingPlanState";
+
+import {
+  fitnessOsTrainingPlan,
+} from "@/features/workout/trainingPlan";
+
+import {
+  getTrainingScheduleForDate,
+} from "@/features/workout/utils/getTrainingScheduleForDate";
+
+import {
+  useTrainingActivityCompletions,
+} from "@/features/workout/hooks/useTrainingActivityCompletions";
+
+import {
+  useWeeklyTrainingProgression,
+} from "@/features/workout/hooks/useWeeklyTrainingProgression";
+
+import TodaysTrainingCard from "../components/TodaysTrainingCard";
+
+import {
+  MorningCheckIn,
+  useMorningCheckIn,
+} from "@/features/recovery";
+
+
+// ============================================================
+// Today Screen
+// ============================================================
+
+export default function TodayScreen() {
+  // ----------------------------------------------------------
+  // Morning Check-In
+  // ----------------------------------------------------------
+
+const {
+  ratings,
+  setRatings,
+} = useMorningCheckIn();
+
+
+  // ----------------------------------------------------------
+  // Training Plan State
+  // ----------------------------------------------------------
+
+  const {
+    state:
+      trainingPlanState,
+
+    loaded:
+      trainingPlanStateLoaded,
+
+    startTrainingPlan,
+
+    clearTrainingPlan,
+
+    applyWeeklyProgressionDecision,
+  } = useTrainingPlanState();
+
+  const {
+  completions:
+    trainingActivityCompletions,
+
+  loaded:
+    trainingActivityCompletionsLoaded,
+
+  completeActivity,
+
+  removeActivityCompletion,
+
+  isActivityCompleted,
+} = useTrainingActivityCompletions();
+
+
+useWeeklyTrainingProgression({
+  state:
+    trainingPlanState,
+
+  loaded:
+    trainingPlanStateLoaded,
+
+  completions:
+    trainingActivityCompletions,
+
+  completionsLoaded:
+    trainingActivityCompletionsLoaded,
+
+  applyWeeklyProgressionDecision,
+});
+
+  // ----------------------------------------------------------
+  // Today's Training Schedule
+  // ----------------------------------------------------------
+
+  const schedule =
+    trainingPlanState
+      ? getTrainingScheduleForDate(
+          fitnessOsTrainingPlan,
+          trainingPlanState,
+          new Date()
+        )
+      : null;
+
+
+  // ----------------------------------------------------------
+  // Coach
+  // ----------------------------------------------------------
+
+  const recommendation =
+    getCoachRecommendation(
+      ratings,
+      schedule?.trainingDay.activities ??
+        []
+    );
+
+
+  // ----------------------------------------------------------
+  // Start Plan
+  // ----------------------------------------------------------
+
+  function handleStartPlan() {
+    const now =
+      new Date();
+
+    // Find Monday of the current local week.
+    const day =
+      now.getDay();
+
+    const daysSinceMonday =
+      day === 0
+        ? 6
+        : day - 1;
+
+    const monday =
+      new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate() -
+          daysSinceMonday
+      );
+
+    const year =
+      monday.getFullYear();
+
+    const month =
+      String(
+        monday.getMonth() + 1
+      ).padStart(2, "0");
+
+    const date =
+      String(
+        monday.getDate()
+      ).padStart(2, "0");
+
+    const startDate =
+      `${year}-${month}-${date}`;
+
+    startTrainingPlan(
+      fitnessOsTrainingPlan.id,
+      startDate
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // Render
+  // ----------------------------------------------------------
+
+  return (
+    <AppShell>
+      <div className="space-y-6">
+
+        {/* ====================================================
+            Coach
+        ==================================================== */}
+
+        <CoachCard
+          recommendation={
+            recommendation
+          }
+        />
+
+
+        {/* ====================================================
+            Today's Training
+        ==================================================== */}
+
+<TodaysTrainingCard
+  schedule={
+    schedule
+  }
+
+  trainingPlanState={
+    trainingPlanState
+  }
+
+  loaded={
+    trainingPlanStateLoaded &&
+    trainingActivityCompletionsLoaded
+  }
+
+  isActivityCompleted={
+    isActivityCompleted
+  }
+
+  onCompleteActivity={
+    (activity) => {
+      if (!schedule) {
+        return;
+      }
+
+      completeActivity(
+        activity,
+        {
+          date:
+            new Date(
+              `${schedule.date}T12:00:00`
+            ),
+        }
+      );
+    }
+  }
+
+  onRemoveActivityCompletion={
+    (activityId) => {
+      if (!schedule) {
+        return;
+      }
+
+      removeActivityCompletion(
+        activityId,
+        schedule.date
+      );
+    }
+  }
+
+  onStartPlan={
+    handleStartPlan
+  }
+
+  onResetPlan={
+    clearTrainingPlan
+  }
+/>
+
+
+        {/* ====================================================
+            Mission
+        ==================================================== */}
+
+<MissionCard
+  mission={
+    today.mission
+  }
+
+  trainingActivities={
+    schedule?.trainingDay.activities ??
+    []
+  }
+
+  trainingDate={
+    schedule?.date
+  }
+
+  isActivityCompleted={
+    isActivityCompleted
+  }
+/>
+
+
+        {/* ====================================================
+            Morning Check-In
+        ==================================================== */}
+
+        <MorningCheckIn
+          ratings={
+            ratings
+          }
+          onChange={
+            setRatings
+          }
+        />
+
+
+        {/* ====================================================
+            Weekly Progress
+        ==================================================== */}
+
+        <WeeklyProgress
+          progress={
+            today.weeklyProgress
+          }
+        />
+
+      </div>
+    </AppShell>
+  );
+}

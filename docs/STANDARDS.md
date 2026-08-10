@@ -1,0 +1,1 @@
+Never import a feature from its own barrel file. Use relative imports inside the feature; reserve the barrel for external consumers only.
