@@ -37,6 +37,44 @@ export default function CloudTestPage() {
   ] =
     useState(false);
 
+    // ----------------------------------------------------------
+// Read Existing Cloud Storage Test
+// ----------------------------------------------------------
+
+async function readStorageTest() {
+  setLoading(true);
+
+  try {
+    const cloudRecord =
+      await readCloudData(
+        "fitness-os-sync-test"
+      );
+
+    setResult(
+      JSON.stringify(
+        cloudRecord,
+        null,
+        2
+      )
+    );
+  } catch (error) {
+    console.error(
+      "Fitness OS cloud storage read failed:",
+      error
+    );
+
+    setResult(
+      JSON.stringify(
+        error,
+        null,
+        2
+      )
+    );
+  } finally {
+    setLoading(false);
+  }
+}
+
 
     // ----------------------------------------------------------
 // Test Cloud Storage Service
@@ -260,6 +298,15 @@ function previewLocalSnapshot() {
   className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
 >
   Test Storage Service
+</button>
+
+<button
+  type="button"
+  onClick={readStorageTest}
+  disabled={loading}
+  className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
+>
+  Read Storage Test
 </button>
 
         <pre className="mt-6 overflow-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100">
