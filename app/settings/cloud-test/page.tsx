@@ -18,6 +18,15 @@ import {
   saveCloudData,
 } from "@/lib/supabase/cloudStorage";
 
+import {
+  downloadStorageKey,
+  uploadStorageKey,
+} from "@/lib/storage/cloudSync";
+
+import {
+  FITNESS_OS_STORAGE_KEYS,
+} from "@/lib/storage/fitnessOsStorageKeys";
+
 // ============================================================
 // Cloud Test Page
 // ============================================================
@@ -36,6 +45,88 @@ export default function CloudTestPage() {
     setLoading,
   ] =
     useState(false);
+
+    // ----------------------------------------------------------
+// Test Sync Engine
+// ----------------------------------------------------------
+
+async function testSyncEngine() {
+  setLoading(true);
+
+  const key =
+    FITNESS_OS_STORAGE_KEYS.trainingPlanState;
+
+  const originalValue =
+    localStorage.getItem(key);
+
+  try {
+    const testData = {
+      syncEngineTest: true,
+      message:
+        "Fitness OS sync engine test",
+      createdAt:
+        new Date().toISOString(),
+    };
+
+    // Write temporary data locally.
+    localStorage.setItem(
+      key,
+      JSON.stringify(testData),
+    );
+
+    // Upload using the real sync engine.
+    await uploadStorageKey(key);
+
+    // Delete the local copy.
+    localStorage.removeItem(key);
+
+    // Download it back from Supabase.
+    const downloaded =
+      await downloadStorageKey(key);
+
+    const restoredValue =
+      localStorage.getItem(key);
+
+    setResult(
+      JSON.stringify(
+        {
+          downloaded,
+          restoredValue:
+            restoredValue
+              ? JSON.parse(restoredValue)
+              : null,
+        },
+        null,
+        2,
+      ),
+    );
+  } catch (error) {
+    console.error(
+      "Fitness OS sync engine test failed:",
+      error,
+    );
+
+    setResult(
+      JSON.stringify(
+        error,
+        null,
+        2,
+      ),
+    );
+  } finally {
+    // Restore whatever was there before the test.
+    if (originalValue === null) {
+      localStorage.removeItem(key);
+    } else {
+      localStorage.setItem(
+        key,
+        originalValue,
+      );
+    }
+
+    setLoading(false);
+  }
+}
 
     // ----------------------------------------------------------
 // Read Existing Cloud Storage Test
@@ -307,6 +398,15 @@ function previewLocalSnapshot() {
   className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
 >
   Read Storage Test
+</button>
+
+<button
+  type="button"
+  onClick={testSyncEngine}
+  disabled={loading}
+  className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
+>
+  Test Sync Engine
 </button>
 
         <pre className="mt-6 overflow-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100">
