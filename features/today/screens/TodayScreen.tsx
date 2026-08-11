@@ -1,5 +1,9 @@
 "use client";
 
+// ============================================================
+// Imports
+// ============================================================
+
 import AppShell from "@/components/layout/AppShell";
 
 import {
@@ -10,7 +14,6 @@ import {
 import {
   MissionCard,
   WeeklyProgress,
-  today,
 } from "@/features/today";
 
 import {
@@ -36,10 +39,13 @@ import {
 import TodaysTrainingCard from "../components/TodaysTrainingCard";
 
 import {
+  getCurrentWeeklyProgress,
+} from "../utils/getCurrentWeeklyProgress";
+
+import {
   MorningCheckIn,
   useMorningCheckIn,
 } from "@/features/recovery";
-
 
 // ============================================================
 // Today Screen
@@ -50,11 +56,10 @@ export default function TodayScreen() {
   // Morning Check-In
   // ----------------------------------------------------------
 
-const {
-  ratings,
-  setRatings,
-} = useMorningCheckIn();
-
+  const {
+    ratings,
+    setRatings,
+  } = useMorningCheckIn();
 
   // ----------------------------------------------------------
   // Training Plan State
@@ -75,35 +80,34 @@ const {
   } = useTrainingPlanState();
 
   const {
-  completions:
-    trainingActivityCompletions,
+    completions:
+      trainingActivityCompletions,
 
-  loaded:
-    trainingActivityCompletionsLoaded,
+    loaded:
+      trainingActivityCompletionsLoaded,
 
-  completeActivity,
+    completeActivity,
 
-  removeActivityCompletion,
+    removeActivityCompletion,
 
-  isActivityCompleted,
-} = useTrainingActivityCompletions();
+    isActivityCompleted,
+  } = useTrainingActivityCompletions();
 
+  useWeeklyTrainingProgression({
+    state:
+      trainingPlanState,
 
-useWeeklyTrainingProgression({
-  state:
-    trainingPlanState,
+    loaded:
+      trainingPlanStateLoaded,
 
-  loaded:
-    trainingPlanStateLoaded,
+    completions:
+      trainingActivityCompletions,
 
-  completions:
-    trainingActivityCompletions,
+    completionsLoaded:
+      trainingActivityCompletionsLoaded,
 
-  completionsLoaded:
-    trainingActivityCompletionsLoaded,
-
-  applyWeeklyProgressionDecision,
-});
+    applyWeeklyProgressionDecision,
+  });
 
   // ----------------------------------------------------------
   // Today's Training Schedule
@@ -118,6 +122,15 @@ useWeeklyTrainingProgression({
         )
       : null;
 
+  // ----------------------------------------------------------
+  // Current Weekly Progress
+  // ----------------------------------------------------------
+
+  const weeklyProgress =
+    getCurrentWeeklyProgress(
+      trainingPlanState,
+      trainingActivityCompletions
+    );
 
   // ----------------------------------------------------------
   // Coach
@@ -129,7 +142,6 @@ useWeeklyTrainingProgression({
       schedule?.trainingDay.activities ??
         []
     );
-
 
   // ----------------------------------------------------------
   // Start Plan
@@ -178,7 +190,6 @@ useWeeklyTrainingProgression({
     );
   }
 
-
   // ----------------------------------------------------------
   // Render
   // ----------------------------------------------------------
@@ -197,93 +208,86 @@ useWeeklyTrainingProgression({
           }
         />
 
-
         {/* ====================================================
             Today's Training
         ==================================================== */}
 
-<TodaysTrainingCard
-  schedule={
-    schedule
-  }
+        <TodaysTrainingCard
+          schedule={
+            schedule
+          }
 
-  trainingPlanState={
-    trainingPlanState
-  }
+          trainingPlanState={
+            trainingPlanState
+          }
 
-  loaded={
-    trainingPlanStateLoaded &&
-    trainingActivityCompletionsLoaded
-  }
+          loaded={
+            trainingPlanStateLoaded &&
+            trainingActivityCompletionsLoaded
+          }
 
-  isActivityCompleted={
-    isActivityCompleted
-  }
+          isActivityCompleted={
+            isActivityCompleted
+          }
 
-  onCompleteActivity={
-    (activity) => {
-      if (!schedule) {
-        return;
-      }
+          onCompleteActivity={
+            (activity) => {
+              if (!schedule) {
+                return;
+              }
 
-      completeActivity(
-        activity,
-        {
-          date:
-            new Date(
-              `${schedule.date}T12:00:00`
-            ),
-        }
-      );
-    }
-  }
+              completeActivity(
+                activity,
+                {
+                  date:
+                    new Date(
+                      `${schedule.date}T12:00:00`
+                    ),
+                }
+              );
+            }
+          }
 
-  onRemoveActivityCompletion={
-    (activityId) => {
-      if (!schedule) {
-        return;
-      }
+          onRemoveActivityCompletion={
+            (activityId) => {
+              if (!schedule) {
+                return;
+              }
 
-      removeActivityCompletion(
-        activityId,
-        schedule.date
-      );
-    }
-  }
+              removeActivityCompletion(
+                activityId,
+                schedule.date
+              );
+            }
+          }
 
-  onStartPlan={
-    handleStartPlan
-  }
+          onStartPlan={
+            handleStartPlan
+          }
 
-  onResetPlan={
-    clearTrainingPlan
-  }
-/>
-
+          onResetPlan={
+            clearTrainingPlan
+          }
+        />
 
         {/* ====================================================
             Mission
         ==================================================== */}
 
-<MissionCard
-  mission={
-    today.mission
-  }
+        <MissionCard
+          trainingActivities={
+            schedule?.trainingDay.activities ??
+            []
+          }
 
-  trainingActivities={
-    schedule?.trainingDay.activities ??
-    []
-  }
+          trainingDate={
+            schedule?.date
+          }
 
-  trainingDate={
-    schedule?.date
-  }
-
-  isActivityCompleted={
-    isActivityCompleted
-  }
-/>
-
+          isActivityCompleted={
+            isActivityCompleted
+          }
+        />
 
         {/* ====================================================
             Morning Check-In
@@ -298,14 +302,18 @@ useWeeklyTrainingProgression({
           }
         />
 
-
         {/* ====================================================
             Weekly Progress
         ==================================================== */}
 
         <WeeklyProgress
           progress={
-            today.weeklyProgress
+            weeklyProgress
+          }
+
+          loaded={
+            trainingPlanStateLoaded &&
+            trainingActivityCompletionsLoaded
           }
         />
 
