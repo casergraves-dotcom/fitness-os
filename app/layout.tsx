@@ -11,6 +11,7 @@ import {
 import "./globals.css";
 
 import ServiceWorkerRegistration from "@/components/pwa/ServiceWorkerRegistration";
+import CloudSyncProvider from "@/components/sync/CloudSyncProvider";
 
 // ============================================================
 // Fonts
@@ -139,8 +140,10 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         <ServiceWorkerRegistration />
-        
-        {children}
+
+        <CloudSyncProvider>
+          {children}
+        </CloudSyncProvider>
       </body>
     </html>
   );

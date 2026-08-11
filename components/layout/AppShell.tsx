@@ -8,8 +8,6 @@ import {
   ReactNode,
 } from "react";
 
-import CloudSyncProvider from "@/components/sync/CloudSyncProvider";
-
 import {
   SignInScreen,
   useAuth,
@@ -68,16 +66,14 @@ export default function AppShell({
   // ----------------------------------------------------------
 
   return (
-    <CloudSyncProvider>
-      <div className="min-h-screen bg-slate-50">
-        <Header />
+    <div className="min-h-screen bg-slate-50">
+      <Header />
 
-        <PageContainer>
-          {children}
-        </PageContainer>
+      <PageContainer>
+        {children}
+      </PageContainer>
 
-        <BottomNav />
-      </div>
-    </CloudSyncProvider>
+      <BottomNav />
+    </div>
   );
 }
