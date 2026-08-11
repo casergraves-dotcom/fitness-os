@@ -28,6 +28,10 @@ import {
   removeTrainingActivityCompletionsByWorkoutSessionId,
 } from "../../workout/utils/trainingActivityCompletionStorage";
 
+import {
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
+
 
 // ============================================================
 // Storage
@@ -676,7 +680,7 @@ export function useRunSession() {
       ...history,
     ];
 
-    localStorage.setItem(
+    setFitnessOsStorage(
       RUN_HISTORY_STORAGE_KEY,
       JSON.stringify(
         updatedHistory
@@ -787,7 +791,7 @@ function deleteRun(
         runId
       );
 
-      localStorage.setItem(
+      setFitnessOsStorage(
         RUN_HISTORY_STORAGE_KEY,
         JSON.stringify(
           updated

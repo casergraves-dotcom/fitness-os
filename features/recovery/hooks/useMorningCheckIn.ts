@@ -10,12 +10,8 @@ import type {
 } from "../components/MorningCheckIn";
 
 import {
-  uploadStorageKey,
-} from "@/lib/storage/cloudSync";
-
-import {
-  FITNESS_OS_STORAGE_KEYS,
-} from "@/lib/storage/fitnessOsStorageKeys";
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
 
 
 // ============================================================
@@ -123,34 +119,9 @@ function writeMorningCheckIns(
   records:
     MorningCheckInRecord[]
 ) {
-  // ----------------------------------------------------------
-  // Save Locally First
-  // ----------------------------------------------------------
-
-  localStorage.setItem(
+  setFitnessOsStorage(
     MORNING_CHECK_IN_STORAGE_KEY,
     JSON.stringify(records)
-  );
-
-  // ----------------------------------------------------------
-  // Sync To Cloud
-  // ----------------------------------------------------------
-  //
-  // Cloud sync is intentionally non-blocking.
-  // The local save has already completed, so a network or
-  // Supabase failure must never prevent the check-in from
-  // being recorded on this device.
-  //
-
-  void uploadStorageKey(
-    FITNESS_OS_STORAGE_KEYS.morningCheckIns
-  ).catch(
-    (error) => {
-      console.error(
-        "Fitness OS morning check-in cloud sync failed:",
-        error
-      );
-    }
   );
 }
 

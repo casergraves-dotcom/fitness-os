@@ -3,6 +3,10 @@ import type {
   TrainingActivityCompletion,
 } from "../types";
 
+import {
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
+
 
 // ============================================================
 // Storage
@@ -114,7 +118,7 @@ export function writeTrainingActivityCompletions(
   completions:
     TrainingActivityCompletion[]
 ) {
-  localStorage.setItem(
+  setFitnessOsStorage(
     TRAINING_ACTIVITY_COMPLETIONS_STORAGE_KEY,
     JSON.stringify(completions)
   );

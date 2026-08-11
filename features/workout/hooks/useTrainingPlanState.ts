@@ -14,6 +14,11 @@ import type {
   TrainingWeek,
 } from "../types";
 
+import {
+  removeFitnessOsStorage,
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
+
 
 // ============================================================
 // Storage
@@ -108,16 +113,16 @@ export function useTrainingPlanState() {
   // Save
   // ----------------------------------------------------------
 
-  function saveState(
-    nextState: TrainingPlanState
-  ) {
-    setState(nextState);
+function saveState(
+  nextState: TrainingPlanState
+) {
+  setState(nextState);
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(nextState)
-    );
-  }
+  setFitnessOsStorage(
+    STORAGE_KEY,
+    JSON.stringify(nextState)
+  );
+}
 
 
   // ----------------------------------------------------------
@@ -151,7 +156,7 @@ export function useTrainingPlanState() {
   function clearTrainingPlan() {
     setState(null);
 
-    localStorage.removeItem(
+    removeFitnessOsStorage(
       STORAGE_KEY
     );
   }

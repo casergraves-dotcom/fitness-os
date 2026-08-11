@@ -90,6 +90,45 @@ export async function uploadStorageKey(
 }
 
 // ============================================================
+// Delete One Cloud Storage Value
+// ============================================================
+
+export async function deleteCloudStorageKey(
+  key: FitnessOsSyncKey,
+): Promise<void> {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    throw userError;
+  }
+
+  if (!user) {
+    throw new Error(
+      "Cannot delete Fitness OS cloud data without an authenticated user.",
+    );
+  }
+
+  const { error } = await supabase
+    .from("fitness_os_data")
+    .delete()
+    .eq(
+      "user_id",
+      user.id,
+    )
+    .eq(
+      "data_key",
+      key,
+    );
+
+  if (error) {
+    throw error;
+  }
+}
+
+// ============================================================
 // Download One Cloud Value
 // ============================================================
 

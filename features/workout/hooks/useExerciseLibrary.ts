@@ -21,6 +21,10 @@ import type {
   WorkoutSession,
 } from "../types";
 
+import {
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
+
 // ============================================================
 // Storage
 // ============================================================
@@ -134,7 +138,7 @@ export function useExerciseLibrary() {
       updatedExercises
     );
 
-    localStorage.setItem(
+    setFitnessOsStorage(
       CUSTOM_EXERCISE_STORAGE_KEY,
       JSON.stringify(
         updatedExercises
@@ -300,7 +304,7 @@ export function useExerciseLibrary() {
         ),
       };
 
-      localStorage.setItem(
+      setFitnessOsStorage(
         TEMPLATE_STORAGE_KEY,
         JSON.stringify(
           updatedTemplates

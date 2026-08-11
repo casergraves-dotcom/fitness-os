@@ -8,6 +8,10 @@ import { useEffect, useState } from "react";
 
 import type { WorkoutSession } from "../types";
 
+import {
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
+
 // ============================================================
 // Storage
 // ============================================================
@@ -73,7 +77,7 @@ export function useWorkoutHistory() {
         );
 
       // Keep localStorage synchronized with React state.
-      localStorage.setItem(
+      setFitnessOsStorage(
         HISTORY_STORAGE_KEY,
         JSON.stringify(updatedHistory)
       );

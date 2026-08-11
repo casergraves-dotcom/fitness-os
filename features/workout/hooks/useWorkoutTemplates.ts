@@ -22,6 +22,11 @@ import type {
   StrengthWorkoutType,
 } from "../types";
 
+import {
+  removeFitnessOsStorage,
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
+
 // ============================================================
 // Types
 // ============================================================
@@ -234,7 +239,7 @@ export function useWorkoutTemplates() {
       updatedTemplates
     );
 
-    localStorage.setItem(
+    setFitnessOsStorage(
       TEMPLATE_STORAGE_KEY,
       JSON.stringify(
         updatedTemplates
@@ -564,7 +569,7 @@ export function useWorkoutTemplates() {
       defaults
     );
 
-    localStorage.removeItem(
+    removeFitnessOsStorage(
       TEMPLATE_STORAGE_KEY
     );
   }

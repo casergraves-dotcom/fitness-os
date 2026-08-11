@@ -41,6 +41,10 @@ import {
   recordTrainingActivityCompletion,
 } from "../utils/trainingActivityCompletionStorage";
 
+import {
+  setFitnessOsStorage,
+} from "@/lib/storage/fitnessOsStorage";
+
 // ============================================================
 // Storage Keys
 // ============================================================
@@ -1406,26 +1410,26 @@ function updateSet(
   }
 
   // ----------------------------------------------------------
-// Workout Lifecycle - Cancel Workout
-// ----------------------------------------------------------
+  // Workout Lifecycle - Cancel Workout
+  // ----------------------------------------------------------
 
-function cancelWorkout() {
-  // Remove the active workout from localStorage.
-  // Nothing is written to workout history.
-  localStorage.removeItem(
-    STORAGE_KEY
-  );
+  function cancelWorkout() {
+    // Remove the active workout from local and cloud storage.
+    // Nothing is written to workout history.
+    localStorage.removeItem(
+      STORAGE_KEY
+    );
 
-  // Clear the active workout from React state.
-  setSession(null);
+    // Clear the active workout from React state.
+    setSession(null);
 
-  // Clear any temporary workout state.
-  setRemovedExercise(null);
+    // Clear any temporary workout state.
+    setRemovedExercise(null);
 
-  // Make sure the completed-workout screen
-  // is not shown.
-  setFinished(false);
-}
+    // Make sure the completed-workout screen
+    // is not shown.
+    setFinished(false);
+  }
 
 // ----------------------------------------------------------
 // Workout Lifecycle - Dismiss Finished Workout
@@ -1502,7 +1506,7 @@ function dismissFinishedWorkout() {
     ];
 
     // Save completed workout history permanently.
-    localStorage.setItem(
+    setFitnessOsStorage(
       HISTORY_STORAGE_KEY,
       JSON.stringify(
         updatedHistory
