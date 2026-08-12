@@ -165,15 +165,17 @@ The current Today screen mixes live training data with placeholder/static Missio
 
 **\*\*Completed outcome:\*\*** resetting the plan is now a deliberate, confirmed action that resets active plan state without deleting historical Fitness OS data.
 
-**\*\*## 1.4 Strength Workout Completion Validation\*\***
+**\*\*## 1.4 Strength Workout Completion Validation — COMPLETE\*\***
 
-\\- [ ] Prevent an empty strength session from satisfying a scheduled strength activity.
-\\- [ ] Require meaningful workout input before recording scheduled strength completion (initial rule: at least one completed working set).
-\\- [ ] Keep cancel/discard behavior separate from completion.
-\\- [ ] Define behavior for intentionally shortened or recovery-modified strength sessions.
-\\- [ ] Ensure invalid/empty sessions do not increase weekly required-training, strength-session, or adherence counts.
+\- [x] Prevent an empty strength session from satisfying a scheduled strength activity.
+\- [x] Require meaningful workout input before recording scheduled strength completion (initial rule: at least one completed working set).
+\- [x] Keep cancel/discard behavior separate from completion.
+\- [x] Support intentionally shortened or recovery-modified strength sessions under the current minimum-valid-session rule.
+\- [x] Ensure invalid/empty sessions do not increase weekly required-training, strength-session, or adherence counts.
+\- [x] Show a clear validation message when a user attempts to finish with zero completed working sets.
+\- [x] Verify an invalid zero-set session is not written to workout history.
 
-**\*\*\\\*\\\*Done when:\\\*\\\*\*\*** a zero-set/zero-exercise strength session cannot satisfy the training plan, while legitimate shortened sessions remain supportable.
+**\*\*Completed outcome:\*\*** a strength workout now requires at least one completed working set before it can be finished. Empty sessions remain active, are not written to history, and cannot record scheduled strength completion. Legitimate shortened sessions remain possible.
 
 **\*\*## 1.5 Guide Integration\*\***
 
@@ -451,8 +453,8 @@ Work should proceed in this order unless a bug or safety issue interrupts it:
 
 1\\. \~\~**\*\*\\\*\\\*Dynamic Today Mission\\\*\\\*\*\***\~\~ — complete
 2\\. \~\~**\*\*\\\*\\\*Real Weekly Progress\\\*\\\*\*\***\~\~ — complete
-3\\. **\*\*\\\*\\\*Reset Plan UX\\\*\\\*\*\***
-4\\. **\*\*\\\*\\\*Strength workout completion validation\\\*\\\*\*\***
+3\\. \~\~**\*\*\\\*\\\*Reset Plan UX\\\*\\\*\*\***\~\~ — complete
+4\\. \~\~**\*\*\\\*\\\*Strength workout completion validation\\\*\\\*\*\***\~\~ — complete
 5\\. **\*\*\\\*\\\*Guide integration with live training/readiness\\\*\\\*\*\***
 6\\. **\*\*\\\*\\\*Backup/home and shortened workout system\\\*\\\*\*\***
 7\\. **\*\*\\\*\\\*Strength progression improvements\\\*\\\*\*\***
