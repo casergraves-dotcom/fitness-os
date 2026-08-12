@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 
+import {
+  useState,
+} from "react";
+
 import type {
   TrainingActivity,
   TrainingPlanState,
@@ -252,6 +256,103 @@ export default function TodaysTrainingCard({
   onStartPlan,
   onResetPlan,
 }: TodaysTrainingCardProps) {
+  // ----------------------------------------------------------
+  // Reset Plan Confirmation
+  // ----------------------------------------------------------
+
+  const [
+    resetConfirmationOpen,
+    setResetConfirmationOpen,
+  ] = useState(false);
+
+  function requestPlanReset() {
+    setResetConfirmationOpen(true);
+  }
+
+  function cancelPlanReset() {
+    setResetConfirmationOpen(false);
+  }
+
+  function confirmPlanReset() {
+    setResetConfirmationOpen(false);
+    onResetPlan();
+  }
+
+  // ----------------------------------------------------------
+  // Reset Plan Confirmation UI
+  // ----------------------------------------------------------
+
+  const resetPlanConfirmation =
+    resetConfirmationOpen ? (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
+        role="presentation"
+        onMouseDown={
+          (event) => {
+            if (
+              event.target ===
+              event.currentTarget
+            ) {
+              cancelPlanReset();
+            }
+          }
+        }
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="reset-plan-title"
+          aria-describedby="reset-plan-description"
+          className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        >
+          <p className="text-sm font-semibold uppercase tracking-wide text-amber-600">
+            Training Plan
+          </p>
+
+          <h2
+            id="reset-plan-title"
+            className="mt-1 text-xl font-bold text-slate-900"
+          >
+            Reset your training plan?
+          </h2>
+
+          <div
+            id="reset-plan-description"
+            className="mt-4 space-y-3 text-sm text-slate-600"
+          >
+            <p>
+              This resets your active training-plan schedule and progression so you can start the plan again.
+            </p>
+
+            <p className="font-medium text-slate-800">
+              Your workout history, run history, morning check-ins, and previously completed historical data are preserved.
+            </p>
+          </div>
+
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={
+                cancelPlanReset
+              }
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Keep Plan
+            </button>
+
+            <button
+              type="button"
+              onClick={
+                confirmPlanReset
+              }
+              className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
+            >
+              Reset Plan
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : null;
 
   // ----------------------------------------------------------
   // Loading
@@ -315,7 +416,8 @@ export default function TodaysTrainingCard({
 
   if (!schedule) {
     return (
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <>
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
         <div className="flex items-start justify-between gap-4">
 
@@ -335,11 +437,11 @@ export default function TodaysTrainingCard({
           <button
             type="button"
             onClick={
-              onResetPlan
+              requestPlanReset
             }
             className="text-sm text-slate-500 underline"
           >
-            Reset
+            Reset Plan
           </button>
 
         </div>
@@ -349,7 +451,10 @@ export default function TodaysTrainingCard({
           No training schedule could be resolved for today.
         </p>
 
-      </section>
+        </section>
+
+        {resetPlanConfirmation}
+      </>
     );
   }
 
@@ -370,7 +475,8 @@ export default function TodaysTrainingCard({
   // ----------------------------------------------------------
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
       {/* ====================================================
           Header
@@ -394,11 +500,11 @@ export default function TodaysTrainingCard({
         <button
           type="button"
           onClick={
-            onResetPlan
+            requestPlanReset
           }
           className="text-sm text-slate-500 underline"
         >
-          Reset
+          Reset Plan
         </button>
 
       </div>
@@ -701,6 +807,9 @@ export default function TodaysTrainingCard({
 
       </div>
 
-    </section>
+      </section>
+
+      {resetPlanConfirmation}
+    </>
   );
 }
