@@ -70,7 +70,12 @@ export function getWeeklyProgressionDecision(
   // Strength Sessions
   // ----------------------------------------------------------
 
-  const scheduledStrength =
+  // Ordinary required strength activities count individually.
+  //
+  // Activities inside substitution groups are intentionally
+  // marked non-required by evaluateWeeklyAdherence(), because
+  // the group itself represents one training requirement.
+  const requiredStrengthActivities =
     adherence.activities.filter(
       (item) =>
         item.required &&
@@ -79,18 +84,52 @@ export function getWeeklyProgressionDecision(
         )
     );
 
-  const completedStrength =
-    scheduledStrength.filter(
+  const completedRequiredStrengthActivities =
+    requiredStrengthActivities.filter(
       (item) =>
         item.completed
     );
 
 
+  // A substitution group containing strength work counts as
+  // ONE scheduled strength requirement, regardless of how many
+  // interchangeable activities are in the group.
+  const strengthSubstitutionGroups =
+    adherence.substitutionGroups.filter(
+      (group) =>
+        group.activities.some(
+          (item) =>
+            isStrengthActivity(
+              item.activity.type
+            )
+        )
+    );
+
+  // The group counts as a completed strength requirement only
+  // when a Strength activity in that group was completed.
+  //
+  // This avoids a mixed substitution group being credited as a
+  // strength session if only a non-strength alternative was done.
+  const completedStrengthSubstitutionGroups =
+    strengthSubstitutionGroups.filter(
+      (group) =>
+        group.activities.some(
+          (item) =>
+            isStrengthActivity(
+              item.activity.type
+            ) &&
+            item.completed
+        )
+    );
+
+
   const scheduledStrengthCount =
-    scheduledStrength.length;
+    requiredStrengthActivities.length +
+    strengthSubstitutionGroups.length;
 
   const completedStrengthCount =
-    completedStrength.length;
+    completedRequiredStrengthActivities.length +
+    completedStrengthSubstitutionGroups.length;
 
 
   // Require up to two strength sessions, but never require
