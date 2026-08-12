@@ -55,6 +55,26 @@ function getRunActivity(
 }
 
 
+function getWalkActivity(
+  activities: TrainingActivity[]
+) {
+  return activities.find(
+    (activity) =>
+      activity.type === "Walk"
+  );
+}
+
+
+function getMobilityActivity(
+  activities: TrainingActivity[]
+) {
+  return activities.find(
+    (activity) =>
+      activity.type === "Mobility"
+  );
+}
+
+
 function hasRecoveryActivity(
   activities: TrainingActivity[]
 ) {
@@ -116,6 +136,16 @@ export function getCoachRecommendation(
 
   const runActivity =
     getRunActivity(
+      activities
+    );
+
+  const walkActivity =
+    getWalkActivity(
+      activities
+    );
+
+  const mobilityActivity =
+    getMobilityActivity(
       activities
     );
 
@@ -198,6 +228,32 @@ export function getCoachRecommendation(
 
 
     // --------------------------------------------------------
+    // Walk / Mobility
+    // --------------------------------------------------------
+
+    if (
+      walkActivity ||
+      mobilityActivity
+    ) {
+      const activityLabels =
+        [
+          walkActivity?.label,
+          mobilityActivity?.label,
+        ]
+          .filter(Boolean)
+          .join(" + ");
+
+      return {
+        title:
+          "Active Recovery",
+
+        message:
+          `${activityLabels} ${walkActivity && mobilityActivity ? "are" : "is"} scheduled today. Complete your Morning Check-In for a recovery-aware recommendation.`,
+      };
+    }
+
+
+    // --------------------------------------------------------
     // Recovery
     // --------------------------------------------------------
 
@@ -227,13 +283,83 @@ export function getCoachRecommendation(
 
 
 // ==========================================================
+// Walk / Mobility / Active Recovery Day
+// ==========================================================
+
+if (
+  (walkActivity || mobilityActivity) &&
+  !strengthActivity &&
+  !runActivity &&
+  !aerialDay
+) {
+  const activityLabels =
+    [
+      walkActivity?.label,
+      mobilityActivity?.label,
+    ]
+      .filter(Boolean)
+      .join(" + ");
+
+  if (
+    readiness.status === "low" ||
+    readiness.status === "very-low"
+  ) {
+    return {
+      title:
+        "Recovery Focus",
+
+      message:
+        readinessContext
+          ? `${readinessContext} Stick with today's ${activityLabels}. Keep the movement comfortable and use the session to support recovery rather than adding training stress.`
+          : `Your readiness is reduced today. Stick with today's ${activityLabels}, keep the movement comfortable, and focus on recovery.`,
+    };
+  }
+
+  if (
+    readiness.status === "normal"
+  ) {
+    return {
+      title:
+        "Active Recovery",
+
+      message:
+        readinessContext
+          ? `${readinessContext} Complete today's ${activityLabels} as planned. Keep the effort easy and use the lighter day to support your next training session.`
+          : `Complete today's ${activityLabels} as planned. Keep the effort easy and use the lighter day to support your next training session.`,
+    };
+  }
+
+  if (
+    readiness.status === "high"
+  ) {
+    return {
+      title:
+        "Active Recovery",
+
+      message:
+        `You're well recovered, but today's ${activityLabels} are intentionally light. Complete them as planned rather than adding unnecessary training volume.`,
+    };
+  }
+
+  return {
+    title:
+      "Active Recovery",
+
+    message:
+      `Today's schedule calls for ${activityLabels}. Keep the effort easy and use the lighter day to support recovery.`,
+  };
+}
+
+
+// ==========================================================
 // Recovery / Rest Day
 // ==========================================================
 
 if (
   recoveryDay &&
   !strengthActivity &&
-  !runActivity
+  !runActivity &&
+  !aerialDay
 ) {
 
   // --------------------------------------------------------

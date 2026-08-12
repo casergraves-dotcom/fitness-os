@@ -129,19 +129,28 @@ export function getReadinessContext(
     return null;
   }
 
+  const hasMultipleFactors =
+    readiness.limitingFactors.length > 1;
+
+  const verb =
+    hasMultipleFactors
+      ? "are"
+      : "is";
 
   switch (
     readiness.status
   ) {
 
     case "very-low":
-      return `Your ${factors} indicate that recovery should be the priority today.`;
+      return hasMultipleFactors
+        ? `Your ${factors} indicate that recovery should be the priority today.`
+        : `Your ${factors} indicates that recovery should be the priority today.`;
 
     case "low":
-      return `Your ${factors} are limiting today's readiness.`;
+      return `Your ${factors} ${verb} limiting today's readiness.`;
 
     case "normal":
-      return `Your ${factors} are worth monitoring today.`;
+      return `Your ${factors} ${verb} worth monitoring today.`;
 
     case "high":
       return null;
