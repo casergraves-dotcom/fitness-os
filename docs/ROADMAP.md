@@ -195,13 +195,19 @@ The current Today screen mixes live training data with placeholder/static Missio
 
 This phase directly addresses the original requirement that missing the gym should not automatically mean missing training.
 
-**\*\*## 2.1 Backup Workout Model\*\***
+**\*\*## 2.1 Backup Workout Model — COMPLETE\*\***
 
-\\- [ ] Define a substitute-workout data model.
-\\- [ ] Create home equivalents for Gym A, Gym B, and Gym C.
-\\- [ ] Support equipment-aware substitutions where useful.
-\\- [ ] Create abbreviated gym sessions for time-constrained days.
-\\- [ ] Preserve the training intent of the scheduled workout rather than copying exercises mechanically.
+\\- [x] Define a substitute-workout data model.
+\\- [x] Create home equivalents for Gym A, Gym B, and Gym C.
+\\- [x] Support equipment-aware substitutions where useful.
+\\- [x] Create abbreviated gym sessions for time-constrained days.
+\\- [x] Preserve the training intent of the scheduled workout rather than copying exercises mechanically.
+\\- [x] Represent movement roles explicitly so substitute sessions preserve training purpose rather than relying on one-for-one exercise replacement.
+\\- [x] Separate available equipment from setup capabilities so owning equipment does not imply every exercise using it is executable.
+\\- [x] Model the current home environment as bodyweight, yoga mat, resistance bands, floor space, and a high anchor.
+\\- [x] Add availability logic that validates both required equipment and required setup capabilities.
+
+**\*\*Completed outcome:\*\*** Gym A, Gym B, and Gym C now each have structured Full Gym, Short Gym, and Home pathways. Short Gym variants preserve required movement roles with reduced volume, while Home variants use bands/bodyweight/mat work and explicitly account for setup requirements such as a high anchor. The model is ready for the Today substitution flow to expose only appropriate executable alternatives.
 
 **\*\*## 2.2 Today Substitution Flow\*\***
 
@@ -455,8 +461,8 @@ Work should proceed in this order unless a bug or safety issue interrupts it:
 2\\. \~\~**\*\*\\\*\\\*Real Weekly Progress\\\*\\\*\*\***\~\~ — complete
 3\\. \~\~**\*\*\\\*\\\*Reset Plan UX\\\*\\\*\*\***\~\~ — complete
 4\\. \~\~**\*\*\\\*\\\*Strength workout completion validation\\\*\\\*\*\***\~\~ — complete
-5\\. **\*\*\\\*\\\*Guide integration with live training/readiness\\\*\\\*\*\***
-6\\. **\*\*\\\*\\\*Backup/home and shortened workout system\\\*\\\*\*\***
+5\\. ~~~~**\*\*\\\*\\\*Guide integration with live training/readiness\\\*\\\*\*\***~~~~ — complete
+6\\. **\*\*\\\*\\\*Backup/home and shortened workout system\\\*\\\*\*\*** — in progress (2.1 complete; 2.2 next)
 7\\. **\*\*\\\*\\\*Strength progression improvements\\\*\\\*\*\***
 8\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\*\***
 9\\. **\*\*\\\*\\\*Body-composition/goal tracking\\\*\\\*\*\***
