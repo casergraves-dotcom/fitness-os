@@ -48,6 +48,153 @@ export type StrengthWorkoutType =
   | "Gym C";
 
 
+// ============================================================
+// Strength Training Intent
+// ============================================================
+//
+// Backup workouts should preserve the purpose of the scheduled
+// strength session rather than copy exercises one-for-one.
+//
+// These movement roles describe that purpose in structured data.
+
+export type StrengthMovementRole =
+  | "Squat"
+  | "SquatGlute"
+  | "Hamstrings"
+  | "HorizontalPush"
+  | "HorizontalPull"
+  | "VerticalPush"
+  | "VerticalPull"
+  | "HipStability"
+  | "Adduction"
+  | "Core"
+  | "Accessory";
+
+
+// ============================================================
+// Workout Equipment
+// ============================================================
+//
+// Equipment requirements describe what must actually be
+// available to perform a workout variant.
+//
+// Owned-but-unavailable equipment should not be treated as
+// available equipment.
+
+export type WorkoutEquipment =
+  | "Bodyweight"
+  | "YogaMat"
+  | "ResistanceBands"
+  | "PullUpBar"
+  | "PunchingBag"
+  | "Dumbbells"
+  | "Bench"
+  | "GymMachines";
+
+
+// ============================================================
+// Workout Setup Capabilities
+// ============================================================
+//
+// Equipment answers "what is available?"
+// Capabilities answer "what can safely be set up here?"
+//
+// Keeping these separate prevents Fitness OS from assuming that
+// owning an item automatically makes every exercise using that
+// item executable in the current environment.
+
+export type WorkoutSetupCapability =
+  | "FloorSpace"
+  | "HighAnchor"
+  | "LowAnchor"
+  | "DoorAnchor"
+  | "PullUpBarInstalled";
+
+
+// ============================================================
+// Strength Workout Variants
+// ============================================================
+//
+// FullGym:
+// Existing Gym A / B / C prescription.
+//
+// ShortGym:
+// Time-constrained gym version that preserves the highest
+// priority movement roles with reduced volume.
+//
+// Home:
+// Home substitute built around available equipment.
+//
+// Additional variants can be added later without changing the
+// scheduled StrengthWorkoutType.
+
+export type StrengthWorkoutVariantType =
+  | "FullGym"
+  | "ShortGym"
+  | "Home";
+
+
+export interface StrengthWorkoutIntentRole {
+  role: StrengthMovementRole;
+
+  required: boolean;
+}
+
+
+export interface StrengthWorkoutIntent {
+  strengthWorkout: StrengthWorkoutType;
+
+  roles: StrengthWorkoutIntentRole[];
+}
+
+
+export interface StrengthWorkoutVariantExercise {
+  exerciseDefinitionId: string;
+
+  movementRole:
+    StrengthMovementRole;
+
+  sets: number;
+
+  optional?: boolean;
+
+  note?: string;
+}
+
+
+export interface StrengthWorkoutVariant {
+  id: string;
+
+  label: string;
+
+  // The scheduled Gym A / B / C session whose training intent
+  // this variant preserves.
+  sourceStrengthWorkout:
+    StrengthWorkoutType;
+
+  variantType:
+    StrengthWorkoutVariantType;
+
+  requiredEquipment:
+    WorkoutEquipment[];
+
+  requiredCapabilities?:
+    WorkoutSetupCapability[];
+
+  // Movement roles intentionally covered by this variant.
+  movementRoles:
+    StrengthMovementRole[];
+
+  exercises:
+    StrengthWorkoutVariantExercise[];
+
+  durationMin?: number;
+  durationMax?: number;
+
+  note?: string;
+}
+
+
 // Legacy strength workout names.
 //
 // Keep these available so previously saved Push / Pull / Legs

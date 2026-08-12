@@ -18,3 +18,24 @@ export { previousWorkout } from "./mock/history";
 export { default as RestTimer } from "./components/RestTimer";
 
 export { default as AddExercise } from "./components/AddExercise";
+
+export {
+  currentHomeWorkoutCapabilities,
+  currentHomeWorkoutEquipment,
+  getStrengthWorkoutVariants,
+  isStrengthWorkoutVariantAvailable,
+  strengthWorkoutIntents,
+  strengthWorkoutVariants,
+  strengthWorkoutVariantTypes,
+} from "./backupWorkoutModel";
+
+export type {
+  StrengthMovementRole,
+  StrengthWorkoutIntent,
+  StrengthWorkoutIntentRole,
+  StrengthWorkoutVariant,
+  StrengthWorkoutVariantExercise,
+  StrengthWorkoutVariantType,
+  WorkoutEquipment,
+  WorkoutSetupCapability,
+} from "./types";
