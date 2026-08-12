@@ -177,13 +177,13 @@ The current Today screen mixes live training data with placeholder/static Missio
 
 **\*\*Completed outcome:\*\*** a strength workout now requires at least one completed working set before it can be finished. Empty sessions remain active, are not written to history, and cannot record scheduled strength completion. Legitimate shortened sessions remain possible.
 
-**\*\*## 1.5 Guide Integration\*\***
+**\*\*## 1.5 Guide Integration — COMPLETE\*\***
 
-\\- [ ] Make Coach/Guide aware of today's actual scheduled activity.
-\\- [ ] Combine readiness with training type when giving advice.
-\\- [ ] Distinguish normal training, reduced-effort training, recovery, and substitution recommendations.
-\\- [ ] Explain recommendations briefly and calmly.
-\\- [ ] Avoid recommendations that silently alter the long-term program.
+\\- [x] Make Coach/Guide aware of today's actual scheduled activity.
+\\- [x] Combine readiness with training type when giving advice.
+\\- [x] Distinguish normal training, reduced-effort training, recovery, and substitution recommendations.
+\\- [x] Explain recommendations briefly and calmly.
+\\- [x] Avoid recommendations that silently alter the long-term program.
 
 **\*\*\\\*\\\*Milestone:\\\*\\\*\*\*** Opening Today reliably answers **\*\*\\\*\\\*"What should I do today?"\\\*\\\*\*\***
 
