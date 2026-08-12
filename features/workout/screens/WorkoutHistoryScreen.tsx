@@ -21,6 +21,10 @@ import {
 } from "../hooks/useWorkoutHistory";
 
 import {
+  getWorkoutSessionLabel,
+} from "../utils/getWorkoutSessionLabel";
+
+import {
   useRunSession,
 } from "../../running/hooks/useRunSession";
 
@@ -372,7 +376,9 @@ export default function WorkoutHistoryScreen() {
 
                           <p className="mt-1 text-lg font-semibold">
                             {
-                              workout.workoutType
+                              getWorkoutSessionLabel(
+                                workout
+                              )
                             }
                           </p>
 
@@ -524,7 +530,9 @@ export default function WorkoutHistoryScreen() {
                             onClick={() => {
                               const confirmed =
                                 window.confirm(
-                                  `Delete this ${workout.workoutType} workout? This cannot be undone.`
+                                  `Delete this ${getWorkoutSessionLabel(
+                                    workout
+                                  )} workout? This cannot be undone.`
                                 );
 
                               if (

@@ -11,6 +11,7 @@ import RestTimer from "./RestTimer";
 
 interface WorkoutHeaderProps {
   workoutType: string;
+  variantLabel?: string;
   startedAt: string;
   restStartedAt?: string;
   completedSets: number;
@@ -19,6 +20,7 @@ interface WorkoutHeaderProps {
 
 export default function WorkoutHeader({
   workoutType,
+  variantLabel,
   startedAt,
   restStartedAt,
   completedSets,
@@ -55,7 +57,25 @@ export default function WorkoutHeader({
   return (
     <SectionCard>
       <div className="flex items-center justify-between">
-        <PageHeader title={`${workoutType} Workout`} />
+        <div>
+          <PageHeader
+            title={
+              variantLabel
+                ? variantLabel.replace(
+                    " - ",
+                    " · "
+                  )
+                : `${workoutType} Workout`
+            }
+          />
+
+          {variantLabel && (
+            <p className="mt-1 text-sm text-slate-500">
+              Alternative workout for{" "}
+              {workoutType}
+            </p>
+          )}
+        </div>
 
         <div className="text-right">
           <p className="text-xs text-slate-500">

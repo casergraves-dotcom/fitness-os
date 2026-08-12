@@ -21,6 +21,10 @@ import {
   getExerciseTarget,
 } from "../getExerciseTarget";
 
+import {
+  strengthWorkoutVariants,
+} from "../backupWorkoutModel";
+
 import type {
   Exercise,
   ExerciseDefinition,
@@ -582,14 +586,86 @@ export function useWorkoutSession() {
     scheduledContext?: {
       activityId: string;
       date: string;
-    }
+    },
+    variantId?: string
   ) {
-    // Select the appropriate template for the workout
-    // chosen on the workout start screen.
+    // --------------------------------------------------------
+    // Resolve Performed Variant
+    // --------------------------------------------------------
+    //
+    // workoutType always remains Gym A / B / C.
+    //
+    // A ShortGym or Home selection changes the exercises that
+    // are performed, but does not change the scheduled workout
+    // identity used by adherence and progression.
+
+    const selectedVariant =
+      variantId
+        ? strengthWorkoutVariants.find(
+            (variant) =>
+              variant.id ===
+                variantId &&
+              variant.sourceStrengthWorkout ===
+                workoutType
+          )
+        : undefined;
+
+    // --------------------------------------------------------
+    // Resolve Exercise Prescription
+    // --------------------------------------------------------
+
     const template =
-      workoutTemplates[
-        workoutType
-      ];
+      selectedVariant
+        ? selectedVariant.exercises.map(
+            (
+              variantExercise
+            ) => {
+              const definition =
+                exerciseLibrary.find(
+                  (item) =>
+                    item.id ===
+                    variantExercise.exerciseDefinitionId
+                );
+
+              if (!definition) {
+                throw new Error(
+                  `Missing exercise definition: ${variantExercise.exerciseDefinitionId}`
+                );
+              }
+
+              return {
+                id:
+                  createId(),
+
+                exerciseDefinitionId:
+                  definition.id,
+
+                name:
+                  definition.name,
+
+                prescribedSetCount:
+                  variantExercise.sets,
+
+                sets:
+                  Array.from(
+                    {
+                      length:
+                        variantExercise.sets,
+                    },
+                    () => ({
+                      id:
+                        createId(),
+                      weight: 0,
+                      reps: 0,
+                      completed: false,
+                    })
+                  ),
+              };
+            }
+          )
+        : workoutTemplates[
+            workoutType
+          ];
 
     // Build each exercise using its progression
     // recommendation and previous performance.
@@ -626,6 +702,7 @@ export function useWorkoutSession() {
             // This is intentionally based on the workout template,
             // NOT definition.sets from the Exercise Library.
             prescribedSetCount:
+              exercise.prescribedSetCount ??
               exercise.sets.length,
 
             sets:
@@ -679,6 +756,16 @@ export function useWorkoutSession() {
       WorkoutSession = {
       id: createId(),
       workoutType,
+
+      variantType:
+        selectedVariant?.variantType ??
+        "FullGym",
+
+      variantId:
+        selectedVariant?.id,
+
+      variantLabel:
+        selectedVariant?.label,
 
       startedAt:
         new Date().toISOString(),

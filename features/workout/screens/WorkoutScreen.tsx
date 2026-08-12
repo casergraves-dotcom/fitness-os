@@ -32,7 +32,20 @@ import {
 import {
   useEffect,
   useRef,
+  useState,
 } from "react";
+
+import {
+  currentHomeWorkoutCapabilities,
+  currentHomeWorkoutEquipment,
+  getStrengthWorkoutVariants,
+  isStrengthWorkoutVariantAvailable,
+} from "../backupWorkoutModel";
+
+import type {
+  StrengthWorkoutType,
+  StrengthWorkoutVariant,
+} from "../types";
 
 import {
   useSearchParams,
@@ -98,10 +111,72 @@ function formatNumber(
 }
 
 // ============================================================
+// Workout Variant Helpers
+// ============================================================
+
+function getVariantName(
+  variant: StrengthWorkoutVariant
+) {
+  if (variant.variantType === "FullGym") {
+    return "Full Gym";
+  }
+
+  if (variant.variantType === "ShortGym") {
+    return "Short Gym";
+  }
+
+  return "Home";
+}
+
+
+function getVariantDescription(
+  variant: StrengthWorkoutVariant
+) {
+  const duration =
+    variant.durationMin !== undefined &&
+    variant.durationMax !== undefined
+      ? `${variant.durationMin}–${variant.durationMax} min`
+      : null;
+
+  if (variant.variantType === "FullGym") {
+    return [
+      duration,
+      "Complete programmed session",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+  }
+
+  if (variant.variantType === "ShortGym") {
+    return [
+      duration,
+      "Reduced volume",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+  }
+
+  return [
+    duration,
+    "Bands + bodyweight",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+
+// ============================================================
 // Workout Screen
 // ============================================================
 
 export default function WorkoutScreen() {
+  const [
+    selectedWorkoutType,
+    setSelectedWorkoutType,
+  ] = useState<StrengthWorkoutType | null>(
+    null
+  );
+
   // ----------------------------------------------------------
   // Workout Session
   // ----------------------------------------------------------
@@ -172,6 +247,12 @@ const scheduledDate =
     "date"
   );
 
+const requestedVariantId =
+  searchParams.get(
+    "variant"
+  ) ??
+  undefined;
+
   if (
     requestedWorkout !== "Gym A" &&
     requestedWorkout !== "Gym B" &&
@@ -195,14 +276,17 @@ if (
 
       date:
         scheduledDate,
-    }
+    },
+    requestedVariantId
   );
 
   return;
 }
 
 startWorkout(
-  requestedWorkout
+  requestedWorkout,
+  undefined,
+  requestedVariantId
 );
 }, [
   loaded,
@@ -868,6 +952,46 @@ const exerciseVolume =
   // ----------------------------------------------------------
 
   if (!session) {
+    const workoutDescriptions:
+      Record<
+        StrengthWorkoutType,
+        string
+      > = {
+        "Gym A":
+          "Full body — leg press, chest press, row, hamstrings, shoulders & core",
+
+        "Gym B":
+          "Full body — squat, vertical pull, incline press, hamstrings & accessories",
+
+        "Gym C":
+          "Full body — glute emphasis, pull-ups, chest, arms, hips & core",
+      };
+
+    const workoutTypes:
+      StrengthWorkoutType[] = [
+        "Gym A",
+        "Gym B",
+        "Gym C",
+      ];
+
+    const variants =
+      selectedWorkoutType
+        ? getStrengthWorkoutVariants(
+            selectedWorkoutType
+          )
+        : [];
+
+    const availableVariants =
+      variants.filter(
+        (variant) =>
+          variant.variantType !== "Home" ||
+          isStrengthWorkoutVariantAvailable(
+            variant,
+            currentHomeWorkoutEquipment,
+            currentHomeWorkoutCapabilities
+          )
+      );
+
     return (
       <AppShell>
         <div className="mx-auto w-full max-w-3xl rounded-2xl border bg-white p-6 shadow-sm">
@@ -877,91 +1001,172 @@ const exerciseVolume =
             </p>
 
             <h1 className="mt-2 text-2xl font-bold">
-              Start a Workout
+              {selectedWorkoutType
+                ? `Choose ${selectedWorkoutType} Version`
+                : "Start a Workout"}
             </h1>
 
             <p className="mt-2 text-slate-500">
-              Choose today&apos;s workout.
+              {selectedWorkoutType
+                ? "Choose the version that fits today's situation."
+                : "Choose today's workout."}
             </p>
           </div>
 
-<div className="mt-6 space-y-3">
-  {/* Gym A */}
+          {!selectedWorkoutType ? (
+            <div className="mt-6 space-y-3">
+              {workoutTypes.map(
+                (workoutType) => (
+                  <button
+                    key={workoutType}
+                    type="button"
+                    onClick={() =>
+                      setSelectedWorkoutType(
+                        workoutType
+                      )
+                    }
+                    className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
+                  >
+                    <div>
+                      <p className="font-semibold">
+                        {workoutType}
+                      </p>
 
-  <button
-    type="button"
-    onClick={() =>
-      startWorkout("Gym A")
-    }
-    className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
-  >
-    <div>
-      <p className="font-semibold">
-        Gym A
-      </p>
+                      <p className="mt-1 text-sm text-slate-500">
+                        {
+                          workoutDescriptions[
+                            workoutType
+                          ]
+                        }
+                      </p>
+                    </div>
 
-      <p className="mt-1 text-sm text-slate-500">
-        Full body — leg press, chest press, row, hamstrings, shoulders & core
-      </p>
-    </div>
+                    <span className="text-xl">
+                      →
+                    </span>
+                  </button>
+                )
+              )}
+            </div>
+          ) : (
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedWorkoutType(
+                    null
+                  )
+                }
+                className="mb-4 text-sm font-medium text-slate-500 underline decoration-slate-300 underline-offset-4 transition hover:text-blue-700"
+              >
+                ← Choose a different workout
+              </button>
 
-    <span className="text-xl">
-      →
-    </span>
-  </button>
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    startWorkout(
+                      selectedWorkoutType
+                    )
+                  }
+                  className="flex w-full items-center justify-between gap-4 rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold">
+                        Full Gym
+                      </p>
+                    </div>
 
-  {/* Gym B */}
+                    <p className="mt-1 text-sm text-slate-500">
+                      Complete programmed session
+                    </p>
 
-  <button
-    type="button"
-    onClick={() =>
-      startWorkout("Gym B")
-    }
-    className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
-  >
-    <div>
-      <p className="font-semibold">
-        Gym B
-      </p>
+                    <p className="mt-2 text-xs leading-5 text-slate-500">
+                      Your standard editable {selectedWorkoutType} workout.
+                    </p>
+                  </div>
 
-      <p className="mt-1 text-sm text-slate-500">
-        Full body — squat, vertical pull, incline press, hamstrings & accessories
-      </p>
-    </div>
+                  <span className="shrink-0 text-xl">
+                    →
+                  </span>
+                </button>
 
-    <span className="text-xl">
-      →
-    </span>
-  </button>
+                {availableVariants.map(
+                  (variant) => {
+                    const setCount =
+                      variant.exercises.reduce(
+                        (
+                          total,
+                          exercise
+                        ) =>
+                          total +
+                          exercise.sets,
+                        0
+                      );
 
-  {/* Gym C */}
+                    return (
+                      <button
+                        key={variant.id}
+                        type="button"
+                        onClick={() =>
+                          startWorkout(
+                            selectedWorkoutType,
+                            undefined,
+                            variant.variantType ===
+                              "FullGym"
+                              ? undefined
+                              : variant.id
+                          )
+                        }
+                        className="flex w-full items-center justify-between gap-4 rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
+                      >
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-semibold">
+                              {
+                                getVariantName(
+                                  variant
+                                )
+                              }
+                            </p>
 
-  <button
-    type="button"
-    onClick={() =>
-      startWorkout("Gym C")
-    }
-    className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
-  >
-    <div>
-      <p className="font-semibold">
-        Gym C
-      </p>
+                            <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-500">
+                              {setCount} sets
+                            </span>
+                          </div>
 
-      <p className="mt-1 text-sm text-slate-500">
-        Full body — glute emphasis, pull-ups, chest, arms, hips & core
-      </p>
-    </div>
+                          <p className="mt-1 text-sm text-slate-500">
+                            {
+                              getVariantDescription(
+                                variant
+                              )
+                            }
+                          </p>
 
-    <span className="text-xl">
-      →
-    </span>
-  </button>
-</div>
+                          {variant.note && (
+                            <p className="mt-2 text-xs leading-5 text-slate-500">
+                              {variant.note}
+                            </p>
+                          )}
+                        </div>
+
+                        <span className="shrink-0 text-xl">
+                          →
+                        </span>
+                      </button>
+                    );
+                  }
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </AppShell>
     );
   }
+
 
   // ----------------------------------------------------------
   // Workout Progress
@@ -1015,6 +1220,9 @@ const exerciseVolume =
         <WorkoutHeader
           workoutType={
             session.workoutType
+          }
+          variantLabel={
+            session.variantLabel
           }
           startedAt={
             session.startedAt

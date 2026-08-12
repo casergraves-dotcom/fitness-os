@@ -15,6 +15,18 @@ import type {
   TrainingScheduleForDate,
 } from "@/features/workout/utils/getTrainingScheduleForDate";
 
+import {
+  currentHomeWorkoutCapabilities,
+  currentHomeWorkoutEquipment,
+  getStrengthWorkoutVariants,
+  isStrengthWorkoutVariantAvailable,
+} from "@/features/workout/backupWorkoutModel";
+
+import type {
+  StrengthWorkoutType,
+  StrengthWorkoutVariant,
+} from "@/features/workout/types";
+
 
 // ============================================================
 // Props
@@ -243,6 +255,72 @@ function getDurationLabel(
 
 
 // ============================================================
+// Strength Variant Options
+// ============================================================
+
+function getVariantName(
+  variant: StrengthWorkoutVariant
+) {
+  if (
+    variant.variantType ===
+    "ShortGym"
+  ) {
+    return "Short Gym";
+  }
+
+  if (
+    variant.variantType ===
+    "Home"
+  ) {
+    return "Home";
+  }
+
+  return variant.label;
+}
+
+
+function getVariantDescription(
+  variant: StrengthWorkoutVariant
+) {
+  const duration =
+    variant.durationMin !== undefined &&
+    variant.durationMax !== undefined
+      ? `${variant.durationMin}–${variant.durationMax} min`
+      : variant.durationMin !== undefined
+        ? `${variant.durationMin} min`
+        : variant.durationMax !== undefined
+          ? `${variant.durationMax} min`
+          : null;
+
+  if (
+    variant.variantType ===
+    "ShortGym"
+  ) {
+    return [
+      duration,
+      "Reduced volume",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+  }
+
+  if (
+    variant.variantType ===
+    "Home"
+  ) {
+    return [
+      duration,
+      "Bands + bodyweight",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+  }
+
+  return duration ?? "";
+}
+
+
+// ============================================================
 // Component
 // ============================================================
 
@@ -256,6 +334,13 @@ export default function TodaysTrainingCard({
   onStartPlan,
   onResetPlan,
 }: TodaysTrainingCardProps) {
+  const [
+    expandedStrengthActivityId,
+    setExpandedStrengthActivityId,
+  ] = useState<string | null>(
+    null
+  );
+
   // ----------------------------------------------------------
   // Reset Plan Confirmation
   // ----------------------------------------------------------
@@ -587,6 +672,38 @@ export default function TodaysTrainingCard({
               !isStrength &&
               !isRun;
 
+            const strengthWorkout =
+              activity.strengthWorkout as
+                | StrengthWorkoutType
+                | undefined;
+
+            const strengthVariants =
+              strengthWorkout
+                ? getStrengthWorkoutVariants(
+                    strengthWorkout
+                  )
+                : [];
+
+            const availableStrengthVariants =
+              strengthVariants.filter(
+                (variant) =>
+                  variant.variantType !==
+                    "FullGym" &&
+                  (
+                    variant.variantType !==
+                      "Home" ||
+                    isStrengthWorkoutVariantAvailable(
+                      variant,
+                      currentHomeWorkoutEquipment,
+                      currentHomeWorkoutCapabilities
+                    )
+                  )
+              );
+
+            const alternativesOpen =
+              expandedStrengthActivityId ===
+              activity.id;
+
 
             return (
               <div
@@ -681,30 +798,133 @@ export default function TodaysTrainingCard({
                         Workout completed
                       </p>
                     ) : (
-                      <Link
-                        href={{
-                          pathname:
-                            "/workout",
+                      <div>
+                        <Link
+                          href={{
+                            pathname:
+                              "/workout",
 
-                          query: {
-                            start:
-                              activity.strengthWorkout ??
-                              activity.label,
+                            query: {
+                              start:
+                                activity.strengthWorkout ??
+                                activity.label,
 
-                            activityId:
-                              activity.id,
+                              activityId:
+                                activity.id,
 
-                            date:
-                              schedule.date,
-                          },
-                        }}
-                        className="inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-                      >
-                        Start {
-                          activity.strengthWorkout ??
-                          activity.label
-                        }
-                      </Link>
+                              date:
+                                schedule.date,
+                            },
+                          }}
+                          className="inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                        >
+                          Start {
+                            activity.strengthWorkout ??
+                            activity.label
+                          }
+                        </Link>
+
+                        {availableStrengthVariants.length >
+                          0 && (
+                          <div className="mt-3">
+                            <button
+                              type="button"
+                              onClick={
+                                () =>
+                                  setExpandedStrengthActivityId(
+                                    alternativesOpen
+                                      ? null
+                                      : activity.id
+                                  )
+                              }
+                              aria-expanded={
+                                alternativesOpen
+                              }
+                              className="text-sm font-medium text-slate-600 underline decoration-slate-300 underline-offset-4 transition hover:text-blue-700"
+                            >
+                              {alternativesOpen
+                                ? "Hide other options"
+                                : "Need another option?"}
+                            </button>
+
+                            {alternativesOpen && (
+                              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                                {availableStrengthVariants.map(
+                                  (variant) => (
+                                    <Link
+                                      key={
+                                        variant.id
+                                      }
+                                      href={{
+                                        pathname:
+                                          "/workout",
+
+                                        query: {
+                                          start:
+                                            activity.strengthWorkout ??
+                                            activity.label,
+
+                                          activityId:
+                                            activity.id,
+
+                                          date:
+                                            schedule.date,
+
+                                          variant:
+                                            variant.id,
+                                        },
+                                      }}
+                                      className="rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:border-blue-300 hover:bg-blue-50/40"
+                                    >
+                                      <div className="flex items-center justify-between gap-3">
+                                        <p className="font-semibold text-slate-900">
+                                          {
+                                            getVariantName(
+                                              variant
+                                            )
+                                          }
+                                        </p>
+
+                                        <span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-slate-500">
+                                          {
+                                            variant.exercises
+                                              .reduce(
+                                                (
+                                                  total,
+                                                  exercise
+                                                ) =>
+                                                  total +
+                                                  exercise.sets,
+                                                0
+                                              )
+                                          }{" "}
+                                          sets
+                                        </span>
+                                      </div>
+
+                                      <p className="mt-1 text-sm text-slate-500">
+                                        {
+                                          getVariantDescription(
+                                            variant
+                                          )
+                                        }
+                                      </p>
+
+                                      {variant.note && (
+                                        <p className="mt-2 text-xs leading-5 text-slate-500">
+                                          {
+                                            variant.note
+                                          }
+                                        </p>
+                                      )}
+                                    </Link>
+                                  )
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     )}
 
                   </div>

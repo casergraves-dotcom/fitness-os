@@ -39,3 +39,8 @@ export type {
   WorkoutEquipment,
   WorkoutSetupCapability,
 } from "./types";
+
+
+export {
+  getWorkoutSessionLabel,
+} from "./utils/getWorkoutSessionLabel";

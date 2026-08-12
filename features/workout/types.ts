@@ -225,6 +225,19 @@ export interface WorkoutSession {
 
   workoutType: WorkoutType;
 
+  // Strength workout variant actually performed.
+  //
+  // workoutType remains the underlying scheduled/program workout
+  // (Gym A / B / C) so adherence and progression keep their
+  // original identity.
+  //
+  // These fields preserve what the user actually chose to do.
+  variantType?: StrengthWorkoutVariantType;
+
+  variantId?: string;
+
+  variantLabel?: string;
+
   startedAt: string;
   completedAt?: string;
   restStartedAt?: string;
