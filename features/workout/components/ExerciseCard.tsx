@@ -12,6 +12,7 @@ import {
 import {
   Check,
   MoreVertical,
+  RefreshCw,
   Trash2,
   TrendingUp,
 } from "lucide-react";
@@ -29,6 +30,15 @@ import {
 import {
   getExerciseTarget,
 } from "../getExerciseTarget";
+
+import {
+  getExerciseSubstitutions,
+} from "../exerciseSubstitutions";
+
+import type {
+  WorkoutEquipment,
+  WorkoutSetupCapability,
+} from "../types";
 
 // ============================================================
 // Props
@@ -97,6 +107,11 @@ export default function ExerciseCard({
     setMenuOpen,
   ] = useState(false);
 
+  const [
+    substitutionsOpen,
+    setSubstitutionsOpen,
+  ] = useState(false);
+
   // ----------------------------------------------------------
   // Exercise Library
   // ----------------------------------------------------------
@@ -138,6 +153,64 @@ export default function ExerciseCard({
       exercise.name,
       exerciseLibrary,
     ]);
+
+  // ----------------------------------------------------------
+  // Exercise Substitutions
+  // ----------------------------------------------------------
+
+  const substitutionContext =
+    useMemo(() => {
+      const availableEquipment:
+        WorkoutEquipment[] = [
+          "Bodyweight",
+          "YogaMat",
+          "ResistanceBands",
+          "Dumbbells",
+          "Bench",
+          "GymMachines",
+        ];
+
+      const availableCapabilities:
+        WorkoutSetupCapability[] = [
+          "FloorSpace",
+          "HighAnchor",
+        ];
+
+      return {
+        environment:
+          "Gym" as const,
+
+        availableEquipment,
+
+        availableCapabilities,
+
+        unavailableExerciseIds:
+          exercise.exerciseDefinitionId
+            ? [
+                exercise.exerciseDefinitionId,
+              ]
+            : [],
+      };
+    }, [
+      exercise.exerciseDefinitionId,
+    ]);
+
+  const substitutionOptions =
+    useMemo(
+      () =>
+        exercise.exerciseDefinitionId
+          ? getExerciseSubstitutions(
+              exercise.exerciseDefinitionId,
+              exerciseLibrary,
+              substitutionContext
+            )
+          : [],
+      [
+        exercise.exerciseDefinitionId,
+        exerciseLibrary,
+        substitutionContext,
+      ]
+    );
 
   // ----------------------------------------------------------
   // Progression Type
@@ -309,6 +382,67 @@ export default function ExerciseCard({
           </div>
         )}
       </div>
+
+      {/* ----------------------------------------------------
+          Exercise Substitution
+      ----------------------------------------------------- */}
+
+      {substitutionOptions.length > 0 && (
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={() =>
+              setSubstitutionsOpen(
+                (open) => !open
+              )
+            }
+            className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700"
+          >
+            <RefreshCw size={15} />
+
+            Need another option?
+          </button>
+
+          {substitutionsOpen && (
+            <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                Swap Exercise
+              </p>
+
+              <div className="mt-2 space-y-2">
+                {substitutionOptions.map(
+                  (option) => (
+                    <button
+                      key={
+                        option.exercise.id
+                      }
+                      type="button"
+                      onClick={() => {
+                        onReplaceExercise(
+                          exercise.id,
+                          option.exercise.id
+                        );
+
+                        setSubstitutionsOpen(
+                          false
+                        );
+                      }}
+                      className="flex w-full items-center rounded-lg border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50"
+                    >
+                      <span className="font-medium text-slate-900">
+                        {
+                          option.exercise
+                            .name
+                        }
+                      </span>
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ----------------------------------------------------
           Today's Target

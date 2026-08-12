@@ -410,6 +410,17 @@ export interface ExerciseDefinition {
   category: ExerciseCategory;
 
   // ----------------------------------------------------------
+  // Training Intent / Availability
+  // ----------------------------------------------------------
+
+  // Movement role(s) this exercise can fulfill.
+  movementRoles?: StrengthMovementRole[];
+
+  // Equipment/setup needed to perform this exercise.
+  requiredEquipment?: WorkoutEquipment[];
+  requiredCapabilities?: WorkoutSetupCapability[];
+
+  // ----------------------------------------------------------
   // Programming
   // ----------------------------------------------------------
 

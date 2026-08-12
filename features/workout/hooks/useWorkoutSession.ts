@@ -1350,11 +1350,16 @@ function updateSet(
               previousExercise
             );
 
-          // The replacement exercise uses its own programmed
-          // set count rather than inheriting the old
-          // exercise's prescription.
+          // Preserve today's workout prescription when swapping
+          // an exercise. The replacement changes the movement,
+          // not the amount of work planned for this slot.
+          const sourceExercise =
+            previous.exercises[
+              exerciseIndex
+            ];
+
           const setCount =
-            definition.sets ?? 3;
+            sourceExercise.sets.length;
 
           const replacementExercise:
             Exercise = {

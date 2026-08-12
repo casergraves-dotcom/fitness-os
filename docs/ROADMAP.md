@@ -209,14 +209,36 @@ This phase directly addresses the original requirement that missing the gym shou
 
 **\*\*Completed outcome:\*\*** Gym A, Gym B, and Gym C now each have structured Full Gym, Short Gym, and Home pathways. Short Gym variants preserve required movement roles with reduced volume, while Home variants use bands/bodyweight/mat work and explicitly account for setup requirements such as a high anchor. The model is ready for the Today substitution flow to expose only appropriate executable alternatives.
 
-**\*\*## 2.2 Today Substitution Flow\*\***
+**\*\*## 2.2 Today Substitution Flow — COMPLETE\*\***
 
-\\- [ ] Add \\\`Can't make the gym?\\\` / substitute action.
-\\- [ ] Offer the appropriate home or shortened workout.
-\\- [ ] Let the user explicitly choose the substitution.
-\\- [ ] Record the substitute against the scheduled activity.
-\\- [ ] Count an appropriate substitute toward adherence.
-\\- [ ] Preserve what was actually performed in history.
+\\- [x] Add a \\\`Need another option?\\\` action for scheduled strength workouts.
+\\- [x] Offer Full Gym, Short Gym, and Home pathways while preserving the scheduled Gym A / Gym B / Gym C identity.
+\\- [x] Let the user explicitly choose the workout variant before starting.
+\\- [x] Expose the same Full Gym / Short Gym / Home choice when manually starting Gym A / Gym B / Gym C from the Workout tab.
+\\- [x] Filter backup options using current equipment and setup-capability availability.
+\\- [x] Record the performed variant separately from the underlying scheduled workout identity.
+\\- [x] Credit an appropriate Short Gym or Home substitute against the original scheduled strength activity.
+\\- [x] Count valid substitutes toward weekly adherence and strength-session progression requirements.
+\\- [x] Treat a strength substitution group as one strength requirement and only award strength credit when a Strength alternative is completed.
+\\- [x] Preserve the actual performed variant in workout history while maintaining backwards compatibility with older history entries.
+
+**\*\*Completed outcome:\*\*** a scheduled Gym A / Gym B / Gym C session can now be executed as Full Gym, Short Gym, or an available Home variant without breaking the training-plan identity. The performed variant is retained in workout history, the original scheduled activity receives completion credit, and valid substitutions count correctly toward adherence and weekly strength-session progression. Manual workouts expose the same variant choices from the Workout tab.
+
+**\*\*## 2.2A In-Workout Exercise Substitution — COMPLETE\*\***
+
+\\- [x] Add a per-exercise \\\`Need another option?\\\` action during an active strength workout.
+\\- [x] Recommend ranked alternatives that preserve the exercise's movement role/training intent.
+\\- [x] Prefer alternatives executable with the equipment and setup currently available.
+\\- [x] Support common gym constraints such as a machine or station being occupied or unavailable.
+\\- [x] Let the user explicitly choose the replacement rather than silently changing the workout.
+\\- [x] Replace only the affected exercise while preserving the rest of the active workout and prescribed set count.
+\\- [x] Use the replacement exercise's own target and performance history.
+\\- [x] Support repeated substitutions during the same active workout.
+\\- [x] Record the exercise actually performed in workout history.
+\\- [x] Preserve the underlying Gym A / Gym B / Gym C and workout-variant identity.
+\\- [x] Preserve useful progression continuity when exercises are substituted.
+
+**\*\*Completed outcome:\*\*** active strength workouts now support explicit, ranked per-exercise substitutions without changing the rest of the programmed session. Alternatives preserve movement intent and respect equipment/setup availability. Replacements retain the programmed slot and set count while using their own exercise target/history, can be substituted again if needed, and workout history records what was actually performed without losing the underlying workout identity.
 
 **\*\*## 2.3 Coach-Recommended Modification\*\***
 
@@ -462,12 +484,14 @@ Work should proceed in this order unless a bug or safety issue interrupts it:
 3\\. \~\~**\*\*\\\*\\\*Reset Plan UX\\\*\\\*\*\***\~\~ — complete
 4\\. \~\~**\*\*\\\*\\\*Strength workout completion validation\\\*\\\*\*\***\~\~ — complete
 5\\. ~~~~**\*\*\\\*\\\*Guide integration with live training/readiness\\\*\\\*\*\***~~~~ — complete
-6\\. **\*\*\\\*\\\*Backup/home and shortened workout system\\\*\\\*\*\*** — in progress (2.1 complete; 2.2 next)
-7\\. **\*\*\\\*\\\*Strength progression improvements\\\*\\\*\*\***
-8\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\*\***
-9\\. **\*\*\\\*\\\*Body-composition/goal tracking\\\*\\\*\*\***
-10\\. **\*\*\\\*\\\*Nutrition and step adherence\\\*\\\*\*\***
-11\\. **\*\*\\\*\\\*Weekly review and progress improvements\\\*\\\*\*\***
+6\\. \~\~**\*\*\\\*\\\*Backup/home and shortened workout system\\\*\\\*\***\~\~ — complete (2.1 and 2.2)
+7\\. \\~\\~**\*\*\\\*\\\*In-workout exercise substitution\\\*\\\*\***\\~\\~ — complete
+8\\. **\*\*\\\*\\\*Coach-recommended workout modification\\\*\\\*\*** (2.3) — next
+9\\. **\*\*\\\*\\\*Strength progression improvements\\\*\\\*\***
+10\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\***
+11\\. **\*\*\\\*\\\*Body-composition/goal tracking\\\*\\\*\***
+12\\. **\*\*\\\*\\\*Nutrition and step adherence\\\*\\\*\***
+13\\. **\*\*\\\*\\\*Weekly review and progress improvements\\\*\\\*\***
 
 Social, integrations, and advanced sync remain mapped but should not displace the core coaching loop.
 
