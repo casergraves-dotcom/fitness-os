@@ -65,14 +65,14 @@ const week0 = week({
       activity({
         id: "week-0-tuesday-walk",
         type: "Walk",
-        label: "Walk / Mobility",
+        label: "Easy Walk",
         optional: true,
       }),
 
       activity({
         id: "week-0-tuesday-mobility",
         type: "Mobility",
-        label: "Mobility",
+        label: "Stretch & Recovery",
         optional: true,
       }),
     ]),
@@ -183,14 +183,14 @@ const week1 = week({
       activity({
         id: "week-1-thursday-walk",
         type: "Walk",
-        label: "Walk / Mobility",
+        label: "Easy Walk",
         optional: true,
       }),
 
       activity({
         id: "week-1-thursday-mobility",
         type: "Mobility",
-        label: "Mobility",
+        label: "Stretch & Recovery",
         optional: true,
       }),
     ]),
@@ -282,14 +282,14 @@ const week2 = week({
       activity({
         id: "week-2-thursday-walk",
         type: "Walk",
-        label: "Walk / Mobility",
+        label: "Easy Walk",
         optional: true,
       }),
 
       activity({
         id: "week-2-thursday-mobility",
         type: "Mobility",
-        label: "Mobility",
+        label: "Stretch & Recovery",
         optional: true,
       }),
     ]),
@@ -380,14 +380,14 @@ const week3 = week({
       activity({
         id: "week-3-thursday-walk",
         type: "Walk",
-        label: "Walk / Mobility",
+        label: "Easy Walk",
         optional: true,
       }),
 
       activity({
         id: "week-3-thursday-mobility",
         type: "Mobility",
-        label: "Mobility",
+        label: "Stretch & Recovery",
         optional: true,
       }),
     ]),
@@ -566,14 +566,14 @@ const week5 = week({
       activity({
         id: "week-5-thursday-walk",
         type: "Walk",
-        label: "Walk / Mobility",
+        label: "Easy Walk",
         optional: true,
       }),
 
       activity({
         id: "week-5-thursday-mobility",
         type: "Mobility",
-        label: "Mobility",
+        label: "Stretch & Recovery",
         optional: true,
       }),
     ]),
