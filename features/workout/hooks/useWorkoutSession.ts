@@ -409,6 +409,14 @@ export function useWorkoutSession() {
   ] =
     useState(false);
 
+  const [
+    finishValidationError,
+    setFinishValidationError,
+  ] =
+    useState<string | null>(
+      null
+    );
+
   // Completed workouts are kept in memory so components can
   // access previous exercise performance without reading
   // localStorage themselves.
@@ -693,6 +701,10 @@ export function useWorkoutSession() {
     // Clear temporary state left over from the previous
     // workout before activating the new one.
     setFinished(false);
+
+    setFinishValidationError(
+      null
+    );
 
     setRemovedExercise(
       null
@@ -1429,6 +1441,10 @@ function updateSet(
     // Make sure the completed-workout screen
     // is not shown.
     setFinished(false);
+
+    setFinishValidationError(
+      null
+    );
   }
 
 // ----------------------------------------------------------
@@ -1445,6 +1461,10 @@ function dismissFinishedWorkout() {
 
   setFinished(false);
 
+  setFinishValidationError(
+    null
+  );
+
   setRemovedExercise(null);
 }
 
@@ -1456,6 +1476,45 @@ function dismissFinishedWorkout() {
     if (!session) {
       return;
     }
+
+    // --------------------------------------------------------
+    // Completion Validation
+    // --------------------------------------------------------
+    //
+    // A strength workout is only considered complete after
+    // at least one working set has actually been marked done.
+    //
+    // This protects workout history and training-plan
+    // adherence from empty sessions that were started and
+    // immediately finished.
+
+    const completedSetCount =
+      session.exercises.reduce(
+        (
+          total,
+          exercise
+        ) =>
+          total +
+          exercise.sets.filter(
+            (set) =>
+              set.completed
+          ).length,
+        0
+      );
+
+    if (
+      completedSetCount === 0
+    ) {
+      setFinishValidationError(
+        "Complete at least one working set before finishing this workout. If you did not train, cancel the workout instead."
+      );
+
+      return;
+    }
+
+    setFinishValidationError(
+      null
+    );
 
     // Only completed sets count as actual workout performance.
     //
@@ -1555,6 +1614,8 @@ function dismissFinishedWorkout() {
       exerciseLibraryLoaded,
 
     finished,
+
+    finishValidationError,
 
     startWorkout,
     finishWorkout,

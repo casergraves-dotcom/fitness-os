@@ -110,6 +110,7 @@ export default function WorkoutScreen() {
     session,
     loaded,
     finished,
+    finishValidationError,
 
     startWorkout,
     finishWorkout,
@@ -1089,6 +1090,21 @@ const exerciseVolume =
         {/* --------------------------------------------------
             Finish Workout
         --------------------------------------------------- */}
+
+        {finishValidationError && (
+          <div
+            role="alert"
+            className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+          >
+            <p className="font-semibold">
+              Workout not finished
+            </p>
+
+            <p className="mt-1">
+              {finishValidationError}
+            </p>
+          </div>
+        )}
 
         <button
           type="button"
