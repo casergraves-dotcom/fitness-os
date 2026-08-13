@@ -61,7 +61,7 @@ interface ExerciseCardProps {
   onUpdateSet: (
     exerciseId: string,
     setId: string,
-    field: "weight" | "reps",
+    field: "weight" | "reps" | "rpe",
     value: number
   ) => void;
 
@@ -303,11 +303,17 @@ export default function ExerciseCard({
       case "increase-load":
         return "Increase load";
 
+      case "reduce-load":
+        return "Reduce load";
+
       case "build-reps":
         return "Build reps";
 
       case "reduce-assistance":
         return "Reduce assistance";
+
+      case "increase-assistance":
+        return "Increase assistance";
 
       case "build-duration":
         return "Build duration";
@@ -942,6 +948,39 @@ export default function ExerciseCard({
                       </div>
                     </div>
                   )}
+
+                  {/* ----------------------------------------
+                      Optional Set RPE
+                  ----------------------------------------- */}
+
+                  <label className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+                    <span>RPE</span>
+
+                    <select
+                      value={set.rpe ?? ""}
+                      aria-label={`RPE for set ${index + 1}`}
+                      onChange={(event) =>
+                        onUpdateSet(
+                          exercise.id,
+                          set.id,
+                          "rpe",
+                          Number(event.target.value)
+                        )
+                      }
+                      className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs"
+                    >
+                      <option value="">Optional</option>
+                      {Array.from({ length: 10 }, (_, rpeIndex) => {
+                        const rpe = rpeIndex + 1;
+
+                        return (
+                          <option key={rpe} value={rpe}>
+                            {rpe}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
 
                   {/* ==========================================
                       Previous Workout Performance

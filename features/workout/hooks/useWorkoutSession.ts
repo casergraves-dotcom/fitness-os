@@ -978,7 +978,8 @@ function updateSet(
   setId: string,
   field:
     | "weight"
-    | "reps",
+    | "reps"
+    | "rpe",
   value: number
 ) {
   // ----------------------------------------------------------
@@ -996,7 +997,11 @@ function updateSet(
   //
   // Reps must be whole numbers and can never be negative.
   const validatedValue =
-    field === "reps"
+    field === "rpe"
+      ? safeValue >= 1
+        ? Math.min(10, Math.max(1, Math.floor(safeValue)))
+        : undefined
+      : field === "reps"
       ? Math.max(
           0,
           Math.floor(safeValue)
@@ -1034,11 +1039,18 @@ function updateSet(
                           set.id !==
                           setId
                             ? set
-                            : {
+                            : field === "rpe"
+                              ? {
+                                  ...set,
+
+                                  rpe:
+                                    validatedValue,
+                                }
+                              : {
                                 ...set,
 
                                 [field]:
-                                  validatedValue,
+                                  validatedValue as number,
                               }
                       ),
                   }

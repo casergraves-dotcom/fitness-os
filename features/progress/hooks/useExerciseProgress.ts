@@ -1,136 +1,159 @@
 "use client";
 
-// ============================================================
-// Imports
-// ============================================================
-
 import { useMemo } from "react";
 
 import { useWorkoutHistory } from "../../workout/hooks/useWorkoutHistory";
 
-// ============================================================
-// Types
-// ============================================================
-
 export interface ExerciseProgressEntry {
   workoutId: string;
   date: string;
+  exerciseDefinitionId?: string;
+  exerciseName: string;
   weight: number;
   reps: number;
   estimatedOneRepMax: number;
 }
 
-// ============================================================
-// Exercise Progress Hook
-// ============================================================
+function estimateOneRepMax(weight: number, reps: number) {
+  if (weight <= 0 || reps <= 0) {
+    return 0;
+  }
 
-export function useExerciseProgress(
-  exerciseName?: string
-) {
+  // Epley estimate. Capping reps prevents high-rep endurance sets
+  // from producing misleading strength estimates.
+  const cappedReps = Math.min(reps, 30);
+  return weight * (1 + cappedReps / 30);
+}
+
+function normalizeExerciseName(exerciseName: string) {
+  return exerciseName.trim().toLowerCase();
+}
+
+export function useExerciseProgress(selectedExercise?: string) {
   const {
     history,
     loaded,
   } = useWorkoutHistory();
 
-  // ----------------------------------------------------------
-  // Available Exercises
-  // ----------------------------------------------------------
+  const exerciseOptions = useMemo(() => {
+    const byName = new Map<
+      string,
+      {
+        exerciseDefinitionId?: string;
+        name: string;
+      }
+    >();
 
-  // Build a unique list of every exercise that has actually
-  // appeared in completed workout history.
-  const exercises = useMemo(() => {
-    const names = new Set<string>();
+    for (const workout of history) {
+      for (const exercise of workout.exercises) {
+        const hasWeightedCompletedSet = exercise.sets.some(
+          (set) => set.completed && set.weight > 0 && set.reps > 0
+        );
 
-    history.forEach((workout) => {
-      workout.exercises.forEach((exercise) => {
-        names.add(exercise.name);
-      });
-    });
+        if (!hasWeightedCompletedSet) {
+          continue;
+        }
 
-    return Array.from(names).sort();
+        const normalizedName = normalizeExerciseName(exercise.name);
+        const existing = byName.get(normalizedName);
+
+        // Deduplicate legacy name-only history and newer permanent-ID
+        // history. Prefer the permanent ID when one is available.
+        if (!existing || (!existing.exerciseDefinitionId && exercise.exerciseDefinitionId)) {
+          byName.set(normalizedName, {
+            exerciseDefinitionId: exercise.exerciseDefinitionId,
+            name: exercise.name,
+          });
+        }
+      }
+    }
+
+    return Array.from(byName.values()).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
   }, [history]);
 
-  // ----------------------------------------------------------
-  // Exercise Performance History
-  // ----------------------------------------------------------
+  // Keep the existing component contract: selector values are labels.
+  const exercises = useMemo(
+    () => exerciseOptions.map((exercise) => exercise.name),
+    [exerciseOptions]
+  );
 
-  const progress = useMemo(() => {
-    if (!exerciseName) {
+  const selectedOption = useMemo(
+    () =>
+      exerciseOptions.find(
+        (exercise) => exercise.name === selectedExercise
+      ),
+    [exerciseOptions, selectedExercise]
+  );
+
+  const progress = useMemo<ExerciseProgressEntry[]>(() => {
+    if (!selectedOption) {
       return [];
     }
 
     const entries: ExerciseProgressEntry[] = [];
 
-    history.forEach((workout) => {
-      const exercise =
-        workout.exercises.find(
-          (item) =>
-            item.name === exerciseName
-        );
-
-      if (!exercise) {
-        return;
-      }
-
-      // Find the strongest set from this workout using
-      // estimated 1-rep max.
-      //
-      // Epley formula:
-      // 1RM = weight × (1 + reps / 30)
-      const strongestSet =
-        exercise.sets.reduce<
-          | {
-              weight: number;
-              reps: number;
-              estimatedOneRepMax: number;
-            }
-          | undefined
-        >((best, set) => {
-          const estimatedOneRepMax =
-            set.weight *
-            (1 + set.reps / 30);
-
+    for (const workout of history) {
+      const exercise = workout.exercises.find(
+        (item) => {
           if (
-            !best ||
-            estimatedOneRepMax >
-              best.estimatedOneRepMax
+            selectedOption.exerciseDefinitionId &&
+            item.exerciseDefinitionId
           ) {
-            return {
-              weight: set.weight,
-              reps: set.reps,
-              estimatedOneRepMax,
-            };
+            return (
+              selectedOption.exerciseDefinitionId ===
+              item.exerciseDefinitionId
+            );
           }
 
-          return best;
-        }, undefined);
+          // Older history entries predate permanent IDs.
+          return (
+            normalizeExerciseName(item.name) ===
+            normalizeExerciseName(selectedOption.name)
+          );
+        }
+      );
 
-      if (!strongestSet) {
-        return;
+      if (!exercise) {
+        continue;
       }
+
+      const completedSets = exercise.sets.filter(
+        (set) => set.completed && set.weight > 0 && set.reps > 0
+      );
+
+      if (completedSets.length === 0) {
+        continue;
+      }
+
+      // Represent each workout with its strongest completed set.
+      const bestSet = completedSets.reduce((best, set) =>
+        estimateOneRepMax(set.weight, set.reps) >
+        estimateOneRepMax(best.weight, best.reps)
+          ? set
+          : best
+      );
 
       entries.push({
         workoutId: workout.id,
-        date:
-          workout.completedAt ??
-          workout.startedAt,
-
-        weight: strongestSet.weight,
-        reps: strongestSet.reps,
-
-        estimatedOneRepMax:
-          strongestSet.estimatedOneRepMax,
+        date: workout.completedAt ?? workout.startedAt,
+        exerciseDefinitionId: exercise.exerciseDefinitionId,
+        exerciseName: exercise.name,
+        weight: bestSet.weight,
+        reps: bestSet.reps,
+        estimatedOneRepMax: estimateOneRepMax(
+          bestSet.weight,
+          bestSet.reps
+        ),
       });
-    });
+    }
 
-    // Workout history is stored newest-first.
-    // Progress is easier to read oldest-first.
-    return entries.reverse();
-  }, [history, exerciseName]);
-
-  // ----------------------------------------------------------
-  // Public API
-  // ----------------------------------------------------------
+    return entries.sort(
+      (a, b) =>
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+  }, [history, selectedOption]);
 
   return {
     loaded,

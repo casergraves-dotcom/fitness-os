@@ -504,6 +504,12 @@ export default function WorkoutHistoryScreen() {
                                           {
                                             set.reps
                                           }
+
+                                          {set.rpe !== undefined && (
+                                            <span className="ml-2 text-slate-500">
+                                              · RPE {set.rpe}
+                                            </span>
+                                          )}
                                         </span>
 
                                       </div>

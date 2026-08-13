@@ -9,8 +9,10 @@ import type {
 
 export type ExerciseTargetAction =
   | "increase-load"
+  | "reduce-load"
   | "build-reps"
   | "reduce-assistance"
+  | "increase-assistance"
   | "build-duration"
   | "next-variation"
   | "repeat"
@@ -282,11 +284,66 @@ export function getExerciseTarget(
         set.reps >= repMax
     );
 
+  // RPE is optional and was added after workout history already
+  // existed. Only reported values participate in this guard so
+  // older workouts keep their original progression behavior.
+  const highestReportedRpe =
+    completedSets.reduce<number | undefined>(
+      (highest, set) => {
+        if (set.rpe === undefined) {
+          return highest;
+        }
+
+        return highest === undefined
+          ? set.rpe
+          : Math.max(highest, set.rpe);
+      },
+      undefined
+    );
+
+  const reachedTopWithHighEffort =
+    reachedTopOfRange &&
+    highestReportedRpe !== undefined &&
+    highestReportedRpe >= 9;
+
   const belowTarget =
     isConsistentlyBelowRange(
       previousExercise,
       repMin
     );
+
+  // Reaching the top of the programmed range at RPE 9–10 is
+  // successful work, but not yet a signal to increase difficulty.
+  // Repeat the current target until it can be completed with more
+  // reserve. This applies consistently to load, assistance,
+  // duration, bodyweight, and exercise-variation progression.
+  if (reachedTopWithHighEffort) {
+    let label = getBaseTargetLabel();
+
+    if (usesWeight && usesDuration) {
+      label =
+        `${previousWeight} lb × ${repMin}–${repMax} sec`;
+    } else if (usesWeight && usesReps) {
+      label =
+        `${previousWeight} lb × ${repMin}–${repMax}`;
+    } else if (usesAssistance && usesReps) {
+      label =
+        `${previousWeight} lb assist × ${repMin}–${repMax}`;
+    }
+
+    return {
+      action: "repeat",
+      label,
+      message:
+        `All working sets reached the top of the target range, but the highest reported effort was RPE ${highestReportedRpe}. Repeat the current target before increasing difficulty.`,
+      targetWeight:
+        usesWeight || usesAssistance
+          ? previousWeight
+          : undefined,
+      repMin,
+      repMax,
+    };
+  }
 
   // ==========================================================
   // Weight + Duration
@@ -318,6 +375,29 @@ export function getExerciseTarget(
     }
 
     if (belowTarget) {
+      if (increment > 0) {
+        const targetWeight =
+          Math.max(
+            0,
+            previousWeight - increment
+          );
+
+        return {
+          action:
+            "reduce-load",
+
+          label:
+            `${targetWeight} lb × ${repMin}–${repMax} sec`,
+
+          message:
+            `Most working sets fell below the ${repMin}-second minimum. Reduce the load by ${increment} lb next time.`,
+
+          targetWeight,
+          repMin,
+          repMax,
+        };
+      }
+
       return {
         action:
           "review-load",
@@ -384,6 +464,29 @@ export function getExerciseTarget(
     }
 
     if (belowTarget) {
+      if (increment > 0) {
+        const targetWeight =
+          Math.max(
+            0,
+            previousWeight - increment
+          );
+
+        return {
+          action:
+            "reduce-load",
+
+          label:
+            `${targetWeight} lb × ${repMin}–${repMax}`,
+
+          message:
+            `Most working sets fell below the ${repMin}-rep minimum. Reduce the load by ${increment} lb next time.`,
+
+          targetWeight,
+          repMin,
+          repMax,
+        };
+      }
+
       return {
         action:
           "review-load",
@@ -460,6 +563,28 @@ export function getExerciseTarget(
     }
 
     if (belowTarget) {
+      if (increment > 0) {
+        const targetAssistance =
+          previousWeight + increment;
+
+        return {
+          action:
+            "increase-assistance",
+
+          label:
+            `${targetAssistance} lb assist × ${repMin}–${repMax}`,
+
+          message:
+            `Most working sets fell below the ${repMin}-rep minimum. Add ${increment} lb of assistance next time.`,
+
+          targetWeight:
+            targetAssistance,
+
+          repMin,
+          repMax,
+        };
+      }
+
       return {
         action:
           "review-load",

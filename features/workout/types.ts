@@ -7,6 +7,10 @@ export interface ExerciseSet {
   weight: number;
   reps: number;
   completed: boolean;
+
+  // Optional rate of perceived exertion on a 1–10 scale.
+  // Older saved sets do not contain this field.
+  rpe?: number;
 }
 
 

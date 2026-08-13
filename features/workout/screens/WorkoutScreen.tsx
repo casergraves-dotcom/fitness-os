@@ -13,6 +13,7 @@ import {
 } from "@/features/workout";
 
 import {
+  Award,
   Check,
   ChevronRight,
   Dumbbell,
@@ -24,6 +25,14 @@ import { useWorkoutSession } from "../hooks/useWorkoutSession";
 import {
   useExerciseLibrary,
 } from "../hooks/useExerciseLibrary";
+
+import {
+  useWorkoutHistory,
+} from "../hooks/useWorkoutHistory";
+
+import {
+  getExercisePersonalRecord,
+} from "../utils/getExercisePersonalRecord";
 
 import {
   getExerciseTarget,
@@ -214,6 +223,14 @@ export default function WorkoutScreen() {
   const {
     exercises: exerciseLibrary,
   } = useExerciseLibrary();
+
+  // Keep the history that existed when this screen loaded.
+  // The separate history hook is intentionally not mutated by
+  // finishWorkout, so the completed workout cannot compare
+  // against itself when personal records are calculated.
+  const {
+    history: previousWorkoutHistory,
+  } = useWorkoutHistory();
 
   // ----------------------------------------------------------
 // Scheduled Workout Launch
@@ -460,6 +477,39 @@ startWorkout(
             "no-progression"
         );
 
+    // --------------------------------------------------------
+    // Personal Records
+    // --------------------------------------------------------
+
+    const personalRecords =
+      completedExercises
+        .map((exercise) => {
+          const definition =
+            exerciseLibrary.find(
+              (item) =>
+                item.id ===
+                  exercise.exerciseDefinitionId ||
+                (
+                  !exercise.exerciseDefinitionId &&
+                  item.name.toLowerCase() ===
+                    exercise.name.toLowerCase()
+                )
+            );
+
+          return getExercisePersonalRecord(
+            exercise,
+            previousWorkoutHistory,
+            definition
+          );
+        })
+        .filter(
+          (
+            record
+          ): record is NonNullable<
+            typeof record
+          > => record !== null
+        );
+
     return (
       <AppShell>
         <div className="mx-auto w-full max-w-4xl space-y-5">
@@ -543,6 +593,59 @@ startWorkout(
               </div>
             </div>
           </div>
+
+          {/* ==================================================
+              Personal Records
+          =================================================== */}
+
+          {personalRecords.length > 0 && (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                  <Award size={20} />
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-wider text-amber-600">
+                    Personal Record
+                  </p>
+
+                  <h2 className="mt-0.5 text-xl font-bold">
+                    New Estimated Strength Best
+                  </h2>
+                </div>
+              </div>
+
+              <div className="mt-5 divide-y divide-amber-200">
+                {personalRecords.map(
+                  (record) => (
+                    <div
+                      key={record.exerciseName}
+                      className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+                    >
+                      <div>
+                        <p className="font-semibold">
+                          {record.exerciseName}
+                        </p>
+
+                        <p className="mt-1 text-sm text-slate-600">
+                          Estimated 1RM: {record.estimatedOneRepMax} lb
+                        </p>
+                      </div>
+
+                      <p className="shrink-0 font-semibold text-green-600">
+                        +{record.improvement} lb
+                      </p>
+                    </div>
+                  )
+                )}
+              </div>
+
+              <p className="mt-4 text-xs leading-5 text-slate-500">
+                Estimated from your logged working sets. No max testing required.
+              </p>
+            </div>
+          )}
 
           {/* ==================================================
               Progression
@@ -667,6 +770,21 @@ else {
                     }
 
                     // ----------------------------------------
+                    // Reduce Load
+                    // ----------------------------------------
+
+                    if (
+                      target.action ===
+                      "reduce-load"
+                    ) {
+                      actionText =
+                        `Reduce to ${target.targetWeight} lb next time`;
+
+                      actionClass =
+                        "font-semibold text-amber-600";
+                    }
+
+                    // ----------------------------------------
                     // Reduce Assistance
                     // ----------------------------------------
 
@@ -679,6 +797,21 @@ else {
 
                       actionClass =
                         "font-semibold text-green-600";
+                    }
+
+                    // ----------------------------------------
+                    // Increase Assistance
+                    // ----------------------------------------
+
+                    if (
+                      target.action ===
+                      "increase-assistance"
+                    ) {
+                      actionText =
+                        `Increase assistance to ${target.targetWeight} lb next time`;
+
+                      actionClass =
+                        "font-semibold text-amber-600";
                     }
 
                     // ----------------------------------------
