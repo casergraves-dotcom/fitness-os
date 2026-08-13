@@ -31,6 +31,12 @@ export interface WeeklyProgressionDecision {
   requiredStrengthCount: number;
 
   reason: string;
+
+  // Concrete evidence shown with the decision. Keeping these
+  // facts in the shared decision object prevents the UI from
+  // inventing a different explanation than the progression
+  // engine actually used.
+  factors: string[];
 }
 
 
@@ -56,6 +62,40 @@ function isStrengthActivity(
   type: TrainingActivityType
 ) {
   return type === "Strength";
+}
+
+
+function formatPercent(
+  rate: number
+) {
+  return `${Math.round(rate * 100)}%`;
+}
+
+
+function getDecisionFactors({
+  adherence,
+  completedStrengthCount,
+  requiredStrengthCount,
+}: {
+  adherence: WeeklyAdherenceResult;
+  completedStrengthCount: number;
+  requiredStrengthCount: number;
+}) {
+  const factors = [
+    `${adherence.requiredCompleted} of ${adherence.requiredCount} required activities completed (${formatPercent(adherence.adherenceRate)} adherence).`,
+  ];
+
+  if (requiredStrengthCount > 0) {
+    factors.push(
+      `${completedStrengthCount} of ${requiredStrengthCount} minimum strength sessions completed.`
+    );
+  } else {
+    factors.push(
+      "No required strength sessions were scheduled for this week."
+    );
+  }
+
+  return factors;
 }
 
 
@@ -143,7 +183,14 @@ export function getWeeklyProgressionDecision(
 
   const strengthRequirementMet =
     completedStrengthCount >=
-    requiredStrengthCount;
+      requiredStrengthCount;
+
+  const factors =
+    getDecisionFactors({
+      adherence,
+      completedStrengthCount,
+      requiredStrengthCount,
+    });
 
 
   // ----------------------------------------------------------
@@ -171,6 +218,8 @@ export function getWeeklyProgressionDecision(
 
       reason:
         "Weekly training adherence met the progression target.",
+
+      factors,
     };
   }
 
@@ -208,6 +257,8 @@ export function getWeeklyProgressionDecision(
 
       reason:
         "The week had reduced adherence, but enough key training was completed to continue progressing.",
+
+      factors,
     };
   }
 
@@ -242,5 +293,7 @@ export function getWeeklyProgressionDecision(
     requiredStrengthCount,
 
     reason,
+
+    factors,
   };
 }

@@ -261,6 +261,10 @@ export default function WeeklyProgress({
           adherence.optionalCount
         ) * 100;
 
+  const showDecisionEvidence =
+    progress.evaluationReady ||
+    adherence.allRequiredCompleted;
+
   // ----------------------------------------------------------
   // Render
   // ----------------------------------------------------------
@@ -279,6 +283,37 @@ export default function WeeklyProgress({
         <p className="mt-1 text-sm text-slate-600">
           {status.detail}
         </p>
+
+        {showDecisionEvidence &&
+          decision.factors.length > 0 && (
+          <div className="mt-3 border-t border-slate-200 pt-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Why this decision
+            </p>
+
+            <ul className="mt-2 space-y-1 text-sm text-slate-600">
+              {decision.factors.map(
+                (factor) => (
+                  <li
+                    key={factor}
+                    className="flex gap-2"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="text-blue-600"
+                    >
+                      •
+                    </span>
+
+                    <span>
+                      {factor}
+                    </span>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+        )}
       </div>
 
       <div className="mt-5 space-y-5">
