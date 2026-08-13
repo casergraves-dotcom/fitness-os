@@ -7,6 +7,7 @@ import type {
 } from "@/features/recovery";
 
 import type {
+  StrengthWorkoutType,
   TrainingActivity,
 } from "@/features/workout/types";
 
@@ -14,26 +15,33 @@ import {
   getReadinessContext,
 } from "./rules";
 
+import type {
+  CoachRecommendation,
+} from "../types";
 
-// ============================================================
-// Coach Recommendation
-// ============================================================
-
-export interface CoachRecommendation {
-  title: string;
-  message: string;
-
-  // Optional because recovery/rest days may not need an action.
-  button?: string;
-
-  // Optional destination for the Coach card action.
-  href?: string;
-}
 
 
 // ============================================================
 // Activity Helpers
 // ============================================================
+
+function getStrengthWorkout(
+  activity: TrainingActivity
+): StrengthWorkoutType | undefined {
+  const workout =
+    activity.strengthWorkout;
+
+  if (
+    workout === "Gym A" ||
+    workout === "Gym B" ||
+    workout === "Gym C"
+  ) {
+    return workout;
+  }
+
+  return undefined;
+}
+
 
 function getStrengthActivity(
   activities: TrainingActivity[]
@@ -93,6 +101,53 @@ function hasAerialActivity(
     (activity) =>
       activity.type === "Aerial"
   );
+}
+
+
+type SorenessRegion =
+  | "upper body"
+  | "lower body"
+  | "upper and lower body";
+
+
+function getSorenessRegion(
+  ratings: MorningCheckInRatings,
+  threshold: number
+): SorenessRegion | undefined {
+  const upperSore =
+    ratings.UpperBodySoreness >= threshold;
+
+  const lowerSore =
+    ratings.LowerBodySoreness >= threshold;
+
+  if (upperSore && lowerSore) {
+    return "upper and lower body";
+  }
+
+  if (upperSore) {
+    return "upper body";
+  }
+
+  if (lowerSore) {
+    return "lower body";
+  }
+
+  return undefined;
+}
+
+
+function getSorenessGuidance(
+  region: SorenessRegion
+) {
+  if (region === "upper body") {
+    return "Use exercise substitutions for any pressing or pulling movement that aggravates the soreness.";
+  }
+
+  if (region === "lower body") {
+    return "Use exercise substitutions for any squat, lunge, hinge, or leg movement that aggravates the soreness.";
+  }
+
+  return "Use exercise substitutions for any movement that aggravates the soreness.";
 }
 
 
@@ -442,29 +497,233 @@ if (
       strengthActivity.strengthWorkout ??
       strengthActivity.label;
 
+    const strengthWorkout =
+      getStrengthWorkout(
+        strengthActivity
+      );
+
+    const extremeSorenessRegion =
+      getSorenessRegion(
+        ratings,
+        5
+      );
+
+    const highSorenessRegion =
+      getSorenessRegion(
+        ratings,
+        4
+      ) ??
+      (
+        ratings.UpperBodySoreness >= 3 &&
+        ratings.LowerBodySoreness >= 3
+          ? "upper and lower body"
+          : undefined
+      );
+
+    const moderateSorenessRegion =
+      getSorenessRegion(
+        ratings,
+        3
+      );
+
 
     // --------------------------------------------------------
-    // Low / Very Low Readiness
+    // Extreme Soreness
     // --------------------------------------------------------
 
-    if (
-      readiness.status === "low" ||
-      readiness.status === "very-low"
-    ) {
+    if (extremeSorenessRegion) {
       return {
         title:
-          "Reduce Intensity",
+          "Recovery Priority",
 
         message:
-          readinessContext
-            ? `${readinessContext} You're scheduled for ${workoutName}, so keep the session controlled and prioritize quality movement over pushing performance.`
-            : `You're scheduled for ${workoutName} today, but overall readiness is reduced. Keep the session controlled and prioritize quality movement over pushing performance.`,
+          `Your ${extremeSorenessRegion} soreness is very high, and ${workoutName} is a full-body session. Recovery is the safer recommendation today rather than training through severe soreness. You can still view the workout and override this recommendation if the rating does not reflect how you feel when moving.`,
 
         button:
-          `View ${workoutName}`,
+          strengthWorkout
+            ? `View ${workoutName} Options`
+            : `View ${workoutName}`,
 
         href:
           "/workout",
+
+        trainingDecision:
+          "recovery",
+
+        strengthWorkout,
+      };
+    }
+
+
+    // --------------------------------------------------------
+    // Very Low Readiness
+    // --------------------------------------------------------
+
+    if (
+      readiness.status === "very-low"
+    ) {
+      const severeRecoveryFlag =
+        ratings.Energy === 1 ||
+        ratings.Sleep === 1;
+
+      if (severeRecoveryFlag) {
+        return {
+          title:
+            "Recovery Priority",
+
+          message:
+            readinessContext
+              ? `${readinessContext} ${workoutName} is scheduled today, but very low energy or sleep makes recovery the better priority than forcing the session.`
+              : `${workoutName} is scheduled today, but very low energy or sleep makes recovery the better priority than forcing the session.`,
+
+          button:
+            strengthWorkout
+              ? `View ${workoutName} Options`
+              : `View ${workoutName}`,
+
+          href:
+            "/workout",
+
+          trainingDecision:
+            "recovery",
+
+          strengthWorkout,
+        };
+      }
+
+      return {
+        title:
+          "Scale Back Today's Training",
+
+        message:
+          readinessContext
+            ? `${readinessContext} Readiness is very low overall, but without a severe energy or sleep flag. Use the shortened ${workoutName} session and keep the effort conservative.`
+            : `Readiness is very low overall, but without a severe energy or sleep flag. Use the shortened ${workoutName} session and keep the effort conservative.`,
+
+        button:
+          strengthWorkout
+            ? `Start ${workoutName} - Short`
+            : `View ${workoutName}`,
+
+        href:
+          "/workout",
+
+        trainingDecision:
+          strengthWorkout
+            ? "short-workout"
+            : undefined,
+
+        strengthWorkout,
+
+        strengthVariant:
+          strengthWorkout
+            ? "ShortGym"
+            : undefined,
+      };
+    }
+
+
+    // --------------------------------------------------------
+    // Low Readiness
+    // --------------------------------------------------------
+
+    if (
+      readiness.status === "low"
+    ) {
+      return {
+        title:
+          "Reduce Training Volume",
+
+        message:
+          readinessContext
+            ? `${readinessContext} You're scheduled for ${workoutName}, so use the shortened version today and keep the work controlled.`
+            : `You're scheduled for ${workoutName} today, but overall readiness is reduced. Use the shortened version and keep the work controlled.`,
+
+        button:
+          strengthWorkout
+            ? `Start ${workoutName} - Short`
+            : `View ${workoutName}`,
+
+        href:
+          "/workout",
+
+        trainingDecision:
+          strengthWorkout
+            ? "short-workout"
+            : undefined,
+
+        strengthWorkout,
+
+        strengthVariant:
+          strengthWorkout
+            ? "ShortGym"
+            : undefined,
+      };
+    }
+
+
+    // --------------------------------------------------------
+    // High / Combined Soreness With Otherwise Adequate Readiness
+    // --------------------------------------------------------
+
+    if (highSorenessRegion) {
+      return {
+        title:
+          "Reduce Training Volume",
+
+        message:
+          `Your ${highSorenessRegion} soreness is high, and ${workoutName} is a full-body session. Use the shortened workout today, keep effort conservative, and avoid movements that aggravate the sore area.`,
+
+        button:
+          strengthWorkout
+            ? `Start ${workoutName} - Short`
+            : `View ${workoutName}`,
+
+        href:
+          "/workout",
+
+        trainingDecision:
+          strengthWorkout
+            ? "short-workout"
+            : undefined,
+
+        strengthWorkout,
+
+        strengthVariant:
+          strengthWorkout
+            ? "ShortGym"
+            : undefined,
+      };
+    }
+
+
+    // --------------------------------------------------------
+    // Moderate Localized Soreness
+    // --------------------------------------------------------
+
+    if (moderateSorenessRegion) {
+      return {
+        title:
+          "Train With Modifications",
+
+        message:
+          `Your ${moderateSorenessRegion} soreness is noticeable, but your overall readiness supports training. Complete ${workoutName} as planned and keep the unaffected work. ${getSorenessGuidance(moderateSorenessRegion)}`,
+
+        button:
+          `Start ${workoutName}`,
+
+        href:
+          "/workout",
+
+        trainingDecision:
+          "as-planned",
+
+        strengthWorkout,
+
+        strengthVariant:
+          strengthWorkout
+            ? "FullGym"
+            : undefined,
       };
     }
 
@@ -490,6 +749,16 @@ if (
 
         href:
           "/workout",
+
+        trainingDecision:
+          "as-planned",
+
+        strengthWorkout,
+
+        strengthVariant:
+          strengthWorkout
+            ? "FullGym"
+            : undefined,
       };
     }
 
@@ -513,6 +782,16 @@ if (
 
         href:
           "/workout",
+
+        trainingDecision:
+          "as-planned",
+
+        strengthWorkout,
+
+        strengthVariant:
+          strengthWorkout
+            ? "FullGym"
+            : undefined,
       };
     }
 
@@ -533,6 +812,16 @@ if (
 
       href:
         "/workout",
+
+      trainingDecision:
+        "as-planned",
+
+      strengthWorkout,
+
+      strengthVariant:
+        strengthWorkout
+          ? "FullGym"
+          : undefined,
     };
   }
 

@@ -1514,6 +1514,139 @@ function updateSet(
   }
 
   // ----------------------------------------------------------
+  // Workout Lifecycle - Shorten Active Workout
+  // ----------------------------------------------------------
+
+  function shortenWorkout() {
+    setSession(
+      (previous) => {
+        if (
+          !previous ||
+          previous.variantType !== "FullGym"
+        ) {
+          return previous;
+        }
+
+        const shortVariant =
+          strengthWorkoutVariants.find(
+            (variant) =>
+              variant.sourceStrengthWorkout ===
+                previous.workoutType &&
+              variant.variantType ===
+                "ShortGym"
+          );
+
+        if (!shortVariant) {
+          return previous;
+        }
+
+        const shortPrescription =
+          new Map(
+            shortVariant.exercises.map(
+              (exercise) => [
+                exercise.exerciseDefinitionId,
+                exercise.sets,
+              ]
+            )
+          );
+
+        const exercises =
+          previous.exercises.flatMap(
+            (exercise) => {
+              const completedSets =
+                exercise.sets.filter(
+                  (set) =>
+                    set.completed
+                );
+
+              const shortSetCount =
+                exercise.exerciseDefinitionId
+                  ? shortPrescription.get(
+                      exercise.exerciseDefinitionId
+                    )
+                  : undefined;
+
+              // Exercises that are not part of the Short Gym
+              // prescription are removed only when no work has
+              // already been completed on them.
+              if (
+                shortSetCount === undefined
+              ) {
+                if (
+                  completedSets.length === 0
+                ) {
+                  return [];
+                }
+
+                return [
+                  {
+                    ...exercise,
+
+                    // The exercise is not part of Short Gym,
+                    // so preserve only work that was already
+                    // performed. Do not leave unfinished sets
+                    // that would imply the user should continue it.
+                    prescribedSetCount:
+                      completedSets.length,
+
+                    sets:
+                      completedSets,
+                  },
+                ];
+              }
+
+              // Never remove completed work. If the Short Gym
+              // prescription calls for fewer sets than have
+              // already been completed, retain every completed set.
+              const retainedSetCount =
+                Math.max(
+                  shortSetCount,
+                  completedSets.length
+                );
+
+              return [
+                {
+                  ...exercise,
+
+                  prescribedSetCount:
+                    retainedSetCount,
+
+                  sets:
+                    exercise.sets.slice(
+                      0,
+                      retainedSetCount
+                    ),
+                },
+              ];
+            }
+          );
+
+        return {
+          ...previous,
+
+          variantType:
+            "ShortGym",
+
+          variantId:
+            shortVariant.id,
+
+          variantLabel:
+            shortVariant.label,
+
+          exercises,
+
+          restStartedAt:
+            undefined,
+        };
+      }
+    );
+
+    setRemovedExercise(
+      null
+    );
+  }
+
+  // ----------------------------------------------------------
   // Workout Lifecycle - Cancel Workout
   // ----------------------------------------------------------
 
@@ -1710,6 +1843,7 @@ function dismissFinishedWorkout() {
     finishValidationError,
 
     startWorkout,
+    shortenWorkout,
     finishWorkout,
     cancelWorkout,
     dismissFinishedWorkout,

@@ -188,6 +188,7 @@ export default function WorkoutScreen() {
     finishValidationError,
 
     startWorkout,
+    shortenWorkout,
     finishWorkout,
     cancelWorkout,
     dismissFinishedWorkout,
@@ -253,6 +254,12 @@ const requestedVariantId =
   ) ??
   undefined;
 
+const requestedVariantType =
+  searchParams.get(
+    "variantType"
+  ) ??
+  undefined;
+
   if (
     requestedWorkout !== "Gym A" &&
     requestedWorkout !== "Gym B" &&
@@ -263,6 +270,20 @@ const requestedVariantId =
 
   scheduledStartHandled.current =
     true;
+
+  const resolvedVariantId =
+    requestedVariantId ??
+    (
+      requestedVariantType
+        ? getStrengthWorkoutVariants(
+            requestedWorkout
+          ).find(
+            (variant) =>
+              variant.variantType ===
+              requestedVariantType
+          )?.id
+        : undefined
+    );
 
 if (
   scheduledActivityId &&
@@ -277,7 +298,7 @@ if (
       date:
         scheduledDate,
     },
-    requestedVariantId
+    resolvedVariantId
   );
 
   return;
@@ -286,7 +307,7 @@ if (
 startWorkout(
   requestedWorkout,
   undefined,
-  requestedVariantId
+  resolvedVariantId
 );
 }, [
   loaded,
@@ -1273,6 +1294,30 @@ const exerciseVolume =
               }
             />
           )
+        )}
+
+        {/* --------------------------------------------------
+            Shorten Workout
+        --------------------------------------------------- */}
+
+        {session.variantType ===
+          "FullGym" && (
+          <button
+            type="button"
+            onClick={() => {
+              const confirmed =
+                window.confirm(
+                  `Shorten ${session.workoutType} Workout?\n\nFitness OS will switch this session to the Short Gym version. Completed work will be kept.`
+                );
+
+              if (confirmed) {
+                shortenWorkout();
+              }
+            }}
+            className="w-full rounded-2xl border border-blue-200 bg-white px-4 py-4 font-semibold text-blue-700 transition hover:bg-blue-50"
+          >
+            Shorten Workout
+          </button>
         )}
 
         {/* --------------------------------------------------

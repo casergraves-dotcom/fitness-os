@@ -240,12 +240,20 @@ This phase directly addresses the original requirement that missing the gym shou
 
 **\*\*Completed outcome:\*\*** active strength workouts now support explicit, ranked per-exercise substitutions without changing the rest of the programmed session. Alternatives preserve movement intent and respect equipment/setup availability. Replacements retain the programmed slot and set count while using their own exercise target/history, can be substituted again if needed, and workout history records what was actually performed without losing the underlying workout identity.
 
-**\*\*## 2.3 Coach-Recommended Modification\*\***
+**\*\*## 2.3 Coach-Recommended Modification — COMPLETE\*\***
 
-\\- [ ] Allow low readiness to recommend reduced volume/intensity.
-\\- [ ] Allow high soreness to influence exercise/session recommendations.
-\\- [ ] Avoid turning every imperfect check-in into a skipped workout.
-\\- [ ] Keep user override available.
+\\- [x] Allow low readiness to recommend reduced volume/intensity.
+\\- [x] Allow high soreness to influence exercise/session recommendations.
+\\- [x] Avoid turning every imperfect check-in into a skipped workout.
+\\- [x] Keep user override available.
+\\- [x] Represent Coach recommendations as structured Full Gym, Short Gym, Home, or Recovery decisions.
+\\- [x] Launch the Coach-recommended Full Gym or Short Gym variant directly from Today.
+\\- [x] Distinguish severe Energy/Sleep recovery flags from very-low readiness without a severe flag.
+\\- [x] Use upper- and lower-body soreness to recommend Full Gym with substitutions, Short Gym, or Recovery as appropriate.
+\\- [x] Allow an active Full Gym workout to be shortened without losing completed work.
+\\- [x] Preserve completed sets from exercises omitted by the Short Gym prescription while removing their unfinished sets.
+
+**\*\*Completed outcome:\*\*** the Coach now turns readiness and region-specific soreness into an actionable strength-training recommendation instead of generic advice. Normal/high readiness can launch Full Gym, reduced or non-severe very-low readiness can launch Short Gym, and severe energy, sleep, or soreness flags can prioritize recovery while retaining manual workout access. Active Full Gym sessions can also be shortened without losing completed work or the underlying Gym A / Gym B / Gym C identity.
 
 **\*\*\\\*\\\*Milestone:\\\*\\\*\*\*** Schedule disruption produces a useful alternative instead of a failed training day.
 
@@ -486,8 +494,8 @@ Work should proceed in this order unless a bug or safety issue interrupts it:
 5\\. ~~~~**\*\*\\\*\\\*Guide integration with live training/readiness\\\*\\\*\*\***~~~~ — complete
 6\\. \~\~**\*\*\\\*\\\*Backup/home and shortened workout system\\\*\\\*\***\~\~ — complete (2.1 and 2.2)
 7\\. \\~\\~**\*\*\\\*\\\*In-workout exercise substitution\\\*\\\*\***\\~\\~ — complete
-8\\. **\*\*\\\*\\\*Coach-recommended workout modification\\\*\\\*\*** (2.3) — next
-9\\. **\*\*\\\*\\\*Strength progression improvements\\\*\\\*\***
+8\\. \\~\\~**\*\*\\\*\\\*Coach-recommended workout modification\\\*\\\*\***\\~\\~ — complete (2.3)
+9\\. **\*\*\\\*\\\*Strength progression improvements\\\*\\\*\*** — next
 10\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\***
 11\\. **\*\*\\\*\\\*Body-composition/goal tracking\\\*\\\*\***
 12\\. **\*\*\\\*\\\*Nutrition and step adherence\\\*\\\*\***
