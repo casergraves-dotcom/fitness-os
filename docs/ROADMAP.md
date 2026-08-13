@@ -83,6 +83,9 @@ Fitness OS should not merely record what happened. It should increasingly use tr
 \\- [x] Set, weight, rep, RPE, and notes logging
 \\- [x] Rest timer
 \\- [x] Exercise targets based on previous performance
+\\- [x] Exercise-level increase / repeat / regression decisions
+\\- [x] RPE-aware target decisions
+\\- [x] Personal-record recognition using estimated 1RM
 \\- [x] Workout history
 \\- [x] Exercise progress views
 \\- [x] Persistent workout history cloud sync
@@ -98,6 +101,7 @@ Fitness OS should not merely record what happened. It should increasingly use tr
 \\- [x] Training activity completion tracking
 \\- [x] Weekly adherence evaluation
 \\- [x] Automatic advance / advance-with-warning / hold decisions
+\\- [x] Calendar-week rollover with fresh weekly completion counters
 \\- [x] Training-plan state persistence and cloud sync
 
 **\*\*### Running\*\***
@@ -154,6 +158,15 @@ The current Today screen mixes live training data with placeholder/static Missio
 \\- [x] Verify workout completion updates Mission and Weekly Progress immediately without a page reload.
 
 **\*\*\\\*\\\*Completed outcome:\\\*\\\*\*\*** the weekly card reflects the same real completion records and adherence rules used by automatic progression.
+
+**\*\*Manual verification completed (August 2026):\*\***
+
+\\- [x] 25% adherence with 1/2 strength sessions reports below progression target.
+\\- [x] 50% adherence with 2/2 strength sessions remains below target because overall required adherence is insufficient.
+\\- [x] 75% adherence with 2/2 strength sessions reports likely advancement with reduced adherence.
+\\- [x] 100% adherence with 2/2 strength sessions reports on track to advance.
+\\- [x] Optional training is tracked separately and does not reduce required adherence.
+\\- [x] Week rollover advances Week 0 Return to Week 1 Restart, resets current-week counters, preserves history, and carries forward exercise targets.
 
 **\*\*## 1.3 Reset Plan UX — COMPLETE\*\***
 
@@ -246,14 +259,8 @@ This phase directly addresses the original requirement that missing the gym shou
 \\- [x] Allow high soreness to influence exercise/session recommendations.
 \\- [x] Avoid turning every imperfect check-in into a skipped workout.
 \\- [x] Keep user override available.
-\\- [x] Represent Coach recommendations as structured Full Gym, Short Gym, Home, or Recovery decisions.
-\\- [x] Launch the Coach-recommended Full Gym or Short Gym variant directly from Today.
-\\- [x] Distinguish severe Energy/Sleep recovery flags from very-low readiness without a severe flag.
-\\- [x] Use upper- and lower-body soreness to recommend Full Gym with substitutions, Short Gym, or Recovery as appropriate.
-\\- [x] Allow an active Full Gym workout to be shortened without losing completed work.
-\\- [x] Preserve completed sets from exercises omitted by the Short Gym prescription while removing their unfinished sets.
 
-**\*\*Completed outcome:\*\*** the Coach now turns readiness and region-specific soreness into an actionable strength-training recommendation instead of generic advice. Normal/high readiness can launch Full Gym, reduced or non-severe very-low readiness can launch Short Gym, and severe energy, sleep, or soreness flags can prioritize recovery while retaining manual workout access. Active Full Gym sessions can also be shortened without losing completed work or the underlying Gym A / Gym B / Gym C identity.
+**\*\*Completed outcome:\*\*** the coach now turns readiness and soreness check-ins into proportional training guidance, including normal training, modified exercise selection, shortened sessions, and recovery-first recommendations. Imperfect check-ins do not automatically cancel training, and users can still view workout options and override the recommendation.
 
 **\*\*\\\*\\\*Milestone:\\\*\\\*\*\*** Schedule disruption produces a useful alternative instead of a failed training day.
 
@@ -265,16 +272,23 @@ This phase directly addresses the original requirement that missing the gym shou
 
 The existing plan can advance or hold based on adherence. This phase makes adaptation reflect performance and recovery as well.
 
-**\*\*## 3.1 Strength Progression\*\***
+**\*\*## 3.1 Strength Progression — COMPLETE\*\***
 
-\\- [ ] Formalize exercise-level progression rules.
-\\- [ ] Use completed sets/reps/RPE to recommend next-session loads.
-\\- [ ] Distinguish successful progression, repeat, and regression.
-\\- [ ] Handle exercise substitutions without losing progression history.
-\\- [ ] Surface PRs without encouraging unnecessary max-effort testing.
+\\- [x] Formalize exercise-level progression rules.
+\\- [x] Use completed sets/reps/RPE to recommend next-session loads.
+\\- [x] Distinguish successful progression, repeat, and regression.
+\\- [x] Handle incomplete prescribed set counts without granting progression.
+\\- [x] Handle exercise substitutions without losing progression history.
+\\- [x] Surface estimated-strength PRs without encouraging unnecessary max-effort testing.
+\\- [x] Persist next-session targets across workouts and calendar-week rollover.
+
+**\*\*Completed outcome:\*\*** completed working sets now produce an explained next-workout target. Full top-of-range performance can increase load, high RPE can hold the target, below-range performance can reduce load, and incomplete exercises retain the current target. Estimated 1RM records appear in the completion summary and exercise progress views.
 
 **\*\*## 3.2 Weekly Training Decisions\*\***
 
+\\- [x] Use required adherence and minimum strength-session counts to advance, advance with reduced adherence, or hold.
+\\- [x] Explain the current weekly decision on the Today screen.
+\\- [x] Apply the decision during calendar-week rollover while preserving history.
 \\- [ ] Incorporate recent recovery alongside adherence.
 \\- [ ] Incorporate strength-session quality where appropriate.
 \\- [ ] Incorporate running completion/load.
@@ -494,9 +508,9 @@ Work should proceed in this order unless a bug or safety issue interrupts it:
 5\\. ~~~~**\*\*\\\*\\\*Guide integration with live training/readiness\\\*\\\*\*\***~~~~ — complete
 6\\. \~\~**\*\*\\\*\\\*Backup/home and shortened workout system\\\*\\\*\***\~\~ — complete (2.1 and 2.2)
 7\\. \\~\\~**\*\*\\\*\\\*In-workout exercise substitution\\\*\\\*\***\\~\\~ — complete
-8\\. \\~\\~**\*\*\\\*\\\*Coach-recommended workout modification\\\*\\\*\***\\~\\~ — complete (2.3)
-9\\. **\*\*\\\*\\\*Strength progression improvements\\\*\\\*\*** — next
-10\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\***
+8\\. \\~\\~**\*\*\\\*\\\*Coach-recommended workout modification\\\*\\\*\***\\~\\~ — complete
+9\\. \\~\\~**\*\*\\\*\\\*Strength progression improvements\\\*\\\*\***\\~\\~ — complete
+10\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\*** — adherence decisions and week rollover complete; recovery/load inputs remain
 11\\. **\*\*\\\*\\\*Body-composition/goal tracking\\\*\\\*\***
 12\\. **\*\*\\\*\\\*Nutrition and step adherence\\\*\\\*\***
 13\\. **\*\*\\\*\\\*Weekly review and progress improvements\\\*\\\*\***
