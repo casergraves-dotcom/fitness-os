@@ -18,6 +18,7 @@ import type {
   TrainingPlanState,
   TrainingWeek,
   WorkoutSession,
+  RunSession,
 } from "../types";
 
 import {
@@ -39,6 +40,10 @@ import type {
 import {
   evaluateWeeklyStrengthQuality,
 } from "../logic/evaluateWeeklyStrengthQuality";
+
+import {
+  evaluateWeeklyRunningLoad,
+} from "../logic/evaluateWeeklyRunningLoad";
 
 import {
   getTrainingScheduleForDate,
@@ -72,6 +77,12 @@ interface WeeklyTrainingProgressionOptions {
     WorkoutSession[];
 
   workoutHistoryLoaded:
+    boolean;
+
+  runHistory:
+    RunSession[];
+
+  runHistoryLoaded:
     boolean;
 
   applyWeeklyProgressionDecision: (
@@ -199,6 +210,8 @@ export function useWeeklyTrainingProgression({
   recoveryLoaded,
   workoutHistory,
   workoutHistoryLoaded,
+  runHistory,
+  runHistoryLoaded,
   applyWeeklyProgressionDecision,
 }: WeeklyTrainingProgressionOptions) {
   useEffect(() => {
@@ -211,6 +224,7 @@ export function useWeeklyTrainingProgression({
       !completionsLoaded ||
       !recoveryLoaded ||
       !workoutHistoryLoaded ||
+      !runHistoryLoaded ||
       !state
     ) {
       return;
@@ -414,6 +428,10 @@ export function useWeeklyTrainingProgression({
           evaluateWeeklyStrengthQuality(
             weekStartDate,
             workoutHistory
+          ),
+          evaluateWeeklyRunningLoad(
+            weekStartDate,
+            runHistory
           )
         );
 
@@ -458,6 +476,8 @@ export function useWeeklyTrainingProgression({
     recoveryLoaded,
     workoutHistory,
     workoutHistoryLoaded,
+    runHistory,
+    runHistoryLoaded,
     applyWeeklyProgressionDecision,
   ]);
 }

@@ -14,6 +14,10 @@ import type {
   WeeklyStrengthQualityEvaluation,
 } from "./evaluateWeeklyStrengthQuality";
 
+import type {
+  WeeklyRunningLoadEvaluation,
+} from "./evaluateWeeklyRunningLoad";
+
 
 // ============================================================
 // Progression Decision
@@ -223,19 +227,82 @@ function applyStrengthQualityContext(
 }
 
 
+function applyRunningLoadContext(
+  decision: WeeklyProgressionDecision,
+  runningLoad:
+    WeeklyRunningLoadEvaluation | null
+): WeeklyProgressionDecision {
+  if (
+    !runningLoad ||
+    runningLoad.status === "NoData"
+  ) {
+    return decision;
+  }
+
+  const factors =
+    runningLoad.factor
+      ? [
+          ...decision.factors,
+          runningLoad.factor,
+        ]
+      : decision.factors;
+
+  // Running completion is already represented by adherence. This
+  // context evaluates the quality/load of completed scheduled runs
+  // and can only make an advance more conservative.
+  if (
+    runningLoad.status === "Poor" &&
+    decision.shouldAdvance
+  ) {
+    return {
+      ...decision,
+      status: "Hold",
+      shouldAdvance: false,
+      reason:
+        "Scheduled running was completed at too little of the prescribed load to increase the overall training week safely.",
+      factors,
+    };
+  }
+
+  if (
+    runningLoad.status === "Limited" &&
+    decision.status === "Advance"
+  ) {
+    return {
+      ...decision,
+      status: "AdvanceWithWarning",
+      shouldAdvance: true,
+      reason:
+        "Training adherence met the target, but running load supports a more conservative advance.",
+      factors,
+    };
+  }
+
+  return {
+    ...decision,
+    factors,
+  };
+}
+
+
 function applyDecisionContext(
   decision: WeeklyProgressionDecision,
   recovery:
     WeeklyRecoveryEvaluation | null,
   strengthQuality:
-    WeeklyStrengthQualityEvaluation | null
+    WeeklyStrengthQualityEvaluation | null,
+  runningLoad:
+    WeeklyRunningLoadEvaluation | null
 ) {
   // Apply quality first, then recovery. Recovery therefore keeps
   // final authority to hold a week when readiness is poor.
   return applyRecoveryContext(
-    applyStrengthQualityContext(
-      decision,
-      strengthQuality
+    applyRunningLoadContext(
+      applyStrengthQualityContext(
+        decision,
+        strengthQuality
+      ),
+      runningLoad
     ),
     recovery
   );
@@ -251,7 +318,9 @@ export function getWeeklyProgressionDecision(
   recovery:
     WeeklyRecoveryEvaluation | null = null,
   strengthQuality:
-    WeeklyStrengthQualityEvaluation | null = null
+    WeeklyStrengthQualityEvaluation | null = null,
+  runningLoad:
+    WeeklyRunningLoadEvaluation | null = null
 ): WeeklyProgressionDecision {
   // ----------------------------------------------------------
   // Strength Sessions
@@ -367,7 +436,7 @@ export function getWeeklyProgressionDecision(
         "Weekly training adherence met the progression target.",
 
       factors,
-    }, recovery, strengthQuality);
+    }, recovery, strengthQuality, runningLoad);
   }
 
 
@@ -406,7 +475,7 @@ export function getWeeklyProgressionDecision(
         "The week had reduced adherence, but enough key training was completed to continue progressing.",
 
       factors,
-    }, recovery, strengthQuality);
+    }, recovery, strengthQuality, runningLoad);
   }
 
 
@@ -442,5 +511,5 @@ export function getWeeklyProgressionDecision(
     reason,
 
     factors,
-  }, recovery, strengthQuality);
+  }, recovery, strengthQuality, runningLoad);
 }
