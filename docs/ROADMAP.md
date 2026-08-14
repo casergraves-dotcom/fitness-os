@@ -289,12 +289,14 @@ The existing plan can advance or hold based on adherence. This phase makes adapt
 \\- [x] Use required adherence and minimum strength-session counts to advance, advance with reduced adherence, or hold.
 \\- [x] Explain the current weekly decision on the Today screen.
 \\- [x] Apply the decision during calendar-week rollover while preserving history.
-\\- [ ] Incorporate recent recovery alongside adherence.
+\\- [x] Incorporate recent recovery alongside adherence.
 \\- [ ] Incorporate strength-session quality where appropriate.
 \\- [ ] Incorporate running completion/load.
 \\- [ ] Treat aerial participation as meaningful training load.
 \\- [ ] Explain why a week advanced, held, or deloaded.
 \\- [ ] Allow manual override with a clear record of the decision.
+
+**\*\*Recovery-aware decision outcome:\*\*** recent recovery check-ins now participate in the weekly progression decision alongside adherence and minimum strength-session counts. Poor recent recovery can prevent an otherwise-qualified advance, while supportive recovery preserves the adherence-based decision. Both paths were verified at 100% required adherence and 2 of 2 minimum strength sessions, and the Today screen explains the recovery input used.
 
 **\*\*## 3.3 Steady-State Programming\*\***
 
@@ -510,7 +512,7 @@ Work should proceed in this order unless a bug or safety issue interrupts it:
 7\\. \\~\\~**\*\*\\\*\\\*In-workout exercise substitution\\\*\\\*\***\\~\\~ — complete
 8\\. \\~\\~**\*\*\\\*\\\*Coach-recommended workout modification\\\*\\\*\***\\~\\~ — complete
 9\\. \\~\\~**\*\*\\\*\\\*Strength progression improvements\\\*\\\*\***\\~\\~ — complete
-10\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\*** — adherence decisions and week rollover complete; recovery/load inputs remain
+10\\. **\*\*\\\*\\\*Adaptive weekly programming\\\*\\\*\*** — adherence, week rollover, and recovery-aware decisions complete; strength-quality, running, aerial-load, and override inputs remain
 11\\. **\*\*\\\*\\\*Body-composition/goal tracking\\\*\\\*\***
 12\\. **\*\*\\\*\\\*Nutrition and step adherence\\\*\\\*\***
 13\\. **\*\*\\\*\\\*Weekly review and progress improvements\\\*\\\*\***
