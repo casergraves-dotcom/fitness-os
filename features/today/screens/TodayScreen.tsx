@@ -36,6 +36,10 @@ import {
   useWeeklyTrainingProgression,
 } from "@/features/workout/hooks/useWeeklyTrainingProgression";
 
+import {
+  useWorkoutHistory,
+} from "@/features/workout/hooks/useWorkoutHistory";
+
 import TodaysTrainingCard from "../components/TodaysTrainingCard";
 
 import {
@@ -97,6 +101,14 @@ export default function TodayScreen() {
     isActivityCompleted,
   } = useTrainingActivityCompletions();
 
+  const {
+    history:
+      workoutHistory,
+
+    loaded:
+      workoutHistoryLoaded,
+  } = useWorkoutHistory();
+
   useWeeklyTrainingProgression({
     state:
       trainingPlanState,
@@ -115,6 +127,10 @@ export default function TodayScreen() {
 
     recoveryLoaded:
       morningCheckInLoaded,
+
+    workoutHistory,
+
+    workoutHistoryLoaded,
 
     applyWeeklyProgressionDecision,
   });
@@ -141,7 +157,8 @@ export default function TodayScreen() {
       trainingPlanState,
       trainingActivityCompletions,
       new Date(),
-      morningCheckInHistory
+      morningCheckInHistory,
+      workoutHistory
     );
 
   // ----------------------------------------------------------
@@ -236,7 +253,8 @@ export default function TodayScreen() {
           loaded={
             trainingPlanStateLoaded &&
             trainingActivityCompletionsLoaded &&
-            morningCheckInLoaded
+            morningCheckInLoaded &&
+            workoutHistoryLoaded
           }
 
           isActivityCompleted={
@@ -326,7 +344,9 @@ export default function TodayScreen() {
 
           loaded={
             trainingPlanStateLoaded &&
-            trainingActivityCompletionsLoaded
+            trainingActivityCompletionsLoaded &&
+            morningCheckInLoaded &&
+            workoutHistoryLoaded
           }
         />
 

@@ -12,6 +12,7 @@ import type {
   TrainingPlanState,
   TrainingWeek,
   TrainingWeekType,
+  WorkoutSession,
 } from "@/features/workout/types";
 
 import {
@@ -37,6 +38,10 @@ import type {
 import type {
   WeeklyProgressionDecision,
 } from "@/features/workout/logic/getWeeklyProgressionDecision";
+
+import {
+  evaluateWeeklyStrengthQuality,
+} from "@/features/workout/logic/evaluateWeeklyStrengthQuality";
 
 import {
   getTrainingScheduleForDate,
@@ -200,7 +205,9 @@ export function getCurrentWeeklyProgress(
   date:
     Date = new Date(),
   recoveryCheckIns:
-    WeeklyRecoveryCheckIn[] = []
+    WeeklyRecoveryCheckIn[] = [],
+  workoutHistory:
+    WorkoutSession[] = []
 ): CurrentWeeklyProgress | null {
   if (!state) {
     return null;
@@ -253,6 +260,10 @@ export function getCurrentWeeklyProgress(
       evaluateWeeklyRecovery(
         weekStartDate,
         recoveryCheckIns
+      ),
+      evaluateWeeklyStrengthQuality(
+        weekStartDate,
+        workoutHistory
       )
     );
 

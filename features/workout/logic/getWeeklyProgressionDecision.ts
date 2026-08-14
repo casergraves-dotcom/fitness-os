@@ -10,6 +10,10 @@ import type {
   WeeklyRecoveryEvaluation,
 } from "./evaluateWeeklyRecovery";
 
+import type {
+  WeeklyStrengthQualityEvaluation,
+} from "./evaluateWeeklyStrengthQuality";
+
 
 // ============================================================
 // Progression Decision
@@ -161,6 +165,83 @@ function applyRecoveryContext(
 }
 
 
+function applyStrengthQualityContext(
+  decision: WeeklyProgressionDecision,
+  strengthQuality:
+    WeeklyStrengthQualityEvaluation | null
+): WeeklyProgressionDecision {
+  if (
+    !strengthQuality ||
+    strengthQuality.status === "NoData"
+  ) {
+    return decision;
+  }
+
+  const factors =
+    strengthQuality.factor
+      ? [
+          ...decision.factors,
+          strengthQuality.factor,
+        ]
+      : decision.factors;
+
+  // Strength quality can only make the adherence decision more
+  // conservative. It never upgrades a week that did not meet
+  // the adherence or minimum-strength requirements.
+  if (
+    strengthQuality.status === "Poor" &&
+    decision.shouldAdvance
+  ) {
+    return {
+      ...decision,
+      status: "Hold",
+      shouldAdvance: false,
+      reason:
+        "Too little of the prescribed strength work was completed to increase weekly training load safely.",
+      factors,
+    };
+  }
+
+  if (
+    strengthQuality.status === "Limited" &&
+    decision.status === "Advance"
+  ) {
+    return {
+      ...decision,
+      status: "AdvanceWithWarning",
+      shouldAdvance: true,
+      reason:
+        "Training adherence met the target, but strength-session quality supports a more conservative advance.",
+      factors,
+    };
+  }
+
+  return {
+    ...decision,
+    factors,
+  };
+}
+
+
+function applyDecisionContext(
+  decision: WeeklyProgressionDecision,
+  recovery:
+    WeeklyRecoveryEvaluation | null,
+  strengthQuality:
+    WeeklyStrengthQualityEvaluation | null
+) {
+  // Apply quality first, then recovery. Recovery therefore keeps
+  // final authority to hold a week when readiness is poor.
+  return applyRecoveryContext(
+    applyStrengthQualityContext(
+      decision,
+      strengthQuality
+    ),
+    recovery
+  );
+}
+
+
 // ============================================================
 // Get Weekly Progression Decision
 // ============================================================
@@ -168,7 +249,9 @@ function applyRecoveryContext(
 export function getWeeklyProgressionDecision(
   adherence: WeeklyAdherenceResult,
   recovery:
-    WeeklyRecoveryEvaluation | null = null
+    WeeklyRecoveryEvaluation | null = null,
+  strengthQuality:
+    WeeklyStrengthQualityEvaluation | null = null
 ): WeeklyProgressionDecision {
   // ----------------------------------------------------------
   // Strength Sessions
@@ -266,7 +349,7 @@ export function getWeeklyProgressionDecision(
       PASSING_ADHERENCE_RATE &&
     strengthRequirementMet
   ) {
-    return applyRecoveryContext({
+    return applyDecisionContext({
       status: "Advance",
 
       shouldAdvance: true,
@@ -284,7 +367,7 @@ export function getWeeklyProgressionDecision(
         "Weekly training adherence met the progression target.",
 
       factors,
-    }, recovery);
+    }, recovery, strengthQuality);
   }
 
 
@@ -304,7 +387,7 @@ export function getWeeklyProgressionDecision(
       MINIMUM_ADHERENCE_RATE &&
     strengthRequirementMet
   ) {
-    return applyRecoveryContext({
+    return applyDecisionContext({
       status:
         "AdvanceWithWarning",
 
@@ -323,7 +406,7 @@ export function getWeeklyProgressionDecision(
         "The week had reduced adherence, but enough key training was completed to continue progressing.",
 
       factors,
-    }, recovery);
+    }, recovery, strengthQuality);
   }
 
 
@@ -342,7 +425,7 @@ export function getWeeklyProgressionDecision(
   }
 
 
-  return applyRecoveryContext({
+  return applyDecisionContext({
     status: "Hold",
 
     shouldAdvance: false,
@@ -359,5 +442,5 @@ export function getWeeklyProgressionDecision(
     reason,
 
     factors,
-  }, recovery);
+  }, recovery, strengthQuality);
 }
