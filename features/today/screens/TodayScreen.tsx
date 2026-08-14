@@ -58,6 +58,10 @@ export default function TodayScreen() {
 
   const {
     ratings,
+    history:
+      morningCheckInHistory,
+    loaded:
+      morningCheckInLoaded,
     setRatings,
   } = useMorningCheckIn();
 
@@ -106,6 +110,12 @@ export default function TodayScreen() {
     completionsLoaded:
       trainingActivityCompletionsLoaded,
 
+    recoveryCheckIns:
+      morningCheckInHistory,
+
+    recoveryLoaded:
+      morningCheckInLoaded,
+
     applyWeeklyProgressionDecision,
   });
 
@@ -129,7 +139,9 @@ export default function TodayScreen() {
   const weeklyProgress =
     getCurrentWeeklyProgress(
       trainingPlanState,
-      trainingActivityCompletions
+      trainingActivityCompletions,
+      new Date(),
+      morningCheckInHistory
     );
 
   // ----------------------------------------------------------
@@ -223,7 +235,8 @@ export default function TodayScreen() {
 
           loaded={
             trainingPlanStateLoaded &&
-            trainingActivityCompletionsLoaded
+            trainingActivityCompletionsLoaded &&
+            morningCheckInLoaded
           }
 
           isActivityCompleted={

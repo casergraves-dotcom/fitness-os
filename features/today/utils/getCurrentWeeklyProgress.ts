@@ -26,6 +26,14 @@ import {
   getWeeklyProgressionDecision,
 } from "@/features/workout/logic/getWeeklyProgressionDecision";
 
+import {
+  evaluateWeeklyRecovery,
+} from "@/features/workout/logic/evaluateWeeklyRecovery";
+
+import type {
+  WeeklyRecoveryCheckIn,
+} from "@/features/workout/logic/evaluateWeeklyRecovery";
+
 import type {
   WeeklyProgressionDecision,
 } from "@/features/workout/logic/getWeeklyProgressionDecision";
@@ -190,7 +198,9 @@ export function getCurrentWeeklyProgress(
   completions:
     TrainingActivityCompletion[],
   date:
-    Date = new Date()
+    Date = new Date(),
+  recoveryCheckIns:
+    WeeklyRecoveryCheckIn[] = []
 ): CurrentWeeklyProgress | null {
   if (!state) {
     return null;
@@ -239,7 +249,11 @@ export function getCurrentWeeklyProgress(
 
   const decision =
     getWeeklyProgressionDecision(
-      adherence
+      adherence,
+      evaluateWeeklyRecovery(
+        weekStartDate,
+        recoveryCheckIns
+      )
     );
 
   const latestRequirementDate =

@@ -6,6 +6,10 @@ import type {
   WeeklyAdherenceResult,
 } from "./evaluateWeeklyAdherence";
 
+import type {
+  WeeklyRecoveryEvaluation,
+} from "./evaluateWeeklyRecovery";
+
 
 // ============================================================
 // Progression Decision
@@ -99,12 +103,72 @@ function getDecisionFactors({
 }
 
 
+function applyRecoveryContext(
+  decision: WeeklyProgressionDecision,
+  recovery:
+    WeeklyRecoveryEvaluation | null
+): WeeklyProgressionDecision {
+  if (
+    !recovery ||
+    recovery.status === "NoData"
+  ) {
+    return decision;
+  }
+
+  const factors =
+    recovery.factor
+      ? [
+          ...decision.factors,
+          recovery.factor,
+        ]
+      : decision.factors;
+
+  // Recovery can make an adherence-based decision more
+  // conservative, but it never upgrades inadequate training
+  // adherence. This keeps the two inputs complementary.
+  if (
+    recovery.status === "Poor"
+  ) {
+    return {
+      ...decision,
+      status: "Hold",
+      shouldAdvance: false,
+      reason:
+        "Recent recovery remained too low to increase weekly training load safely.",
+      factors,
+    };
+  }
+
+  if (
+    recovery.status === "Limited" &&
+    decision.status === "Advance"
+  ) {
+    return {
+      ...decision,
+      status:
+        "AdvanceWithWarning",
+      shouldAdvance: true,
+      reason:
+        "Training adherence met the target, but recent recovery supports a more conservative advance.",
+      factors,
+    };
+  }
+
+  return {
+    ...decision,
+    factors,
+  };
+}
+
+
 // ============================================================
 // Get Weekly Progression Decision
 // ============================================================
 
 export function getWeeklyProgressionDecision(
-  adherence: WeeklyAdherenceResult
+  adherence: WeeklyAdherenceResult,
+  recovery:
+    WeeklyRecoveryEvaluation | null = null
 ): WeeklyProgressionDecision {
   // ----------------------------------------------------------
   // Strength Sessions
@@ -202,7 +266,7 @@ export function getWeeklyProgressionDecision(
       PASSING_ADHERENCE_RATE &&
     strengthRequirementMet
   ) {
-    return {
+    return applyRecoveryContext({
       status: "Advance",
 
       shouldAdvance: true,
@@ -220,7 +284,7 @@ export function getWeeklyProgressionDecision(
         "Weekly training adherence met the progression target.",
 
       factors,
-    };
+    }, recovery);
   }
 
 
@@ -240,7 +304,7 @@ export function getWeeklyProgressionDecision(
       MINIMUM_ADHERENCE_RATE &&
     strengthRequirementMet
   ) {
-    return {
+    return applyRecoveryContext({
       status:
         "AdvanceWithWarning",
 
@@ -259,7 +323,7 @@ export function getWeeklyProgressionDecision(
         "The week had reduced adherence, but enough key training was completed to continue progressing.",
 
       factors,
-    };
+    }, recovery);
   }
 
 
@@ -278,7 +342,7 @@ export function getWeeklyProgressionDecision(
   }
 
 
-  return {
+  return applyRecoveryContext({
     status: "Hold",
 
     shouldAdvance: false,
@@ -295,5 +359,5 @@ export function getWeeklyProgressionDecision(
     reason,
 
     factors,
-  };
+  }, recovery);
 }

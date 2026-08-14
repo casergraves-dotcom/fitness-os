@@ -28,6 +28,14 @@ import {
 } from "../logic/getWeeklyProgressionDecision";
 
 import {
+  evaluateWeeklyRecovery,
+} from "../logic/evaluateWeeklyRecovery";
+
+import type {
+  WeeklyRecoveryCheckIn,
+} from "../logic/evaluateWeeklyRecovery";
+
+import {
   getTrainingScheduleForDate,
 } from "../utils/getTrainingScheduleForDate";
 
@@ -47,6 +55,12 @@ interface WeeklyTrainingProgressionOptions {
     TrainingActivityCompletion[];
 
   completionsLoaded:
+    boolean;
+
+  recoveryCheckIns:
+    WeeklyRecoveryCheckIn[];
+
+  recoveryLoaded:
     boolean;
 
   applyWeeklyProgressionDecision: (
@@ -170,6 +184,8 @@ export function useWeeklyTrainingProgression({
   loaded,
   completions,
   completionsLoaded,
+  recoveryCheckIns,
+  recoveryLoaded,
   applyWeeklyProgressionDecision,
 }: WeeklyTrainingProgressionOptions) {
   useEffect(() => {
@@ -180,6 +196,7 @@ export function useWeeklyTrainingProgression({
     if (
       !loaded ||
       !completionsLoaded ||
+      !recoveryLoaded ||
       !state
     ) {
       return;
@@ -375,7 +392,11 @@ export function useWeeklyTrainingProgression({
 
       const decision =
         getWeeklyProgressionDecision(
-          adherence
+          adherence,
+          evaluateWeeklyRecovery(
+            weekStartDate,
+            recoveryCheckIns
+          )
         );
 
 
@@ -415,6 +436,8 @@ export function useWeeklyTrainingProgression({
     loaded,
     completions,
     completionsLoaded,
+    recoveryCheckIns,
+    recoveryLoaded,
     applyWeeklyProgressionDecision,
   ]);
 }
