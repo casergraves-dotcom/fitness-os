@@ -46,6 +46,10 @@ import {
 } from "../logic/evaluateWeeklyRunningLoad";
 
 import {
+  evaluateWeeklyAerialLoad,
+} from "../logic/evaluateWeeklyAerialLoad";
+
+import {
   getTrainingScheduleForDate,
 } from "../utils/getTrainingScheduleForDate";
 
@@ -432,6 +436,9 @@ export function useWeeklyTrainingProgression({
           evaluateWeeklyRunningLoad(
             weekStartDate,
             runHistory
+          ),
+          evaluateWeeklyAerialLoad(
+            adherence
           )
         );
 

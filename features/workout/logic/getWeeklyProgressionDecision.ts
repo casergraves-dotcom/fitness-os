@@ -17,6 +17,7 @@ import type {
 import type {
   WeeklyRunningLoadEvaluation,
 } from "./evaluateWeeklyRunningLoad";
+import { WeeklyAerialLoadEvaluation } from "./evaluateWeeklyAerialLoad";
 
 
 // ============================================================
@@ -284,6 +285,41 @@ function applyRunningLoadContext(
   };
 }
 
+function applyAerialLoadContext(
+  decision: WeeklyProgressionDecision,
+  aerialLoad:
+    WeeklyAerialLoadEvaluation | null
+): WeeklyProgressionDecision {
+  if (
+    !aerialLoad ||
+    aerialLoad.status === "NoData"
+  ) {
+    return decision;
+  }
+
+  const factors =
+    aerialLoad.factor
+      ? [
+          ...decision.factors,
+          aerialLoad.factor,
+        ]
+      : decision.factors;
+
+  // Aerial participation is meaningful training load, but the
+  // current completion model does not record enough information
+  // to judge session quality or fatigue directly.
+  //
+  // Therefore aerial participation contributes evidence to the
+  // weekly decision without independently upgrading or
+  // downgrading it. Recovery remains responsible for determining
+  // whether the overall training load was poorly tolerated.
+
+  return {
+    ...decision,
+    factors,
+  };
+}
+
 
 function applyDecisionContext(
   decision: WeeklyProgressionDecision,
@@ -292,17 +328,22 @@ function applyDecisionContext(
   strengthQuality:
     WeeklyStrengthQualityEvaluation | null,
   runningLoad:
-    WeeklyRunningLoadEvaluation | null
+    WeeklyRunningLoadEvaluation | null,
+  aerialLoad:
+    WeeklyAerialLoadEvaluation | null
 ) {
   // Apply quality first, then recovery. Recovery therefore keeps
   // final authority to hold a week when readiness is poor.
   return applyRecoveryContext(
-    applyRunningLoadContext(
-      applyStrengthQualityContext(
-        decision,
-        strengthQuality
+    applyAerialLoadContext(
+      applyRunningLoadContext(
+        applyStrengthQualityContext(
+          decision,
+          strengthQuality
+        ),
+        runningLoad
       ),
-      runningLoad
+      aerialLoad
     ),
     recovery
   );
@@ -320,7 +361,9 @@ export function getWeeklyProgressionDecision(
   strengthQuality:
     WeeklyStrengthQualityEvaluation | null = null,
   runningLoad:
-    WeeklyRunningLoadEvaluation | null = null
+    WeeklyRunningLoadEvaluation | null = null,
+  aerialLoad:
+    WeeklyAerialLoadEvaluation | null = null
 ): WeeklyProgressionDecision {
   // ----------------------------------------------------------
   // Strength Sessions
@@ -436,7 +479,7 @@ export function getWeeklyProgressionDecision(
         "Weekly training adherence met the progression target.",
 
       factors,
-    }, recovery, strengthQuality, runningLoad);
+    }, recovery, strengthQuality, runningLoad, aerialLoad);
   }
 
 
@@ -475,7 +518,7 @@ export function getWeeklyProgressionDecision(
         "The week had reduced adherence, but enough key training was completed to continue progressing.",
 
       factors,
-    }, recovery, strengthQuality, runningLoad);
+    }, recovery, strengthQuality, runningLoad, aerialLoad);
   }
 
 
@@ -511,5 +554,5 @@ export function getWeeklyProgressionDecision(
     reason,
 
     factors,
-  }, recovery, strengthQuality, runningLoad);
+  }, recovery, strengthQuality, runningLoad, aerialLoad);
 }
