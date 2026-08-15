@@ -174,7 +174,8 @@ export default function TodayScreen() {
       trainingActivityCompletions,
       new Date(),
       morningCheckInHistory,
-      workoutHistory
+      workoutHistory,
+      runHistory
     );
 
   // ----------------------------------------------------------

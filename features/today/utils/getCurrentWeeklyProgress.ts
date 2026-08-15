@@ -8,6 +8,7 @@ import {
 } from "@/features/workout/trainingPlan";
 
 import type {
+  RunSession,
   TrainingActivityCompletion,
   TrainingPlanState,
   TrainingWeek,
@@ -42,6 +43,14 @@ import type {
 import {
   evaluateWeeklyStrengthQuality,
 } from "@/features/workout/logic/evaluateWeeklyStrengthQuality";
+
+import {
+  evaluateWeeklyRunningLoad,
+} from "@/features/workout/logic/evaluateWeeklyRunningLoad";
+
+import {
+  evaluateWeeklyAerialLoad,
+} from "@/features/workout/logic/evaluateWeeklyAerialLoad";
 
 import {
   getTrainingScheduleForDate,
@@ -207,7 +216,9 @@ export function getCurrentWeeklyProgress(
   recoveryCheckIns:
     WeeklyRecoveryCheckIn[] = [],
   workoutHistory:
-    WorkoutSession[] = []
+    WorkoutSession[] = [],
+  runHistory:
+    RunSession[] = []
 ): CurrentWeeklyProgress | null {
   if (!state) {
     return null;
@@ -264,6 +275,13 @@ export function getCurrentWeeklyProgress(
       evaluateWeeklyStrengthQuality(
         weekStartDate,
         workoutHistory
+      ),
+      evaluateWeeklyRunningLoad(
+        weekStartDate,
+        runHistory
+      ),
+      evaluateWeeklyAerialLoad(
+        adherence
       )
     );
 
