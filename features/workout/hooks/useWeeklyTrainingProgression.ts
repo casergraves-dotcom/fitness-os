@@ -19,6 +19,7 @@ import type {
   TrainingWeek,
   WorkoutSession,
   RunSession,
+  WeeklyProgressionDecisionRecord,
 } from "../types";
 
 import {
@@ -27,6 +28,7 @@ import {
 
 import {
   getWeeklyProgressionDecision,
+  WeeklyProgressionDecision,
 } from "../logic/getWeeklyProgressionDecision";
 
 import {
@@ -94,7 +96,8 @@ interface WeeklyTrainingProgressionOptions {
     shouldAdvance: boolean,
     repeatedWeekStartDate?: string,
     completedWeek?: TrainingWeek,
-    nextWeekStartDate?: string
+    nextWeekStartDate?: string,
+    decisionRecord?: WeeklyProgressionDecisionRecord
   ) => void;
 }
 
@@ -395,7 +398,35 @@ export function useWeeklyTrainingProgression({
           true,
           undefined,
           trainingWeek,
-          nextWeekStartDate
+          nextWeekStartDate,
+          {
+            weekStartDate,
+
+            weekType:
+              trainingWeek.weekType,
+
+            automaticStatus:
+              "Advance",
+
+            automaticShouldAdvance:
+              true,
+
+            automaticReason:
+              "The scheduled deload week is complete, so the plan returns to steady-state training.",
+
+            automaticFactors: [
+              "This was a planned deload week focused on recovery rather than normal progression criteria.",
+            ],
+
+            finalShouldAdvance:
+              true,
+
+            manuallyOverridden:
+              false,
+
+            decidedAt:
+              new Date().toISOString(),
+          }
         );
 
         return;
@@ -458,7 +489,36 @@ export function useWeeklyTrainingProgression({
 
         trainingWeek,
 
-        nextWeekStartDate
+        nextWeekStartDate,
+
+        {
+          weekStartDate,
+
+          weekType:
+            trainingWeek.weekType,
+
+          automaticStatus:
+            decision.status,
+
+          automaticShouldAdvance:
+            decision.shouldAdvance,
+
+          automaticReason:
+            decision.reason,
+
+          automaticFactors: [
+            ...decision.factors,
+          ],
+
+          finalShouldAdvance:
+            decision.shouldAdvance,
+
+          manuallyOverridden:
+            false,
+
+          decidedAt:
+            new Date().toISOString(),
+        }
       );
 
 

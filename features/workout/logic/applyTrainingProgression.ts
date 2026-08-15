@@ -1,6 +1,7 @@
 import type {
   TrainingPlanState,
   TrainingWeek,
+  WeeklyProgressionDecisionRecord,
 } from "../types";
 
 
@@ -25,6 +26,9 @@ export interface ApplyTrainingProgressionInput {
   // Whether the adherence/progression engine decided that
   // this week successfully progresses.
   shouldAdvance: boolean;
+
+  // Full audit record for the weekly decision being applied.
+  decisionRecord?: WeeklyProgressionDecisionRecord;
 
   // Full template for the week that was just completed.
   completedWeek?: TrainingWeek;
@@ -73,6 +77,7 @@ export function applyTrainingProgression({
   state,
   evaluatedWeekStartDate,
   shouldAdvance,
+  decisionRecord,
   completedWeek,
   nextWeekStartDate,
 }: ApplyTrainingProgressionInput):
@@ -220,6 +225,26 @@ export function applyTrainingProgression({
     }
   }
 
+    const existingDecisionRecords =
+    state.weeklyProgressionDecisions ??
+    [];
+
+  const weeklyProgressionDecisions =
+    decisionRecord
+      ? [
+          ...existingDecisionRecords.filter(
+            (record) =>
+              record.weekStartDate !==
+              evaluatedWeekStartDate
+          ),
+          decisionRecord,
+        ].sort(
+          (a, b) =>
+            a.weekStartDate.localeCompare(
+              b.weekStartDate
+            )
+        )
+      : existingDecisionRecords;
 
   // ----------------------------------------------------------
   // Result
@@ -236,6 +261,8 @@ export function applyTrainingProgression({
         evaluatedWeeks,
         evaluatedWeekStartDate
       ),
+
+    weeklyProgressionDecisions,
 
     successfulSteadyStateWeeks,
 

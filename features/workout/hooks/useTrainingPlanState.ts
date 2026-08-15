@@ -12,12 +12,17 @@ import {
 import type {
   TrainingPlanState,
   TrainingWeek,
+  WeeklyProgressionDecisionRecord,
 } from "../types";
 
 import {
   removeFitnessOsStorage,
   setFitnessOsStorage,
 } from "@/lib/storage/fitnessOsStorage";
+
+import {
+  overrideWeeklyProgressionDecision,
+} from "../logic/overrideWeeklyProgressionDecision";
 
 
 // ============================================================
@@ -141,6 +146,8 @@ function saveState(
 
       evaluatedWeekStartDates: [],
 
+      weeklyProgressionDecisions: [],
+
       successfulSteadyStateWeeks:
         0,
 
@@ -245,7 +252,8 @@ function saveState(
     shouldAdvance: boolean,
     repeatedWeekStartDate?: string,
     completedWeek?: TrainingWeek,
-    nextWeekStartDate?: string
+    nextWeekStartDate?: string,
+    decisionRecord?: WeeklyProgressionDecisionRecord
   ) {
     if (!state) {
       return;
@@ -271,6 +279,8 @@ function saveState(
 
         shouldAdvance,
 
+        decisionRecord,
+
         completedWeek,
 
         nextWeekStartDate:
@@ -286,6 +296,44 @@ function saveState(
       return;
     }
 
+
+    saveState(
+      nextState
+    );
+  }
+
+  // ----------------------------------------------------------
+  // Override Weekly Progression Decision
+  // ----------------------------------------------------------
+
+  function overrideProgressionDecision(
+    weekStartDate: string,
+    finalShouldAdvance: boolean,
+    overrideReason?: string
+  ) {
+    if (!state) {
+      return;
+    }
+
+    const nextState =
+      overrideWeeklyProgressionDecision({
+        state,
+
+        weekStartDate,
+
+        finalShouldAdvance,
+
+        overrideReason,
+
+        overriddenAt:
+          new Date().toISOString(),
+      });
+
+    if (
+      nextState === state
+    ) {
+      return;
+    }
 
     saveState(
       nextState
@@ -308,6 +356,8 @@ function saveState(
     markWeekEvaluated,
 
     applyWeeklyProgressionDecision,
+
+    overrideProgressionDecision,
 
     clearTrainingPlan,
   };

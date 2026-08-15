@@ -723,6 +723,59 @@ export interface TrainingPlan {
 
 
 // ============================================================
+// Weekly Progression Decision Record
+// ============================================================
+//
+// Preserves the progression decision that was actually applied
+// to a completed calendar week.
+//
+// The automatic recommendation is retained even if the user
+// later overrides it, so progression history remains auditable.
+
+export type WeeklyProgressionDecisionStatus =
+  | "Advance"
+  | "AdvanceWithWarning"
+  | "Hold";
+
+
+export interface WeeklyProgressionDecisionRecord {
+  // Monday of the calendar week that was evaluated.
+  weekStartDate: string;
+
+  // Program week type whose progression was evaluated.
+  weekType: TrainingWeekType;
+
+  // Automatic recommendation produced by the progression
+  // engine before any manual override.
+  automaticStatus:
+    WeeklyProgressionDecisionStatus;
+
+  automaticShouldAdvance: boolean;
+
+  automaticReason: string;
+
+  automaticFactors: string[];
+
+  // Final result actually applied to the training plan.
+  finalShouldAdvance: boolean;
+
+  // True when the user intentionally changed the automatic
+  // progression result.
+  manuallyOverridden: boolean;
+
+  // Optional explanation supplied with a manual override.
+  overrideReason?: string;
+
+  // ISO timestamp recording when the automatic decision was
+  // originally applied.
+  decidedAt: string;
+
+  // ISO timestamp of the most recent manual override.
+  overriddenAt?: string;
+}
+
+
+// ============================================================
 // Training Plan State
 // ============================================================
 
@@ -764,6 +817,13 @@ export interface TrainingPlanState {
   // This prevents the same completed week from being
   // processed more than once.
   evaluatedWeekStartDates?: string[];
+
+    // Persisted history of weekly progression decisions.
+  //
+  // Optional for backward compatibility with training-plan
+  // state saved before decision history was introduced.
+  weeklyProgressionDecisions?:
+    WeeklyProgressionDecisionRecord[];
 
   // Number of successfully progressed steady-state weeks
   // completed since the most recent deload.

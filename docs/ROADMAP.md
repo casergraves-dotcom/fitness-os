@@ -424,36 +424,47 @@ high RPE can hold the target, below-range performance can reduce load,
 and incomplete exercises retain the current target. Estimated 1RM
 records appear in the completion summary and exercise progress views.
 
-**## 3.2 Weekly Training Decisions — IN PROGRESS
+## 3.2 Weekly Training Decisions — COMPLETE
+
 - [x] Use required adherence and minimum strength-session counts to
-    advance, advance with reduced adherence, or hold.
+  advance, advance with reduced adherence, or hold.
 - [x] Explain the current weekly decision on the Today screen.
 - [x] Apply the decision during calendar-week rollover while
-    preserving history.
+  preserving history.
 - [x] Incorporate recent recovery alongside adherence.
 - [x] Incorporate strength-session quality where appropriate.
 - [x] Incorporate running completion/load.
-- [ ] Treat aerial participation as meaningful training load.
-- [ ] Complete unified advance / hold / deload explanations, including
-    all contributing load and recovery factors.
-- [ ] Allow manual override with a clear record of the decision.
+- [x] Treat aerial participation as meaningful training load.
+- [x] Complete unified advance / hold / deload explanations, including
+  all contributing load and recovery factors.
+- [x] Allow manual override with a clear record of the decision.
 
-**Completed so far:** weekly progression now combines required adherence
+**Completed outcome:** weekly progression now combines required adherence
 and minimum strength-session completion with recovery, strength-session
-quality, and scheduled running load. Recovery and training-quality
-inputs can make an otherwise valid advance more conservative or hold the
-week. Scheduled running evaluates actual duration against the
-prescription and uses RPE as load context; manual runs remain history
-but do not alter plan progression. These decisions use shared factors so
-the Today experience can explain the evidence used by the progression
-engine.
+quality, scheduled running load, and scheduled aerial participation.
+Recovery and training-quality inputs can make an otherwise valid advance
+more conservative or hold the week. Scheduled running evaluates actual
+duration against the prescription and uses RPE as load context, while
+manual runs remain history without altering plan progression. Scheduled
+aerial participation is recognized as meaningful weekly training load
+without being treated mechanically as another required strength session.
+
+Advance, advance-with-warning, hold, and deload behavior now use a unified
+decision model with persisted reasons and contributing factors. Applied
+weekly decisions are recorded in training-plan state so the automatic
+recommendation remains auditable. The most recent eligible decision can
+be manually overridden in either direction, with the original automatic
+decision preserved alongside the final decision, optional override reason,
+and override timestamp. Overrides also correctly reverse or apply the
+associated repeated-week, steady-state success-count, and deload scheduling
+effects.
 
 **Current next item:** aerial participation/load. Aerial work should
 count as real training stress and should interact correctly with
 substitution groups and adjacent cardio/strength work without simply
 being treated as another required workout.
 
-## 3.3 Steady-State Programming**
+## 3.3 Steady-State Programming
 - [ ] Validate the long-term Mon/Wed/Fri strength structure.
 - [ ] Validate running placement around strength and aerials.
 - [ ] Define how optional Tue/Thu aerial sessions affect adjacent
@@ -685,34 +696,34 @@ interrupts it.
 
 ### Complete
 
-1.  Dynamic Today Mission
-2.  Real Weekly Progress
-3.  Reset Plan UX
-4.  Strength workout completion validation
-5.  Guide integration with live training/readiness
-6.  Backup/home and shortened workout system
-7.  In-workout exercise substitution
-8.  Coach-recommended workout modification
-9.  Strength progression improvements
+1. Dynamic Today Mission
+2. Real Weekly Progress
+3. Reset Plan UX
+4. Strength workout completion validation
+5. Guide integration with live training/readiness
+6. Backup/home and shortened workout system
+7. In-workout exercise substitution
+8. Coach-recommended workout modification
+9. Strength progression improvements
+10. Phase 3.2 — Adaptive Weekly Programming
+    - Adherence and week rollover
+    - Recovery input
+    - Strength-session quality input
+    - Running completion/load input
+    - Aerial participation/load input
+    - Unified advance / hold / deload decisions and explanations
+    - Persisted weekly decision records
+    - Reversible manual progression override
 
 ### Current
 
-10. **Phase 3.2 --- Adaptive Weekly Programming**
+11. **Phase 3.3 — Steady-State Programming**
 
--   Complete: adherence and week rollover
--   Complete: recovery input
--   Complete: strength-session quality input
--   Complete: running completion/load input
--   **Next: aerial participation/load**
--   Then: unified advance/hold/deload explanation
--   Then: manual override and decision record
+### After Phase 3.3
 
-### After Phase 3.2
-
-11. Phase 3.3 --- Steady-State Programming
-12. Phase 4 --- Body Composition and Goal Progress
-13. Phase 5 --- Nutrition and Daily Activity
-14. Phase 6 --- Weekly Review and Progress Improvements
+12. Phase 4 — Body Composition and Goal Progress
+13. Phase 5 — Nutrition and Daily Activity
+14. Phase 6 — Weekly Review and Progress Improvements
 
 Social, health integrations, personalization, and advanced platform work
 remain mapped for later and should not displace the core coaching loop.

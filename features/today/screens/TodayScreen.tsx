@@ -55,6 +55,8 @@ import {
   useMorningCheckIn,
 } from "@/features/recovery";
 
+import WeeklyDecisionRecord from "../components/WeeklyDecisionRecord";
+
 // ============================================================
 // Today Screen
 // ============================================================
@@ -89,6 +91,8 @@ export default function TodayScreen() {
     clearTrainingPlan,
 
     applyWeeklyProgressionDecision,
+
+    overrideProgressionDecision,
   } = useTrainingPlanState();
 
   const {
@@ -177,6 +181,21 @@ export default function TodayScreen() {
       workoutHistory,
       runHistory
     );
+
+  // ----------------------------------------------------------
+  // Latest Weekly Progression Decision
+  // ----------------------------------------------------------
+
+  const latestProgressionDecision =
+    trainingPlanState
+      ?.weeklyProgressionDecisions
+      ?.slice()
+      .sort(
+        (a, b) =>
+          b.weekStartDate.localeCompare(
+            a.weekStartDate
+          )
+      )[0] ?? null;
 
   // ----------------------------------------------------------
   // Coach
@@ -366,6 +385,16 @@ export default function TodayScreen() {
             morningCheckInLoaded &&
             workoutHistoryLoaded &&
             runHistoryLoaded
+          }
+        />
+
+        <WeeklyDecisionRecord
+          decision={
+            latestProgressionDecision
+          }
+
+          onOverride={
+            overrideProgressionDecision
           }
         />
 
