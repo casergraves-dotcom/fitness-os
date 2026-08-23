@@ -590,6 +590,82 @@ export function useWorkoutSession() {
     variantId?: string
   ) {
     // --------------------------------------------------------
+    // Resolve Scheduled Strength Prescription
+    // --------------------------------------------------------
+    //
+    // Workouts launched from Today carry the scheduled activity
+    // that prescribed them. Resolve that activity here so
+    // schedule-level strength modifiers, such as deload volume,
+    // affect the workout that is actually created.
+    //
+    // Manually started workouts have no scheduled context and
+    // therefore retain the normal full-volume prescription.
+
+    let strengthVolumeMultiplier = 1;
+
+    if (scheduledContext) {
+      const savedPlanState =
+        localStorage.getItem(
+          TRAINING_PLAN_STATE_STORAGE_KEY
+        );
+
+      const scheduledDate =
+        parseLocalTrainingDate(
+          scheduledContext.date
+        );
+
+      if (
+        savedPlanState &&
+        scheduledDate
+      ) {
+        try {
+          const planState:
+            TrainingPlanState =
+            JSON.parse(
+              savedPlanState
+            );
+
+          const schedule =
+            getTrainingScheduleForDate(
+              fitnessOsTrainingPlan,
+              planState,
+              scheduledDate
+            );
+
+          const scheduledActivity =
+            schedule?.trainingDay.activities.find(
+              (activity) =>
+                activity.id ===
+                  scheduledContext.activityId &&
+                activity.type ===
+                  "Strength" &&
+                activity.strengthWorkout ===
+                  workoutType
+            );
+
+          if (
+            scheduledActivity
+              ?.strengthVolumeMultiplier !==
+            undefined
+          ) {
+            strengthVolumeMultiplier =
+              Math.min(
+                1,
+                Math.max(
+                  0,
+                  scheduledActivity
+                    .strengthVolumeMultiplier
+                )
+              );
+          }
+        } catch {
+          // Invalid or unavailable plan state should not prevent
+          // a workout from starting. Fall back to the normal
+          // full-volume prescription.
+        }
+      }
+    }
+    // --------------------------------------------------------
     // Resolve Performed Variant
     // --------------------------------------------------------
     //
@@ -691,6 +767,19 @@ export function useWorkoutSession() {
               previousExercise
             );
 
+          const normalSetCount =
+            exercise.prescribedSetCount ??
+            exercise.sets.length;
+
+          const prescribedSetCount =
+            Math.max(
+              1,
+              Math.round(
+                normalSetCount *
+                  strengthVolumeMultiplier
+              )
+            );
+
           return {
             ...exercise,
 
@@ -701,15 +790,18 @@ export function useWorkoutSession() {
             //
             // This is intentionally based on the workout template,
             // NOT definition.sets from the Exercise Library.
-            prescribedSetCount:
-              exercise.prescribedSetCount ??
-              exercise.sets.length,
+            prescribedSetCount,
 
             sets:
-              exercise.sets.map(
-                (
-                  templateSet
-                ) => ({
+              exercise.sets
+                .slice(
+                  0,
+                  prescribedSetCount
+                )
+                .map(
+                  (
+                    templateSet
+                  ) => ({
                   ...templateSet,
 
                   id: createId(),

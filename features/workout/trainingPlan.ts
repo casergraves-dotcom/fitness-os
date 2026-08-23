@@ -923,18 +923,22 @@ export const deloadWeek = week({
         type: "Strength",
         label: "Gym A",
         strengthWorkout: "Gym A",
+        strengthVolumeMultiplier: 0.6,
         note:
           "Deload: reduce normal working-set volume by about 40%. Keep loads comfortable and stop well short of failure.",
       }),
 
       activity({
         id: "deload-monday-zone-2",
-        type: "Run",
-        label: "Easy Zone 2",
+        type: "Walk",
+        label: "Incline Treadmill",
         cardioIntensity: "Zone 2",
         durationMin: 10,
         durationMax: 15,
         optional: true,
+
+        note:
+          "Short incline treadmill walk at an easy, sustainable Zone 2 effort.",
       }),
     ]),
 
@@ -977,18 +981,22 @@ export const deloadWeek = week({
         type: "Strength",
         label: "Gym B",
         strengthWorkout: "Gym B",
+        strengthVolumeMultiplier: 0.6,
         note:
           "Deload: reduce normal working-set volume by about 40%. Keep loads comfortable and stop well short of failure.",
       }),
 
       activity({
         id: "deload-wednesday-zone-2",
-        type: "Run",
-        label: "Easy Zone 2",
+        type: "Walk",
+        label: "Incline Treadmill",
         cardioIntensity: "Zone 2",
         durationMin: 10,
         durationMax: 15,
         optional: true,
+
+        note:
+          "Short incline treadmill walk at an easy, sustainable Zone 2 effort.",
       }),
     ]),
 
@@ -1022,7 +1030,7 @@ export const deloadWeek = week({
 
     // --------------------------------------------------------
     // Friday
-    // Gym C — No Intervals
+    // Gym C
     // --------------------------------------------------------
 
     day("Friday", [
@@ -1031,8 +1039,9 @@ export const deloadWeek = week({
         type: "Strength",
         label: "Gym C",
         strengthWorkout: "Gym C",
+        strengthVolumeMultiplier: 0.6,
         note:
-          "Deload: reduce normal working-set volume by about 40%. Keep loads comfortable and stop well short of failure. Skip adaptive intervals this week.",
+          "Deload: reduce normal working-set volume by about 40%. Keep loads comfortable and stop well short of failure.",
       }),
     ]),
 

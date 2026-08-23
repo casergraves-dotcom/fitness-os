@@ -200,8 +200,7 @@ const gymBExercises: Exercise[] = [
 // Leg Press uses a high-foot setup for additional
 // posterior-chain / glute emphasis.
 //
-// Spreadsheet cardio:
-// Intervals / adaptive cardio
+// Cardio is prescribed by the Training Plan.
 // ============================================================
 
 const gymCExercises: Exercise[] = [

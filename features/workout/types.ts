@@ -599,6 +599,19 @@ export interface TrainingActivity {
   // This points to one of the active Gym A/B/C templates.
   strengthWorkout?: StrengthWorkoutType;
 
+  // Optional multiplier applied to the normal working-set
+  // prescription when this scheduled strength activity begins.
+  //
+  // Example:
+  //
+  // 0.6 = perform approximately 60% of normal working-set volume.
+  //
+  // Deload weeks use this to reduce fatigue while preserving the
+  // normal Gym A / B / C exercise selection and movement patterns.
+  //
+  // Omitted means use the normal workout-template prescription.
+  strengthVolumeMultiplier?: number;
+
   // ----------------------------------------------------------
   // Cardio / Walking
   // ----------------------------------------------------------
@@ -819,6 +832,44 @@ export interface WeeklyProgressionDecisionRecord {
 
 
 // ============================================================
+// Return to Training
+// ============================================================
+
+export type TrainingInterruptionReason =
+  | "Illness"
+  | "Travel"
+  | "Other";
+
+
+export interface TrainingInterruption {
+  // First local calendar date on which normal training was
+  // interrupted.
+  startedAt: string;
+
+  // First local calendar date on which the user is available
+  // to resume training.
+  resumedAt: string;
+
+  reason: TrainingInterruptionReason;
+
+  // Ramp week selected as the appropriate re-entry point.
+  //
+  // 0 = Return
+  // 1 = Restart
+  // 2 = Consistency
+  // 3 = Progress
+  // 4 = Add Volume
+  // 5 = Build
+  // 6 = Transition
+  returnRampWeek: number;
+
+  // Monday of the calendar week in which the temporary
+  // return-to-training ramp begins.
+  returnWeekStartDate: string;
+}
+
+
+// ============================================================
 // Training Plan State
 // ============================================================
 
@@ -861,7 +912,7 @@ export interface TrainingPlanState {
   // processed more than once.
   evaluatedWeekStartDates?: string[];
 
-    // Persisted history of weekly progression decisions.
+  // Persisted history of weekly progression decisions.
   //
   // Optional for backward compatibility with training-plan
   // state saved before decision history was introduced.
@@ -879,6 +930,16 @@ export interface TrainingPlanState {
     Endurance?:
       RunProgressionPrescription;
   };
+
+  // Most recent active return-to-training interruption.
+  //
+  // The return ramp temporarily changes which TrainingWeek is
+  // scheduled without changing startDate or deleting historical
+  // strength/running progression data.
+  //
+  // Optional for backward compatibility with existing saved
+  // training-plan state.
+  trainingInterruption?: TrainingInterruption;
 
   // Number of successfully progressed steady-state weeks
   // completed since the most recent deload.

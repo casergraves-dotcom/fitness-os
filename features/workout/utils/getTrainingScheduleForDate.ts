@@ -275,6 +275,152 @@ function getProgramWeek(
 
 
 // ------------------------------------------------------------
+// Resolve Return-to-Training Week
+// ------------------------------------------------------------
+//
+// A training interruption does not rewrite the original plan
+// start date.
+//
+// Instead, the calendar week stored in returnWeekStartDate
+// temporarily becomes the beginning of a new pass through the
+// existing ramp templates.
+//
+// Example:
+//
+// returnRampWeek = 2
+// returnWeekStartDate = 2026-09-21
+//
+// 2026-09-21 -> Week 2
+// 2026-09-28 -> Week 3
+// 2026-10-05 -> Week 4
+// ...
+// Week 7+    -> Steady State
+//
+// Held weeks that occur on or after the return week also pause
+// this temporary ramp, just as they pause normal progression.
+//
+// Holds from before the interruption do not shift the new
+// return ramp.
+
+function getReturnToTrainingWeek(
+  plan: TrainingPlan,
+  state: TrainingPlanState,
+  targetDate: Date
+): TrainingWeek | undefined {
+  const interruption =
+    state.trainingInterruption;
+
+  if (!interruption) {
+    return undefined;
+  }
+
+
+  const returnWeekStart =
+    parseLocalDate(
+      interruption
+        .returnWeekStartDate
+    );
+
+  if (!returnWeekStart) {
+    return undefined;
+  }
+
+
+  const targetWeekStart =
+    getMonday(
+      targetDate
+    );
+
+  const returnWeekStartMonday =
+    getMonday(
+      returnWeekStart
+    );
+
+
+  const targetWeekDayNumber =
+    getCalendarDayNumber(
+      targetWeekStart
+    );
+
+  const returnWeekDayNumber =
+    getCalendarDayNumber(
+      returnWeekStartMonday
+    );
+
+
+  // Dates before the return week continue to resolve from the
+  // original training-plan calendar.
+  if (
+    targetWeekDayNumber <
+    returnWeekDayNumber
+  ) {
+    return undefined;
+  }
+
+
+  const elapsedReturnWeeks =
+    Math.floor(
+      (
+        targetWeekDayNumber -
+        returnWeekDayNumber
+      ) / 7
+    );
+
+
+  const heldReturnWeekCount =
+    (
+      state.heldWeekStartDates ??
+      []
+    ).filter(
+      (heldStartDate) => {
+        const heldDate =
+          parseLocalDate(
+            heldStartDate
+          );
+
+        if (!heldDate) {
+          return false;
+        }
+
+        const heldDayNumber =
+          getCalendarDayNumber(
+            getMonday(
+              heldDate
+            )
+          );
+
+        return (
+          heldDayNumber >=
+            returnWeekDayNumber &&
+          heldDayNumber <=
+            targetWeekDayNumber
+        );
+      }
+    ).length;
+
+
+  const effectiveReturnWeeks =
+    Math.max(
+      0,
+      elapsedReturnWeeks -
+        heldReturnWeekCount
+    );
+
+
+  const returnProgramWeek =
+    interruption
+      .returnRampWeek +
+    effectiveReturnWeeks;
+
+
+  return getProgramWeek(
+    plan,
+    returnProgramWeek
+  );
+}
+
+
+// ------------------------------------------------------------
 // Is Deload Calendar Week
 // ------------------------------------------------------------
 
@@ -578,6 +724,31 @@ export function getTrainingScheduleForDate(
 
 
   // ----------------------------------------------------------
+  // Return-to-Training Override
+  // ----------------------------------------------------------
+  //
+  // A return ramp temporarily replaces the normal calendar
+  // program week without changing the original plan start date.
+  //
+  // Once the temporary ramp reaches Week 7, getProgramWeek()
+  // naturally resolves the repeating steady-state template.
+  //
+  // Existing strength history, running progression, decision
+  // history, and deload history remain stored in state.
+
+  const returnTrainingWeek =
+    getReturnToTrainingWeek(
+      plan,
+      state,
+      targetDate
+    );
+
+  const baseTrainingWeek =
+    returnTrainingWeek ??
+    normalTrainingWeek;
+
+
+  // ----------------------------------------------------------
   // Deload Override
   // ----------------------------------------------------------
   //
@@ -596,10 +767,21 @@ export function getTrainingScheduleForDate(
     );
 
 
+  // Deload is a steady-state recovery mechanism.
+  //
+  // Do not replace an active return-ramp week with a previously
+  // scheduled deload. Once the return ramp reaches steady state,
+  // normal deload behavior can apply again.
+  const useDeload =
+    deload &&
+    baseTrainingWeek.weekType ===
+      "SteadyState";
+
+
   const trainingWeek =
-    deload
+    useDeload
       ? deloadWeek
-      : normalTrainingWeek;
+      : baseTrainingWeek;
 
 
   // ----------------------------------------------------------
@@ -680,7 +862,7 @@ export function getTrainingScheduleForDate(
       true,
 
     isDeload:
-      deload,
+      useDeload,
 
     isRepeatedWeek,
   };

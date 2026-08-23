@@ -10,12 +10,17 @@ import {
 } from "../logic/applyTrainingProgression";
 
 import {
+  applyTrainingInterruption,
+} from "../logic/applyTrainingInterruption";
+
+import {
   overrideWeeklyProgressionDecision,
 } from "../logic/overrideWeeklyProgressionDecision";
 
 import type {
   RunProgressionPrescription,
   RunProgressionRole,
+  TrainingInterruptionReason,
   TrainingPlanState,
   TrainingWeek,
   WeeklyProgressionDecisionRecord,
@@ -353,6 +358,47 @@ export function useTrainingPlanState() {
 
 
   // ----------------------------------------------------------
+  // Apply Training Interruption
+  // ----------------------------------------------------------
+  //
+  // Records a completed interruption and, when necessary,
+  // activates the temporary return-to-training ramp selected by
+  // the pure decision engine.
+  //
+  // The pure transition preserves the original plan start date,
+  // weekly progression history, adaptive running progression,
+  // and deload-cycle state.
+
+  function applyTrainingInterruptionDecision(
+    startedAt: string,
+    resumedAt: string,
+    reason: TrainingInterruptionReason,
+    returnWeekStartDate: string
+  ) {
+    if (!state) {
+      return;
+    }
+
+    const nextState =
+      applyTrainingInterruption({
+        state,
+
+        startedAt,
+
+        resumedAt,
+
+        reason,
+
+        returnWeekStartDate,
+      });
+
+    saveState(
+      nextState
+    );
+  }
+
+
+  // ----------------------------------------------------------
   // Public API
   // ----------------------------------------------------------
 
@@ -369,6 +415,8 @@ export function useTrainingPlanState() {
     applyWeeklyProgressionDecision,
 
     overrideProgressionDecision,
+
+    applyTrainingInterruptionDecision,
 
     clearTrainingPlan,
   };

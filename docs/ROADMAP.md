@@ -539,27 +539,43 @@ running progression. Updated prescriptions persist in training-plan state,
 survive calendar-week rollover and repeated weeks, and are consumed by future
 scheduled runs.
 
-### 3.3.4 Deload and Return-to-Training Validation
+### 3.3.4 Deload and Return-to-Training Validation — COMPLETE
 
-- [ ] Revalidate the deload template against the finalized steady-state strength
+- [x] Revalidate the deload template against the finalized steady-state strength
   and conditioning structure.
-- [ ] Update deload incline-treadmill/cardio activity types and labels where
+- [x] Update deload incline-treadmill/cardio activity types and labels where
   necessary.
-- [ ] Remove stale deload references to fixed Friday adaptive intervals.
-- [ ] Keep aerobic work easy during deload weeks.
-- [ ] Validate strength-volume reduction against the finalized Gym A / B / C
+- [x] Remove stale deload references to fixed Friday adaptive intervals.
+- [x] Keep aerobic work easy during deload weeks.
+- [x] Validate strength-volume reduction against the finalized Gym A / B / C
   templates.
-- [ ] Define return-to-training behavior after illness.
-- [ ] Define return-to-training behavior after travel.
-- [ ] Define return-to-training behavior after a prolonged training break.
-- [ ] Avoid automatically returning to full steady-state load when recent
+- [x] Define return-to-training behavior after illness.
+- [x] Define return-to-training behavior after travel.
+- [x] Define return-to-training behavior after a prolonged training break.
+- [x] Avoid automatically returning to full steady-state load when recent
   training history indicates that a short re-ramp is more appropriate.
-- [ ] Preserve historical performance and progression data when a re-ramp is
+- [x] Preserve historical performance and progression data when a re-ramp is
   required.
 
-**Target outcome:** deloads and interruptions reduce training appropriately
-without resetting useful history or immediately returning the user to an
-inappropriate workload.
+**Completed outcome:** deload weeks now use the finalized steady-state movement
+structure while reducing fatigue intentionally. Monday and Wednesday use short
+incline-treadmill Zone 2 walks, Friday contains strength only, aerobic work stays
+easy, and scheduled Gym A / B / C deload sessions reduce normal working-set
+volume to approximately 60% while preserving the normal exercise selection and
+movement patterns.
+
+Training interruptions now use a structured return-to-training model rather than
+automatically resuming full steady-state load. Short interruptions can resume
+steady state directly, while longer interruptions select an appropriate existing
+ramp re-entry point based on time away. Travel, illness, and prolonged breaks
+therefore reuse the established Week 0–6 ramp instead of creating a separate
+program.
+
+Return ramps act as a temporary schedule overlay rather than resetting the
+training plan. The original plan start date, workout history, weekly progression
+history, deload history, and adaptive running prescriptions remain preserved.
+Held weeks can pause a return ramp, and once steady state is reached again the
+stored Development and Endurance running prescriptions resume normally.
 
 ## 3.4 Adaptive Scheduling
 
@@ -849,11 +865,11 @@ interrupts it.
     - 3.3.1 Steady-State Strength Programming — COMPLETE
     - 3.3.2 Weekly Conditioning Structure — COMPLETE
     - 3.3.3 Adaptive Running Progression — COMPLETE
-    - 3.3.4 Deload and Return-to-Training Validation - NEXT
+    - 3.3.4 Deload and Return-to-Training Validation - COMPLETE
 
 ### After Phase 3.3
 
-12. **Phase 3.4 — Adaptive Scheduling**
+12. **Phase 3.4 — Adaptive Scheduling - NEXT**
 13. Phase 4 — Body Composition and Goal Progress
 14. Phase 5 — Nutrition and Daily Activity
 15. Phase 6 — Weekly Review and Progress Improvements
