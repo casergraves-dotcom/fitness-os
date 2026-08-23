@@ -1,4 +1,5 @@
 import type {
+  CardioIntensity,
   RunProgressionRole,
   RunSession,
 } from "../types";
@@ -22,6 +23,21 @@ export interface RunProgressionEvaluation {
 
   role:
     RunProgressionRole | null;
+
+  // Snapshot of the prescription that produced this
+  // performance result.
+  //
+  // Development progression needs this context so an Easy
+  // run can transition into intervals and an interval session
+  // can progress or regress its work/recovery structure.
+  prescribedIntensity:
+    CardioIntensity | null;
+
+  prescribedRunIntervalMinutes:
+    number | null;
+
+  prescribedWalkIntervalMinutes:
+    number | null;
 
   durationCompletionRate:
     number | null;
@@ -55,6 +71,59 @@ const POOR_DURATION_RATE =
 
 
 // ============================================================
+// Evaluation Builder
+// ============================================================
+
+function createEvaluation(
+  run: RunSession,
+  status: RunProgressionStatus,
+  role: RunProgressionRole | null,
+  durationCompletionRate:
+    number | null,
+  prescribedDuration:
+    number | null,
+  actualDuration:
+    number | null,
+  rpe:
+    number | null,
+  factor:
+    string | null
+): RunProgressionEvaluation {
+  return {
+    status,
+
+    role,
+
+    prescribedIntensity:
+      run.intensity ??
+      null,
+
+    prescribedRunIntervalMinutes:
+      run
+        .prescribedRunIntervalMinutes ??
+      null,
+
+    prescribedWalkIntervalMinutes:
+      run
+        .prescribedWalkIntervalMinutes ??
+      null,
+
+    durationCompletionRate,
+
+    rpe,
+
+    prescribedDurationMinutes:
+      prescribedDuration,
+
+    actualDurationMinutes:
+      actualDuration,
+
+    factor,
+  };
+}
+
+
+// ============================================================
 // Evaluate Run Progression
 // ============================================================
 
@@ -65,14 +134,29 @@ export function evaluateRunProgression(
   if (!run) {
     return {
       status: "NoData",
+
       role: null,
+
+      prescribedIntensity:
+        null,
+
+      prescribedRunIntervalMinutes:
+        null,
+
+      prescribedWalkIntervalMinutes:
+        null,
+
       durationCompletionRate:
         null,
+
       rpe: null,
+
       prescribedDurationMinutes:
         null,
+
       actualDurationMinutes:
         null,
+
       factor: null,
     };
   }
@@ -98,6 +182,10 @@ export function evaluateRunProgression(
       : null;
 
 
+  // ----------------------------------------------------------
+  // Insufficient Data
+  // ----------------------------------------------------------
+
   if (
     !role ||
     prescribedDuration ===
@@ -107,26 +195,34 @@ export function evaluateRunProgression(
       undefined ||
     actualDuration < 0
   ) {
-    return {
-      status: "NoData",
+    return createEvaluation(
+      run,
+      "NoData",
       role,
-      durationCompletionRate:
+      null,
+      prescribedDuration ??
+        null,
+      actualDuration ??
         null,
       rpe,
-      prescribedDurationMinutes:
-        prescribedDuration ??
-        null,
-      actualDurationMinutes:
-        actualDuration ??
-        null,
-      factor: null,
-    };
+      null
+    );
   }
 
 
   const durationCompletionRate =
     actualDuration /
     prescribedDuration;
+
+  const factor =
+    `Completed ${Math.round(
+      durationCompletionRate *
+        100
+    )}% of the prescribed duration${
+      rpe !== null
+        ? ` at RPE ${rpe}`
+        : ""
+    }.`;
 
 
   // ----------------------------------------------------------
@@ -138,18 +234,16 @@ export function evaluateRunProgression(
       POOR_DURATION_RATE ||
     rpe === 10
   ) {
-    return {
-      status: "Poor",
+    return createEvaluation(
+      run,
+      "Poor",
       role,
       durationCompletionRate,
+      prescribedDuration,
+      actualDuration,
       rpe,
-      prescribedDurationMinutes:
-        prescribedDuration,
-      actualDurationMinutes:
-        actualDuration,
-      factor:
-        `Completed ${Math.round(durationCompletionRate * 100)}% of the prescribed duration${rpe !== null ? ` at RPE ${rpe}` : ""}.`,
-    };
+      factor
+    );
   }
 
 
@@ -162,18 +256,16 @@ export function evaluateRunProgression(
       ACCEPTABLE_DURATION_RATE ||
     rpe === 9
   ) {
-    return {
-      status: "Limited",
+    return createEvaluation(
+      run,
+      "Limited",
       role,
       durationCompletionRate,
+      prescribedDuration,
+      actualDuration,
       rpe,
-      prescribedDurationMinutes:
-        prescribedDuration,
-      actualDurationMinutes:
-        actualDuration,
-      factor:
-        `Completed ${Math.round(durationCompletionRate * 100)}% of the prescribed duration${rpe !== null ? ` at RPE ${rpe}` : ""}.`,
-    };
+      factor
+    );
   }
 
 
@@ -189,18 +281,16 @@ export function evaluateRunProgression(
       rpe <= 7
     )
   ) {
-    return {
-      status: "Strong",
+    return createEvaluation(
+      run,
+      "Strong",
       role,
       durationCompletionRate,
+      prescribedDuration,
+      actualDuration,
       rpe,
-      prescribedDurationMinutes:
-        prescribedDuration,
-      actualDurationMinutes:
-        actualDuration,
-      factor:
-        `Completed ${Math.round(durationCompletionRate * 100)}% of the prescribed duration${rpe !== null ? ` at RPE ${rpe}` : ""}.`,
-    };
+      factor
+    );
   }
 
 
@@ -208,16 +298,14 @@ export function evaluateRunProgression(
   // Acceptable
   // ----------------------------------------------------------
 
-  return {
-    status: "Acceptable",
+  return createEvaluation(
+    run,
+    "Acceptable",
     role,
     durationCompletionRate,
+    prescribedDuration,
+    actualDuration,
     rpe,
-    prescribedDurationMinutes:
-      prescribedDuration,
-    actualDurationMinutes:
-      actualDuration,
-    factor:
-      `Completed ${Math.round(durationCompletionRate * 100)}% of the prescribed duration${rpe !== null ? ` at RPE ${rpe}` : ""}.`,
-  };
+    factor
+  );
 }

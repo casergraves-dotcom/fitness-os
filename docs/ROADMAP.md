@@ -500,30 +500,44 @@ short incline-treadmill Zone 2 work, Tuesday provides an aerial/running slot,
 Thursday provides an aerial/recovery slot, Friday is strength only, Saturday is
 the primary endurance day, and Sunday is recovery.
 
-### 3.3.3 Adaptive Running Progression — NEXT
+### 3.3.3 Adaptive Running Progression — COMPLETE
 
-- [ ] Define the steady-state running progression model after the initial ramp.
-- [ ] Generate an appropriate Tuesday run prescription when running is selected
+- [x] Define the steady-state running progression model after the initial ramp.
+- [x] Generate an appropriate Tuesday run prescription when running is selected
   instead of aerial.
-- [ ] Progress Tuesday running between easy, interval, or other appropriate
-  development work based on current running capacity.
-- [ ] Define a progressive Saturday endurance-duration prescription rather than
+- [x] Progress Tuesday running between easy and interval development work based
+  on current running capacity and completed performance.
+- [x] Define a progressive Saturday endurance-duration prescription rather than
   leaving long endurance completely open-ended.
-- [ ] Use scheduled-run completion, actual duration, and RPE when determining
+- [x] Use scheduled-run completion, actual duration, and RPE when determining
   subsequent running progression.
-- [ ] Account for aerial substitution so choosing aerial on Tuesday does not
+- [x] Account for aerial substitution so choosing aerial on Tuesday does not
   incorrectly count as failed running progression.
-- [ ] Avoid increasing running load when recent performance or recovery does not
+- [x] Avoid increasing running load when recent performance or recovery does not
   support progression.
-- [ ] Keep manual/extra runs as useful history without allowing them to
+- [x] Keep manual/extra runs as useful history without allowing them to
   automatically advance the prescribed running program.
-- [ ] Surface the current run prescription clearly when starting a scheduled run.
-- [ ] Verify running progression works across calendar-week rollover and
+- [x] Surface the current run prescription clearly when starting a scheduled run.
+- [x] Verify running progression works across calendar-week rollover and
   steady-state repeats.
 
-**Target outcome:** Fitness OS progresses running based on actual running
-performance and recovery rather than repeating a static steady-state run
-prescription indefinitely.
+**Completed outcome:** steady-state running now uses two independently adaptive
+progression tracks. The optional Tuesday Development run begins with controlled
+easy running, progresses duration to a 35-minute easy-run ceiling, and can then
+advance through conservative interval prescriptions (2:2, 3:2, 4:2, 5:2, and
+5:1 run/recovery ratios) when completed performance supports progression.
+Acceptable or limited sessions repeat the current prescription, while poor
+performance regresses the prescription and can return introductory intervals
+to easy running.
+
+Saturday Endurance remains an easy aerobic session and progresses duration
+independently in five-minute increments based on completed duration and RPE.
+Scheduled runs snapshot their prescriptions for historical evaluation, while
+manual runs remain useful history without automatically advancing the program.
+Choosing aerial instead of the optional Tuesday run does not count as failed
+running progression. Updated prescriptions persist in training-plan state,
+survive calendar-week rollover and repeated weeks, and are consumed by future
+scheduled runs.
 
 ### 3.3.4 Deload and Return-to-Training Validation
 
@@ -834,8 +848,8 @@ interrupts it.
 11. **Phase 3.3 — Steady-State Programming**
     - 3.3.1 Steady-State Strength Programming — COMPLETE
     - 3.3.2 Weekly Conditioning Structure — COMPLETE
-    - 3.3.3 Adaptive Running Progression — NEXT
-    - 3.3.4 Deload and Return-to-Training Validation
+    - 3.3.3 Adaptive Running Progression — COMPLETE
+    - 3.3.4 Deload and Return-to-Training Validation - NEXT
 
 ### After Phase 3.3
 
