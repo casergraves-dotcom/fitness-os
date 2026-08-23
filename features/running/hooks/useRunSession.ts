@@ -11,6 +11,7 @@ import {
 
 import type {
   CardioIntensity,
+  RunProgressionRole,
   RunSession,
   TrainingPlanState,
 } from "../../workout/types";
@@ -469,6 +470,9 @@ export function useRunSession() {
       prescribedWalkIntervalMinutes?: number;
 
       prescribedNote?: string;
+
+      prescribedRunProgressionRole?:
+        RunProgressionRole;
     }
   ) {
     const newSession:
@@ -506,6 +510,10 @@ export function useRunSession() {
 
       prescribedNote:
         options?.prescribedNote,
+
+      prescribedRunProgressionRole:
+        options
+          ?.prescribedRunProgressionRole,
     };
 
     setFinished(

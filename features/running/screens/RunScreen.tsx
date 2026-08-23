@@ -376,6 +376,10 @@ export default function RunScreen() {
         scheduledActivity
           ?.walkIntervalMinutes,
 
+      prescribedRunProgressionRole:
+        scheduledActivity
+          ?.runProgressionRole,
+
       prescribedNote:
         scheduledActivity?.note,
     });

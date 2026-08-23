@@ -3,6 +3,8 @@ import {
 } from "../trainingPlan";
 
 import type {
+  RunProgressionPrescription,
+  TrainingActivity,
   TrainingDay,
   TrainingDayOfWeek,
   TrainingPlan,
@@ -53,7 +55,7 @@ export interface TrainingScheduleForDate {
   // the reusable deload template.
   isDeload: boolean;
 
-    // True only when the target date falls inside a calendar
+  // True only when the target date falls inside a calendar
   // week that was explicitly inserted as a held/repeated week.
   isRepeatedWeek: boolean;
 }
@@ -300,6 +302,115 @@ function isDeloadWeek(
 
 
 // ============================================================
+// Adaptive Running Prescription
+// ============================================================
+
+function applyRunningPrescription(
+  activity: TrainingActivity,
+  prescription:
+    RunProgressionPrescription
+): TrainingActivity {
+  return {
+    ...activity,
+
+    label:
+      prescription.label,
+
+    cardioIntensity:
+      prescription.intensity,
+
+    durationMin:
+      prescription.durationMin,
+
+    durationMax:
+      prescription.durationMax,
+
+    runIntervalMinutes:
+      prescription
+        .runIntervalMinutes,
+
+    walkIntervalMinutes:
+      prescription
+        .walkIntervalMinutes,
+
+    note:
+      prescription.note ??
+      activity.note,
+  };
+}
+
+
+function applyAdaptiveRunningProgression(
+  trainingDay: TrainingDay,
+  state: TrainingPlanState,
+  weekType: TrainingWeekType
+): TrainingDay {
+  // Adaptive running prescriptions apply only to normal
+  // steady-state training. Ramp and deload weeks retain their
+  // explicit template prescriptions.
+  if (
+    weekType !==
+      "SteadyState"
+  ) {
+    return trainingDay;
+  }
+
+  const runningProgression =
+    state.runningProgression;
+
+  if (!runningProgression) {
+    return trainingDay;
+  }
+
+  let changed =
+    false;
+
+  const activities =
+    trainingDay.activities.map(
+      (activity) => {
+        if (
+          activity.type !==
+            "Run" ||
+          !activity
+            .runProgressionRole
+        ) {
+          return activity;
+        }
+
+        const prescription =
+          runningProgression[
+            activity
+              .runProgressionRole
+          ];
+
+        if (!prescription) {
+          return activity;
+        }
+
+        changed =
+          true;
+
+        return applyRunningPrescription(
+          activity,
+          prescription
+        );
+      }
+    );
+
+  if (!changed) {
+    return trainingDay;
+  }
+
+  // Return a new object so imported plan templates remain
+  // immutable and schedule resolution stays deterministic.
+  return {
+    ...trainingDay,
+    activities,
+  };
+}
+
+
+// ============================================================
 // Get Training Schedule For Date
 // ============================================================
 
@@ -419,7 +530,7 @@ export function getTrainingScheduleForDate(
     );
 
 
-      // ----------------------------------------------------------
+  // ----------------------------------------------------------
   // Current Calendar Week Is Repeated
   // ----------------------------------------------------------
   //
@@ -449,6 +560,7 @@ export function getTrainingScheduleForDate(
     ).includes(
       targetWeekStartDate
     );
+
 
   // ----------------------------------------------------------
   // Normal Program Week
@@ -499,16 +611,35 @@ export function getTrainingScheduleForDate(
       targetDate.getDay()
     ];
 
-  const trainingDay =
+  const baseTrainingDay =
     trainingWeek.days.find(
       (day) =>
         day.day ===
         dayOfWeek
     );
 
-  if (!trainingDay) {
+  if (!baseTrainingDay) {
     return null;
   }
+
+
+  // ----------------------------------------------------------
+  // Adaptive Running Overlay
+  // ----------------------------------------------------------
+  //
+  // Persisted Development / Endurance prescriptions replace
+  // the matching steady-state Run activity fields for this
+  // resolved schedule only.
+  //
+  // The underlying imported training-plan template is never
+  // mutated.
+
+  const trainingDay =
+    applyAdaptiveRunningProgression(
+      baseTrainingDay,
+      state,
+      trainingWeek.weekType
+    );
 
 
   // ----------------------------------------------------------

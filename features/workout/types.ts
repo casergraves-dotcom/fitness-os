@@ -321,6 +321,9 @@ export interface RunSession {
   prescribedRunIntervalMinutes?: number;
   prescribedWalkIntervalMinutes?: number;
 
+  prescribedRunProgressionRole?:
+    RunProgressionRole;
+
   prescribedNote?: string;
 
   // ----------------------------------------------------------
@@ -540,6 +543,36 @@ export type CardioIntensity =
 
 
 // ============================================================
+// Running Progression
+// ============================================================
+
+export type RunProgressionRole =
+  | "Development"
+  | "Endurance";
+
+
+export interface RunProgressionPrescription {
+  role:
+    RunProgressionRole;
+
+  label: string;
+
+  intensity:
+    CardioIntensity;
+
+  durationMin: number;
+
+  durationMax: number;
+
+  runIntervalMinutes?: number;
+
+  walkIntervalMinutes?: number;
+
+  note?: string;
+}
+
+
+// ============================================================
 // Training Activity
 // ============================================================
 
@@ -571,6 +604,16 @@ export interface TrainingActivity {
   // ----------------------------------------------------------
 
   cardioIntensity?: CardioIntensity;
+
+  // Identifies the long-term running progression track.
+  //
+  // Development:
+  // Shorter run focused on aerobic development and, when
+  // appropriate, quality work such as intervals.
+  //
+  // Endurance:
+  // Longer easy session focused primarily on duration.
+  runProgressionRole?: RunProgressionRole;
 
   // Duration prescription.
   //
@@ -824,6 +867,18 @@ export interface TrainingPlanState {
   // state saved before decision history was introduced.
   weeklyProgressionDecisions?:
     WeeklyProgressionDecisionRecord[];
+
+  // Current steady-state running prescriptions.
+  //
+  // Optional for backward compatibility with plans created
+  // before adaptive running progression existed.
+  runningProgression?: {
+    Development?:
+      RunProgressionPrescription;
+
+    Endurance?:
+      RunProgressionPrescription;
+  };
 
   // Number of successfully progressed steady-state weeks
   // completed since the most recent deload.

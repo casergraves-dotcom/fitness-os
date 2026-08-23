@@ -14,12 +14,14 @@ import {
 } from "../trainingPlan";
 
 import type {
+  RunProgressionPrescription,
+  RunProgressionRole,
+  RunSession,
   TrainingActivityCompletion,
   TrainingPlanState,
   TrainingWeek,
-  WorkoutSession,
-  RunSession,
   WeeklyProgressionDecisionRecord,
+  WorkoutSession,
 } from "../types";
 
 import {
@@ -28,7 +30,6 @@ import {
 
 import {
   getWeeklyProgressionDecision,
-  WeeklyProgressionDecision,
 } from "../logic/getWeeklyProgressionDecision";
 
 import {
@@ -50,6 +51,10 @@ import {
 import {
   evaluateWeeklyAerialLoad,
 } from "../logic/evaluateWeeklyAerialLoad";
+
+import {
+  getWeeklyRunningProgressionUpdates,
+} from "../logic/getWeeklyRunningProgressionUpdates";
 
 import {
   getTrainingScheduleForDate,
@@ -97,7 +102,13 @@ interface WeeklyTrainingProgressionOptions {
     repeatedWeekStartDate?: string,
     completedWeek?: TrainingWeek,
     nextWeekStartDate?: string,
-    decisionRecord?: WeeklyProgressionDecisionRecord
+    decisionRecord?: WeeklyProgressionDecisionRecord,
+    runningProgressionUpdates?: Partial<
+      Record<
+        RunProgressionRole,
+        RunProgressionPrescription
+      >
+    >
   ) => void;
 }
 
@@ -475,6 +486,25 @@ export function useWeeklyTrainingProgression({
 
 
       // ------------------------------------------------------
+      // Running Progression Updates
+      // ------------------------------------------------------
+      //
+      // Run-specific progression is independent from the
+      // overall weekly advance/hold decision. Only normal
+      // steady-state weeks are allowed to update the persistent
+      // Development / Endurance prescriptions here.
+
+      const runningProgressionUpdates =
+        trainingWeek.weekType ===
+          "SteadyState"
+          ? getWeeklyRunningProgressionUpdates(
+              weekStartDate,
+              runHistory
+            )
+          : undefined;
+
+
+      // ------------------------------------------------------
       // Apply Decision
       // ------------------------------------------------------
 
@@ -518,7 +548,9 @@ export function useWeeklyTrainingProgression({
 
           decidedAt:
             new Date().toISOString(),
-        }
+        },
+
+        runningProgressionUpdates
       );
 
 

@@ -1,4 +1,6 @@
 import type {
+  RunProgressionPrescription,
+  RunProgressionRole,
   TrainingPlanState,
   TrainingWeek,
   WeeklyProgressionDecisionRecord,
@@ -35,6 +37,17 @@ export interface ApplyTrainingProgressionInput {
 
   // Monday of the following calendar week.
   nextWeekStartDate?: string;
+
+  // Role-specific running prescriptions produced from runs
+  // completed during the evaluated week.
+  //
+  // A missing role means its current prescription is retained.
+  runningProgressionUpdates?: Partial<
+    Record<
+      RunProgressionRole,
+      RunProgressionPrescription
+    >
+  >;
 }
 
 
@@ -80,6 +93,7 @@ export function applyTrainingProgression({
   decisionRecord,
   completedWeek,
   nextWeekStartDate,
+  runningProgressionUpdates,
 }: ApplyTrainingProgressionInput):
   TrainingPlanState {
 
@@ -225,7 +239,12 @@ export function applyTrainingProgression({
     }
   }
 
-    const existingDecisionRecords =
+
+  // ----------------------------------------------------------
+  // Decision History
+  // ----------------------------------------------------------
+
+  const existingDecisionRecords =
     state.weeklyProgressionDecisions ??
     [];
 
@@ -245,6 +264,31 @@ export function applyTrainingProgression({
             )
         )
       : existingDecisionRecords;
+
+
+  // ----------------------------------------------------------
+  // Running Progression
+  // ----------------------------------------------------------
+  //
+  // Running progresses independently from the overall weekly
+  // advance/hold result.
+  //
+  // For example, a strong endurance run may legitimately
+  // progress even if the overall training week repeats because
+  // another required activity was missed.
+
+  const existingRunningProgression =
+    state.runningProgression ??
+    {};
+
+  const runningProgression =
+    runningProgressionUpdates
+      ? {
+          ...existingRunningProgression,
+          ...runningProgressionUpdates,
+        }
+      : existingRunningProgression;
+
 
   // ----------------------------------------------------------
   // Result
@@ -268,5 +312,7 @@ export function applyTrainingProgression({
 
     deloadWeekStartDates:
       deloadWeeks,
+
+    runningProgression,
   };
 }

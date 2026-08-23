@@ -9,7 +9,13 @@ import {
   applyTrainingProgression,
 } from "../logic/applyTrainingProgression";
 
+import {
+  overrideWeeklyProgressionDecision,
+} from "../logic/overrideWeeklyProgressionDecision";
+
 import type {
+  RunProgressionPrescription,
+  RunProgressionRole,
   TrainingPlanState,
   TrainingWeek,
   WeeklyProgressionDecisionRecord,
@@ -19,10 +25,6 @@ import {
   removeFitnessOsStorage,
   setFitnessOsStorage,
 } from "@/lib/storage/fitnessOsStorage";
-
-import {
-  overrideWeeklyProgressionDecision,
-} from "../logic/overrideWeeklyProgressionDecision";
 
 
 // ============================================================
@@ -118,16 +120,16 @@ export function useTrainingPlanState() {
   // Save
   // ----------------------------------------------------------
 
-function saveState(
-  nextState: TrainingPlanState
-) {
-  setState(nextState);
+  function saveState(
+    nextState: TrainingPlanState
+  ) {
+    setState(nextState);
 
-  setFitnessOsStorage(
-    STORAGE_KEY,
-    JSON.stringify(nextState)
-  );
-}
+    setFitnessOsStorage(
+      STORAGE_KEY,
+      JSON.stringify(nextState)
+    );
+  }
 
 
   // ----------------------------------------------------------
@@ -253,7 +255,13 @@ function saveState(
     repeatedWeekStartDate?: string,
     completedWeek?: TrainingWeek,
     nextWeekStartDate?: string,
-    decisionRecord?: WeeklyProgressionDecisionRecord
+    decisionRecord?: WeeklyProgressionDecisionRecord,
+    runningProgressionUpdates?: Partial<
+      Record<
+        RunProgressionRole,
+        RunProgressionPrescription
+      >
+    >
   ) {
     if (!state) {
       return;
@@ -285,6 +293,8 @@ function saveState(
 
         nextWeekStartDate:
           followingWeekStartDate,
+
+        runningProgressionUpdates,
       });
 
 
@@ -301,6 +311,7 @@ function saveState(
       nextState
     );
   }
+
 
   // ----------------------------------------------------------
   // Override Weekly Progression Decision

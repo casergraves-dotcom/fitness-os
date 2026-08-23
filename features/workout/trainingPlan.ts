@@ -729,7 +729,7 @@ const steadyState = week({
   days: [
     // --------------------------------------------------------
     // Monday
-    // Gym A + Zone 2
+    // Gym A + Incline Treadmill
     // --------------------------------------------------------
 
     day("Monday", [
@@ -742,11 +742,14 @@ const steadyState = week({
 
       activity({
         id: "steady-monday-zone-2",
-        type: "Run",
-        label: "Zone 2",
+        type: "Walk",
+        label: "Incline Treadmill",
         cardioIntensity: "Zone 2",
         durationMin: 15,
         durationMax: 20,
+
+        note:
+          "Incline treadmill walk at a sustainable Zone 2 effort.",
       }),
     ]),
 
@@ -769,14 +772,19 @@ const steadyState = week({
         type: "Run",
         label: "Easy Run",
         cardioIntensity: "Easy",
+        durationMin: 30,
+        durationMax: 30,
         optional: true,
         substitutionGroup: "easy-cardio",
+
+        runProgressionRole:
+          "Development",
       }),
     ]),
 
     // --------------------------------------------------------
     // Wednesday
-    // Gym B + Zone 2
+    // Gym B + Incline Treadmill
     // --------------------------------------------------------
 
     day("Wednesday", [
@@ -789,11 +797,14 @@ const steadyState = week({
 
       activity({
         id: "steady-wednesday-zone-2",
-        type: "Run",
-        label: "Zone 2",
+        type: "Walk",
+        label: "Incline Treadmill",
         cardioIntensity: "Zone 2",
         durationMin: 15,
         durationMax: 20,
+
+        note:
+          "Incline treadmill walk at a sustainable Zone 2 effort.",
       }),
     ]),
 
@@ -823,7 +834,7 @@ const steadyState = week({
 
     // --------------------------------------------------------
     // Friday
-    // Gym C + Adaptive Intervals
+    // Gym C
     // --------------------------------------------------------
 
     day("Friday", [
@@ -834,15 +845,6 @@ const steadyState = week({
         strengthWorkout: "Gym C",
       }),
 
-      activity({
-        id: "steady-friday-cardio",
-        type: "Run",
-        label: "Adaptive Intervals",
-        cardioIntensity: "Adaptive",
-
-        note:
-          "Perform intervals when readiness supports them. Substitute Zone 2 when recovery is poor.",
-      }),
     ]),
 
     // --------------------------------------------------------
@@ -856,6 +858,11 @@ const steadyState = week({
         type: "Run",
         label: "Long Run / Hike",
         cardioIntensity: "Easy",
+        durationMin: 40,
+        durationMax: 40,
+
+        runProgressionRole:
+          "Endurance",
 
         note:
           "Use a long run, hike, or comparable aerobic session based on current goals and recovery.",

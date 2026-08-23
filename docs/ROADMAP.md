@@ -459,23 +459,137 @@ and override timestamp. Overrides also correctly reverse or apply the
 associated repeated-week, steady-state success-count, and deload scheduling
 effects.
 
-**Current next item:** aerial participation/load. Aerial work should
-count as real training stress and should interact correctly with
-substitution groups and adjacent cardio/strength work without simply
-being treated as another required workout.
-
 ## 3.3 Steady-State Programming
-- [ ] Validate the long-term Mon/Wed/Fri strength structure.
-- [ ] Validate running placement around strength and aerials.
-- [ ] Define how optional Tue/Thu aerial sessions affect adjacent
-    training.
-- [ ] Define long-term deload triggers.
-- [ ] Define
-    return-to-training behavior after illness, travel, or a prolonged
-    break.
 
-****Milestone:**** Fitness OS adapts the program rather than merely
-moving through a calendar.
+Establish the long-term training structure used after the return-to-training
+ramp. Steady state should provide a sustainable default while leaving room for
+recovery, aerial participation, running progression, and real-life schedule
+changes.
+
+### 3.3.1 Steady-State Strength Programming — COMPLETE
+
+- [x] Validate Monday / Wednesday / Friday as the long-term strength structure.
+- [x] Validate Gym A / Gym B / Gym C as full-body sessions distributed across
+  the week.
+- [x] Review weekly movement-pattern balance and strength volume.
+- [x] Add a true hip-hinge pattern to Gym C using Dumbbell Romanian Deadlift.
+- [x] Preserve editable workout templates and existing exercise progression.
+- [x] Keep gym-day conditioning separate from the strength exercise templates.
+
+**Completed outcome:** steady-state strength uses three nonconsecutive full-body
+sessions on Monday, Wednesday, and Friday. Gym C now includes a true hip-hinge
+movement so the weekly program is not dependent entirely on squat/leg-press and
+leg-curl patterns for lower-body development.
+
+### 3.3.2 Weekly Conditioning Structure — COMPLETE
+
+- [x] Validate running/cardio placement around strength and aerial training.
+- [x] Treat Monday and Wednesday post-strength cardio as incline treadmill
+  walking at Zone 2 rather than scheduled running.
+- [x] Preserve Tuesday as Aerial OR a programmed run.
+- [x] Preserve Thursday as Aerial OR recovery-oriented activity.
+- [x] Remove fixed Friday adaptive intervals so Gym C is not immediately
+  followed by a hard running session before Saturday endurance work.
+- [x] Preserve Saturday as the primary long-endurance day.
+- [x] Preserve Sunday as recovery.
+- [x] Keep supplemental gym-day aerobic work distinct from the running program.
+
+**Completed outcome:** the default steady-state week now separates supplemental
+Zone 2 conditioning from actual running. Monday and Wednesday pair strength with
+short incline-treadmill Zone 2 work, Tuesday provides an aerial/running slot,
+Thursday provides an aerial/recovery slot, Friday is strength only, Saturday is
+the primary endurance day, and Sunday is recovery.
+
+### 3.3.3 Adaptive Running Progression — NEXT
+
+- [ ] Define the steady-state running progression model after the initial ramp.
+- [ ] Generate an appropriate Tuesday run prescription when running is selected
+  instead of aerial.
+- [ ] Progress Tuesday running between easy, interval, or other appropriate
+  development work based on current running capacity.
+- [ ] Define a progressive Saturday endurance-duration prescription rather than
+  leaving long endurance completely open-ended.
+- [ ] Use scheduled-run completion, actual duration, and RPE when determining
+  subsequent running progression.
+- [ ] Account for aerial substitution so choosing aerial on Tuesday does not
+  incorrectly count as failed running progression.
+- [ ] Avoid increasing running load when recent performance or recovery does not
+  support progression.
+- [ ] Keep manual/extra runs as useful history without allowing them to
+  automatically advance the prescribed running program.
+- [ ] Surface the current run prescription clearly when starting a scheduled run.
+- [ ] Verify running progression works across calendar-week rollover and
+  steady-state repeats.
+
+**Target outcome:** Fitness OS progresses running based on actual running
+performance and recovery rather than repeating a static steady-state run
+prescription indefinitely.
+
+### 3.3.4 Deload and Return-to-Training Validation
+
+- [ ] Revalidate the deload template against the finalized steady-state strength
+  and conditioning structure.
+- [ ] Update deload incline-treadmill/cardio activity types and labels where
+  necessary.
+- [ ] Remove stale deload references to fixed Friday adaptive intervals.
+- [ ] Keep aerobic work easy during deload weeks.
+- [ ] Validate strength-volume reduction against the finalized Gym A / B / C
+  templates.
+- [ ] Define return-to-training behavior after illness.
+- [ ] Define return-to-training behavior after travel.
+- [ ] Define return-to-training behavior after a prolonged training break.
+- [ ] Avoid automatically returning to full steady-state load when recent
+  training history indicates that a short re-ramp is more appropriate.
+- [ ] Preserve historical performance and progression data when a re-ramp is
+  required.
+
+**Target outcome:** deloads and interruptions reduce training appropriately
+without resetting useful history or immediately returning the user to an
+inappropriate workload.
+
+## 3.4 Adaptive Scheduling
+
+Allow the prescribed week to respond to real-life availability without changing
+the underlying training goals.
+
+### 3.4.1 Activity Rescheduling
+
+- [ ] Allow a scheduled activity to be moved to another day.
+- [ ] Preserve the original training activity identity when rescheduled.
+- [ ] Record the original date and rescheduled date.
+- [ ] Ensure a legitimately rescheduled activity is not counted as a missed
+  adherence requirement on its original day.
+- [ ] Update Today's Mission and the remaining weekly schedule after an accepted
+  move.
+
+### 3.4.2 Schedule Conflict Evaluation
+
+- [ ] Detect conflicts created by moving strength, running, aerial, or recovery
+  activities.
+- [ ] Preserve appropriate spacing between strength sessions where practical.
+- [ ] Account for aerial load when moving adjacent upper-body/strength work.
+- [ ] Account for running load when rearranging strength and endurance days.
+- [ ] Avoid unnecessarily stacking hard sessions on consecutive days.
+- [ ] Distinguish situations where moving, substituting, shortening, or skipping
+  an activity is the better option.
+
+### 3.4.3 Adaptive Schedule Recommendations
+
+- [ ] Recommend an appropriate revised week when the planned day is unavailable.
+- [ ] Explain why the proposed rearrangement is appropriate.
+- [ ] Let the user accept or reject the proposed schedule change.
+- [ ] Preserve user control rather than silently rearranging the program.
+- [ ] Integrate backup/home/shortened workouts when substitution is preferable
+  to rescheduling.
+- [ ] Recalculate downstream weekly recommendations after an accepted schedule
+  change.
+
+**Target outcome:** when real life disrupts the default Monday / Wednesday /
+Friday training rhythm, Fitness OS can intelligently rearrange the week rather
+than treating the disruption as an automatic failure.
+
+**Milestone:** Fitness OS adapts training load, running progression, recovery,
+and weekly scheduling rather than merely moving through a fixed calendar.
 
 **---**
 
@@ -718,15 +832,20 @@ interrupts it.
 ### Current
 
 11. **Phase 3.3 — Steady-State Programming**
+    - 3.3.1 Steady-State Strength Programming — COMPLETE
+    - 3.3.2 Weekly Conditioning Structure — COMPLETE
+    - 3.3.3 Adaptive Running Progression — NEXT
+    - 3.3.4 Deload and Return-to-Training Validation
 
 ### After Phase 3.3
 
-12. Phase 4 — Body Composition and Goal Progress
-13. Phase 5 — Nutrition and Daily Activity
-14. Phase 6 — Weekly Review and Progress Improvements
+12. **Phase 3.4 — Adaptive Scheduling**
+13. Phase 4 — Body Composition and Goal Progress
+14. Phase 5 — Nutrition and Daily Activity
+15. Phase 6 — Weekly Review and Progress Improvements
 
-Social, health integrations, personalization, and advanced platform work
-remain mapped for later and should not displace the core coaching loop.
+Personalization, health integrations, social features, and advanced platform
+work remain mapped for later and should not displace the core coaching loop.
 
 ------------------------------------------------------------------------
 

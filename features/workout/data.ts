@@ -188,12 +188,13 @@ const gymBExercises: Exercise[] = [
 // Spreadsheet roles:
 //
 // 1. Squat / Glute      - required
-// 2. Vertical Pull      - required
-// 3. Horizontal Push    - required
-// 4. Accessory          - optional
-// 5. Hip Stability      - optional
-// 6. Adduction          - optional
-// 7. Core               - required
+// 2. Hip Hinge          - required
+// 3. Vertical Pull      - required
+// 4. Horizontal Push    - required
+// 5. Accessory          - optional
+// 6. Hip Stability      - optional
+// 7. Adduction          - optional
+// 8. Core               - required
 //
 // Spreadsheet note:
 // Leg Press uses a high-foot setup for additional
@@ -208,6 +209,13 @@ const gymCExercises: Exercise[] = [
     "gym-c-leg-press",
     "leg-press",
     "Leg Press",
+    3
+  ),
+
+  createExercise(
+    "gym-c-dumbbell-rdl",
+    "dumbbell-rdl",
+    "Dumbbell Romanian Deadlift",
     3
   ),
 
