@@ -16,6 +16,10 @@ import type {
 } from "@/features/workout/utils/getTrainingScheduleForDate";
 
 import {
+  evaluateProposedActivityReschedule,
+} from "@/features/workout/logic/evaluateProposedActivityReschedule";
+
+import {
   currentHomeWorkoutCapabilities,
   currentHomeWorkoutEquipment,
   getStrengthWorkoutVariants,
@@ -397,6 +401,36 @@ export default function TodaysTrainingCard({
     cancelReschedule();
   }
 
+  const proposedRescheduleEvaluation =
+    reschedulingActivity &&
+    rescheduleDate &&
+    trainingPlanState &&
+    schedule
+      ? evaluateProposedActivityReschedule({
+          state:
+            trainingPlanState,
+
+          trainingActivityId:
+            reschedulingActivity.id,
+
+          originalDate:
+            schedule.date,
+
+          scheduledDate:
+            rescheduleDate,
+        })
+      : null;
+
+  const proposedRescheduleConflicts =
+    proposedRescheduleEvaluation
+      ?.conflicts ??
+    [];
+
+  const hasHighRescheduleConflict =
+    proposedRescheduleEvaluation
+      ?.hasHighConflict ??
+    false;
+
   // ----------------------------------------------------------
   // Reset Plan Confirmation
   // ----------------------------------------------------------
@@ -560,6 +594,78 @@ export default function TodaysTrainingCard({
             />
           </label>
 
+          {rescheduleDate &&
+            proposedRescheduleEvaluation && (
+              <div className="mt-4">
+                {proposedRescheduleConflicts.length >
+                0 ? (
+                  <div
+                    className={
+                      hasHighRescheduleConflict
+                        ? "rounded-xl border border-red-200 bg-red-50 p-4"
+                        : "rounded-xl border border-amber-200 bg-amber-50 p-4"
+                    }
+                  >
+                    <p
+                      className={
+                        hasHighRescheduleConflict
+                          ? "text-sm font-semibold text-red-800"
+                          : "text-sm font-semibold text-amber-800"
+                      }
+                    >
+                      {hasHighRescheduleConflict
+                        ? "High scheduling conflict"
+                        : "Scheduling caution"}
+                    </p>
+
+                    <div className="mt-2 space-y-2">
+                      {proposedRescheduleConflicts.map(
+                        (
+                          conflict,
+                          index
+                        ) => (
+                          <p
+                            key={`${conflict.kind}-${index}`}
+                            className={
+                              conflict.severity ===
+                              "High"
+                                ? "text-sm leading-5 text-red-700"
+                                : "text-sm leading-5 text-amber-700"
+                            }
+                          >
+                            {conflict.reason}
+                          </p>
+                        )
+                      )}
+                    </div>
+
+                    <p
+                      className={
+                        hasHighRescheduleConflict
+                          ? "mt-3 text-xs leading-5 text-red-700"
+                          : "mt-3 text-xs leading-5 text-amber-700"
+                      }
+                    >
+                      You can still move the activity if this
+                      schedule works best for you.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                    <p className="text-sm font-semibold text-emerald-800">
+                      No scheduling conflicts detected
+                    </p>
+
+                    <p className="mt-1 text-xs leading-5 text-emerald-700">
+                      This move does not create any conflicts
+                      detected by the current training-load
+                      rules.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
           <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <button
               type="button"
@@ -581,7 +687,9 @@ export default function TodaysTrainingCard({
               }
               className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
             >
-              Move Activity
+              {hasHighRescheduleConflict
+                ? "Move Anyway"
+                : "Move Activity"}
             </button>
           </div>
         </div>

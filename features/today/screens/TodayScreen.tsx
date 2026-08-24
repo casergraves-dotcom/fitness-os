@@ -412,6 +412,20 @@ export default function TodayScreen() {
           currentDate={
             new Date()
           }
+
+          onRescheduleActivity={
+            (
+              trainingActivityId,
+              originalDate,
+              scheduledDate
+            ) => {
+              rescheduleTrainingActivity(
+                trainingActivityId,
+                originalDate,
+                scheduledDate
+              );
+            }
+          }
         />
 
 

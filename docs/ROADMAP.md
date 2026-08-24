@@ -601,14 +601,23 @@ and automatic progression evaluation, including cross-week moves.
 
 ### 3.4.2 Schedule Conflict Evaluation
 
-- [ ] Detect conflicts created by moving strength, running, aerial, or recovery
+- [x] Detect conflicts created by moving strength, running, aerial, or recovery
   activities.
-- [ ] Preserve appropriate spacing between strength sessions where practical.
-- [ ] Account for aerial load when moving adjacent upper-body/strength work.
-- [ ] Account for running load when rearranging strength and endurance days.
-- [ ] Avoid unnecessarily stacking hard sessions on consecutive days.
-- [ ] Distinguish situations where moving, substituting, shortening, or skipping
+- [x] Preserve appropriate spacing between strength sessions where practical.
+- [x] Account for aerial load when moving adjacent upper-body/strength work.
+- [x] Account for running load when rearranging strength and endurance days.
+- [x] Avoid unnecessarily stacking hard sessions on consecutive days.
+- [x] Distinguish situations where moving, substituting, shortening, or skipping
   an activity is the better option.
+
+**Completed:** Schedule conflict evaluation now classifies training load across
+strength, running, aerial, walking, mobility, recovery, and rest activities;
+detects same-day and adjacent-day conflicts; evaluates proposed same-week and
+cross-week moves against the resolved training schedule; and warns only about
+conflicts introduced by the proposed change rather than conflicts already present
+in the current or prescribed schedule. Conflict types are also mapped to
+appropriate resolution categories such as move, shorten, substitute, or skip,
+without yet choosing a specific revised schedule.
 
 ### 3.4.3 Adaptive Schedule Recommendations
 

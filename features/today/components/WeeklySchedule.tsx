@@ -1,4 +1,8 @@
 import {
+  useState,
+} from "react";
+
+import {
   Card,
 } from "@/components/ui/card";
 
@@ -14,6 +18,10 @@ import {
 import type {
   ResolvedWeeklyActivityOccurrence,
 } from "@/features/workout/logic/getResolvedWeeklyActivityOccurrences";
+
+import {
+  evaluateProposedActivityReschedule,
+} from "@/features/workout/logic/evaluateProposedActivityReschedule";
 
 
 // ============================================================
@@ -32,6 +40,12 @@ interface WeeklyScheduleProps {
 
   currentDate:
     Date;
+
+  onRescheduleActivity: (
+    trainingActivityId: string,
+    originalDate: string,
+    scheduledDate: string
+  ) => void;
 }
 
 
@@ -189,12 +203,18 @@ interface ActivityRowProps {
 
   completed:
     boolean;
+
+  onMove: (
+    occurrence:
+      ResolvedWeeklyActivityOccurrence
+  ) => void;
 }
 
 
 function ActivityRow({
   occurrence,
   completed,
+  onMove,
 }: ActivityRowProps) {
   const moved =
     occurrence.date !==
@@ -205,11 +225,7 @@ function ActivityRow({
       <div className="min-w-0">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <p className="font-semibold text-slate-900">
-            {
-              occurrence
-                .activity
-                .label
-            }
+            {occurrence.activity.label}
           </p>
 
           {occurrence.activity.optional && (
@@ -229,17 +245,33 @@ function ActivityRow({
         )}
       </div>
 
-      <span
-        className={
-          completed
-            ? "shrink-0 text-sm font-medium text-emerald-600"
-            : "shrink-0 text-sm text-slate-400"
-        }
-      >
-        {completed
-          ? "Completed"
-          : "Planned"}
-      </span>
+      <div className="flex shrink-0 items-center gap-3">
+        <span
+          className={
+            completed
+              ? "text-sm font-medium text-emerald-600"
+              : "text-sm text-slate-400"
+          }
+        >
+          {completed
+            ? "Completed"
+            : "Planned"}
+        </span>
+
+        {!completed && (
+          <button
+            type="button"
+            onClick={() =>
+              onMove(
+                occurrence
+              )
+            }
+            className="text-sm font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700"
+          >
+            Move
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -254,7 +286,21 @@ export default function WeeklySchedule({
   completions,
   loaded,
   currentDate,
+  onRescheduleActivity,
 }: WeeklyScheduleProps) {
+  const [
+    movingOccurrence,
+    setMovingOccurrence,
+  ] =
+    useState<
+      ResolvedWeeklyActivityOccurrence | null
+    >(null);
+
+  const [
+    moveDate,
+    setMoveDate,
+  ] =
+    useState("");
   // ----------------------------------------------------------
   // Loading
   // ----------------------------------------------------------
@@ -371,6 +417,87 @@ export default function WeeklySchedule({
   }
 
 
+    // ----------------------------------------------------------
+  // Activity Rescheduling
+  // ----------------------------------------------------------
+
+  function openMoveDialog(
+    occurrence:
+      ResolvedWeeklyActivityOccurrence
+  ) {
+    setMovingOccurrence(
+      occurrence
+    );
+
+    setMoveDate(
+      occurrence.date
+    );
+  }
+
+
+  function closeMoveDialog() {
+    setMovingOccurrence(
+      null
+    );
+
+    setMoveDate("");
+  }
+
+
+  function confirmMove() {
+    if (
+      !movingOccurrence ||
+      !moveDate
+    ) {
+      return;
+    }
+
+    onRescheduleActivity(
+      movingOccurrence.activity.id,
+      movingOccurrence.originalDate,
+      moveDate
+    );
+
+    closeMoveDialog();
+  }
+
+
+  const moveDateChanged =
+    movingOccurrence !== null &&
+    moveDate !== "" &&
+    moveDate !== movingOccurrence.date;
+
+
+  const proposedMoveEvaluation =
+    movingOccurrence &&
+    moveDateChanged
+      ? evaluateProposedActivityReschedule({
+          state,
+
+          trainingActivityId:
+            movingOccurrence.activity.id,
+
+          originalDate:
+            movingOccurrence.originalDate,
+
+          scheduledDate:
+            moveDate,
+        })
+      : null;
+
+
+  const proposedMoveConflicts =
+    proposedMoveEvaluation
+      ?.conflicts ??
+    [];
+
+
+  const hasHighMoveConflict =
+    proposedMoveEvaluation
+      ?.hasHighConflict ??
+    false;
+
+
   // ----------------------------------------------------------
   // Render Group
   // ----------------------------------------------------------
@@ -408,6 +535,9 @@ export default function WeeklySchedule({
                   isCompleted(
                     occurrence
                   )
+                }
+                onMove={
+                    openMoveDialog
                 }
               />
             )
@@ -450,6 +580,150 @@ export default function WeeklySchedule({
             {outsideWeekGroups.map(
               renderGroup
             )}
+          </div>
+        </div>
+      )}
+
+    {movingOccurrence && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
+              Move Activity
+            </p>
+
+            <h2 className="mt-2 text-xl font-semibold text-slate-900">
+              Move{" "}
+              {
+                movingOccurrence
+                  .activity
+                  .label
+              }
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Choose another date for this scheduled
+              activity. Its training prescription and
+              activity identity will be preserved.
+            </p>
+
+            <label className="mt-5 block">
+              <span className="text-sm font-medium text-slate-700">
+                New date
+              </span>
+
+              <input
+                type="date"
+                value={
+                  moveDate
+                }
+                onChange={(event) =>
+                  setMoveDate(
+                    event.target.value
+                  )
+                }
+                className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-blue-500"
+              />
+            </label>
+
+            {moveDate &&
+              proposedMoveEvaluation && (
+                <div className="mt-4">
+                  {proposedMoveConflicts.length >
+                  0 ? (
+                    <div
+                      className={
+                        hasHighMoveConflict
+                          ? "rounded-xl border border-red-200 bg-red-50 p-4"
+                          : "rounded-xl border border-amber-200 bg-amber-50 p-4"
+                      }
+                    >
+                      <p
+                        className={
+                          hasHighMoveConflict
+                            ? "text-sm font-semibold text-red-800"
+                            : "text-sm font-semibold text-amber-800"
+                        }
+                      >
+                        {hasHighMoveConflict
+                          ? "High scheduling conflict"
+                          : "Scheduling caution"}
+                      </p>
+
+                      <div className="mt-2 space-y-2">
+                        {proposedMoveConflicts.map(
+                          (
+                            conflict,
+                            index
+                          ) => (
+                            <p
+                              key={`${conflict.kind}-${index}`}
+                              className={
+                                conflict.severity ===
+                                "High"
+                                  ? "text-sm leading-5 text-red-700"
+                                  : "text-sm leading-5 text-amber-700"
+                              }
+                            >
+                              {conflict.reason}
+                            </p>
+                          )
+                        )}
+                      </div>
+
+                      <p
+                        className={
+                          hasHighMoveConflict
+                            ? "mt-3 text-xs leading-5 text-red-700"
+                            : "mt-3 text-xs leading-5 text-amber-700"
+                        }
+                      >
+                        You can still move the activity if
+                        this schedule works best for you.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                      <p className="text-sm font-semibold text-emerald-800">
+                        No scheduling conflicts detected
+                      </p>
+
+                      <p className="mt-1 text-xs leading-5 text-emerald-700">
+                        This move does not create any
+                        conflicts detected by the current
+                        training-load rules.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={
+                  closeMoveDialog
+                }
+                className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                disabled={
+                  !moveDate ||
+                  !moveDateChanged
+                }
+                onClick={
+                  confirmMove
+                }
+                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              >
+                {hasHighMoveConflict
+                  ? "Move Anyway"
+                  : "Move Activity"}
+              </button>
+            </div>
           </div>
         </div>
       )}
