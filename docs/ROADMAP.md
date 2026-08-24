@@ -619,20 +619,36 @@ in the current or prescribed schedule. Conflict types are also mapped to
 appropriate resolution categories such as move, shorten, substitute, or skip,
 without yet choosing a specific revised schedule.
 
-### 3.4.3 Adaptive Schedule Recommendations
+### 3.4.3 Adaptive Schedule Recommendations — COMPLETE
 
-- [ ] Recommend an appropriate revised week when the planned day is unavailable.
-- [ ] Explain why the proposed rearrangement is appropriate.
-- [ ] Let the user accept or reject the proposed schedule change.
-- [ ] Preserve user control rather than silently rearranging the program.
-- [ ] Integrate backup/home/shortened workouts when substitution is preferable
+- [x] Recommend an appropriate revised week when the planned day is unavailable.
+- [x] Explain why the proposed rearrangement is appropriate.
+- [x] Let the user accept or reject the proposed schedule change.
+- [x] Preserve user control rather than silently rearranging the program.
+- [x] Integrate backup/home/shortened workouts when substitution is preferable
   to rescheduling.
-- [ ] Recalculate downstream weekly recommendations after an accepted schedule
+- [x] Recalculate downstream weekly recommendations after an accepted schedule
   change.
 
-**Target outcome:** when real life disrupts the default Monday / Wednesday /
-Friday training rhythm, Fitness OS can intelligently rearrange the week rather
-than treating the disruption as an automatic failure.
+**Completed outcome:** adaptive scheduling now turns real-life availability
+constraints into an explicit proposed schedule rather than silently changing the
+training plan. Whole-day unavailability can trigger a bounded search for a
+lower-conflict rearrangement of required activities, with optional
+substitution-group conflicts resolved through explicit skip/substitute
+recommendations where appropriate.
+
+Strength-specific constraints can preserve the planned training day instead of
+unnecessarily rearranging the week. Gym unavailability can recommend an
+executable Home variant, while a time constraint can recommend the Short Gym
+variant. Accepted occurrence-specific variant choices are persisted separately
+from the underlying Gym A / Gym B / Gym C identity and remain attached to the
+occurrence through schedule resolution and rescheduling.
+
+The user reviews the recommendation and explanation before applying it. Accepted
+moves, optional occurrence adjustments, and strength-variant overrides are
+persisted as schedule overlays, after which Today, the weekly schedule,
+adherence/progression evaluation, and scheduled workout launch consume the
+updated resolved state. Rejected recommendations leave the plan unchanged.
 
 **Milestone:** Fitness OS adapts training load, running progression, recovery,
 and weekly scheduling rather than merely moving through a fixed calendar.
@@ -875,18 +891,22 @@ interrupts it.
     - Persisted weekly decision records
     - Reversible manual progression override
 
-### Current
-
-11. **Phase 3.3 — Steady-State Programming**
+11. Phase 3.3 — Steady-State Programming
     - 3.3.1 Steady-State Strength Programming — COMPLETE
     - 3.3.2 Weekly Conditioning Structure — COMPLETE
     - 3.3.3 Adaptive Running Progression — COMPLETE
-    - 3.3.4 Deload and Return-to-Training Validation - COMPLETE
+    - 3.3.4 Deload and Return-to-Training Validation — COMPLETE
+12. Phase 3.4 — Adaptive Scheduling
+    - 3.4.1 Activity Rescheduling — COMPLETE
+    - 3.4.2 Schedule Conflict Evaluation — COMPLETE
+    - 3.4.3 Adaptive Schedule Recommendations — COMPLETE
 
-### After Phase 3.3
+### Current
 
-12. **Phase 3.4 — Adaptive Scheduling - NEXT**
-13. Phase 4 — Body Composition and Goal Progress
+13. **Phase 4 — Body Composition and Goal Progress — NEXT**
+
+### After Phase 4
+
 14. Phase 5 — Nutrition and Daily Activity
 15. Phase 6 — Weekly Review and Progress Improvements
 
