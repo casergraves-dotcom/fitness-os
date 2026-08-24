@@ -56,6 +56,10 @@ import {
   getTrainingScheduleForDate,
 } from "@/features/workout/utils/getTrainingScheduleForDate";
 
+import {
+  getResolvedWeeklyActivityOccurrences,
+} from "@/features/workout/logic/getResolvedWeeklyActivityOccurrences";
+
 // ============================================================
 // Types
 // ============================================================
@@ -254,11 +258,22 @@ export function getCurrentWeeklyProgress(
     return null;
   }
 
+  const resolvedOccurrences =
+    getResolvedWeeklyActivityOccurrences(
+      state,
+      weekStartDate
+    );
+
+  if (!resolvedOccurrences) {
+    return null;
+  }
+
   const adherence =
     evaluateWeeklyAdherence(
       trainingWeek,
       weekStartDate,
-      completions
+      completions,
+      resolvedOccurrences
     );
 
   if (!adherence) {

@@ -57,6 +57,8 @@ import {
 
 import WeeklyDecisionRecord from "../components/WeeklyDecisionRecord";
 
+import WeeklySchedule from "../components/WeeklySchedule";
+
 // ============================================================
 // Today Screen
 // ============================================================
@@ -93,6 +95,8 @@ export default function TodayScreen() {
     applyWeeklyProgressionDecision,
 
     overrideProgressionDecision,
+
+    rescheduleTrainingActivity,
   } = useTrainingPlanState();
 
   const {
@@ -329,6 +333,23 @@ export default function TodayScreen() {
             }
           }
 
+          onRescheduleActivity={
+            (
+              activity,
+              scheduledDate
+            ) => {
+              if (!schedule) {
+                return;
+              }
+
+              rescheduleTrainingActivity(
+                activity.id,
+                schedule.date,
+                scheduledDate
+              );
+            }
+          }
+
           onStartPlan={
             handleStartPlan
           }
@@ -369,6 +390,30 @@ export default function TodayScreen() {
             setRatings
           }
         />
+
+        {/* ====================================================
+            Weekly Schedule
+        ==================================================== */}
+
+        <WeeklySchedule
+          state={
+            trainingPlanState
+          }
+
+          completions={
+            trainingActivityCompletions
+          }
+
+          loaded={
+            trainingPlanStateLoaded &&
+            trainingActivityCompletionsLoaded
+          }
+
+          currentDate={
+            new Date()
+          }
+        />
+
 
         {/* ====================================================
             Weekly Progress

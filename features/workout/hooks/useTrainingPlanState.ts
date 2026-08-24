@@ -14,6 +14,10 @@ import {
 } from "../logic/applyTrainingInterruption";
 
 import {
+  applyTrainingActivityReschedule,
+} from "../logic/applyTrainingActivityReschedule";
+
+import {
   overrideWeeklyProgressionDecision,
 } from "../logic/overrideWeeklyProgressionDecision";
 
@@ -399,6 +403,51 @@ export function useTrainingPlanState() {
 
 
   // ----------------------------------------------------------
+  // Reschedule Training Activity
+  // ----------------------------------------------------------
+  //
+  // Moves one specific scheduled activity occurrence without
+  // mutating the underlying TrainingPlan template.
+  //
+  // Moving the same occurrence again replaces its destination.
+  // Moving it back to originalDate removes the reschedule.
+
+  function rescheduleTrainingActivity(
+    trainingActivityId: string,
+    originalDate: string,
+    scheduledDate: string
+  ) {
+    if (!state) {
+      return;
+    }
+
+    const nextState =
+      applyTrainingActivityReschedule({
+        state,
+
+        trainingActivityId,
+
+        originalDate,
+
+        scheduledDate,
+
+        rescheduledAt:
+          new Date().toISOString(),
+      });
+
+    if (
+      nextState === state
+    ) {
+      return;
+    }
+
+    saveState(
+      nextState
+    );
+  }
+
+
+  // ----------------------------------------------------------
   // Public API
   // ----------------------------------------------------------
 
@@ -417,6 +466,8 @@ export function useTrainingPlanState() {
     overrideProgressionDecision,
 
     applyTrainingInterruptionDecision,
+
+    rescheduleTrainingActivity,
 
     clearTrainingPlan,
   };

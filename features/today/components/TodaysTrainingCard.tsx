@@ -54,6 +54,11 @@ interface TodaysTrainingCardProps {
     activityId: string
   ) => void;
 
+  onRescheduleActivity: (
+    activity: TrainingActivity,
+    scheduledDate: string
+  ) => void;
+
   onStartPlan: () => void;
 
   onResetPlan: () => void;
@@ -331,6 +336,7 @@ export default function TodaysTrainingCard({
   isActivityCompleted,
   onCompleteActivity,
   onRemoveActivityCompletion,
+  onRescheduleActivity,
   onStartPlan,
   onResetPlan,
 }: TodaysTrainingCardProps) {
@@ -340,6 +346,56 @@ export default function TodaysTrainingCard({
   ] = useState<string | null>(
     null
   );
+
+  // ----------------------------------------------------------
+  // Activity Rescheduling
+  // ----------------------------------------------------------
+
+  const [
+    reschedulingActivity,
+    setReschedulingActivity,
+  ] = useState<TrainingActivity | null>(
+    null
+  );
+
+  const [
+    rescheduleDate,
+    setRescheduleDate,
+  ] = useState("");
+
+  function openReschedule(
+    activity: TrainingActivity
+  ) {
+    setReschedulingActivity(
+      activity
+    );
+
+    setRescheduleDate("");
+  }
+
+  function cancelReschedule() {
+    setReschedulingActivity(
+      null
+    );
+
+    setRescheduleDate("");
+  }
+
+  function confirmReschedule() {
+    if (
+      !reschedulingActivity ||
+      !rescheduleDate
+    ) {
+      return;
+    }
+
+    onRescheduleActivity(
+      reschedulingActivity,
+      rescheduleDate
+    );
+
+    cancelReschedule();
+  }
 
   // ----------------------------------------------------------
   // Reset Plan Confirmation
@@ -438,6 +494,100 @@ export default function TodaysTrainingCard({
         </div>
       </div>
     ) : null;
+
+  // ----------------------------------------------------------
+  // Activity Reschedule UI
+  // ----------------------------------------------------------
+
+  const rescheduleConfirmation =
+    reschedulingActivity ? (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
+        role="presentation"
+        onMouseDown={
+          (event) => {
+            if (
+              event.target ===
+              event.currentTarget
+            ) {
+              cancelReschedule();
+            }
+          }
+        }
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="reschedule-activity-title"
+          aria-describedby="reschedule-activity-description"
+          className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+        >
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+            Move Activity
+          </p>
+
+          <h2
+            id="reschedule-activity-title"
+            className="mt-1 text-xl font-bold text-slate-900"
+          >
+            Move {reschedulingActivity.label}
+          </h2>
+
+          <p
+            id="reschedule-activity-description"
+            className="mt-3 text-sm text-slate-600"
+          >
+            Choose another date for this scheduled activity. Its training prescription and activity identity will be preserved.
+          </p>
+
+          <label className="mt-5 block text-sm font-semibold text-slate-700">
+            New date
+            <input
+              type="date"
+              value={
+                rescheduleDate
+              }
+              min={
+                schedule?.date
+              }
+              onChange={
+                (event) =>
+                  setRescheduleDate(
+                    event.target.value
+                  )
+              }
+              className="mt-2 block w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-900"
+            />
+          </label>
+
+          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={
+                cancelReschedule
+              }
+              className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              disabled={
+                !rescheduleDate
+              }
+              onClick={
+                confirmReschedule
+              }
+              className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+            >
+              Move Activity
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : null;
+
 
   // ----------------------------------------------------------
   // Loading
@@ -1020,6 +1170,23 @@ export default function TodaysTrainingCard({
                   </div>
                 )}
 
+                {!completed && (
+                  <div className="mt-3 border-t border-slate-100 pt-3">
+                    <button
+                      type="button"
+                      onClick={
+                        () =>
+                          openReschedule(
+                            activity
+                          )
+                      }
+                      className="text-sm font-medium text-slate-600 underline decoration-slate-300 underline-offset-4 transition hover:text-blue-700"
+                    >
+                      Move to another date
+                    </button>
+                  </div>
+                )}
+
               </div>
             );
           }
@@ -1030,6 +1197,7 @@ export default function TodaysTrainingCard({
       </section>
 
       {resetPlanConfirmation}
+      {rescheduleConfirmation}
     </>
   );
 }

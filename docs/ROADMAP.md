@@ -584,13 +584,20 @@ the underlying training goals.
 
 ### 3.4.1 Activity Rescheduling
 
-- [ ] Allow a scheduled activity to be moved to another day.
-- [ ] Preserve the original training activity identity when rescheduled.
-- [ ] Record the original date and rescheduled date.
-- [ ] Ensure a legitimately rescheduled activity is not counted as a missed
+- [x] Allow a scheduled activity to be moved to another day.
+- [x] Preserve the original training activity identity when rescheduled.
+- [x] Record the original date and rescheduled date.
+- [x] Ensure a legitimately rescheduled activity is not counted as a missed
   adherence requirement on its original day.
-- [ ] Update Today's Mission and the remaining weekly schedule after an accepted
+- [x] Update Today's Mission and the remaining weekly schedule after an accepted
   move.
+
+**Completed:** Activity rescheduling is implemented as a persisted schedule
+overlay rather than a mutation of the underlying training-plan templates.
+Individual occurrences retain their original activity identity and original
+calendar-week ownership while adopting a new scheduled date. Rescheduled
+activities are reflected in Today, the training-week schedule, weekly adherence,
+and automatic progression evaluation, including cross-week moves.
 
 ### 3.4.2 Schedule Conflict Evaluation
 

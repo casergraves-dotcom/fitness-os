@@ -870,6 +870,45 @@ export interface TrainingInterruption {
 
 
 // ============================================================
+// Activity Rescheduling
+// ============================================================
+//
+// Rescheduling changes when one specific scheduled occurrence
+// should be performed without changing the underlying training
+// plan template or activity identity.
+//
+// trainingActivityId + originalDate identifies the occurrence.
+//
+// Example:
+//
+// Gym A is normally prescribed:
+//   Monday 2026-08-24
+//
+// User moves it to:
+//   Tuesday 2026-08-25
+//
+// The underlying Monday Gym A TrainingActivity remains unchanged.
+// Schedule resolution suppresses that occurrence on Monday and
+// exposes the same activity on Tuesday.
+// ============================================================
+
+export interface TrainingActivityReschedule {
+  // Stable TrainingActivity ID from the underlying plan.
+  trainingActivityId: string;
+
+  // Original local calendar date on which this occurrence was
+  // prescribed.
+  originalDate: string;
+
+  // New local calendar date on which it should be prescribed.
+  scheduledDate: string;
+
+  // Exact timestamp recording when the move was made.
+  rescheduledAt: string;
+}
+
+
+// ============================================================
 // Training Plan State
 // ============================================================
 
@@ -940,6 +979,18 @@ export interface TrainingPlanState {
   // Optional for backward compatibility with existing saved
   // training-plan state.
   trainingInterruption?: TrainingInterruption;
+
+  // User-requested moves of individual scheduled activity
+  // occurrences.
+  //
+  // This is an overlay on the resolved schedule. It does not
+  // mutate TrainingPlan templates, progression history, or the
+  // identity of the moved TrainingActivity.
+  //
+  // Optional for backward compatibility with training-plan
+  // state saved before activity rescheduling existed.
+  activityReschedules?:
+    TrainingActivityReschedule[];
 
   // Number of successfully progressed steady-state weeks
   // completed since the most recent deload.

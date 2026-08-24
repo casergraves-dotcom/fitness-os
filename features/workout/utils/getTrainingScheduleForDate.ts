@@ -560,7 +560,7 @@ function applyAdaptiveRunningProgression(
 // Get Training Schedule For Date
 // ============================================================
 
-export function getTrainingScheduleForDate(
+function getBaseTrainingScheduleForDate(
   plan: TrainingPlan,
   state: TrainingPlanState,
   targetDate: Date
@@ -866,4 +866,260 @@ export function getTrainingScheduleForDate(
 
     isRepeatedWeek,
   };
+}
+// ============================================================
+// Activity Rescheduling Overlay
+// ============================================================
+//
+// Rescheduling is applied after the normal schedule has been
+// fully resolved.
+//
+// This is intentionally outside the base resolver so a moved
+// activity can be recovered from its ORIGINAL calendar date,
+// including its:
+// - ramp / steady-state / deload template
+// - adaptive running prescription
+// - return-to-training overlay
+// - strength-volume prescription
+//
+// The underlying TrainingPlan templates remain immutable.
+
+function getRescheduledActivitiesForDate(
+  plan: TrainingPlan,
+  state: TrainingPlanState,
+  targetDate: Date
+): TrainingActivity[] {
+  const targetDateString =
+    formatLocalDate(
+      targetDate
+    );
+
+  const reschedules =
+    state.activityReschedules ??
+    [];
+
+  const destinationMoves =
+    reschedules.filter(
+      (reschedule) =>
+        reschedule.scheduledDate ===
+          targetDateString &&
+        reschedule.originalDate !==
+          targetDateString
+    );
+
+  const activities:
+    TrainingActivity[] = [];
+
+  for (
+    const reschedule of
+    destinationMoves
+  ) {
+    const originalDate =
+      parseLocalDate(
+        reschedule.originalDate
+      );
+
+    if (!originalDate) {
+      continue;
+    }
+
+    // Resolve the original occurrence without applying the
+    // rescheduling overlay again. This avoids recursion while
+    // preserving the exact prescription that belonged to the
+    // original date.
+    const originalSchedule =
+      getBaseTrainingScheduleForDate(
+        plan,
+        state,
+        originalDate
+      );
+
+    if (!originalSchedule) {
+      continue;
+    }
+
+    const activity =
+      originalSchedule
+        .trainingDay
+        .activities
+        .find(
+          (candidate) =>
+            candidate.id ===
+              reschedule
+                .trainingActivityId
+        );
+
+    if (!activity) {
+      continue;
+    }
+
+    activities.push(
+      activity
+    );
+  }
+
+  return activities;
+}
+
+
+function applyActivityRescheduling(
+  plan: TrainingPlan,
+  state: TrainingPlanState,
+  targetDate: Date,
+  schedule:
+    TrainingScheduleForDate
+): TrainingScheduleForDate {
+  const targetDateString =
+    formatLocalDate(
+      targetDate
+    );
+
+  const reschedules =
+    state.activityReschedules ??
+    [];
+
+  if (
+    reschedules.length ===
+    0
+  ) {
+    return schedule;
+  }
+
+
+  // ----------------------------------------------------------
+  // Suppress Original Occurrences
+  // ----------------------------------------------------------
+
+  const movedFromThisDate =
+    new Set(
+      reschedules
+        .filter(
+          (reschedule) =>
+            reschedule.originalDate ===
+              targetDateString &&
+            reschedule.scheduledDate !==
+              targetDateString
+        )
+        .map(
+          (reschedule) =>
+            reschedule
+              .trainingActivityId
+        )
+    );
+
+  const retainedActivities =
+    schedule
+      .trainingDay
+      .activities
+      .filter(
+        (activity) =>
+          !movedFromThisDate.has(
+            activity.id
+          )
+      );
+
+
+  // ----------------------------------------------------------
+  // Inject Destination Occurrences
+  // ----------------------------------------------------------
+
+  const movedToThisDate =
+    getRescheduledActivitiesForDate(
+      plan,
+      state,
+      targetDate
+    );
+
+
+  // Defensive de-duplication by activity ID.
+  //
+  // A valid state transition should already prevent one
+  // occurrence from having multiple active destinations, but
+  // older/manually edited state should not produce duplicates.
+  const activities = [
+    ...retainedActivities,
+  ];
+
+  for (
+    const activity of
+    movedToThisDate
+  ) {
+    if (
+      !activities.some(
+        (existing) =>
+          existing.id ===
+            activity.id
+      )
+    ) {
+      activities.push(
+        activity
+      );
+    }
+  }
+
+
+  // ----------------------------------------------------------
+  // No Change
+  // ----------------------------------------------------------
+
+  if (
+    activities.length ===
+      schedule
+        .trainingDay
+        .activities
+        .length &&
+    activities.every(
+      (activity, index) =>
+        activity ===
+          schedule
+            .trainingDay
+            .activities[index]
+    )
+  ) {
+    return schedule;
+  }
+
+
+  // ----------------------------------------------------------
+  // Result
+  // ----------------------------------------------------------
+
+  return {
+    ...schedule,
+
+    trainingDay: {
+      ...schedule.trainingDay,
+
+      activities,
+    },
+  };
+}
+
+
+// ============================================================
+// Public Schedule Resolver
+// ============================================================
+
+export function getTrainingScheduleForDate(
+  plan: TrainingPlan,
+  state: TrainingPlanState,
+  targetDate: Date
+): TrainingScheduleForDate | null {
+  const baseSchedule =
+    getBaseTrainingScheduleForDate(
+      plan,
+      state,
+      targetDate
+    );
+
+  if (!baseSchedule) {
+    return null;
+  }
+
+  return applyActivityRescheduling(
+    plan,
+    state,
+    targetDate,
+    baseSchedule
+  );
 }

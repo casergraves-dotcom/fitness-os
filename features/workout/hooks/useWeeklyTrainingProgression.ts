@@ -60,6 +60,10 @@ import {
   getTrainingScheduleForDate,
 } from "../utils/getTrainingScheduleForDate";
 
+import {
+  getResolvedWeeklyActivityOccurrences,
+} from "../logic/getResolvedWeeklyActivityOccurrences";
+
 
 // ============================================================
 // Types
@@ -448,11 +452,22 @@ export function useWeeklyTrainingProgression({
       // Evaluate Adherence
       // ------------------------------------------------------
 
+      const resolvedOccurrences =
+        getResolvedWeeklyActivityOccurrences(
+          state,
+          weekStartDate
+        );
+
+      if (!resolvedOccurrences) {
+        return;
+      }
+
       const adherence =
         evaluateWeeklyAdherence(
           trainingWeek,
           weekStartDate,
-          completions
+          completions,
+          resolvedOccurrences
         );
 
       if (!adherence) {

@@ -5,6 +5,10 @@ import type {
   TrainingWeek,
 } from "../types";
 
+import type {
+  ResolvedWeeklyActivityOccurrence,
+} from "./getResolvedWeeklyActivityOccurrences";
+
 
 // ============================================================
 // Types
@@ -192,56 +196,39 @@ export function evaluateWeeklyAdherence(
   week: TrainingWeek,
   weekStartDate: string,
   completions:
-    TrainingActivityCompletion[]
+    TrainingActivityCompletion[],
+  resolvedOccurrences?:
+    ResolvedWeeklyActivityOccurrence[]
 ): WeeklyAdherenceResult | null {
-  const startDate =
-    parseLocalDate(
-      weekStartDate
-    );
-
-  if (!startDate) {
-    return null;
-  }
-
-
   // ----------------------------------------------------------
   // Individual Scheduled Activities
   // ----------------------------------------------------------
+  //
+  // When resolvedOccurrences is supplied, adherence follows the
+  // current scheduled date of each occurrence while preserving
+  // ownership by its original calendar week.
+  //
+  // Without resolvedOccurrences, retain the legacy static-week
+  // behavior for backward compatibility with existing callers.
 
   const activities:
     ScheduledActivityAdherence[] = [];
 
-  for (
-    const trainingDay
-    of week.days
-  ) {
-    const dayOffset =
-      DAY_OFFSETS[
-        trainingDay.day
-      ];
-
-    const activityDate =
-      formatLocalDate(
-        addCalendarDays(
-          startDate,
-          dayOffset
-        )
-      );
-
-
+  if (resolvedOccurrences) {
     for (
-      const activity
-      of trainingDay.activities
+      const occurrence
+      of resolvedOccurrences
     ) {
+      const activity =
+        occurrence.activity;
+
       const completion =
         findCompletion(
           activity,
-          activityDate,
+          occurrence.date,
           completions
         );
 
-      // Activities inside substitution groups are evaluated
-      // collectively below rather than individually.
       const belongsToSubstitutionGroup =
         Boolean(
           activity.substitutionGroup
@@ -253,13 +240,12 @@ export function evaluateWeeklyAdherence(
         activity.type !== "Rest" &&
         !belongsToSubstitutionGroup;
 
-
       activities.push({
         date:
-          activityDate,
+          occurrence.date,
 
         day:
-          trainingDay.day,
+          occurrence.day,
 
         activity,
 
@@ -271,6 +257,74 @@ export function evaluateWeeklyAdherence(
 
         completion,
       });
+    }
+  } else {
+    const startDate =
+      parseLocalDate(
+        weekStartDate
+      );
+
+    if (!startDate) {
+      return null;
+    }
+
+    for (
+      const trainingDay
+      of week.days
+    ) {
+      const dayOffset =
+        DAY_OFFSETS[
+          trainingDay.day
+        ];
+
+      const activityDate =
+        formatLocalDate(
+          addCalendarDays(
+            startDate,
+            dayOffset
+          )
+        );
+
+      for (
+        const activity
+        of trainingDay.activities
+      ) {
+        const completion =
+          findCompletion(
+            activity,
+            activityDate,
+            completions
+          );
+
+        const belongsToSubstitutionGroup =
+          Boolean(
+            activity.substitutionGroup
+          );
+
+        const required =
+          activity.optional !== true &&
+          activity.type !== "Recovery" &&
+          activity.type !== "Rest" &&
+          !belongsToSubstitutionGroup;
+
+        activities.push({
+          date:
+            activityDate,
+
+          day:
+            trainingDay.day,
+
+          activity,
+
+          required,
+
+          completed:
+            completion !==
+            undefined,
+
+          completion,
+        });
+      }
     }
   }
 
