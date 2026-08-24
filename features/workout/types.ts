@@ -962,6 +962,39 @@ export interface TrainingActivityAdjustment {
 
 
 // ============================================================
+// Strength Variant Overrides
+// ============================================================
+//
+// Records which strength-workout variant should be used for one
+// specific scheduled strength occurrence.
+//
+// trainingActivityId + originalDate identifies the occurrence.
+//
+// This is separate from rescheduling and optional adjustments:
+// rescheduling changes WHEN an occurrence happens, while a variant
+// override changes HOW the scheduled strength session should be
+// executed without changing its underlying Gym A / B / C identity.
+// ============================================================
+
+export interface TrainingActivityVariantOverride {
+  // Stable TrainingActivity ID from the underlying plan.
+  trainingActivityId: string;
+
+  // Original local calendar date on which this occurrence was
+  // prescribed. This keeps the override attached to the same
+  // occurrence even if it is later rescheduled.
+  originalDate: string;
+
+  // Stable ID of the StrengthWorkoutVariant to use when this
+  // occurrence is started.
+  strengthWorkoutVariantId: string;
+
+  // Exact timestamp recording when the override was applied.
+  overriddenAt: string;
+}
+
+
+// ============================================================
 // Training Plan State
 // ============================================================
 
@@ -1056,6 +1089,14 @@ export interface TrainingPlanState {
   // before occurrence adjustments existed.
   activityAdjustments?:
     TrainingActivityAdjustment[];
+
+  // User-approved strength-workout variant choice for individual
+  // scheduled strength occurrences.
+  //
+  // Optional for backward compatibility with saved state created
+  // before adaptive strength-variant scheduling existed.
+  activityVariantOverrides?:
+    TrainingActivityVariantOverride[];
 
   // Number of successfully progressed steady-state weeks
   // completed since the most recent deload.

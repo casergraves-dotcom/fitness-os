@@ -30,6 +30,12 @@ export interface ResolvedWeeklyActivityOccurrence {
 
   // Fully resolved activity prescription.
   activity: TrainingActivity;
+
+  // Persisted strength-workout variant selected for this specific
+  // occurrence, if one exists. The override remains keyed to the
+  // original occurrence even when the activity is rescheduled.
+  strengthWorkoutVariantId?:
+    string;
 }
 
 
@@ -185,6 +191,28 @@ function getAdjustmentForOccurrence(
 
 
 // ============================================================
+// Strength Variant Override Lookup
+// ============================================================
+
+function getVariantOverrideForOccurrence(
+  state: TrainingPlanState,
+  trainingActivityId: string,
+  originalDate: string
+) {
+  return (
+    state.activityVariantOverrides ??
+    []
+  ).find(
+    (item) =>
+      item.trainingActivityId ===
+        trainingActivityId &&
+      item.originalDate ===
+        originalDate
+  );
+}
+
+
+// ============================================================
 // Resolve Weekly Activity Occurrences
 // ============================================================
 //
@@ -242,6 +270,9 @@ export function getResolvedWeeklyActivityOccurrences(
         [],
 
       activityAdjustments:
+        [],
+
+      activityVariantOverrides:
         [],
     };
 
@@ -309,6 +340,22 @@ export function getResolvedWeeklyActivityOccurrences(
       }
 
 
+      const variantOverride =
+        getVariantOverrideForOccurrence(
+          state,
+          originalActivity.id,
+          originalDateString
+        );
+
+
+      const strengthWorkoutVariantId =
+        originalActivity.type ===
+          "Strength"
+          ? variantOverride
+              ?.strengthWorkoutVariantId
+          : undefined;
+
+
       const reschedule =
         getRescheduleForOccurrence(
           state,
@@ -335,6 +382,8 @@ export function getResolvedWeeklyActivityOccurrences(
 
           activity:
             originalActivity,
+
+          strengthWorkoutVariantId,
         });
 
         continue;
@@ -366,6 +415,8 @@ export function getResolvedWeeklyActivityOccurrences(
 
           activity:
             originalActivity,
+
+          strengthWorkoutVariantId,
         });
 
         continue;
@@ -433,6 +484,8 @@ export function getResolvedWeeklyActivityOccurrences(
 
         activity:
           movedActivity,
+
+        strengthWorkoutVariantId,
       });
     }
   }

@@ -74,6 +74,11 @@ interface WeeklyScheduleProps {
       originalDate: string;
       action: "Skip" | "Substitute";
       substituteTrainingActivityId?: string;
+    }[],
+    variantOverrides: {
+      trainingActivityId: string;
+      originalDate: string;
+      strengthWorkoutVariantId: string;
     }[]
   ) => void;
 }
@@ -694,7 +699,20 @@ export default function WeeklySchedule({
         })
       ),
 
-      adjustments
+      adjustments,
+
+      recommendation.variantRecommendations.map(
+        (variantRecommendation) => ({
+          trainingActivityId:
+            variantRecommendation.trainingActivityId,
+
+          originalDate:
+            variantRecommendation.originalDate,
+
+          strengthWorkoutVariantId:
+            variantRecommendation.variantId,
+        })
+      )
     );
 
 

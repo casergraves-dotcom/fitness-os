@@ -6,6 +6,10 @@ import {
   applyTrainingActivityReschedule,
 } from "./applyTrainingActivityReschedule";
 
+import {
+  applyTrainingActivityVariantOverride,
+} from "./applyTrainingActivityVariantOverride";
+
 import type {
   TrainingActivityAdjustmentAction,
   TrainingPlanState,
@@ -43,6 +47,18 @@ export interface AdaptiveScheduleRecommendationAdjustment {
 }
 
 
+export interface AdaptiveScheduleRecommendationVariantOverride {
+  trainingActivityId:
+    string;
+
+  originalDate:
+    string;
+
+  strengthWorkoutVariantId:
+    string;
+}
+
+
 export interface ApplyAdaptiveScheduleRecommendationInput {
   state:
     TrainingPlanState;
@@ -52,6 +68,9 @@ export interface ApplyAdaptiveScheduleRecommendationInput {
 
   adjustments:
     AdaptiveScheduleRecommendationAdjustment[];
+
+  variantOverrides:
+    AdaptiveScheduleRecommendationVariantOverride[];
 
   appliedAt:
     string;
@@ -67,6 +86,7 @@ export interface ApplyAdaptiveScheduleRecommendationInput {
 //
 //   1. coordinated date moves
 //   2. optional Skip/Substitute occurrence adjustments
+//   3. per-occurrence strength-workout variant overrides
 //
 // Persistence belongs to the caller. This function only produces
 // the next TrainingPlanState.
@@ -76,6 +96,7 @@ export function applyAdaptiveScheduleRecommendation({
   state,
   moves,
   adjustments,
+  variantOverrides,
   appliedAt,
 }: ApplyAdaptiveScheduleRecommendationInput):
   TrainingPlanState {
@@ -130,6 +151,30 @@ export function applyAdaptiveScheduleRecommendation({
           adjustment.substituteTrainingActivityId,
 
         adjustedAt:
+          appliedAt,
+      });
+  }
+
+
+  for (
+    const variantOverride
+    of variantOverrides
+  ) {
+    nextState =
+      applyTrainingActivityVariantOverride({
+        state:
+          nextState,
+
+        trainingActivityId:
+          variantOverride.trainingActivityId,
+
+        originalDate:
+          variantOverride.originalDate,
+
+        strengthWorkoutVariantId:
+          variantOverride.strengthWorkoutVariantId,
+
+        overriddenAt:
           appliedAt,
       });
   }

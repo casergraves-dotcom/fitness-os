@@ -922,6 +922,17 @@ export default function TodaysTrainingCard({
               activity.type ===
               "Strength";
 
+            const activityContext =
+              schedule.activityContexts[
+                activity.id
+              ];
+
+            const scheduledStrengthVariantId =
+              isStrength
+                ? activityContext
+                    ?.strengthWorkoutVariantId
+                : undefined;
+
             const isRun =
               activity.type ===
               "Run";
@@ -1072,6 +1083,15 @@ export default function TodaysTrainingCard({
 
                               date:
                                 schedule.date,
+
+                              ...(
+                                scheduledStrengthVariantId
+                                  ? {
+                                      variant:
+                                        scheduledStrengthVariantId,
+                                    }
+                                  : {}
+                              ),
                             },
                           }}
                           className="inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"

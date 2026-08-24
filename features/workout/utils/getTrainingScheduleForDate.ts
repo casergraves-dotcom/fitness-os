@@ -18,6 +18,18 @@ import type {
 // Result
 // ============================================================
 
+export interface TrainingScheduleActivityContext {
+  // Original local calendar date on which this occurrence was
+  // prescribed. This remains stable if the occurrence is moved.
+  originalDate: string;
+
+  // Persisted strength-workout variant selected for this specific
+  // occurrence, if one exists.
+  strengthWorkoutVariantId?:
+    string;
+}
+
+
 export interface TrainingScheduleForDate {
   date: string;
 
@@ -48,6 +60,17 @@ export interface TrainingScheduleForDate {
 
   trainingDay:
     TrainingDay;
+
+  // Per-occurrence metadata keyed by stable TrainingActivity ID.
+  //
+  // This keeps occurrence-specific state separate from the reusable
+  // TrainingActivity template while still making it available to
+  // Today/workout launch consumers.
+  activityContexts:
+    Record<
+      string,
+      TrainingScheduleActivityContext
+    >;
 
   repeating: boolean;
 
@@ -557,6 +580,49 @@ function applyAdaptiveRunningProgression(
 
 
 // ============================================================
+// Activity Occurrence Context
+// ============================================================
+
+function getStrengthWorkoutVariantIdForOccurrence(
+  state: TrainingPlanState,
+  trainingActivityId: string,
+  originalDate: string
+) {
+  return (
+    state.activityVariantOverrides ??
+    []
+  ).find(
+    (override) =>
+      override.trainingActivityId ===
+        trainingActivityId &&
+      override.originalDate ===
+        originalDate
+  )?.strengthWorkoutVariantId;
+}
+
+
+function getActivityContext(
+  state: TrainingPlanState,
+  activity: TrainingActivity,
+  originalDate: string
+): TrainingScheduleActivityContext {
+  return {
+    originalDate,
+
+    strengthWorkoutVariantId:
+      activity.type ===
+        "Strength"
+        ? getStrengthWorkoutVariantIdForOccurrence(
+            state,
+            activity.id,
+            originalDate
+          )
+        : undefined,
+  };
+}
+
+
+// ============================================================
 // Get Training Schedule For Date
 // ============================================================
 
@@ -824,15 +890,39 @@ function getBaseTrainingScheduleForDate(
     );
 
 
+  const date =
+    formatLocalDate(
+      targetDate
+    );
+
+
+  const activityContexts:
+    Record<
+      string,
+      TrainingScheduleActivityContext
+    > = {};
+
+  for (
+    const activity of
+    trainingDay.activities
+  ) {
+    activityContexts[
+      activity.id
+    ] =
+      getActivityContext(
+        state,
+        activity,
+        date
+      );
+  }
+
+
   // ----------------------------------------------------------
   // Result
   // ----------------------------------------------------------
 
   return {
-    date:
-      formatLocalDate(
-        targetDate
-      ),
+    date,
 
     daysSinceStart,
 
@@ -856,6 +946,8 @@ function getBaseTrainingScheduleForDate(
     dayOfWeek,
 
     trainingDay,
+
+    activityContexts,
 
     repeating:
       trainingWeek.repeating ===
@@ -884,11 +976,20 @@ function getBaseTrainingScheduleForDate(
 //
 // The underlying TrainingPlan templates remain immutable.
 
+interface RescheduledActivityForDate {
+  activity:
+    TrainingActivity;
+
+  originalDate:
+    string;
+}
+
+
 function getRescheduledActivitiesForDate(
   plan: TrainingPlan,
   state: TrainingPlanState,
   targetDate: Date
-): TrainingActivity[] {
+): RescheduledActivityForDate[] {
   const targetDateString =
     formatLocalDate(
       targetDate
@@ -908,7 +1009,7 @@ function getRescheduledActivitiesForDate(
     );
 
   const activities:
-    TrainingActivity[] = [];
+    RescheduledActivityForDate[] = [];
 
   for (
     const reschedule of
@@ -953,9 +1054,12 @@ function getRescheduledActivitiesForDate(
       continue;
     }
 
-    activities.push(
-      activity
-    );
+    activities.push({
+      activity,
+
+      originalDate:
+        reschedule.originalDate,
+    });
   }
 
   return activities;
@@ -1040,43 +1144,58 @@ function applyActivityRescheduling(
     ...retainedActivities,
   ];
 
+
+  const activityContexts:
+    Record<
+      string,
+      TrainingScheduleActivityContext
+    > = {};
+
   for (
     const activity of
+    retainedActivities
+  ) {
+    const existingContext =
+      schedule.activityContexts[
+        activity.id
+      ];
+
+    activityContexts[
+      activity.id
+    ] =
+      existingContext ??
+      getActivityContext(
+        state,
+        activity,
+        targetDateString
+      );
+  }
+
+
+  for (
+    const moved of
     movedToThisDate
   ) {
     if (
       !activities.some(
         (existing) =>
           existing.id ===
-            activity.id
+            moved.activity.id
       )
     ) {
       activities.push(
-        activity
+        moved.activity
       );
+
+      activityContexts[
+        moved.activity.id
+      ] =
+        getActivityContext(
+          state,
+          moved.activity,
+          moved.originalDate
+        );
     }
-  }
-
-
-  // ----------------------------------------------------------
-  // No Change
-  // ----------------------------------------------------------
-
-  if (
-    activities.length ===
-      schedule
-        .trainingDay
-        .activities
-        .length &&
-    activities.every(
-      (activity, index) =>
-        activity ===
-          schedule
-            .trainingDay
-            .activities[index]
-    )
-  ) {
-    return schedule;
   }
 
 
@@ -1092,6 +1211,8 @@ function applyActivityRescheduling(
 
       activities,
     },
+
+    activityContexts,
   };
 }
 

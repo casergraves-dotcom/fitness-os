@@ -530,13 +530,19 @@ export function useTrainingPlanState() {
       originalDate: string;
       action: "Skip" | "Substitute";
       substituteTrainingActivityId?: string;
-    }[]
+    }[],
+    variantOverrides: {
+      trainingActivityId: string;
+      originalDate: string;
+      strengthWorkoutVariantId: string;
+    }[] = []
   ) {
     if (
       !state ||
       (
         moves.length === 0 &&
-        adjustments.length === 0
+        adjustments.length === 0 &&
+        variantOverrides.length === 0
       )
     ) {
       return;
@@ -550,6 +556,8 @@ export function useTrainingPlanState() {
         moves,
 
         adjustments,
+
+        variantOverrides,
 
         appliedAt:
           new Date().toISOString(),

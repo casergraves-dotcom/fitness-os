@@ -444,11 +444,13 @@ export default function TodayScreen() {
           onApplyAdaptiveScheduleRecommendation={
             (
               moves,
-              adjustments
+              adjustments,
+              variantOverrides
             ) => {
               applyAdaptiveScheduleRecommendation(
                 moves,
-                adjustments
+                adjustments,
+                variantOverrides
               );
             }
           }
