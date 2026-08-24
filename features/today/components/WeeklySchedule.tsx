@@ -23,6 +23,14 @@ import {
   evaluateProposedActivityReschedule,
 } from "@/features/workout/logic/evaluateProposedActivityReschedule";
 
+import {
+  getAdaptiveWeeklyScheduleRecommendation,
+} from "@/features/workout/logic/getAdaptiveWeeklyScheduleRecommendation";
+
+import type {
+  AdaptiveWeeklyScheduleRecommendation,
+} from "@/features/workout/logic/getAdaptiveWeeklyScheduleRecommendation";
+
 
 // ============================================================
 // Props
@@ -45,6 +53,14 @@ interface WeeklyScheduleProps {
     trainingActivityId: string,
     originalDate: string,
     scheduledDate: string
+  ) => void;
+
+  onRescheduleActivities: (
+    moves: {
+      trainingActivityId: string;
+      originalDate: string;
+      scheduledDate: string;
+    }[]
   ) => void;
 }
 
@@ -287,6 +303,7 @@ export default function WeeklySchedule({
   loaded,
   currentDate,
   onRescheduleActivity,
+  onRescheduleActivities,
 }: WeeklyScheduleProps) {
   const [
     movingOccurrence,
@@ -301,6 +318,28 @@ export default function WeeklySchedule({
     setMoveDate,
   ] =
     useState("");
+
+  const [
+    adjustingWeek,
+    setAdjustingWeek,
+  ] =
+    useState(false);
+
+  const [
+    unavailableDates,
+    setUnavailableDates,
+  ] =
+    useState<string[]>(
+      []
+    );
+
+  const [
+    recommendation,
+    setRecommendation,
+  ] =
+    useState<
+      AdaptiveWeeklyScheduleRecommendation | null
+    >(null);
   // ----------------------------------------------------------
   // Loading
   // ----------------------------------------------------------
@@ -499,6 +538,112 @@ export default function WeeklySchedule({
 
 
   // ----------------------------------------------------------
+  // Adaptive Weekly Recommendation
+  // ----------------------------------------------------------
+
+  const weekDates =
+    Array.from(
+      {
+        length:
+          7,
+      },
+      (
+        _,
+        index
+      ) =>
+        formatLocalDate(
+          addCalendarDays(
+            weekStart,
+            index
+          )
+        )
+    );
+
+
+  function toggleUnavailableDate(
+    date: string
+  ) {
+    setUnavailableDates(
+      (current) =>
+        current.includes(
+          date
+        )
+          ? current.filter(
+              (value) =>
+                value !==
+                date
+            )
+          : [
+              ...current,
+              date,
+            ].sort()
+    );
+
+    setRecommendation(
+      null
+    );
+  }
+
+
+  function closeWeekAdjustment() {
+    setAdjustingWeek(
+      false
+    );
+
+    setUnavailableDates(
+      []
+    );
+
+    setRecommendation(
+      null
+    );
+  }
+
+
+  function findRecommendation() {
+    if (
+      unavailableDates.length ===
+        0 ||
+      !state
+    ) {
+      return;
+    }
+
+    setRecommendation(
+      getAdaptiveWeeklyScheduleRecommendation({
+        state,
+        weekStartDate,
+        unavailableDates,
+      })
+    );
+  }
+
+
+  function applyRecommendation() {
+    if (!recommendation) {
+      return;
+    }
+
+    onRescheduleActivities(
+      recommendation.moves.map(
+        (move) => ({
+          trainingActivityId:
+            move.trainingActivityId,
+
+          originalDate:
+            move.originalDate,
+
+          scheduledDate:
+            move.scheduledDate,
+        })
+      )
+    );
+
+    closeWeekAdjustment();
+  }
+
+
+  // ----------------------------------------------------------
   // Render Group
   // ----------------------------------------------------------
 
@@ -554,9 +699,27 @@ export default function WeeklySchedule({
 
   return (
     <Card className="rounded-2xl p-6 shadow-sm">
-      <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
-        Training Week Schedule
-      </p>
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
+          Training Week Schedule
+        </p>
+
+        <button
+          type="button"
+          onClick={() => {
+            setAdjustingWeek(
+              true
+            );
+
+            setRecommendation(
+              null
+            );
+          }}
+          className="text-sm font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700"
+        >
+          Adjust week
+        </button>
+      </div>
 
       {inWeekGroups.length > 0 ? (
         <div className="mt-5 space-y-3">
@@ -580,6 +743,226 @@ export default function WeeklySchedule({
             {outsideWeekGroups.map(
               renderGroup
             )}
+          </div>
+        </div>
+      )}
+
+      {adjustingWeek && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4 py-6">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
+              Adjust Training Week
+            </p>
+
+            <h2 className="mt-2 text-xl font-semibold text-slate-900">
+              Which days are unavailable?
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Select the days when you cannot train. Fitness OS
+              will look for a safer way to rearrange the current
+              week without changing anything until you approve it.
+            </p>
+
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+              {weekDates.map(
+                (date) => {
+                  const selected =
+                    unavailableDates.includes(
+                      date
+                    );
+
+                  return (
+                    <button
+                      key={
+                        date
+                      }
+                      type="button"
+                      onClick={() =>
+                        toggleUnavailableDate(
+                          date
+                        )
+                      }
+                      className={
+                        selected
+                          ? "rounded-xl border border-blue-600 bg-blue-50 px-3 py-3 text-left text-blue-800"
+                          : "rounded-xl border border-slate-200 px-3 py-3 text-left text-slate-700 hover:bg-slate-50"
+                      }
+                    >
+                      <span className="block text-xs font-semibold uppercase tracking-wider">
+                        {new Date(
+                          `${date}T12:00:00`
+                        ).toLocaleDateString(
+                          undefined,
+                          {
+                            weekday:
+                              "short",
+                          }
+                        )}
+                      </span>
+
+                      <span className="mt-1 block text-xs">
+                        {new Date(
+                          `${date}T12:00:00`
+                        ).toLocaleDateString(
+                          undefined,
+                          {
+                            month:
+                              "short",
+
+                            day:
+                              "numeric",
+                          }
+                        )}
+                      </span>
+                    </button>
+                  );
+                }
+              )}
+            </div>
+
+            {!recommendation && (
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={
+                    closeWeekAdjustment
+                  }
+                  className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  disabled={
+                    unavailableDates.length ===
+                    0
+                  }
+                  onClick={
+                    findRecommendation
+                  }
+                  className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                >
+                  Find a Better Schedule
+                </button>
+              </div>
+            )}
+
+            {recommendation && (
+              <div className="mt-6 border-t border-slate-200 pt-6">
+                <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                    Suggested Week
+                  </p>
+
+                  <p className="mt-2 font-semibold text-slate-900">
+                    {recommendation.summary}
+                  </p>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-700">
+                    {recommendation.explanation}
+                  </p>
+                </div>
+
+                <div className="mt-5">
+                  <p className="text-sm font-semibold text-slate-900">
+                    Proposed moves
+                  </p>
+
+                  <div className="mt-2 divide-y divide-slate-200 rounded-xl border border-slate-200 px-4">
+                    {recommendation.moves.map(
+                      (move) => (
+                        <div
+                          key={`${move.trainingActivityId}-${move.originalDate}`}
+                          className="flex items-center justify-between gap-4 py-3"
+                        >
+                          <span className="text-sm font-medium text-slate-900">
+                            {move.label}
+                          </span>
+
+                          <span className="text-sm text-slate-600">
+                            {move.originalDayLabel}
+                            {" → "}
+                            {move.scheduledDayLabel}
+                          </span>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                {recommendation.optionalAdjustments.length >
+                  0 && (
+                  <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <p className="text-sm font-semibold text-amber-900">
+                      Optional sessions still need adjustment
+                    </p>
+
+                    <div className="mt-2 space-y-2">
+                      {recommendation.optionalAdjustments.map(
+                        (
+                          adjustment
+                        ) => (
+                          <p
+                            key={`${adjustment.trainingActivityId}-${adjustment.scheduledDate}`}
+                            className="text-sm leading-5 text-amber-800"
+                          >
+                            <span className="font-medium">
+                              {adjustment.scheduledDayLabel}
+                              {" — "}
+                              {adjustment.label}
+                            </span>
+                            {" "}
+                            may need to be moved, shortened,
+                            substituted, or skipped.
+                          </p>
+                        )
+                      )}
+                    </div>
+
+                    <p className="mt-3 text-xs leading-5 text-amber-700">
+                      Applying this recommendation will move only
+                      the proposed activities above. Fitness OS
+                      will not silently change these optional
+                      sessions.
+                    </p>
+                  </div>
+                )}
+
+                <div className="mt-6 flex flex-wrap justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={
+                      closeWeekAdjustment
+                    }
+                    className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                  >
+                    Keep Current Schedule
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={
+                      applyRecommendation
+                    }
+                    className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                  >
+                    Apply Recommendation
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {unavailableDates.length >
+              0 &&
+              recommendation ===
+                null && (
+                <p className="mt-4 text-xs text-slate-500">
+                  Nothing will change until you apply a
+                  recommendation.
+                </p>
+              )}
           </div>
         </div>
       )}

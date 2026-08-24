@@ -97,6 +97,8 @@ export default function TodayScreen() {
     overrideProgressionDecision,
 
     rescheduleTrainingActivity,
+
+    rescheduleTrainingActivities,
   } = useTrainingPlanState();
 
   const {
@@ -426,8 +428,17 @@ export default function TodayScreen() {
               );
             }
           }
-        />
 
+          onRescheduleActivities={
+            (
+              moves
+            ) => {
+              rescheduleTrainingActivities(
+                moves
+              );
+            }
+          }
+        />
 
         {/* ====================================================
             Weekly Progress

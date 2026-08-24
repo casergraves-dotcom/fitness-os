@@ -448,6 +448,67 @@ export function useTrainingPlanState() {
 
 
   // ----------------------------------------------------------
+  // Reschedule Multiple Training Activities
+  // ----------------------------------------------------------
+  //
+  // Applies a coordinated set of activity moves as one state
+  // transition so later moves cannot overwrite earlier ones.
+
+  function rescheduleTrainingActivities(
+    moves: {
+      trainingActivityId: string;
+      originalDate: string;
+      scheduledDate: string;
+    }[]
+  ) {
+    if (
+      !state ||
+      moves.length === 0
+    ) {
+      return;
+    }
+
+    const rescheduledAt =
+      new Date().toISOString();
+
+    let nextState =
+      state;
+
+    for (
+      const move
+      of moves
+    ) {
+      nextState =
+        applyTrainingActivityReschedule({
+          state:
+            nextState,
+
+          trainingActivityId:
+            move.trainingActivityId,
+
+          originalDate:
+            move.originalDate,
+
+          scheduledDate:
+            move.scheduledDate,
+
+          rescheduledAt,
+        });
+    }
+
+    if (
+      nextState === state
+    ) {
+      return;
+    }
+
+    saveState(
+      nextState
+    );
+  }
+
+
+  // ----------------------------------------------------------
   // Public API
   // ----------------------------------------------------------
 
@@ -468,6 +529,8 @@ export function useTrainingPlanState() {
     applyTrainingInterruptionDecision,
 
     rescheduleTrainingActivity,
+
+    rescheduleTrainingActivities,
 
     clearTrainingPlan,
   };
