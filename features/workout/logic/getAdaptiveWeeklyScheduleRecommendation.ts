@@ -20,6 +20,14 @@ import type {
   WeeklyScheduleRearrangementStatus,
 } from "./evaluateWeeklyScheduleRearrangement";
 
+import {
+  recommendOptionalScheduleAdjustments,
+} from "./recommendOptionalScheduleAdjustments";
+
+import type {
+  OptionalScheduleAdjustmentAction,
+} from "./recommendOptionalScheduleAdjustments";
+
 
 // ============================================================
 // Types
@@ -50,11 +58,8 @@ export interface AdaptiveWeeklyScheduleRecommendationMove {
 
 
 export interface AdaptiveWeeklyScheduleOptionalAdjustment {
-  trainingActivityId:
-    string;
-
-  label:
-    string;
+  action:
+    OptionalScheduleAdjustmentAction;
 
   scheduledDate:
     string;
@@ -64,6 +69,28 @@ export interface AdaptiveWeeklyScheduleOptionalAdjustment {
 
   substitutionGroup?:
     string;
+
+  conflictingActivities: {
+    trainingActivityId:
+      string;
+
+    label:
+      string;
+
+    type:
+      TrainingActivityType;
+  }[];
+
+  replacementActivity?: {
+    trainingActivityId:
+      string;
+
+    label:
+      string;
+
+    type:
+      TrainingActivityType;
+  };
 
   reason:
     string;
@@ -193,32 +220,6 @@ function getOccurrenceKey(
 }
 
 
-function getOptionalConflictDate(
-  conflict:
-    WeeklyScheduleRearrangementEvaluation[
-      "resolvableOptionalConflicts"
-    ][number],
-  optionalActivityId:
-    string
-) {
-  if (
-    conflict.conflict.first.activity.id ===
-    optionalActivityId
-  ) {
-    return conflict.conflict.first.date;
-  }
-
-  if (
-    conflict.conflict.second.activity.id ===
-    optionalActivityId
-  ) {
-    return conflict.conflict.second.date;
-  }
-
-  return "";
-}
-
-
 function buildSummary(
   unavailableDates:
     string[],
@@ -281,7 +282,7 @@ function buildExplanation(
         ? "1 optional session"
         : `${optionalAdjustmentCount} optional sessions`;
 
-    return `This plan preserves the required training structure without a blocking conflict. ${label} still need to be moved, shortened, substituted, or skipped.`;
+    return `This plan preserves the required training structure without a blocking conflict. I also found a concrete adjustment for ${label}.`;
   }
 
   return evaluation.reason;
@@ -437,80 +438,69 @@ export function getAdaptiveWeeklyScheduleRecommendation({
       );
 
 
-  const optionalAdjustmentByKey =
-    new Map<
-      string,
-      AdaptiveWeeklyScheduleOptionalAdjustment
-    >();
+  const optionalAdjustments:
+    AdaptiveWeeklyScheduleOptionalAdjustment[] =
+      recommendOptionalScheduleAdjustments({
+        state,
 
+        weekStartDate,
 
-  for (
-    const item
-    of best.resolvableOptionalConflicts
-  ) {
-    const optionalActivity =
-      item.resolution
-        .optionalActivity;
+        evaluation:
+          best,
+      }).map(
+        (adjustment) => ({
+          action:
+            adjustment.action,
 
-    if (!optionalActivity) {
-      continue;
-    }
+          scheduledDate:
+            adjustment.date,
 
+          scheduledDayLabel:
+            adjustment.dayLabel,
 
-    const scheduledDate =
-      getOptionalConflictDate(
-        item,
-        optionalActivity.id
+          substitutionGroup:
+            adjustment.substitutionGroup,
+
+          conflictingActivities:
+            adjustment
+              .conflictingActivities
+              .map(
+                (activity) => ({
+                  trainingActivityId:
+                    activity.id,
+
+                  label:
+                    activity.label,
+
+                  type:
+                    activity.type,
+                })
+              ),
+
+          replacementActivity:
+            adjustment.replacementActivity
+              ? {
+                  trainingActivityId:
+                    adjustment
+                      .replacementActivity
+                      .id,
+
+                  label:
+                    adjustment
+                      .replacementActivity
+                      .label,
+
+                  type:
+                    adjustment
+                      .replacementActivity
+                      .type,
+                }
+              : undefined,
+
+          reason:
+            adjustment.reason,
+        })
       );
-
-
-    const key =
-      [
-        optionalActivity.id,
-        scheduledDate,
-      ].join("|");
-
-
-    if (
-      optionalAdjustmentByKey.has(
-        key
-      )
-    ) {
-      continue;
-    }
-
-
-    optionalAdjustmentByKey.set(
-      key,
-      {
-        trainingActivityId:
-          optionalActivity.id,
-
-        label:
-          optionalActivity.label,
-
-        scheduledDate,
-
-        scheduledDayLabel:
-          getDayLabel(
-            scheduledDate
-          ),
-
-        substitutionGroup:
-          item.resolution
-            .substitutionGroup,
-
-        reason:
-          item.resolution.reason,
-      }
-    );
-  }
-
-
-  const optionalAdjustments =
-    Array.from(
-      optionalAdjustmentByKey.values()
-    );
 
 
   return {

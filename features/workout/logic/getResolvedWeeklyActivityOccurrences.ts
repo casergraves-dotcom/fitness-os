@@ -163,6 +163,28 @@ function getRescheduleForOccurrence(
 
 
 // ============================================================
+// Adjustment Lookup
+// ============================================================
+
+function getAdjustmentForOccurrence(
+  state: TrainingPlanState,
+  trainingActivityId: string,
+  originalDate: string
+) {
+  return (
+    state.activityAdjustments ??
+    []
+  ).find(
+    (item) =>
+      item.trainingActivityId ===
+        trainingActivityId &&
+      item.originalDate ===
+        originalDate
+  );
+}
+
+
+// ============================================================
 // Resolve Weekly Activity Occurrences
 // ============================================================
 //
@@ -218,6 +240,9 @@ export function getResolvedWeeklyActivityOccurrences(
 
       activityReschedules:
         [],
+
+      activityAdjustments:
+        [],
     };
 
 
@@ -255,6 +280,35 @@ export function getResolvedWeeklyActivityOccurrences(
         .trainingDay
         .activities
     ) {
+      const adjustment =
+        getAdjustmentForOccurrence(
+          state,
+          originalActivity.id,
+          originalDateString
+        );
+
+
+      // --------------------------------------------------------
+      // Skipped / Substituted Optional Occurrence
+      // --------------------------------------------------------
+      //
+      // Both persisted actions suppress this specific occurrence.
+      // A Substitute points at an existing peer activity; that
+      // replacement keeps its own normal resolved occurrence and
+      // is therefore not duplicated here.
+      //
+      // Defensive rule: only optional activities may be suppressed
+      // by this overlay. Invalid persisted state must not silently
+      // erase required training.
+
+      if (
+        adjustment &&
+        originalActivity.optional
+      ) {
+        continue;
+      }
+
+
       const reschedule =
         getRescheduleForOccurrence(
           state,

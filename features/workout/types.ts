@@ -909,6 +909,59 @@ export interface TrainingActivityReschedule {
 
 
 // ============================================================
+// Activity Occurrence Adjustments
+// ============================================================
+//
+// Records an intentional change to one specific scheduled
+// occurrence without mutating the underlying training-plan
+// template.
+//
+// trainingActivityId + originalDate identifies the occurrence.
+//
+// Skip:
+// Suppresses that occurrence for the owning calendar week.
+//
+// Substitute:
+// Suppresses that occurrence because another activity in the same
+// substitution group is being used instead. The replacement
+// activity keeps its own normal occurrence and identity.
+//
+// These adjustments are intentionally separate from rescheduling:
+// rescheduling changes WHEN an occurrence happens, while these
+// records change whether an optional occurrence should remain in
+// the resolved schedule.
+// ============================================================
+
+export type TrainingActivityAdjustmentAction =
+  | "Skip"
+  | "Substitute";
+
+
+export interface TrainingActivityAdjustment {
+  // Stable TrainingActivity ID from the underlying plan.
+  trainingActivityId: string;
+
+  // Original local calendar date on which this occurrence was
+  // prescribed. This preserves week ownership even if other
+  // schedule overlays move activities around it.
+  originalDate: string;
+
+  action:
+    TrainingActivityAdjustmentAction;
+
+  // Required for Substitute. This is the stable TrainingActivity
+  // ID of the existing peer occurrence that is being used instead.
+  //
+  // The resolver does not create a duplicate replacement
+  // occurrence; it suppresses only the substituted-away activity.
+  substituteTrainingActivityId?: string;
+
+  // Exact timestamp recording when the adjustment was made.
+  adjustedAt: string;
+}
+
+
+// ============================================================
 // Training Plan State
 // ============================================================
 
@@ -991,6 +1044,18 @@ export interface TrainingPlanState {
   // state saved before activity rescheduling existed.
   activityReschedules?:
     TrainingActivityReschedule[];
+
+  // User-approved Skip/Substitute decisions for individual
+  // scheduled activity occurrences.
+  //
+  // This overlay is separate from activityReschedules because it
+  // changes whether an optional occurrence remains scheduled,
+  // rather than changing its date.
+  //
+  // Optional for backward compatibility with saved state created
+  // before occurrence adjustments existed.
+  activityAdjustments?:
+    TrainingActivityAdjustment[];
 
   // Number of successfully progressed steady-state weeks
   // completed since the most recent deload.

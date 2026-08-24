@@ -99,6 +99,8 @@ export default function TodayScreen() {
     rescheduleTrainingActivity,
 
     rescheduleTrainingActivities,
+
+    applyAdaptiveScheduleRecommendation,
   } = useTrainingPlanState();
 
   const {
@@ -435,6 +437,18 @@ export default function TodayScreen() {
             ) => {
               rescheduleTrainingActivities(
                 moves
+              );
+            }
+          }
+
+          onApplyAdaptiveScheduleRecommendation={
+            (
+              moves,
+              adjustments
+            ) => {
+              applyAdaptiveScheduleRecommendation(
+                moves,
+                adjustments
               );
             }
           }

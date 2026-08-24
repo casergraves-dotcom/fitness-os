@@ -62,6 +62,20 @@ interface WeeklyScheduleProps {
       scheduledDate: string;
     }[]
   ) => void;
+
+  onApplyAdaptiveScheduleRecommendation: (
+    moves: {
+      trainingActivityId: string;
+      originalDate: string;
+      scheduledDate: string;
+    }[],
+    adjustments: {
+      trainingActivityId: string;
+      originalDate: string;
+      action: "Skip" | "Substitute";
+      substituteTrainingActivityId?: string;
+    }[]
+  ) => void;
 }
 
 
@@ -304,6 +318,7 @@ export default function WeeklySchedule({
   currentDate,
   onRescheduleActivity,
   onRescheduleActivities,
+  onApplyAdaptiveScheduleRecommendation,
 }: WeeklyScheduleProps) {
   const [
     movingOccurrence,
@@ -624,7 +639,48 @@ export default function WeeklySchedule({
       return;
     }
 
-    onRescheduleActivities(
+
+    const adjustments =
+      recommendation
+        .optionalAdjustments
+        .flatMap(
+          (adjustment) => {
+            if (
+              adjustment.action ===
+                "Substitute" &&
+              !adjustment.replacementActivity
+            ) {
+              return [];
+            }
+
+
+            return adjustment
+              .conflictingActivities
+              .map(
+                (activity) => ({
+                  trainingActivityId:
+                    activity.trainingActivityId,
+
+                  originalDate:
+                    adjustment.scheduledDate,
+
+                  action:
+                    adjustment.action,
+
+                  substituteTrainingActivityId:
+                    adjustment.action ===
+                      "Substitute"
+                      ? adjustment
+                          .replacementActivity
+                          ?.trainingActivityId
+                      : undefined,
+                })
+              );
+          }
+        );
+
+
+    onApplyAdaptiveScheduleRecommendation(
       recommendation.moves.map(
         (move) => ({
           trainingActivityId:
@@ -636,8 +692,11 @@ export default function WeeklySchedule({
           scheduledDate:
             move.scheduledDate,
         })
-      )
+      ),
+
+      adjustments
     );
+
 
     closeWeekAdjustment();
   }
@@ -896,36 +955,86 @@ export default function WeeklySchedule({
                   0 && (
                   <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
                     <p className="text-sm font-semibold text-amber-900">
-                      Optional sessions still need adjustment
+                      Optional session recommendations
                     </p>
 
-                    <div className="mt-2 space-y-2">
+                    <div className="mt-3 space-y-3">
                       {recommendation.optionalAdjustments.map(
                         (
                           adjustment
-                        ) => (
-                          <p
-                            key={`${adjustment.trainingActivityId}-${adjustment.scheduledDate}`}
-                            className="text-sm leading-5 text-amber-800"
-                          >
-                            <span className="font-medium">
-                              {adjustment.scheduledDayLabel}
-                              {" — "}
-                              {adjustment.label}
-                            </span>
-                            {" "}
-                            may need to be moved, shortened,
-                            substituted, or skipped.
-                          </p>
-                        )
+                        ) => {
+                          const conflictingLabel =
+                            adjustment
+                              .conflictingActivities
+                              .map(
+                                (
+                                  activity
+                                ) =>
+                                  activity.label
+                              )
+                              .join(
+                                " / "
+                              );
+
+                          return (
+                            <div
+                              key={`${adjustment.scheduledDate}-${adjustment.substitutionGroup ?? "optional"}-${adjustment.action}`}
+                              className="rounded-lg border border-amber-200 bg-white/60 p-3"
+                            >
+                              <p className="text-sm font-semibold text-amber-900">
+                                {adjustment.scheduledDayLabel}
+                                {" — "}
+                                {adjustment.action ===
+                                "Substitute"
+                                  ? "Substitute"
+                                  : "Skip"}
+                              </p>
+
+                              <p className="mt-1 text-sm leading-5 text-amber-800">
+                                {adjustment.action ===
+                                  "Substitute" &&
+                                adjustment.replacementActivity
+                                  ? (
+                                    <>
+                                      Replace{" "}
+                                      <span className="font-medium">
+                                        {conflictingLabel}
+                                      </span>
+                                      {" with "}
+                                      <span className="font-medium">
+                                        {
+                                          adjustment
+                                            .replacementActivity
+                                            .label
+                                        }
+                                      </span>
+                                      .
+                                    </>
+                                  )
+                                  : (
+                                    <>
+                                      Skip{" "}
+                                      <span className="font-medium">
+                                        {conflictingLabel}
+                                      </span>
+                                      {" for this week."}
+                                    </>
+                                  )}
+                              </p>
+
+                              <p className="mt-2 text-xs leading-5 text-amber-700">
+                                {adjustment.reason}
+                              </p>
+                            </div>
+                          );
+                        }
                       )}
                     </div>
 
                     <p className="mt-3 text-xs leading-5 text-amber-700">
-                      Applying this recommendation will move only
-                      the proposed activities above. Fitness OS
-                      will not silently change these optional
-                      sessions.
+                      Applying this recommendation will apply both
+                      the proposed moves and these optional session
+                      adjustments together.
                     </p>
                   </div>
                 )}

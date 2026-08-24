@@ -18,6 +18,10 @@ import {
 } from "../logic/applyTrainingActivityReschedule";
 
 import {
+  applyAdaptiveScheduleRecommendation as applyAdaptiveScheduleRecommendationTransition,
+} from "../logic/applyAdaptiveScheduleRecommendation";
+
+import {
   overrideWeeklyProgressionDecision,
 } from "../logic/overrideWeeklyProgressionDecision";
 
@@ -509,6 +513,63 @@ export function useTrainingPlanState() {
 
 
   // ----------------------------------------------------------
+  // Apply Adaptive Schedule Recommendation
+  // ----------------------------------------------------------
+  //
+  // The complete recommendation is produced by one pure state
+  // transition. The hook is responsible only for persistence.
+
+  function applyAdaptiveScheduleRecommendation(
+    moves: {
+      trainingActivityId: string;
+      originalDate: string;
+      scheduledDate: string;
+    }[],
+    adjustments: {
+      trainingActivityId: string;
+      originalDate: string;
+      action: "Skip" | "Substitute";
+      substituteTrainingActivityId?: string;
+    }[]
+  ) {
+    if (
+      !state ||
+      (
+        moves.length === 0 &&
+        adjustments.length === 0
+      )
+    ) {
+      return;
+    }
+
+
+    const nextState =
+      applyAdaptiveScheduleRecommendationTransition({
+        state,
+
+        moves,
+
+        adjustments,
+
+        appliedAt:
+          new Date().toISOString(),
+      });
+
+
+    if (
+      nextState === state
+    ) {
+      return;
+    }
+
+
+    saveState(
+      nextState
+    );
+  }
+
+
+  // ----------------------------------------------------------
   // Public API
   // ----------------------------------------------------------
 
@@ -531,6 +592,8 @@ export function useTrainingPlanState() {
     rescheduleTrainingActivity,
 
     rescheduleTrainingActivities,
+
+    applyAdaptiveScheduleRecommendation,
 
     clearTrainingPlan,
   };
