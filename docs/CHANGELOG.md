@@ -127,8 +127,4 @@ It is not intended to duplicate every Git commit.
 
 ## Next
 
-See `ROADMAP.md`.
-
-The current development milestone is **Complete the Core Daily Coaching
-Loop**, beginning with replacing static Today Mission/Weekly Progress
-data with real application state.
+See `ROADMAP.md` for the current development milestone.

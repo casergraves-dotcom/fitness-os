@@ -660,7 +660,7 @@ and weekly scheduling rather than merely moving through a fixed calendar.
 
 **---**
 
-# Phase 4 --- Body Composition and Goal Progress
+# Phase 4 — Body Composition and Goal Progress
 
 ****Priority: CORE****
 
@@ -668,35 +668,121 @@ Fat loss is the primary outcome, so Fitness OS needs to measure whether
 training and lifestyle are actually moving body composition in the
 desired direction.
 
+Phase 4 establishes longitudinal body-composition tracking, goal
+projection, and progress review while preserving the distinction between
+raw measurements, higher-quality assessments such as DEXA, and
+long-term trends.
+
+## 4.0 Body-Composition Storage Foundation
+
+- [ ] Define persistent data models for goals, measurements, DEXA records,
+      weekly check-ins, and progress-photo metadata.
+- [ ] Add authenticated cloud-backed storage for DEXA report files and
+      progress photos.
+- [ ] Keep uploaded files separate from structured Fitness OS record data.
+- [ ] Associate uploaded files with authenticated user-owned records.
+- [ ] Enforce per-user access controls for uploaded files.
+- [ ] Define file replacement and deletion behavior.
+- [ ] Ensure deleting a DEXA record/check-in can intentionally remove its
+      associated uploaded files.
+- [ ] Define behavior when metadata sync succeeds but file upload fails,
+      or vice versa.
+- [ ] Preserve device-local usability when optional files are unavailable.
+- [ ] Verify uploaded files remain private across user accounts.
+
 ## 4.1 Goal Profile
+
 - [ ] Add user goal configuration.
-- [ ] Support
-    fat-loss/body-composition goal as the primary goal.
-- [ ] Store
-    target/goal context without overemphasizing a single scale number.
+- [ ] Support fat-loss/body-composition goal as the primary goal.
+- [ ] Store target/goal context without overemphasizing a single scale number.
+- [ ] Support optional goal weight.
+- [ ] Support optional goal body-fat percentage.
 - [ ] Support relevant performance/hobby goals.
+- [ ] Store goal effective/start date.
+- [ ] Preserve historical goals when goals change.
+- [ ] Support expected rate of change.
+- [ ] Calculate projected goal completion date.
+- [ ] Recalculate projection from observed progress trends.
+- [ ] Compare actual rate of progress with expected rate.
+- [ ] Identify plateaus or unusually rapid changes without automatically
+      changing training or nutrition targets.
 
-## 4.2 Measurements
-- [ ] Body-weight logging and trend.
-- [ ] Waist measurement logging
-    and trend.
-- [ ] Optional body-composition entries when
-    available.
-- [ ] Use rolling trends rather than reacting to daily
-    weight noise.
+## 4.2 Measurements and Body Composition
 
-## 4.3 Progress Summary
-- [ ] Combine body-composition trend with strength
-    retention/progression.
+- [ ] Add body-weight logging.
+- [ ] Add waist measurement logging.
+- [ ] Add optional body-fat percentage logging.
+- [ ] Add optional lean-mass logging.
+- [ ] Support additional useful body-composition measurements where appropriate.
+- [ ] Record measurement date and optional notes.
+- [ ] Track measurement source/provenance.
+      - Manual measurement.
+      - Home scale/device.
+      - DEXA.
+- [ ] Preserve historical measurements rather than overwriting prior entries.
+- [ ] Distinguish raw measurements from calculated trend values.
+- [ ] Use rolling trends rather than reacting to daily weight noise.
+- [ ] Support comparison between measurements from selected dates.
+
+## 4.3 DEXA Records
+
+- [ ] Support optional DEXA scan records.
+- [ ] Store scan date.
+- [ ] Support upload and storage of the original DEXA report.
+- [ ] Store relevant DEXA-derived metrics when available.
+      - Body weight.
+      - Body-fat percentage.
+      - Fat mass.
+      - Lean mass.
+      - Other useful metrics supported by the report.
+- [ ] Preserve DEXA as a distinct measurement source rather than treating
+      it as interchangeable with home-scale estimates.
+- [ ] Support manual entry of DEXA values.
+- [ ] Treat automatic DEXA report extraction as an optional later enhancement.
+- [ ] Support comparison between DEXA scans.
+
+## 4.4 Weekly Progress Check-In
+
+- [ ] Add an optional weekly progress check-in.
+- [ ] Record current body weight.
+- [ ] Record waist measurement when available.
+- [ ] Record optional body-fat measurement.
+- [ ] Record optional notes.
+- [ ] Support optional weekly progress photos.
+      - Front.
+      - Side.
+      - Back.
+- [ ] Associate progress photos with the check-in/measurement date.
+- [ ] Allow measurements or photos to be skipped without preventing
+      check-in completion.
+- [ ] Show change since the previous check-in.
+- [ ] Show rolling weight trend rather than relying on a single measurement.
+- [ ] Show progress toward the current goal.
+
+## 4.5 Progress Summary and Dashboard
+
+- [ ] Add body-weight trend visualization.
+- [ ] Add waist trend visualization.
+- [ ] Add body-fat trend visualization when sufficient data is available.
+- [ ] Add lean-mass trend visualization when sufficient data is available.
+- [ ] Clearly distinguish raw measurements from trend values.
+- [ ] Show progress toward the current goal.
+- [ ] Show expected versus actual rate of progress.
+- [ ] Show projected goal completion date.
+- [ ] Track meaningful progress milestones.
+- [ ] Add DEXA comparison view.
+- [ ] Add progress-photo timeline.
+- [ ] Add side-by-side progress-photo comparison.
+- [ ] Combine body-composition trend with strength retention/progression.
 - [ ] Combine running/cardio trend.
-- [ ] Combine adherence.
-- [ ] Highlight whether the current approach
-    appears to be working.
-- [ ] Avoid automatic training changes from
-    a single measurement.
+- [ ] Combine training adherence.
+- [ ] Highlight whether the current approach appears to be working.
+- [ ] Avoid automatic training changes from a single measurement or
+      short-term fluctuation.
 
-****Milestone:**** Fitness OS can answer ****"Is this program
-actually getting me toward the outcome I want?"****
+****Milestone:**** Fitness OS can answer ****"Is this program actually
+getting me toward the outcome I want?"**** using body-composition trends,
+goal progress, training performance, cardio progress, and adherence.
 
 **---**
 
@@ -707,31 +793,58 @@ actually getting me toward the outcome I want?"****
 Nutrition and daily movement materially affect the primary fat-loss
 goal, but Fitness OS should avoid becoming a cumbersome food diary.
 
+Phase 5 adds enough nutrition and general-activity context to explain
+body-composition progress without turning Fitness OS into a full
+calorie-tracking application.
+
 ## 5.1 Nutrition Targets
-- [ ] Configurable calorie target.
-- [ ] Configurable protein
-    target.
-- [ ] Simple daily adherence input.
-- [ ] Weekly protein
-    adherence.
-- [ ] Weekly calorie adherence where data is available.
+
+- [ ] Add configurable calorie target.
+- [ ] Add configurable protein target.
+- [ ] Preserve historical targets when targets change.
+- [ ] Record target effective dates.
+- [ ] Add simple daily nutrition adherence input.
+- [ ] Track weekly protein adherence.
+- [ ] Track weekly calorie adherence where data is available.
+- [ ] Distinguish target values from actual/adherence data.
 
 ## 5.2 Steps / General Activity
-- [ ] Configurable daily step target.
-- [ ] Daily step completion.
-- [ ] Weekly step adherence.
-- [ ] Consider automatic
-    health-platform import later.
 
-## 5.3 Guide Integration
-- [ ] Use nutrition/activity adherence as context, not punishment.
+- [ ] Add configurable daily step target.
+- [ ] Preserve historical step targets when targets change.
+- [ ] Add daily step logging/completion.
+- [ ] Track weekly step adherence.
+- [ ] Track general-activity trends where useful.
+- [ ] Consider automatic health-platform import later.
+
+## 5.3 Goal-Progress Integration
+
+- [ ] Combine nutrition adherence with Phase 4 body-composition trends.
+- [ ] Combine general-activity adherence with Phase 4 body-composition trends.
+- [ ] Use multiple weeks of evidence before identifying nutrition/activity
+      as a likely contributor to slower or faster progress.
+- [ ] Compare observed body-composition progress with the expected rate
+      established by the active goal.
+- [ ] Surface persistent patterns that may explain goal-progress trends.
+- [ ] Avoid drawing conclusions from individual high-calorie days,
+      low-step days, or isolated scale measurements.
+
+## 5.4 Guide Integration
+
+- [ ] Use nutrition/activity adherence as coaching context, not punishment.
 - [ ] Avoid compensatory exercise recommendations for individual
-    high-calorie days.
-- [ ] Surface persistent trends that materially
-    affect the goal.
+      high-calorie days.
+- [ ] Avoid automatically increasing training load to compensate for
+      nutrition adherence.
+- [ ] Surface persistent trends that materially affect the goal.
+- [ ] Explain when available evidence is insufficient to determine why
+      progress is faster or slower than expected.
+- [ ] Keep explicit user control over calorie, protein, and activity targets.
 
-****Milestone:**** Today's Mission and Weekly Progress can include
-real protein and step data instead of placeholders.
+****Milestone:**** Today's Mission and Weekly Progress can include real
+protein and step data, and Fitness OS can use nutrition and daily-activity
+context to better explain body-composition progress without becoming a
+full food diary.
 
 **---**
 
@@ -739,28 +852,66 @@ real protein and step data instead of placeholders.
 
 ****Priority: HIGH****
 
+Phase 6 turns the data established by the training system, Phase 4
+body-composition tracking, and Phase 5 nutrition/activity tracking into
+concise periodic reflection.
+
+Reflect should interpret existing data rather than duplicate the
+underlying tracking dashboards.
+
 ## 6.1 Weekly Review
+
+- [ ] Add a structured weekly review.
 - [ ] Summarize scheduled vs completed training.
-- [ ] Summarize
-    strength progress.
-- [ ] Summarize running progress.
+- [ ] Summarize strength progress.
+- [ ] Summarize running/cardio progress.
 - [ ] Summarize recovery trend.
-- [ ] Summarize body-composition trend
-    when available.
+- [ ] Summarize body-composition trend when sufficient data is available.
+- [ ] Summarize nutrition and daily-activity adherence when available.
+- [ ] Compare current progress with the active goal and expected rate.
 - [ ] Explain the next week's training decision.
-- [ ] Highlight one or two useful observations rather than dumping
-    metrics.
+- [ ] Highlight one or two useful observations rather than dumping metrics.
+- [ ] Distinguish meaningful trends from normal short-term noise.
+- [ ] Explicitly acknowledge when insufficient data exists to draw a useful
+      conclusion.
 
-## 6.2 Progress UX
+## 6.2 Longer-Term Progress Review
+
+- [ ] Support useful longer-term review periods.
+- [ ] Compare current body-composition progress with earlier periods.
+- [ ] Summarize strength retention/progression during fat loss.
+- [ ] Summarize cardiovascular progress.
+- [ ] Summarize adherence over the review period.
+- [ ] Surface meaningful milestones and PR/history highlights.
+- [ ] Incorporate DEXA comparisons when available.
+- [ ] Incorporate progress-photo comparisons when useful.
+- [ ] Evaluate whether the current approach appears to be moving toward
+      the active goal.
+- [ ] Avoid treating any single metric as the definition of success.
+
+## 6.3 Progress UX
+
 - [ ] Improve strength trend visualization.
-- [ ] Improve running
-    trend visualization.
+- [ ] Improve running trend visualization.
 - [ ] Improve recovery trend visualization.
-- [ ] Add body-composition trends.
-- [ ] Add adherence trends.
+- [ ] Improve adherence trend visualization.
+- [ ] Integrate Phase 4 body-composition views without duplicating them.
+- [ ] Integrate Phase 5 nutrition/activity context where useful.
 - [ ] Add meaningful PR/history highlights.
+- [ ] Make related progress signals easy to compare over the same time period.
 
-****Milestone:**** Reflect improves the next Guide decision.
+## 6.4 Guide Feedback Loop
+
+- [ ] Make Guide aware of the latest completed review.
+- [ ] Use persistent multi-week patterns as context for future recommendations.
+- [ ] Distinguish observations from actionable recommendations.
+- [ ] Avoid changing training from body-composition data alone.
+- [ ] Require training/recovery evidence before body-composition trends
+      influence training-load decisions.
+- [ ] Preserve user control over meaningful goal or target changes.
+
+****Milestone:**** Reflect explains what changed, why it may have changed,
+and what matters next, and those insights improve future Guide decisions.
 
 **---**
 
@@ -774,21 +925,29 @@ real protein and step data instead of placeholders.
     equipment.
 - [ ] Typical session-duration constraints.
 
-## 7.2 Goals and Targets
-- [ ] Protein target.
-- [ ] Step target.
-- [ ] Body-composition
-    goal.
-- [ ] Training emphasis/preferences.
+## 7.2 Coaching Preferences
 
-## 7.3 Account and Data
+- [ ] Add training emphasis/preferences.
+- [ ] Add preferred balance between strength, running/cardio, and active hobbies.
+- [ ] Add coaching aggressiveness/conservatism preferences where appropriate.
+- [ ] Add preferred reminder/check-in behavior where appropriate.
+- [ ] Keep goal configuration owned by Phase 4.
+- [ ] Keep nutrition and activity targets owned by Phase 5.
+
+## 7.3 Account, Privacy, and Data
+
 - [ ] Clear sign-out/account switching UX.
-- [ ] Review
-    first-time-user behavior.
+- [ ] Review first-time-user behavior.
 - [ ] Review empty-account onboarding.
-- [ ] Data export.
-- [ ] Intentional account/data deletion flow.
+- [ ] Add data export.
+- [ ] Include body-composition measurements and goal history in data export.
+- [ ] Define export behavior for uploaded DEXA reports and progress photos.
+- [ ] Add intentional account/data deletion flow.
+- [ ] Ensure deletion covers uploaded DEXA reports and progress photos.
 - [ ] Review cloud-sync status/error UX.
+- [ ] Review storage/error UX for uploaded files.
+- [ ] Ensure sensitive body-composition files and progress photos remain
+      private by default.
 
 ## 7.4 Exercise Guidance
 
@@ -811,6 +970,12 @@ real protein and step data instead of placeholders.
     where it improves rather than duplicates Fitness OS.
 - [ ] Define
     source-of-truth/conflict rules before enabling bidirectional writes.
+- [ ] Preserve imported measurement source/provenance.
+- [ ] Prevent duplicate measurements when the same record is imported repeatedly.
+- [ ] Define conflict/deduplication behavior between manually entered weight,
+      device-imported weight, and DEXA-derived measurements.
+- [ ] Preserve Phase 4 measurement history rather than silently overwriting
+      manually entered records.
 
 Integrations should reduce manual entry. They should not create a
 second, conflicting training history.
@@ -831,6 +996,9 @@ purpose-built shared data rather than exposing raw `fitness_os_data`.
 - [ ] Privacy controls.
 - [ ] Dedicated
     social database tables and RLS policies.
+- [ ] Treat body-composition measurements, DEXA reports, progress photos,
+      nutrition data, recovery data, and other sensitive health-related data
+      as private unless explicitly selected for sharing.
 
 ## 9.2 Challenges
 
@@ -877,6 +1045,63 @@ different programs and fitness levels.
 - [ ] Broader multi-user onboarding/product polish.
 
 **---**
+
+# Cross-Cutting Technical Debt and Maintenance
+
+These items should be addressed opportunistically when related code is already
+being modified. They should not displace core roadmap work unless they create
+correctness, privacy, data-loss, security, or significant maintainability risk.
+
+## Storage and Persistence
+
+- [ ] Consolidate `lib/storage/keys.ts` and
+      `lib/storage/fitnessOsStorageKeys.ts` into one canonical storage-key
+      registry.
+- [ ] Replace remaining duplicated/local string storage keys with references
+      to the canonical registry.
+- [ ] Establish a project-owned Supabase migration/policy structure before
+      adding DEXA report and progress-photo file storage.
+- [ ] Document the boundary between structured synchronized data and uploaded
+      binary files.
+- [ ] Review startup cloud hydration/conflict behavior as additional
+      cross-device editable datasets are introduced.
+- [ ] Add explicit recovery/error handling for partial cloud/file operations.
+
+## Shared Utilities
+
+- [ ] Consolidate duplicated `createId()` helpers into a shared utility.
+- [ ] Consolidate duplicated local-date formatting/parsing helpers where
+      practical.
+- [ ] Prefer shared typed persistence helpers over feature-specific
+      `localStorage` parsing for new persistent data.
+
+## Development Tooling
+
+- [ ] Create a production-gated `/dev/*` route namespace for reusable
+      development and diagnostic pages.
+- [ ] Add a small `/dev` tools index when multiple development utilities exist.
+- [ ] Move `/settings/cloud-test` to `/dev/cloud-test`.
+- [ ] Keep reusable diagnostics under `/dev`; delete truly one-time repair
+      utilities after use.
+
+## Code and UI Hygiene
+
+- [ ] Audit for malformed Tailwind utility strings and accidental class
+      concatenation.
+- [ ] Audit remaining mojibake/encoding artifacts such as broken multiplication
+      signs, arrows, bullets, and em dashes.
+- [ ] Keep mobile form controls at iOS-safe font sizes.
+- [ ] Continue validating fixed-navigation, modal, and safe-area behavior on
+      physical mobile devices.
+
+## Data Model Maintenance
+
+- [ ] Preserve backward compatibility when extending historical persisted
+      records.
+- [ ] Add explicit migrations only when older persisted data cannot be safely
+      interpreted by the current model.
+- [ ] Preserve provenance/source metadata when multiple measurement sources
+      represent equivalent metrics.
 
 # Near-Term Execution Order
 

@@ -1,5 +1,9 @@
 "use client";
 
+// ============================================================
+// Imports
+// ============================================================
+
 import {
   useState,
 } from "react";
@@ -27,6 +31,7 @@ import {
   FITNESS_OS_STORAGE_KEYS,
 } from "@/lib/storage/fitnessOsStorageKeys";
 
+
 // ============================================================
 // Cloud Test Page
 // ============================================================
@@ -46,252 +51,49 @@ export default function CloudTestPage() {
   ] =
     useState(false);
 
-// ----------------------------------------------------------
-// Test Sync Engine
-// ----------------------------------------------------------
 
-async function testSyncEngine() {
-  setLoading(true);
+  // ==========================================================
+  // Helpers
+  // ==========================================================
 
-  const key =
-    FITNESS_OS_STORAGE_KEYS.trainingPlanState;
-
-  const originalValue =
-    localStorage.getItem(key);
-
-  try {
-    const testData = {
-      syncEngineTest: true,
-      message:
-        "Fitness OS sync engine test",
-      createdAt:
-        new Date().toISOString(),
-    };
-
-    // Write temporary data locally.
-    localStorage.setItem(
-      key,
-      JSON.stringify(testData),
-    );
-
-    // Upload using the real sync engine.
-    await uploadStorageKey(key);
-
-    // Delete the local copy.
-    localStorage.removeItem(key);
-
-    // Download it back from Supabase.
-    const downloaded =
-      await downloadStorageKey(key);
-
-    const restoredValue =
-      localStorage.getItem(key);
-
-    setResult(
-      JSON.stringify(
+  function formatError(
+    error: unknown
+  ) {
+    if (
+      error instanceof Error
+    ) {
+      return JSON.stringify(
         {
-          downloaded,
-          restoredValue:
-            restoredValue
-              ? JSON.parse(restoredValue)
-              : null,
+          name:
+            error.name,
+
+          message:
+            error.message,
         },
         null,
-        2,
-      ),
-    );
-  } catch (error) {
-    console.error(
-      "Fitness OS sync engine test failed:",
-      error,
-    );
-
-    setResult(
-      JSON.stringify(
-        error,
-        null,
-        2,
-      ),
-    );
-  } finally {
-    // Restore whatever was there before the test.
-    if (originalValue === null) {
-      localStorage.removeItem(key);
-    } else {
-      localStorage.setItem(
-        key,
-        originalValue,
+        2
       );
     }
-
-    setLoading(false);
-  }
-}
-
-async function uploadWorkoutHistory() {
-  setLoading(true);
-
-  try {
-    await uploadStorageKey(
-      FITNESS_OS_STORAGE_KEYS.workoutHistory
-    );
-
-    setResult(
-      "Workout history uploaded to Supabase."
-    );
-  } catch (error) {
-    console.error(
-      "Workout history upload failed:",
-      error
-    );
-
-    setResult(
-      JSON.stringify(
-        error,
-        null,
-        2
-      )
-    );
-  } finally {
-    setLoading(false);
-  }
-}
-
-// ----------------------------------------------------------
-// Read Existing Cloud Storage Test
-// ----------------------------------------------------------
-
-async function readStorageTest() {
-  setLoading(true);
-
-  try {
-    const cloudRecord =
-      await readCloudData(
-        "fitness-os-sync-test"
-      );
-
-    setResult(
-      JSON.stringify(
-        cloudRecord,
-        null,
-        2
-      )
-    );
-  } catch (error) {
-    console.error(
-      "Fitness OS cloud storage read failed:",
-      error
-    );
-
-    setResult(
-      JSON.stringify(
-        error,
-        null,
-        2
-      )
-    );
-  } finally {
-    setLoading(false);
-  }
-}
-
-
-    // ----------------------------------------------------------
-// Test Cloud Storage Service
-// ----------------------------------------------------------
-
-async function testCloudStorage() {
-  setLoading(true);
-
-  try {
-    const testData = {
-      message:
-        "Fitness OS cloud storage service test",
-      testedAt:
-        new Date().toISOString(),
-      device:
-        navigator.userAgent,
-    };
-
-    await saveCloudData(
-      "fitness-os-sync-test",
-      testData
-    );
-
-    const cloudRecord =
-      await readCloudData(
-        "fitness-os-sync-test"
-      );
-
-    setResult(
-      JSON.stringify(
-        cloudRecord,
-        null,
-        2
-      )
-    );
-  } catch (error) {
-    console.error(
-      "Fitness OS cloud storage test failed:",
-      error
-    );
-
-    setResult(
-      JSON.stringify(
-        error,
-        null,
-        2
-      )
-    );
-  } finally {
-    setLoading(false);
-  }
-}
-
-    // ----------------------------------------------------------
-// Preview Local Snapshot
-// ----------------------------------------------------------
-
-function previewLocalSnapshot() {
-  try {
-    const snapshot =
-      createLocalStorageSnapshot();
-
-    setResult(
-      JSON.stringify(
-        snapshot,
-        null,
-        2
-      )
-    );
-  } catch (error) {
-    console.error(
-      "Fitness OS snapshot preview failed:",
-      error
-    );
 
     if (
-      typeof error === "object" &&
+      typeof error ===
+        "object" &&
       error !== null
     ) {
-      setResult(
-        JSON.stringify(
-          error,
-          null,
-          2
-        )
-      );
-    } else {
-      setResult(
-        String(error)
+      return JSON.stringify(
+        error,
+        null,
+        2
       );
     }
-  }
-}
 
-  // ----------------------------------------------------------
-  // Run Test
-  // ----------------------------------------------------------
+    return String(error);
+  }
+
+
+  // ==========================================================
+  // Run Cloud Test
+  // ==========================================================
 
   async function runTest() {
     setLoading(true);
@@ -301,10 +103,6 @@ function previewLocalSnapshot() {
     );
 
     try {
-      // ------------------------------------------------------
-      // Write
-      // ------------------------------------------------------
-
       const testData = {
         message:
           "Fitness OS cloud sync test",
@@ -318,10 +116,6 @@ function previewLocalSnapshot() {
         "cloud_test",
         testData
       );
-
-      // ------------------------------------------------------
-      // Read Back
-      // ------------------------------------------------------
 
       const record =
         await loadFitnessCloudData<
@@ -343,105 +137,350 @@ function previewLocalSnapshot() {
           2
         )
       );
-} catch (error) {
-  console.error(
-    "Fitness OS cloud test failed:",
-    error
-  );
+    } catch (error) {
+      console.error(
+        "Fitness OS cloud test failed:",
+        error
+      );
 
-  if (
-    typeof error === "object" &&
-    error !== null
-  ) {
-    setResult(
-      JSON.stringify(
-        error,
-        null,
-        2
-      )
-    );
-  } else {
-    setResult(
-      String(error)
-    );
-  }
-}
+      setResult(
+        formatError(
+          error
+        )
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
-  // ----------------------------------------------------------
+
+  // ==========================================================
+  // Preview Local Snapshot
+  // ==========================================================
+
+  function previewLocalSnapshot() {
+    try {
+      const snapshot =
+        createLocalStorageSnapshot();
+
+      setResult(
+        JSON.stringify(
+          snapshot,
+          null,
+          2
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Fitness OS snapshot preview failed:",
+        error
+      );
+
+      setResult(
+        formatError(
+          error
+        )
+      );
+    }
+  }
+
+
+  // ==========================================================
+  // Test Cloud Storage Service
+  // ==========================================================
+
+  async function testCloudStorage() {
+    setLoading(true);
+
+    try {
+      const testData = {
+        message:
+          "Fitness OS cloud storage service test",
+
+        testedAt:
+          new Date()
+            .toISOString(),
+
+        device:
+          navigator.userAgent,
+      };
+
+      await saveCloudData(
+        "fitness-os-sync-test",
+        testData
+      );
+
+      const cloudRecord =
+        await readCloudData(
+          "fitness-os-sync-test"
+        );
+
+      setResult(
+        JSON.stringify(
+          cloudRecord,
+          null,
+          2
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Fitness OS cloud storage test failed:",
+        error
+      );
+
+      setResult(
+        formatError(
+          error
+        )
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+  // ==========================================================
+  // Read Existing Cloud Storage Test
+  // ==========================================================
+
+  async function readStorageTest() {
+    setLoading(true);
+
+    try {
+      const cloudRecord =
+        await readCloudData(
+          "fitness-os-sync-test"
+        );
+
+      setResult(
+        JSON.stringify(
+          cloudRecord,
+          null,
+          2
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Fitness OS cloud storage read failed:",
+        error
+      );
+
+      setResult(
+        formatError(
+          error
+        )
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+  // ==========================================================
+  // Test Sync Engine
+  // ==========================================================
+
+  async function testSyncEngine() {
+    setLoading(true);
+
+    const key =
+      FITNESS_OS_STORAGE_KEYS
+        .trainingPlanState;
+
+    const originalValue =
+      localStorage.getItem(
+        key
+      );
+
+    try {
+      const testData = {
+        syncEngineTest:
+          true,
+
+        message:
+          "Fitness OS sync engine test",
+
+        createdAt:
+          new Date()
+            .toISOString(),
+      };
+
+      // Write temporary data locally.
+      localStorage.setItem(
+        key,
+        JSON.stringify(
+          testData
+        )
+      );
+
+      // Upload using the real sync engine.
+      await uploadStorageKey(
+        key
+      );
+
+      // Remove the local copy so the test proves
+      // that cloud hydration restores it.
+      localStorage.removeItem(
+        key
+      );
+
+      const downloaded =
+        await downloadStorageKey(
+          key
+        );
+
+      const restoredValue =
+        localStorage.getItem(
+          key
+        );
+
+      setResult(
+        JSON.stringify(
+          {
+            downloaded,
+
+            restoredValue:
+              restoredValue
+                ? JSON.parse(
+                    restoredValue
+                  )
+                : null,
+          },
+          null,
+          2
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Fitness OS sync engine test failed:",
+        error
+      );
+
+      setResult(
+        formatError(
+          error
+        )
+      );
+    } finally {
+      // Restore the local state that existed
+      // before the diagnostic test.
+      if (
+        originalValue ===
+        null
+      ) {
+        localStorage.removeItem(
+          key
+        );
+      } else {
+        localStorage.setItem(
+          key,
+          originalValue
+        );
+      }
+
+      setLoading(false);
+    }
+  }
+
+
+  // ==========================================================
   // Render
-  // ----------------------------------------------------------
+  // ==========================================================
 
   return (
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="mx-auto max-w-2xl">
+
         <h1 className="text-2xl font-bold text-slate-900">
           Fitness OS Cloud Test
         </h1>
 
         <p className="mt-2 text-sm text-slate-500">
-          Temporary test for authenticated Supabase reads and writes.
+          Development diagnostics for authenticated
+          Fitness OS cloud storage and synchronization.
         </p>
 
-        <button
-          type="button"
-          onClick={
-            runTest
-          }
-          disabled={
-            loading
-          }
-          className="mt-6 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white disabled:opacity-60"
-        >
-          {loading
-            ? "Testing..."
-            : "Run Cloud Test"}
-        </button>
 
-        <button
-  type="button"
-  onClick={
-    previewLocalSnapshot
-  }
-  disabled={
-    loading
-  }
-  className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
->
-  Preview Local Data
-</button>
+        <div className="mt-6 flex flex-wrap gap-3">
 
-<button
-  type="button"
-  onClick={testCloudStorage}
-  disabled={loading}
-  className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
->
-  Test Storage Service
-</button>
+          <button
+            type="button"
+            onClick={
+              runTest
+            }
+            disabled={
+              loading
+            }
+            className="rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white disabled:opacity-60"
+          >
+            {loading
+              ? "Testing..."
+              : "Run Cloud Test"}
+          </button>
 
-<button
-  type="button"
-  onClick={readStorageTest}
-  disabled={loading}
-  className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
->
-  Read Storage Test
-</button>
 
-<button
-  type="button"
-  onClick={testSyncEngine}
-  disabled={loading}
-  className="ml-3 mt-6 rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
->
-  Test Sync Engine
-</button>
+          <button
+            type="button"
+            onClick={
+              previewLocalSnapshot
+            }
+            disabled={
+              loading
+            }
+            className="rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
+          >
+            Preview Local Data
+          </button>
+
+
+          <button
+            type="button"
+            onClick={
+              testCloudStorage
+            }
+            disabled={
+              loading
+            }
+            className="rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
+          >
+            Test Storage Service
+          </button>
+
+
+          <button
+            type="button"
+            onClick={
+              readStorageTest
+            }
+            disabled={
+              loading
+            }
+            className="rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
+          >
+            Read Storage Test
+          </button>
+
+
+          <button
+            type="button"
+            onClick={
+              testSyncEngine
+            }
+            disabled={
+              loading
+            }
+            className="rounded-xl border border-blue-600 bg-white px-4 py-3 font-semibold text-blue-600 disabled:opacity-60"
+          >
+            Test Sync Engine
+          </button>
+
+        </div>
 
 
         <pre className="mt-6 overflow-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100">
           {result}
         </pre>
+
       </div>
     </main>
   );

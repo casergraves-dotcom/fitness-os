@@ -2,37 +2,68 @@
 // Fitness OS Storage Keys
 // ============================================================
 //
-// Central source of truth for Fitness OS persisted data.
+// Central source of truth for Fitness OS persisted data used by
+// the current localStorage/cloud-sync implementation.
 //
-// These keys intentionally match the existing localStorage keys
-// so cloud sync can be added without changing the data formats
-// already used throughout the app.
+// These values intentionally match the existing localStorage
+// keys so cloud sync does not change persisted data formats.
 // ============================================================
 
 export const FITNESS_OS_STORAGE_KEYS = {
-  customExercises: "fitness-os-custom-exercises",
-  workoutTemplates: "fitness-os-workout-templates",
-  trainingPlanState: "fitness-os-training-plan-state",
+  customExercises:
+    "fitness-os-custom-exercises",
+
+  workoutTemplates:
+    "fitness-os-workout-templates",
+
+  trainingPlanState:
+    "fitness-os-training-plan-state",
+
   trainingActivityCompletions:
     "fitness-os-training-activity-completions",
-  morningCheckIns: "fitness-os-morning-check-ins",
-  workoutHistory: "fitness-os-workout-history",
-  runHistory: "fitness-os-run-history",
+
+  morningCheckIns:
+    "fitness-os-morning-check-ins",
+
+  workoutHistory:
+    "fitness-os-workout-history",
+
+  runHistory:
+    "fitness-os-run-history",
 
   // ----------------------------------------------------------
-  // Device-local only for now
+  // Body Composition / Goal Progress
   // ----------------------------------------------------------
 
-  activeWorkout: "fitness-os-active-workout",
-  activeRun: "fitness-os-active-run",
+  goalHistory:
+    "fitness-os-goal-history",
+
+  bodyMeasurements:
+    "fitness-os-body-measurements",
+
+  dexaRecords:
+    "fitness-os-dexa-records",
+
+  progressCheckIns:
+    "fitness-os-progress-check-ins",
+
+  // ----------------------------------------------------------
+  // Device-Local Only
+  // ----------------------------------------------------------
+
+  activeWorkout:
+    "fitness-os-active-workout",
+
+  activeRun:
+    "fitness-os-active-run",
 } as const;
+
 
 // ============================================================
 // Cloud Sync Keys
 // ============================================================
 //
-// Only completed/persistent data is synchronized during the
-// first sync phase.
+// Persistent Fitness OS records are synchronized.
 //
 // Active workout/run state stays device-local until conflict
 // handling is implemented.
@@ -46,7 +77,13 @@ export const FITNESS_OS_SYNC_KEYS = [
   FITNESS_OS_STORAGE_KEYS.morningCheckIns,
   FITNESS_OS_STORAGE_KEYS.workoutHistory,
   FITNESS_OS_STORAGE_KEYS.runHistory,
+
+  FITNESS_OS_STORAGE_KEYS.goalHistory,
+  FITNESS_OS_STORAGE_KEYS.bodyMeasurements,
+  FITNESS_OS_STORAGE_KEYS.dexaRecords,
+  FITNESS_OS_STORAGE_KEYS.progressCheckIns,
 ] as const;
+
 
 export type FitnessOsSyncKey =
   (typeof FITNESS_OS_SYNC_KEYS)[number];

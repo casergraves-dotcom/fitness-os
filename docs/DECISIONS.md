@@ -248,3 +248,27 @@ work. `DECISIONS.md` documents accepted constraints and rationale.
 
 **Consequence:** Do not describe planned systems as implemented
 architecture.
+
+------------------------------------------------------------------------
+
+## D-017 --- Structured fitness data and uploaded files use separate persistence paths
+
+**Status:** Accepted
+
+Structured Fitness OS records remain part of the local-first persistence and
+cloud synchronization model.
+
+Large binary user files such as DEXA reports and progress photos must not be
+embedded in `localStorage` or `fitness_os_data`.
+
+Those files will use private authenticated object storage. Structured Fitness OS
+records may contain metadata and storage references needed to associate those
+files with goals, measurements, DEXA scans, or progress check-ins.
+
+**Why:** Binary files have different storage, synchronization, privacy, and
+failure-handling requirements from small structured application records.
+
+**Consequence:** Features that accept uploaded files must preserve the existing
+local-first behavior for structured data while treating file upload/download as
+a separate persistence concern. Uploaded fitness files remain private by
+default and must preserve authenticated user ownership.

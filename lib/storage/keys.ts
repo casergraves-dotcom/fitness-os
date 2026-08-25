@@ -30,17 +30,40 @@ export const STORAGE_KEYS = {
   trainingActivityCompletions:
     "fitness-os-training-activity-completions",
 
+  // ----------------------------------------------------------
+  // Body Composition / Goal Progress
+  // ----------------------------------------------------------
+
+  goalHistory:
+    "fitness-os-goal-history",
+
+  bodyMeasurements:
+    "fitness-os-body-measurements",
+
+  dexaRecords:
+    "fitness-os-dexa-records",
+
+  progressCheckIns:
+    "fitness-os-progress-check-ins",
+
+  // ----------------------------------------------------------
+  // Local Migration Markers
+  // ----------------------------------------------------------
+
   exerciseIdMigrationV1:
     "fitness-os-exercise-id-migration-v1",
 } as const;
+
 
 // ============================================================
 // Cloud-Synced Data
 // ============================================================
 //
-// Phase 1 intentionally excludes active workout/run state.
-// Those require more careful conflict handling.
+// Persistent Fitness OS records are synchronized.
 //
+// Active workout/run state remains device-local until
+// cross-device conflict handling is deliberately implemented.
+// ============================================================
 
 export const CLOUD_SYNC_STORAGE_KEYS = [
   STORAGE_KEYS.morningCheckIns,
@@ -50,7 +73,13 @@ export const CLOUD_SYNC_STORAGE_KEYS = [
   STORAGE_KEYS.workoutTemplates,
   STORAGE_KEYS.workoutHistory,
   STORAGE_KEYS.trainingActivityCompletions,
+
+  STORAGE_KEYS.goalHistory,
+  STORAGE_KEYS.bodyMeasurements,
+  STORAGE_KEYS.dexaRecords,
+  STORAGE_KEYS.progressCheckIns,
 ] as const;
+
 
 // ============================================================
 // Types
