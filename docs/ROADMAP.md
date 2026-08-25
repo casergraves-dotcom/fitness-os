@@ -113,6 +113,11 @@ recommend the most appropriate action today.
 - [x] Exercise progress views
 - [x] Persistent workout
     history cloud sync
+- [x] Exercise-type-aware workout inputs and history formatting
+- [x] Per-side repetition labeling for unilateral exercises
+- [x] Resistance-band load tracking with band-specific resistance selection
+- [x] Mobile-friendly workout numeric inputs without unwanted input zoom
+- [x] Empty numeric fields remain editable instead of forcing zero during entry
 
 ### Training plan
 - [x] Structured return-to-training ramp
@@ -759,7 +764,7 @@ real protein and step data instead of placeholders.
 
 **---**
 
-# Phase 7 --- Settings and Personalization
+# Phase 7 --- Personalization and Exercise Guidance
 
 ## 7.1 Training Preferences
 - [ ] Preferred gym days.
@@ -784,6 +789,14 @@ real protein and step data instead of placeholders.
 - [ ] Data export.
 - [ ] Intentional account/data deletion flow.
 - [ ] Review cloud-sync status/error UX.
+
+## 7.4 Exercise Guidance
+
+- [ ] Add an optional exercise demo/details view.
+- [ ] Show concise setup and execution instructions.
+- [ ] Add visual demonstrations where they materially improve exercise understanding.
+- [ ] Surface exercise-specific guidance such as unilateral/per-side execution.
+- [ ] Keep guidance unobtrusive during normal workout logging.
 
 **---**
 
@@ -900,15 +913,20 @@ interrupts it.
     - 3.4.1 Activity Rescheduling — COMPLETE
     - 3.4.2 Schedule Conflict Evaluation — COMPLETE
     - 3.4.3 Adaptive Schedule Recommendations — COMPLETE
+13. Workout execution UX polish — COMPLETE
+    - Exercise-type-aware input and history formatting
+    - Per-side repetition guidance
+    - Resistance-band load tracking
+    - Mobile numeric-input improvements
 
 ### Current
 
-13. **Phase 4 — Body Composition and Goal Progress — NEXT**
+14. **Phase 4 — Body Composition and Goal Progress — NEXT**
 
 ### After Phase 4
 
-14. Phase 5 — Nutrition and Daily Activity
-15. Phase 6 — Weekly Review and Progress Improvements
+15. Phase 5 — Nutrition and Daily Activity
+16. Phase 6 — Weekly Review and Progress Improvements
 
 Personalization, health integrations, social features, and advanced platform
 work remain mapped for later and should not displace the core coaching loop.
