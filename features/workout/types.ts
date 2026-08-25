@@ -384,14 +384,19 @@ export type ExerciseProgressionType =
 // Bodyweight or movements without external resistance.
 //
 // Weight:
-// External resistance that makes the exercise harder.
+// Conventional external load recorded numerically in pounds.
 //
 // Assistance:
-// External assistance that makes the exercise easier.
+// External assistance recorded numerically in pounds.
+//
+// Band:
+// Resistance-band loading. Band resistance is not treated as
+// equivalent to a conventional pound-based external load.
 export type ExerciseResistanceType =
   | "None"
   | "Weight"
-  | "Assistance";
+  | "Assistance"
+  | "Band";
 
 
 // Describes what the working-set performance value means.
@@ -405,6 +410,26 @@ export type ExerciseResistanceType =
 export type ExercisePerformanceType =
   | "Reps"
   | "Duration";
+
+
+// ============================================================
+// Exercise Rep Counting
+// ============================================================
+//
+// Total:
+// ExerciseSet.reps represents the total repetitions performed.
+//
+// PerSide:
+// ExerciseSet.reps represents repetitions performed on EACH side.
+// This changes how the prescription is displayed/interpreted without
+// changing the stored ExerciseSet.reps value.
+//
+// Undefined on older/custom definitions defaults to Total.
+// ============================================================
+
+export type ExerciseRepCounting =
+  | "Total"
+  | "PerSide";
 
 
 // ============================================================
@@ -480,6 +505,14 @@ export interface ExerciseDefinition {
   // Describes whether performance is measured by repetitions
   // or duration.
   performanceType?: ExercisePerformanceType;
+
+  // Describes how repetition prescriptions should be interpreted.
+  //
+  // PerSide means a stored value of 10 represents 10 repetitions
+  // on each side, not 10 total alternating repetitions.
+  //
+  // Omitted defaults to Total for backwards compatibility.
+  repCounting?: ExerciseRepCounting;
 
   // ----------------------------------------------------------
   // Exercise Progression Path

@@ -21,6 +21,10 @@ import {
 } from "../hooks/useWorkoutHistory";
 
 import {
+  exerciseLibrary,
+} from "../exerciseLibrary";
+
+import {
   getWorkoutSessionLabel,
 } from "../utils/getWorkoutSessionLabel";
 
@@ -133,6 +137,77 @@ function formatPace(
       2,
       "0"
     )}`;
+}
+
+
+// ------------------------------------------------------------
+// Strength Set Performance
+// ------------------------------------------------------------
+
+function formatStrengthSetPerformance(
+  exerciseDefinitionId: string | undefined,
+  weight: number,
+  reps: number
+) {
+  const definition =
+    exerciseDefinitionId
+      ? exerciseLibrary.find(
+          (item) =>
+            item.id ===
+            exerciseDefinitionId
+        )
+      : undefined;
+
+  const resistanceType =
+    definition?.resistanceType;
+
+  const performanceType =
+    definition?.performanceType;
+
+  const repCounting =
+    definition?.repCounting;
+
+  const repsLabel =
+    repCounting === "PerSide"
+      ? `${reps} reps / side`
+      : `${reps} reps`;
+
+  if (
+    performanceType ===
+    "Duration"
+  ) {
+    if (
+      resistanceType ===
+      "Weight"
+    ) {
+      return `${weight} lb × ${reps} sec`;
+    }
+
+    return `${reps} sec`;
+  }
+
+  if (
+    resistanceType ===
+    "Band"
+  ) {
+    return `${weight} lb band × ${repsLabel}`;
+  }
+
+  if (
+    resistanceType ===
+    "Assistance"
+  ) {
+    return `${weight} lb assist × ${repsLabel}`;
+  }
+
+  if (
+    resistanceType ===
+    "Weight"
+  ) {
+    return `${weight} lb × ${repsLabel}`;
+  }
+
+  return repsLabel;
 }
 
 
@@ -497,13 +572,11 @@ export default function WorkoutHistoryScreen() {
                                         </span>
 
                                         <span className="font-medium">
-                                          {
-                                            set.weight
-                                          }{" "}
-                                          lb ×{" "}
-                                          {
+                                          {formatStrengthSetPerformance(
+                                            exercise.exerciseDefinitionId,
+                                            set.weight,
                                             set.reps
-                                          }
+                                          )}
 
                                           {set.rpe !== undefined && (
                                             <span className="ml-2 text-slate-500">

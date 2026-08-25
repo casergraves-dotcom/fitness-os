@@ -46,7 +46,7 @@ export default function CloudTestPage() {
   ] =
     useState(false);
 
-    // ----------------------------------------------------------
+// ----------------------------------------------------------
 // Test Sync Engine
 // ----------------------------------------------------------
 
@@ -128,7 +128,36 @@ async function testSyncEngine() {
   }
 }
 
-    // ----------------------------------------------------------
+async function uploadWorkoutHistory() {
+  setLoading(true);
+
+  try {
+    await uploadStorageKey(
+      FITNESS_OS_STORAGE_KEYS.workoutHistory
+    );
+
+    setResult(
+      "Workout history uploaded to Supabase."
+    );
+  } catch (error) {
+    console.error(
+      "Workout history upload failed:",
+      error
+    );
+
+    setResult(
+      JSON.stringify(
+        error,
+        null,
+        2
+      )
+    );
+  } finally {
+    setLoading(false);
+  }
+}
+
+// ----------------------------------------------------------
 // Read Existing Cloud Storage Test
 // ----------------------------------------------------------
 
@@ -408,6 +437,7 @@ function previewLocalSnapshot() {
 >
   Test Sync Engine
 </button>
+
 
         <pre className="mt-6 overflow-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100">
           {result}

@@ -85,6 +85,25 @@ interface ExerciseCardProps {
 }
 
 // ============================================================
+// Resistance Band Options
+// ============================================================
+//
+// Current home setup uses a WHATAFIT tube-band set labelled
+// 10 / 20 / 30 / 40 / 50 lb. ExerciseSet.weight stores the
+// labelled band resistance while resistanceType === "Band"
+// preserves the fact that this is not conventional fixed weight.
+// ============================================================
+
+const BAND_RESISTANCE_OPTIONS = [
+  10,
+  20,
+  30,
+  40,
+  50,
+] as const;
+
+
+// ============================================================
 // Exercise Card
 // ============================================================
 
@@ -238,11 +257,27 @@ export default function ExerciseCard({
     exerciseDefinition?.resistanceType === "Weight" &&
     exerciseDefinition?.performanceType === "Duration";
 
+  const isBand =
+    exerciseDefinition?.resistanceType ===
+    "Band";
+
   // Exercises without progression programming continue
   // using the traditional weight × reps interface.
   const usesTraditionalInputs =
     !progressionType ||
     (isLoad && !isWeightDuration);
+
+  // Repetition values for unilateral exercises are stored as the
+  // number completed on each side. The numeric value itself stays
+  // unchanged; this metadata only changes interpretation/display.
+  const isPerSide =
+    exerciseDefinition?.repCounting ===
+    "PerSide";
+
+  const repsUnitLabel =
+    isPerSide
+      ? "reps / side"
+      : "reps";
 
   // ----------------------------------------------------------
   // Today's Target
@@ -292,7 +327,13 @@ export default function ExerciseCard({
     target.repMax !== undefined &&
     target.action === "no-history"
       ? `${target.repMin}–${target.repMax} sec`
-      : target.label;
+      : isPerSide &&
+          target.repMin !== undefined &&
+          target.repMax !== undefined
+        ? target.action === "no-history"
+          ? `${target.repMin}–${target.repMax} reps / side`
+          : `${target.label} / side`
+        : target.label;
 
   // ----------------------------------------------------------
   // Target Action Label
@@ -337,6 +378,47 @@ export default function ExerciseCard({
         return "";
     }
   }
+
+  // ----------------------------------------------------------
+  // Numeric Input Helpers
+  // ----------------------------------------------------------
+
+  function getNumericInputValue(
+    value: number
+  ) {
+    return value === 0
+      ? ""
+      : value;
+  }
+
+  function parseWeightInput(
+    value: string
+  ) {
+    if (value === "") {
+      return 0;
+    }
+
+    return Math.max(
+      0,
+      Number(value)
+    );
+  }
+
+  function parseRepsInput(
+    value: string
+  ) {
+    if (value === "") {
+      return 0;
+    }
+
+    return Math.max(
+      0,
+      Math.floor(
+        Number(value)
+      )
+    );
+  }
+
 
   // ----------------------------------------------------------
   // Render
@@ -618,8 +700,10 @@ export default function ExerciseCard({
                         min={0}
                         step={1}
                         value={
-                          set.reps
-                        }
+                            getNumericInputValue(
+                              set.reps
+                            )
+                          }
                         disabled={
                           set.completed
                         }
@@ -627,22 +711,15 @@ export default function ExerciseCard({
                           event
                         ) =>
                           onUpdateSet(
-                            exercise.id,
-                            set.id,
-                            "reps",
-                            Math.max(
-                              0,
-                              Math.floor(
-                                Number(
-                                  event
-                                    .target
-                                    .value
-                                )
+                              exercise.id,
+                              set.id,
+                              "reps",
+                              parseRepsInput(
+                                event.target.value
                               )
                             )
-                          )
                         }
-                        className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                        className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                       />
 
                       <span className="text-sm text-slate-500">
@@ -652,10 +729,106 @@ export default function ExerciseCard({
                   )}
 
                   {/* ----------------------------------------
+                      Resistance Band × Reps
+                  ----------------------------------------- */}
+
+                  {isBand && isReps && (
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <select
+                          value={
+                            getNumericInputValue(
+                              set.weight
+                            )
+                          }
+                          disabled={
+                            set.completed
+                          }
+                          aria-label={`Band resistance for set ${index + 1}`}
+                          onChange={(
+                            event
+                          ) =>
+                            onUpdateSet(
+                              exercise.id,
+                              set.id,
+                              "weight",
+                              parseWeightInput(
+                                event.target.value
+                              )
+                            )
+                          }
+                          className="w-24 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
+                        >
+                          <option value="">
+                            Band
+                          </option>
+
+                          {BAND_RESISTANCE_OPTIONS.map(
+                            (resistance) => (
+                              <option
+                                key={
+                                  resistance
+                                }
+                                value={
+                                  resistance
+                                }
+                              >
+                                {resistance}
+                              </option>
+                            )
+                          )}
+                        </select>
+
+                        <span className="text-sm text-slate-500">
+                          lb band
+                        </span>
+                      </div>
+
+                      <span className="text-slate-400">
+                        ×
+                      </span>
+
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          min={0}
+                          step={1}
+                          value={
+                            getNumericInputValue(
+                              set.reps
+                            )
+                          }
+                          disabled={
+                            set.completed
+                          }
+                          onChange={(
+                            event
+                          ) =>
+                            onUpdateSet(
+                              exercise.id,
+                              set.id,
+                              "reps",
+                              parseRepsInput(
+                                event.target.value
+                              )
+                            )
+                          }
+                          className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
+                        />
+
+                        <span className="text-sm text-slate-500">
+                          {repsUnitLabel}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ----------------------------------------
                       Rep-Only / Bodyweight
                   ----------------------------------------- */}
 
-                  {isReps && (
+                  {isReps && !isBand && (
                     <div className="flex items-center gap-1">
                       <input
                         type="number"
@@ -663,8 +836,10 @@ export default function ExerciseCard({
                         min={0}
                         step={1}
                         value={
-                          set.reps
-                        }
+                            getNumericInputValue(
+                              set.reps
+                            )
+                          }
                         disabled={
                           set.completed
                         }
@@ -672,26 +847,19 @@ export default function ExerciseCard({
                           event
                         ) =>
                           onUpdateSet(
-                            exercise.id,
-                            set.id,
-                            "reps",
-                            Math.max(
-                              0,
-                              Math.floor(
-                                Number(
-                                  event
-                                    .target
-                                    .value
-                                )
+                              exercise.id,
+                              set.id,
+                              "reps",
+                              parseRepsInput(
+                                event.target.value
                               )
                             )
-                          )
                         }
-                        className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                        className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                       />
 
                       <span className="text-sm text-slate-500">
-                        reps
+                        {repsUnitLabel}
                       </span>
                     </div>
                   )}
@@ -708,7 +876,9 @@ export default function ExerciseCard({
                           inputMode="decimal"
                           min={0}
                           value={
-                            set.weight
+                            getNumericInputValue(
+                              set.weight
+                            )
                           }
                           disabled={
                             set.completed
@@ -720,17 +890,12 @@ export default function ExerciseCard({
                               exercise.id,
                               set.id,
                               "weight",
-                              Math.max(
-                                0,
-                                Number(
-                                  event
-                                    .target
-                                    .value
-                                )
+                              parseWeightInput(
+                                event.target.value
                               )
                             )
                           }
-                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                         />
 
                         <span className="text-sm text-slate-500">
@@ -749,7 +914,9 @@ export default function ExerciseCard({
                           min={0}
                           step={1}
                           value={
-                            set.reps
+                            getNumericInputValue(
+                              set.reps
+                            )
                           }
                           disabled={
                             set.completed
@@ -761,23 +928,16 @@ export default function ExerciseCard({
                               exercise.id,
                               set.id,
                               "reps",
-                              Math.max(
-                                0,
-                                Math.floor(
-                                  Number(
-                                    event
-                                      .target
-                                      .value
-                                  )
-                                )
+                              parseRepsInput(
+                                event.target.value
                               )
                             )
                           }
-                          className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                          className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                         />
 
                         <span className="text-sm text-slate-500">
-                          reps
+                          {repsUnitLabel}
                         </span>
                       </div>
                     </div>
@@ -796,22 +956,23 @@ export default function ExerciseCard({
                           type="number"
                           inputMode="decimal"
                           min={0}
-                          value={set.weight}
+                          value={
+                            getNumericInputValue(
+                              set.weight
+                            )
+                          }
                           disabled={set.completed}
                           onChange={(event) =>
                             onUpdateSet(
                               exercise.id,
                               set.id,
                               "weight",
-                              Math.max(
-                                0,
-                                Number(
-                                  event.target.value
-                                )
+                              parseWeightInput(
+                                event.target.value
                               )
                             )
                           }
-                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                         />
 
                         <span className="text-sm text-slate-500">
@@ -831,24 +992,23 @@ export default function ExerciseCard({
                           inputMode="numeric"
                           min={0}
                           step={1}
-                          value={set.reps}
+                          value={
+                            getNumericInputValue(
+                              set.reps
+                            )
+                          }
                           disabled={set.completed}
                           onChange={(event) =>
                             onUpdateSet(
                               exercise.id,
                               set.id,
                               "reps",
-                              Math.max(
-                                0,
-                                Math.floor(
-                                  Number(
-                                    event.target.value
-                                  )
-                                )
+                              parseRepsInput(
+                                event.target.value
                               )
                             )
                           }
-                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                         />
 
                         <span className="text-sm text-slate-500">
@@ -872,7 +1032,9 @@ export default function ExerciseCard({
                           inputMode="decimal"
                           min={0}
                           value={
-                            set.weight
+                            getNumericInputValue(
+                              set.weight
+                            )
                           }
                           disabled={
                             set.completed
@@ -884,17 +1046,12 @@ export default function ExerciseCard({
                               exercise.id,
                               set.id,
                               "weight",
-                              Math.max(
-                                0,
-                                Number(
-                                  event
-                                    .target
-                                    .value
-                                )
+                              parseWeightInput(
+                                event.target.value
                               )
                             )
                           }
-                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                          className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                         />
 
                         <span className="text-sm text-slate-500">
@@ -915,7 +1072,9 @@ export default function ExerciseCard({
                           min={0}
                           step={1}
                           value={
-                            set.reps
+                            getNumericInputValue(
+                              set.reps
+                            )
                           }
                           disabled={
                             set.completed
@@ -927,23 +1086,16 @@ export default function ExerciseCard({
                               exercise.id,
                               set.id,
                               "reps",
-                              Math.max(
-                                0,
-                                Math.floor(
-                                  Number(
-                                    event
-                                      .target
-                                      .value
-                                  )
-                                )
+                              parseRepsInput(
+                                event.target.value
                               )
                             )
                           }
-                          className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center font-medium disabled:bg-transparent disabled:text-slate-400"
+                          className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
                         />
 
                         <span className="text-sm text-slate-500">
-                          reps
+                          {repsUnitLabel}
                         </span>
                       </div>
                     </div>
@@ -967,7 +1119,7 @@ export default function ExerciseCard({
                           Number(event.target.value)
                         )
                       }
-                      className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs"
+                      className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-base sm:text-xs"
                     >
                       <option value="">Optional</option>
                       {Array.from({ length: 10 }, (_, rpeIndex) => {
@@ -1011,15 +1163,31 @@ export default function ExerciseCard({
                         </>
                       )}
 
+                      {/* Band + Reps */}
+
+                      {isBand && isReps && (
+                        <>
+                          Last:{" "}
+                          {
+                            previousSet.weight
+                          }{" "}
+                          lb band ×{" "}
+                          {
+                            previousSet.reps
+                          }{" "}
+                          {repsUnitLabel}
+                        </>
+                      )}
+
                       {/* Rep-only */}
 
-                      {isReps && (
+                      {isReps && !isBand && (
                         <>
                           Last:{" "}
                           {
                             previousSet.reps
                           }{" "}
-                          reps
+                          {repsUnitLabel}
                         </>
                       )}
 
@@ -1035,7 +1203,7 @@ export default function ExerciseCard({
                           {
                             previousSet.reps
                           }{" "}
-                          reps
+                          {repsUnitLabel}
                         </>
                       )}
 
@@ -1051,7 +1219,7 @@ export default function ExerciseCard({
                           {
                             previousSet.reps
                           }{" "}
-                          reps
+                          {repsUnitLabel}
                         </>
                       )}
                     </div>

@@ -17,8 +17,9 @@ import type {
 //
 // resistanceType
 //   None       = bodyweight / no external resistance
-//   Weight     = external resistance
+//   Weight     = conventional external load
 //   Assistance = external assistance
+//   Band       = resistance-band loading
 //
 // performanceType
 //   Reps       = performance measured in repetitions
@@ -222,7 +223,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     repMax: 20,
     increment: 0,
     progressionType: "Reps",
-    resistanceType: "Weight",
+    resistanceType: "Band",
     performanceType: "Reps",
   },
   {
@@ -265,7 +266,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     repMax: 15,
     increment: 0,
     progressionType: "Reps",
-    resistanceType: "None",
+    resistanceType: "Band",
     performanceType: "Reps",
   },
 
@@ -321,7 +322,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     repMax: 20,
     increment: 0,
     progressionType: "Reps",
-    resistanceType: "Weight",
+    resistanceType: "Band",
     performanceType: "Reps",
   },
   {
@@ -462,7 +463,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     repMax: 20,
     increment: 0,
     progressionType: "Reps",
-    resistanceType: "Weight",
+    resistanceType: "Band",
     performanceType: "Reps",
   },
   {
@@ -477,7 +478,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     repMax: 20,
     increment: 0,
     progressionType: "Reps",
-    resistanceType: "Weight",
+    resistanceType: "Band",
     performanceType: "Reps",
   },
 
@@ -548,7 +549,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     name: "Reverse Lunge",
     category: "Legs",
     movementRoles: ["Squat"],
-    requiredEquipment: ["Dumbbells"],
+    requiredEquipment: ["Bodyweight"],
     sets: 3,
     repMin: 8,
     repMax: 12,
@@ -556,6 +557,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    repCounting: "PerSide",
   },
   {
     id: "leg-curl",
@@ -611,7 +613,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     repMax: 20,
     increment: 0,
     progressionType: "Reps",
-    resistanceType: "Weight",
+    resistanceType: "Band",
     performanceType: "Reps",
   },
   {
@@ -799,6 +801,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    repCounting: "PerSide",
   },
 
   // Not defined in the spreadsheet.

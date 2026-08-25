@@ -825,8 +825,8 @@ export default function WeeklySchedule({
       )}
 
       {adjustingWeek && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4 py-6">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center bg-slate-950/40 px-4 pt-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:items-center sm:py-6">
+          <div className="max-h-[calc(100dvh-8rem-env(safe-area-inset-bottom))] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-xl sm:max-h-[90vh]">
             <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               Adjust Training Week
             </p>

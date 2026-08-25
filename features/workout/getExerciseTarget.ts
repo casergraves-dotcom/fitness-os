@@ -146,6 +146,9 @@ export function getExerciseTarget(
   const usesWeight =
     resistanceType === "Weight";
 
+  const usesBand =
+    resistanceType === "Band";
+
   const usesAssistance =
     resistanceType === "Assistance";
 
@@ -246,6 +249,17 @@ export function getExerciseTarget(
         `${previousWeight} lb × ${repMin}–${repMax}`;
     }
 
+    // Band + Reps
+    else if (
+      usesBand &&
+      usesReps
+    ) {
+      label =
+        previousWeight > 0
+          ? `${previousWeight} lb band × ${repMin}–${repMax}`
+          : `${repMin}–${repMax} reps`;
+    }
+
     // Assistance + Reps
     else if (
       usesAssistance &&
@@ -265,7 +279,9 @@ export function getExerciseTarget(
         `Only ${completedSets.length} of ${prescribedSetCount} prescribed working sets were completed. Keep the current target until a full exercise is recorded.`,
 
       targetWeight:
-        usesWeight || usesAssistance
+        usesWeight ||
+        usesBand ||
+        usesAssistance
           ? previousWeight
           : undefined,
 
@@ -326,6 +342,11 @@ export function getExerciseTarget(
     } else if (usesWeight && usesReps) {
       label =
         `${previousWeight} lb × ${repMin}–${repMax}`;
+    } else if (usesBand && usesReps) {
+      label =
+        previousWeight > 0
+          ? `${previousWeight} lb band × ${repMin}–${repMax}`
+          : `${repMin}–${repMax} reps`;
     } else if (usesAssistance && usesReps) {
       label =
         `${previousWeight} lb assist × ${repMin}–${repMax}`;
@@ -337,7 +358,9 @@ export function getExerciseTarget(
       message:
         `All working sets reached the top of the target range, but the highest reported effort was RPE ${highestReportedRpe}. Repeat the current target before increasing difficulty.`,
       targetWeight:
-        usesWeight || usesAssistance
+        usesWeight ||
+        usesBand ||
+        usesAssistance
           ? previousWeight
           : undefined,
       repMin,
@@ -522,6 +545,93 @@ export function getExerciseTarget(
       repMax,
     };
   }
+
+  // ==========================================================
+  // Band + Reps
+  // ==========================================================
+
+  if (
+    usesBand &&
+    usesReps
+  ) {
+    // No band resistance was recorded in the previous workout.
+    // Keep the rep target useful without presenting a misleading
+    // "0 lb" load recommendation.
+    if (previousWeight <= 0) {
+      return {
+        action:
+          "build-reps",
+
+        label:
+          `${repMin}–${repMax} reps`,
+
+        message:
+          `Choose an appropriate band resistance and build toward ${repMax} reps on every working set.`,
+
+        targetWeight:
+          undefined,
+
+        repMin,
+        repMax,
+      };
+    }
+
+    if (reachedTopOfRange) {
+      return {
+        action:
+          "repeat",
+
+        label:
+          `${previousWeight} lb band × ${repMin}–${repMax}`,
+
+        message:
+          `All working sets reached the top of the target range with the ${previousWeight} lb band. Repeat this resistance or choose a stronger band when the current band feels appropriately controlled.`,
+
+        targetWeight:
+          previousWeight,
+
+        repMin,
+        repMax,
+      };
+    }
+
+    if (belowTarget) {
+      return {
+        action:
+          "review-load",
+
+        label:
+          `${previousWeight} lb band × ${repMin}–${repMax}`,
+
+        message:
+          `Most working sets fell below the ${repMin}-rep minimum. Review whether the ${previousWeight} lb band is too difficult before the next workout.`,
+
+        targetWeight:
+          previousWeight,
+
+        repMin,
+        repMax,
+      };
+    }
+
+    return {
+      action:
+        "build-reps",
+
+      label:
+        `${previousWeight} lb band × ${repMin}–${repMax}`,
+
+      message:
+        `Keep the same ${previousWeight} lb band and continue building toward ${repMax} reps on every working set.`,
+
+      targetWeight:
+        previousWeight,
+
+      repMin,
+      repMax,
+    };
+  }
+
 
   // ==========================================================
   // Assistance + Reps
