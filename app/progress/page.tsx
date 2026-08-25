@@ -1,7 +1,9 @@
 import AppShell from "@/components/layout/AppShell";
 
 import {
+  BodyMeasurements,
   ExerciseProgress,
+  GoalProfile,
   RecoveryProgress,
   RunningProgress,
 } from "@/features/progress";
@@ -36,6 +38,62 @@ export default function ProgressPage() {
           </p>
 
         </div>
+
+
+        {/* ====================================================
+            Goal
+        ===================================================== */}
+
+        <section className="space-y-4">
+
+          <div>
+
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Outcome
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Goal Profile
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Define the outcome Fitness OS should use when evaluating progress.
+            </p>
+
+          </div>
+
+
+          <GoalProfile />
+
+        </section>
+
+
+        {/* ====================================================
+            Body Composition
+        ===================================================== */}
+
+        <section className="space-y-4">
+
+          <div>
+
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Body Composition
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Body Measurements
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Track weight, circumference measurements, and body-composition changes over time.
+            </p>
+
+          </div>
+
+
+          <BodyMeasurements />
+
+        </section>
 
 
         {/* ====================================================

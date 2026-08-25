@@ -673,56 +673,91 @@ projection, and progress review while preserving the distinction between
 raw measurements, higher-quality assessments such as DEXA, and
 long-term trends.
 
-## 4.0 Body-Composition Storage Foundation
+## 4.0 Body-Composition Storage Foundation — IN PROGRESS
 
-- [ ] Define persistent data models for goals, measurements, DEXA records,
+- [x] Define persistent data models for goals, measurements, DEXA records,
       weekly check-ins, and progress-photo metadata.
-- [ ] Add authenticated cloud-backed storage for DEXA report files and
+- [x] Add authenticated cloud-backed storage for DEXA report files and
       progress photos.
-- [ ] Keep uploaded files separate from structured Fitness OS record data.
-- [ ] Associate uploaded files with authenticated user-owned records.
-- [ ] Enforce per-user access controls for uploaded files.
-- [ ] Define file replacement and deletion behavior.
-- [ ] Ensure deleting a DEXA record/check-in can intentionally remove its
+- [x] Keep uploaded files separate from structured Fitness OS record data.
+- [x] Associate uploaded-file metadata with user-owned structured records.
+- [x] Enforce per-user access controls for uploaded files.
+- [x] Define basic file replacement and deletion behavior.
+- [ ] Ensure deleting a DEXA record/check-in intentionally removes its
       associated uploaded files.
-- [ ] Define behavior when metadata sync succeeds but file upload fails,
-      or vice versa.
-- [ ] Preserve device-local usability when optional files are unavailable.
-- [ ] Verify uploaded files remain private across user accounts.
+- [ ] Define and implement recovery behavior when metadata sync succeeds but
+      file upload fails, or vice versa.
+- [ ] Verify user-facing records remain usable when optional files are
+      unavailable.
+- [ ] Verify uploaded-file isolation using separate authenticated accounts.
 
-## 4.1 Goal Profile
+**Current state:** Phase 4 has a persistent body-composition data foundation
+for goals, measurements, DEXA records, weekly check-ins, and progress-photo
+metadata. Structured records use the existing authenticated Fitness OS
+synchronization model, while DEXA reports and progress photos use private
+authenticated file storage with user-scoped paths and access policies.
 
-- [ ] Add user goal configuration.
-- [ ] Support fat-loss/body-composition goal as the primary goal.
-- [ ] Store target/goal context without overemphasizing a single scale number.
-- [ ] Support optional goal weight.
-- [ ] Support optional goal body-fat percentage.
+The private-file upload/download/delete path has been verified for an
+authenticated user. Record-level file cleanup, partial-failure recovery,
+offline/missing-file behavior, and cross-account verification remain to be
+completed as the DEXA and progress-photo workflows are implemented.
+
+## 4.1 Goal Profile — IN PROGRESS
+
+- [x] Add user goal configuration.
+- [x] Support fat-loss/body-composition goal as the primary goal.
+- [x] Store target/goal context without overemphasizing a single scale number.
+- [x] Support optional goal weight.
+- [x] Support optional goal body-fat percentage.
 - [ ] Support relevant performance/hobby goals.
-- [ ] Store goal effective/start date.
-- [ ] Preserve historical goals when goals change.
-- [ ] Support expected rate of change.
+- [x] Store goal effective/start date.
+- [x] Preserve historical goals when goals change.
+- [x] Support expected rate of change.
 - [ ] Calculate projected goal completion date.
 - [ ] Recalculate projection from observed progress trends.
 - [ ] Compare actual rate of progress with expected rate.
 - [ ] Identify plateaus or unusually rapid changes without automatically
       changing training or nutrition targets.
 
-## 4.2 Measurements and Body Composition
+**Current state:** goal profiles can be created and changed while retaining
+historical goal records and effective dates. Goals can describe fat loss, body composition, maintenance, or performance
+and can include optional weight, body-fat, expected-rate, and notes context.
+Specific performance/hobby goal entry remains to be added.
+Projection and observed-progress analysis remain to be implemented after
+sufficient measurement trend support exists.
 
-- [ ] Add body-weight logging.
-- [ ] Add waist measurement logging.
-- [ ] Add optional body-fat percentage logging.
-- [ ] Add optional lean-mass logging.
-- [ ] Support additional useful body-composition measurements where appropriate.
-- [ ] Record measurement date and optional notes.
-- [ ] Track measurement source/provenance.
+## 4.2 Measurements and Body Composition — IN PROGRESS
+
+- [x] Add body-weight logging.
+- [x] Add waist measurement logging.
+- [x] Add optional body-fat percentage logging.
+- [x] Add optional lean-mass logging.
+- [x] Support additional useful body-composition measurements.
+      - Neck.
+      - Shoulders.
+      - Chest.
+      - Abdomen.
+      - Hips.
+      - Left/right upper arms.
+      - Left/right thighs.
+      - Left/right calves.
+      - Fat mass.
+- [x] Record measurement date and optional notes.
+- [x] Track measurement source/provenance.
       - Manual measurement.
       - Home scale/device.
       - DEXA.
-- [ ] Preserve historical measurements rather than overwriting prior entries.
+- [x] Preserve historical measurements rather than overwriting prior entries.
 - [ ] Distinguish raw measurements from calculated trend values.
 - [ ] Use rolling trends rather than reacting to daily weight noise.
 - [ ] Support comparison between measurements from selected dates.
+
+**Current state:** manual body-composition records can be created, edited,
+deleted, and reviewed historically. Core weight, waist, and body-fat fields
+are supplemented by detailed circumference measurements and optional
+lean/fat-mass values. Measurement provenance is preserved so future manual, device-derived, and
+DEXA-derived records can coexist. Trend calculations and date comparison
+remain to be implemented.
 
 ## 4.3 DEXA Records
 
@@ -957,6 +992,17 @@ and what matters next, and those insights improve future Guide decisions.
 - [ ] Surface exercise-specific guidance such as unilateral/per-side execution.
 - [ ] Keep guidance unobtrusive during normal workout logging.
 
+## 7.5 Body Measurement UX
+
+- [ ] Add an optional interactive body-map measurement interface.
+- [ ] Show measurement locations on a front/back body silhouette.
+- [ ] Allow a measurement location to be selected directly from the body map.
+- [ ] Show current and previous values/change for the selected measurement.
+- [ ] Preserve the conventional measurement form as an efficient alternative
+      for complete measurement entry.
+- [ ] Support historical-date entry.
+- [ ] Support date-to-date body-map comparison.
+
 **---**
 
 # Phase 8 --- Health Data Integrations
@@ -1059,9 +1105,9 @@ correctness, privacy, data-loss, security, or significant maintainability risk.
       registry.
 - [ ] Replace remaining duplicated/local string storage keys with references
       to the canonical registry.
-- [ ] Establish a project-owned Supabase migration/policy structure before
-      adding DEXA report and progress-photo file storage.
-- [ ] Document the boundary between structured synchronized data and uploaded
+- [x] Establish a project-owned Supabase migration/policy structure for
+      DEXA report and progress-photo file storage.
+- [x] Document the boundary between structured synchronized data and uploaded
       binary files.
 - [ ] Review startup cloud hydration/conflict behavior as additional
       cross-device editable datasets are introduced.
@@ -1146,7 +1192,7 @@ interrupts it.
 
 ### Current
 
-14. **Phase 4 — Body Composition and Goal Progress — NEXT**
+14. **Phase 4 — Body Composition and Goal Progress — IN PROGRESS**
 
 ### After Phase 4
 

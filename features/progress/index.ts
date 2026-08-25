@@ -18,6 +18,14 @@ export {
   default as StrengthProgressChart,
 } from "./components/StrengthProgressChart";
 
+export {
+  default as GoalProfile,
+} from "./components/GoalProfile";
+
+export {
+  default as BodyMeasurements,
+} from "./components/BodyMeasurements";
+
 
 // ============================================================
 // Hooks
@@ -26,3 +34,11 @@ export {
 export {
   useExerciseProgress,
 } from "./hooks/useExerciseProgress";
+
+export {
+  useBodyCompositionGoals,
+} from "./hooks/useBodyCompositionGoals";
+
+export {
+  useBodyMeasurements,
+} from "./hooks/useBodyMeasurements";

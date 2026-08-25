@@ -51,23 +51,34 @@ export interface BodyMeasurement {
   source:
     BodyMeasurementSource;
 
+  // Scale / body composition
   weightLb?: number;
-
-  waistIn?: number;
-
   bodyFatPercent?: number;
-
   leanMassLb?: number;
-
   fatMassLb?: number;
+
+  // Circumference measurements
+  neckIn?: number;
+  chestIn?: number;
+  shouldersIn?: number;
+  abdomenIn?: number;
+  waistIn?: number;
+  hipsIn?: number;
+
+  leftUpperArmIn?: number;
+  rightUpperArmIn?: number;
+
+  leftThighIn?: number;
+  rightThighIn?: number;
+
+  leftCalfIn?: number;
+  rightCalfIn?: number;
 
   notes?: string;
 
   createdAt: string;
-
   updatedAt: string;
 
-  // Present when this measurement was created from a DEXA scan.
   dexaRecordId?: string;
 }
 
