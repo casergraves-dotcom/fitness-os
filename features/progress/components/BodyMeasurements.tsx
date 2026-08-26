@@ -5,6 +5,7 @@
 // ============================================================
 
 import {
+  useMemo,
   useState,
 } from "react";
 
@@ -19,6 +20,10 @@ import {
 import {
   useBodyMeasurements,
 } from "../hooks/useBodyMeasurements";
+
+import {
+  useBodyCompositionTrends,
+} from "../hooks/useBodyCompositionTrends";
 
 import type {
   BodyMeasurement,
@@ -370,6 +375,13 @@ export default function BodyMeasurements() {
   } =
     useBodyMeasurements();
 
+  const {
+    weightTrendSummary,
+  } =
+    useBodyCompositionTrends(
+      measurements
+    );
+
   const [
     editingId,
     setEditingId,
@@ -412,6 +424,70 @@ export default function BodyMeasurements() {
       null
     >(
       null
+    );
+
+
+  const [
+    comparisonEarlierId,
+    setComparisonEarlierId,
+  ] =
+    useState<
+      string
+    >(
+      ""
+    );
+
+  const [
+    comparisonLaterId,
+    setComparisonLaterId,
+  ] =
+    useState<
+      string
+    >(
+      ""
+    );
+
+
+  // ----------------------------------------------------------
+  // Comparison
+  // ----------------------------------------------------------
+
+  const comparisonMeasurements =
+    useMemo(
+      () =>
+        [...measurements].sort(
+          (
+            a,
+            b
+          ) =>
+            a.date.localeCompare(
+              b.date
+            ) ||
+            a.createdAt.localeCompare(
+              b.createdAt
+            )
+        ),
+      [
+        measurements,
+      ]
+    );
+
+  const comparisonEarlier =
+    comparisonMeasurements.find(
+      (
+        measurement
+      ) =>
+        measurement.id ===
+        comparisonEarlierId
+    );
+
+  const comparisonLater =
+    comparisonMeasurements.find(
+      (
+        measurement
+      ) =>
+        measurement.id ===
+        comparisonLaterId
     );
 
 
@@ -547,7 +623,7 @@ export default function BodyMeasurements() {
           form.chestIn
         ),
 
-        shouldersIn:
+      shouldersIn:
         parseOptionalNumber(
           form.shouldersIn
         ),
@@ -740,6 +816,8 @@ export default function BodyMeasurements() {
                   }
                 </p>
 
+                <SourceBadge source={latestMeasurement.source} />
+
                 <p className="mt-1 text-sm text-slate-500">
                   Record weight frequently and circumference
                   measurements whenever you take them.
@@ -781,12 +859,21 @@ export default function BodyMeasurements() {
 
 
         {latestMeasurement && (
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
 
             <Metric
-              label="Weight"
+              label="Raw Weight"
               value={
                 latestMeasurement.weightLb
+              }
+              unit="lb"
+            />
+
+            <Metric
+              label="7-Day Trend"
+              value={
+                weightTrendSummary
+                  .latestTrendWeightLb
               }
               unit="lb"
             />
@@ -1016,7 +1103,7 @@ export default function BodyMeasurements() {
                       }
                     />
 
-                                        <NumberField
+                    <NumberField
                       label="Shoulders"
                       unit="in"
                       value={
@@ -1278,6 +1365,163 @@ export default function BodyMeasurements() {
 
 
       {/* ======================================================
+          Measurement Comparison
+      ======================================================= */}
+
+      {measurements.length >
+        1 && (
+        <div className="rounded-2xl border bg-white p-5 shadow-sm">
+
+          <p className="text-sm font-semibold uppercase tracking-wider text-slate-500">
+            Measurement Comparison
+          </p>
+
+          <h3 className="mt-1 text-lg font-bold text-slate-900">
+            Compare Two Dates
+          </h3>
+
+          <p className="mt-1 text-sm leading-6 text-slate-500">
+            Select two measurement records to compare the values
+            recorded on those dates. Only measurements available
+            on both dates are compared.
+          </p>
+
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+
+            <label className="block">
+
+              <span className="text-sm font-semibold text-slate-800">
+                Earlier Measurement
+              </span>
+
+              <select
+                value={
+                  comparisonEarlierId
+                }
+                onChange={(
+                  event
+                ) =>
+                  setComparisonEarlierId(
+                    event.target.value
+                  )
+                }
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+              >
+                <option value="">
+                  Select a date
+                </option>
+
+                {comparisonMeasurements.map(
+                  (
+                    measurement
+                  ) => (
+                    <option
+                      key={
+                        measurement.id
+                      }
+                      value={
+                        measurement.id
+                      }
+                    >
+                      {
+                        formatDisplayDate(
+                          measurement.date
+                        )
+                      }
+                    </option>
+                  )
+                )}
+
+              </select>
+
+            </label>
+
+
+            <label className="block">
+
+              <span className="text-sm font-semibold text-slate-800">
+                Later Measurement
+              </span>
+
+              <select
+                value={
+                  comparisonLaterId
+                }
+                onChange={(
+                  event
+                ) =>
+                  setComparisonLaterId(
+                    event.target.value
+                  )
+                }
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+              >
+                <option value="">
+                  Select a date
+                </option>
+
+                {comparisonMeasurements.map(
+                  (
+                    measurement
+                  ) => (
+                    <option
+                      key={
+                        measurement.id
+                      }
+                      value={
+                        measurement.id
+                      }
+                    >
+                      {
+                        formatDisplayDate(
+                          measurement.date
+                        )
+                      }
+                    </option>
+                  )
+                )}
+
+              </select>
+
+            </label>
+
+          </div>
+
+
+          {comparisonEarlier &&
+            comparisonLater &&
+            comparisonEarlier.id ===
+              comparisonLater.id && (
+            <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3">
+
+              <p className="text-sm font-medium text-amber-800">
+                Select two different measurement records to compare.
+              </p>
+
+            </div>
+          )}
+
+
+          {comparisonEarlier &&
+            comparisonLater &&
+            comparisonEarlier.id !==
+              comparisonLater.id && (
+            <MeasurementComparison
+              earlier={
+                comparisonEarlier
+              }
+              later={
+                comparisonLater
+              }
+            />
+          )}
+
+        </div>
+      )}
+
+
+      {/* ======================================================
           History
       ======================================================= */}
 
@@ -1453,6 +1697,432 @@ function Metric({
 
 
 // ============================================================
+// Measurement Comparison
+// ============================================================
+
+function MeasurementComparison({
+  earlier,
+  later,
+}: {
+  earlier:
+    BodyMeasurement;
+
+  later:
+    BodyMeasurement;
+}) {
+  const chronological =
+    earlier.date.localeCompare(
+      later.date
+    ) <=
+    0
+      ? {
+          earlier,
+          later,
+        }
+      : {
+          earlier:
+            later,
+
+          later:
+            earlier,
+        };
+
+  const fields = [
+    {
+      label:
+        "Weight",
+
+      earlier:
+        chronological.earlier.weightLb,
+
+      later:
+        chronological.later.weightLb,
+
+      unit:
+        "lb",
+    },
+
+    {
+      label:
+        "Waist",
+
+      earlier:
+        chronological.earlier.waistIn,
+
+      later:
+        chronological.later.waistIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Body Fat",
+
+      earlier:
+        chronological.earlier.bodyFatPercent,
+
+      later:
+        chronological.later.bodyFatPercent,
+
+      unit:
+        "%",
+    },
+
+    {
+      label:
+        "Neck",
+
+      earlier:
+        chronological.earlier.neckIn,
+
+      later:
+        chronological.later.neckIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Shoulders",
+
+      earlier:
+        chronological.earlier.shouldersIn,
+
+      later:
+        chronological.later.shouldersIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Chest",
+
+      earlier:
+        chronological.earlier.chestIn,
+
+      later:
+        chronological.later.chestIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Abdomen",
+
+      earlier:
+        chronological.earlier.abdomenIn,
+
+      later:
+        chronological.later.abdomenIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Hips",
+
+      earlier:
+        chronological.earlier.hipsIn,
+
+      later:
+        chronological.later.hipsIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Left Upper Arm",
+
+      earlier:
+        chronological.earlier.leftUpperArmIn,
+
+      later:
+        chronological.later.leftUpperArmIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Right Upper Arm",
+
+      earlier:
+        chronological.earlier.rightUpperArmIn,
+
+      later:
+        chronological.later.rightUpperArmIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Left Thigh",
+
+      earlier:
+        chronological.earlier.leftThighIn,
+
+      later:
+        chronological.later.leftThighIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Right Thigh",
+
+      earlier:
+        chronological.earlier.rightThighIn,
+
+      later:
+        chronological.later.rightThighIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Left Calf",
+
+      earlier:
+        chronological.earlier.leftCalfIn,
+
+      later:
+        chronological.later.leftCalfIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Right Calf",
+
+      earlier:
+        chronological.earlier.rightCalfIn,
+
+      later:
+        chronological.later.rightCalfIn,
+
+      unit:
+        "in",
+    },
+
+    {
+      label:
+        "Lean Mass",
+
+      earlier:
+        chronological.earlier.leanMassLb,
+
+      later:
+        chronological.later.leanMassLb,
+
+      unit:
+        "lb",
+    },
+
+    {
+      label:
+        "Fat Mass",
+
+      earlier:
+        chronological.earlier.fatMassLb,
+
+      later:
+        chronological.later.fatMassLb,
+
+      unit:
+        "lb",
+    },
+  ];
+
+  const comparableFields =
+    fields.filter(
+      (
+        field
+      ) =>
+        field.earlier !==
+          undefined &&
+        field.later !==
+          undefined
+    );
+
+
+  return (
+    <div className="mt-5">
+
+      <div className="flex flex-wrap items-center gap-2 text-sm text-slate-500">
+
+        <span className="font-semibold text-slate-900">
+          {
+            formatDisplayDate(
+              chronological.earlier.date
+            )
+          }
+        </span>
+
+        <span>
+          →
+        </span>
+
+        <span className="font-semibold text-slate-900">
+          {
+            formatDisplayDate(
+              chronological.later.date
+            )
+          }
+        </span>
+
+      </div>
+
+
+      {comparableFields.length >
+        0 ? (
+        <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+
+          <div className="grid grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))] gap-2 bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+
+            <span>
+              Measurement
+            </span>
+
+            <span>
+              Earlier
+            </span>
+
+            <span>
+              Later
+            </span>
+
+            <span>
+              Change
+            </span>
+
+          </div>
+
+
+          {comparableFields.map(
+            (
+              field
+            ) => {
+              const change =
+                field.later! -
+                field.earlier!;
+
+              const roundedChange =
+                Math.round(
+                  change *
+                  10
+                ) /
+                10;
+
+              const changeLabel =
+                roundedChange >
+                0
+                  ? `+${roundedChange}`
+                  : String(
+                      roundedChange
+                    );
+
+              return (
+                <div
+                  key={
+                    field.label
+                  }
+                  className="grid grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))] gap-2 border-t border-slate-200 px-4 py-3 text-sm"
+                >
+
+                  <span className="font-semibold text-slate-900">
+                    {
+                      field.label
+                    }
+                  </span>
+
+                  <span className="text-slate-700">
+                    {
+                      field.earlier
+                    }{" "}
+                    {
+                      field.unit
+                    }
+                  </span>
+
+                  <span className="text-slate-700">
+                    {
+                      field.later
+                    }{" "}
+                    {
+                      field.unit
+                    }
+                  </span>
+
+                  <span className="font-semibold text-slate-900">
+                    {
+                      changeLabel
+                    }{" "}
+                    {
+                      field.unit
+                    }
+                  </span>
+
+                </div>
+              );
+            }
+          )}
+
+        </div>
+      ) : (
+        <div className="mt-4 rounded-xl bg-slate-50 p-4">
+
+          <p className="text-sm text-slate-600">
+            These records do not contain any of the same
+            measurements, so there is nothing to compare yet.
+          </p>
+
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+
+// ============================================================
+// Source Badge
+// ============================================================
+
+function SourceBadge({
+  source,
+}: {
+  source:
+    BodyMeasurement["source"];
+}) {
+  return (
+    <span className="mt-1 inline-flex rounded-full border border-slate-200 bg-white px-2 py-0.5 text-xs font-semibold text-slate-600">
+      {source}
+    </span>
+  );
+}
+
+
+// ============================================================
 // Measurement History Item
 // ============================================================
 
@@ -1612,6 +2282,8 @@ function MeasurementHistoryItem({
             }
           </p>
 
+          <SourceBadge source={measurement.source} />
+
           <p className="mt-1 text-sm text-slate-500">
             {measurement.weightLb !==
             undefined
@@ -1691,35 +2363,34 @@ function MeasurementHistoryItem({
           )}
 
 
-          <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-200 pt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-200 pt-4">
 
-            <button
-              type="button"
-              onClick={
-                onEdit
-              }
-              className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              <Pencil
-                size={15}
-              />
+            {measurement.source === "DEXA" ? (
+              <p className="text-sm text-slate-500">
+                This measurement is linked to a DEXA scan. Edit or delete it
+                from DEXA Records so the scan and measurement stay synchronized.
+              </p>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={onEdit}
+                  className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                >
+                  <Pencil size={15} />
+                  Edit
+                </button>
 
-              Edit
-            </button>
-
-            <button
-              type="button"
-              onClick={
-                onDelete
-              }
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
-            >
-              <Trash2
-                size={15}
-              />
-
-              Delete
-            </button>
+                <button
+                  type="button"
+                  onClick={onDelete}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                >
+                  <Trash2 size={15} />
+                  Delete
+                </button>
+              </>
+            )}
 
           </div>
 

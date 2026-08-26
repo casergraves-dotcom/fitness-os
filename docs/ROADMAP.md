@@ -137,6 +137,19 @@ recommend the most appropriate action today.
 - [x] Calendar-week rollover with fresh weekly completion counters
 - [x] Training-plan state persistence and cloud sync
 
+### Activity prescription clarity
+
+- [x] Ensure scheduled walking, mobility, and recovery activities have a defined
+      purpose and target rather than relying on an open-ended label.
+- [x] Replace vague `Easy Walk` prescriptions with a concrete duration/intensity
+      target of 20–30 minutes at an easy, conversational effort.
+- [x] Replace vague `Stretch & Recovery` prescriptions with a concrete 10–15 minute
+      duration and recommended full-body recovery routine.
+- [x] Show walking/mobility prescriptions clearly from Today before the activity
+      is completed.
+- [ ] Define and enforce what counts as completion so walking/mobility activities
+      can be tracked consistently without requiring unnecessary logging.
+
 ### Running
 - [x] Scheduled and manually started runs
 - [x] Duration, distance,
@@ -683,13 +696,24 @@ long-term trends.
 - [x] Associate uploaded-file metadata with user-owned structured records.
 - [x] Enforce per-user access controls for uploaded files.
 - [x] Define basic file replacement and deletion behavior.
-- [ ] Ensure deleting a DEXA record/check-in intentionally removes its
-      associated uploaded files.
-- [ ] Define and implement recovery behavior when metadata sync succeeds but
-      file upload fails, or vice versa.
-- [ ] Verify user-facing records remain usable when optional files are
+- [x] Ensure deleting a DEXA record intentionally removes its associated
+      uploaded report.
+- [ ] Ensure deleting a progress check-in intentionally removes its associated
+      uploaded progress photos.
+- [x] Define and implement DEXA recovery behavior when report upload succeeds
+      but structured record persistence fails, or when report upload fails
+      before structured persistence begins.
+- [ ] Define and implement equivalent recovery behavior for weekly check-in
+      progress-photo uploads.
+- [x] Verify DEXA records remain usable when an optional uploaded report is
       unavailable.
+- [ ] Verify weekly check-in records remain usable when optional progress photos
+      are unavailable.
 - [ ] Verify uploaded-file isolation using separate authenticated accounts.
+      - User-scoped storage policies are implemented for read, insert, update,
+        and delete.
+      - Defer explicit cross-account verification until a second real account
+        or appropriate integration-test environment exists.
 
 **Current state:** Phase 4 has a persistent body-composition data foundation
 for goals, measurements, DEXA records, weekly check-ins, and progress-photo
@@ -702,31 +726,35 @@ authenticated user. Record-level file cleanup, partial-failure recovery,
 offline/missing-file behavior, and cross-account verification remain to be
 completed as the DEXA and progress-photo workflows are implemented.
 
-## 4.1 Goal Profile — IN PROGRESS
+## 4.1 Goal Profile — COMPLETE
 
 - [x] Add user goal configuration.
 - [x] Support fat-loss/body-composition goal as the primary goal.
 - [x] Store target/goal context without overemphasizing a single scale number.
 - [x] Support optional goal weight.
 - [x] Support optional goal body-fat percentage.
-- [ ] Support relevant performance/hobby goals.
+- [x] Support relevant performance/hobby goals.
 - [x] Store goal effective/start date.
 - [x] Preserve historical goals when goals change.
 - [x] Support expected rate of change.
-- [ ] Calculate projected goal completion date.
-- [ ] Recalculate projection from observed progress trends.
-- [ ] Compare actual rate of progress with expected rate.
-- [ ] Identify plateaus or unusually rapid changes without automatically
+- [x] Calculate projected goal completion date.
+- [x] Recalculate projection from observed progress trends.
+- [x] Compare actual rate of progress with expected rate.
+- [x] Identify plateaus or unusually rapid changes without automatically
       changing training or nutrition targets.
 
-**Current state:** goal profiles can be created and changed while retaining
-historical goal records and effective dates. Goals can describe fat loss, body composition, maintenance, or performance
-and can include optional weight, body-fat, expected-rate, and notes context.
-Specific performance/hobby goal entry remains to be added.
-Projection and observed-progress analysis remain to be implemented after
-sufficient measurement trend support exists.
+**Completed outcome:** goal profiles can be created and changed while retaining
+historical goal records and effective dates. Goals can describe fat loss,
+body composition, maintenance, or performance and can include optional
+weight, body-fat, expected-rate, performance/hobby goals, and notes context.
 
-## 4.2 Measurements and Body Composition — IN PROGRESS
+Fitness OS now combines the active goal with the derived rolling weight trend
+to show current trend weight, remaining change, observed weekly rate, planned
+projection, trend-based projection, and progress status. Trend-dependent
+analysis remains conservative when measurement history is insufficient and
+does not automatically alter training or nutrition targets.
+
+## 4.2 Measurements and Body Composition — COMPLETE
 
 - [x] Add body-weight logging.
 - [x] Add waist measurement logging.
@@ -748,71 +776,110 @@ sufficient measurement trend support exists.
       - Home scale/device.
       - DEXA.
 - [x] Preserve historical measurements rather than overwriting prior entries.
-- [ ] Distinguish raw measurements from calculated trend values.
-- [ ] Use rolling trends rather than reacting to daily weight noise.
-- [ ] Support comparison between measurements from selected dates.
+- [x] Distinguish raw measurements from calculated trend values.
+- [x] Use rolling trends rather than reacting to daily weight noise.
+- [x] Support comparison between measurements from selected dates.
 
-**Current state:** manual body-composition records can be created, edited,
+**Completed outcome:** manual body-composition records can be created, edited,
 deleted, and reviewed historically. Core weight, waist, and body-fat fields
 are supplemented by detailed circumference measurements and optional
-lean/fat-mass values. Measurement provenance is preserved so future manual, device-derived, and
-DEXA-derived records can coexist. Trend calculations and date comparison
-remain to be implemented.
+lean/fat-mass values. Measurement provenance is preserved so future manual,
+device-derived, and DEXA-derived records can coexist.
 
-## 4.3 DEXA Records
+Raw measurement history remains separate from derived analysis. Fitness OS
+now calculates a seven-day rolling weight trend without persisting calculated
+values back into measurement records, and the Progress screen clearly
+distinguishes raw weight from the calculated trend. Historical measurement
+records can also be selected and compared date-to-date across any measurements
+available on both records.
 
-- [ ] Support optional DEXA scan records.
-- [ ] Store scan date.
-- [ ] Support upload and storage of the original DEXA report.
-- [ ] Store relevant DEXA-derived metrics when available.
+## 4.3 DEXA Records — COMPLETE
+
+- [x] Support optional DEXA scan records.
+- [x] Store scan date.
+- [x] Support upload and storage of the original DEXA report.
+- [x] Store relevant DEXA-derived metrics when available.
       - Body weight.
       - Body-fat percentage.
       - Fat mass.
       - Lean mass.
       - Other useful metrics supported by the report.
-- [ ] Preserve DEXA as a distinct measurement source rather than treating
+- [x] Preserve DEXA as a distinct measurement source rather than treating
       it as interchangeable with home-scale estimates.
-- [ ] Support manual entry of DEXA values.
-- [ ] Treat automatic DEXA report extraction as an optional later enhancement.
-- [ ] Support comparison between DEXA scans.
+- [x] Support manual entry of DEXA values.
+- [x] Treat automatic DEXA report extraction as an optional later enhancement.
+- [x] Support comparison between DEXA scans.
 
-## 4.4 Weekly Progress Check-In
+**Current state:** DEXA scans can be created, edited, deleted, and compared while
+remaining a distinct body-composition measurement source. Scan date, body weight,
+body-fat percentage, fat mass, lean mass, optional notes, and the original DEXA
+report are preserved. Original reports are stored in private authenticated file
+storage and can be opened through temporary signed URLs.
 
-- [ ] Add an optional weekly progress check-in.
-- [ ] Record current body weight.
-- [ ] Record waist measurement when available.
-- [ ] Record optional body-fat measurement.
-- [ ] Record optional notes.
-- [ ] Support optional weekly progress photos.
+DEXA records automatically contribute linked DEXA-sourced measurements to the
+body-composition history. Editing a DEXA scan synchronizes its linked measurement
+while preserving the attached report, keeping the DEXA record as the source of
+truth for scan-derived measurements. DEXA-derived measurements participate in
+measurement comparison, rolling weight trends, and goal-progress analysis.
+
+Automatic extraction of values from uploaded DEXA reports remains an optional
+future enhancement rather than a requirement for this phase.
+
+## 4.4 Weekly Progress Check-In — COMPLETE
+
+- [x] Add an optional weekly progress check-in.
+- [x] Reference body weight from the preferred Body Measurement recorded on the check-in date.
+- [x] Reference waist measurement when available.
+- [x] Reference body-fat measurement when available.
+- [x] Record optional notes.
+- [x] Support optional weekly progress photos.
       - Front.
       - Side.
       - Back.
-- [ ] Associate progress photos with the check-in/measurement date.
-- [ ] Allow measurements or photos to be skipped without preventing
+- [x] Associate progress photos with the check-in date.
+- [x] Allow measurements or photos to be skipped without preventing
       check-in completion.
-- [ ] Show change since the previous check-in.
-- [ ] Show rolling weight trend rather than relying on a single measurement.
-- [ ] Show progress toward the current goal.
+- [x] Show change since the previous check-in.
+- [x] Show rolling weight trend rather than relying on a single measurement.
+- [x] Show progress toward the current goal.
+- [x] Keep Body Measurements as the canonical measurement source rather than
+      duplicating measurement values inside weekly check-ins.
+- [x] Prefer Manual measurements, then Home Scale measurements, when resolving
+      the same-date measurement for a check-in while preserving DEXA as a
+      distinct measurement source.
+
+**Completed outcome:** Weekly Progress Check-In now provides a lightweight
+weekly review layer over the existing body-composition system. A check-in can
+contain weekly context and optional private front, side, and back progress
+photos without requiring measurements. When Body Measurements exist on the
+same date, the preferred measurement is shown automatically and compared with
+the previous check-in. The review also surfaces the rolling weight trend,
+observed rate, and current goal status without duplicating canonical
+measurement data inside the check-in itself.
+
+**Future enhancement:** Add inline progress-photo thumbnails/previews so saved
+and newly selected progress photos can be visually reviewed without opening
+the original file in a separate browser tab.
 
 ## 4.5 Progress Summary and Dashboard
 
-- [ ] Add body-weight trend visualization.
-- [ ] Add waist trend visualization.
-- [ ] Add body-fat trend visualization when sufficient data is available.
-- [ ] Add lean-mass trend visualization when sufficient data is available.
-- [ ] Clearly distinguish raw measurements from trend values.
-- [ ] Show progress toward the current goal.
-- [ ] Show expected versus actual rate of progress.
-- [ ] Show projected goal completion date.
-- [ ] Track meaningful progress milestones.
+- [x] Add body-weight trend visualization.
+- [x] Add waist trend visualization.
+- [x] Add body-fat trend visualization when sufficient data is available.
+- [x] Add lean-mass trend visualization when sufficient data is available.
+- [x] Clearly distinguish raw measurements from trend values.
+- [x] Show progress toward the current goal.
+- [x] Show expected versus actual rate of progress.
+- [x] Show projected goal completion date.
+- [x] Track meaningful progress milestones.
 - [ ] Add DEXA comparison view.
-- [ ] Add progress-photo timeline.
-- [ ] Add side-by-side progress-photo comparison.
-- [ ] Combine body-composition trend with strength retention/progression.
-- [ ] Combine running/cardio trend.
-- [ ] Combine training adherence.
-- [ ] Highlight whether the current approach appears to be working.
-- [ ] Avoid automatic training changes from a single measurement or
+- [x] Add progress-photo timeline.
+- [x] Add side-by-side progress-photo comparison.
+- [x] Combine body-composition trend with strength retention/progression.
+- [x] Combine running/cardio trend.
+- [x] Combine training adherence.
+- [x] Highlight whether the current approach appears to be working.
+- [x] Avoid automatic training changes from a single measurement or
       short-term fluctuation.
 
 ****Milestone:**** Fitness OS can answer ****"Is this program actually
@@ -1003,6 +1070,28 @@ and what matters next, and those insights improve future Guide decisions.
 - [ ] Support historical-date entry.
 - [ ] Support date-to-date body-map comparison.
 
+## 7.6 Mobility & Flexibility Guidance
+
+- [ ] Add structured mobility and stretching guidance rather than relying on
+      open-ended recovery labels.
+- [ ] Add a small library of stretches and mobility drills with concise setup,
+      execution, target-area, and safety cues.
+- [ ] Support guided routines with explicit duration and per-side timing where
+      appropriate.
+- [ ] Provide useful default routines such as Full Body Recovery, Post-Run,
+      Post-Strength, and Post-Aerial.
+- [ ] Support routine duration targets such as 10, 15, and 20 minutes.
+- [ ] Allow favorite and custom mobility/stretching routines.
+- [ ] Allow tight/sore-area context to influence the recommended routine without
+      automatically changing the underlying training plan.
+- [ ] Record completed mobility/stretching work so adherence and recovery history
+      can distinguish prescribed work from vague recovery intent.
+- [ ] Support progression from basic static stretching toward appropriate mobility
+      work where useful rather than repeating an unchanged routine indefinitely.
+
+**Design principle:** mobility and stretching should remain a focused
+training-support feature, not expand Fitness OS into a general yoga application.
+
 **---**
 
 # Phase 8 --- Health Data Integrations
@@ -1148,6 +1237,16 @@ correctness, privacy, data-loss, security, or significant maintainability risk.
       interpreted by the current model.
 - [ ] Preserve provenance/source metadata when multiple measurement sources
       represent equivalent metrics.
+
+### Progress Photo Enhancements
+
+- [ ] Add in-app preview for progress photos.
+- [ ] Show photo thumbnails in weekly check-in history.
+- [ ] Allow opening a larger photo preview without downloading the original file.
+- [ ] Support HEIC/HEIF photos with a browser-compatible preview representation.
+- [ ] Preserve the original uploaded photo in private storage.
+- [ ] Keep progress-photo previews private and authenticated.
+- [ ] Consider side-by-side progress-photo comparison between check-in dates.
 
 # Near-Term Execution Order
 

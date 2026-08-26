@@ -2,10 +2,13 @@ import AppShell from "@/components/layout/AppShell";
 
 import {
   BodyMeasurements,
+  DexaRecords,
   ExerciseProgress,
   GoalProfile,
   RecoveryProgress,
   RunningProgress,
+  WeeklyProgressCheckIn,
+  BodyCompositionProgress,
 } from "@/features/progress";
 
 
@@ -19,12 +22,7 @@ export default function ProgressPage() {
 
       <div className="space-y-8">
 
-        {/* ====================================================
-            Page Header
-        ===================================================== */}
-
         <div>
-
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
             Progress
           </p>
@@ -36,18 +34,11 @@ export default function ProgressPage() {
           <p className="mt-1 text-sm text-slate-500">
             Track your performance and recovery over time.
           </p>
-
         </div>
 
 
-        {/* ====================================================
-            Goal
-        ===================================================== */}
-
         <section className="space-y-4">
-
           <div>
-
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
               Outcome
             </p>
@@ -59,23 +50,54 @@ export default function ProgressPage() {
             <p className="mt-1 text-sm text-slate-500">
               Define the outcome Fitness OS should use when evaluating progress.
             </p>
-
           </div>
 
-
           <GoalProfile />
-
         </section>
-
-
-        {/* ====================================================
-            Body Composition
-        ===================================================== */}
 
         <section className="space-y-4">
 
           <div>
 
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Body Composition
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Progress Summary
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Review body-weight trends, progress rate, and projected goal timing.
+            </p>
+
+          </div>
+
+          <BodyCompositionProgress />
+
+        </section>
+
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Body Composition
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Weekly Progress Check-In
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Capture a weekly snapshot and compare it with your recent body-composition trend and active goal.
+            </p>
+          </div>
+
+          <WeeklyProgressCheckIn />
+        </section>
+
+
+        <section className="space-y-4">
+          <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
               Body Composition
             </p>
@@ -87,23 +109,33 @@ export default function ProgressPage() {
             <p className="mt-1 text-sm text-slate-500">
               Track weight, circumference measurements, and body-composition changes over time.
             </p>
-
           </div>
 
-
           <BodyMeasurements />
-
         </section>
 
 
-        {/* ====================================================
-            Strength
-        ===================================================== */}
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Body Composition
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              DEXA Records
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Preserve DEXA scans as distinct body-composition assessments and compare changes between scans.
+            </p>
+          </div>
+
+          <DexaRecords />
+        </section>
+
 
         <section className="space-y-4">
-
           <div>
-
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
               Strength
             </p>
@@ -115,23 +147,14 @@ export default function ProgressPage() {
             <p className="mt-1 text-sm text-slate-500">
               Track estimated strength changes for individual exercises.
             </p>
-
           </div>
 
-
           <ExerciseProgress />
-
         </section>
 
 
-        {/* ====================================================
-            Running
-        ===================================================== */}
-
         <section className="space-y-4">
-
           <div>
-
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
               Running
             </p>
@@ -143,23 +166,14 @@ export default function ProgressPage() {
             <p className="mt-1 text-sm text-slate-500">
               Track running volume, pace, and recent performance.
             </p>
-
           </div>
 
-
           <RunningProgress />
-
         </section>
 
 
-        {/* ====================================================
-            Recovery
-        ===================================================== */}
-
         <section className="space-y-4">
-
           <div>
-
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
               Recovery
             </p>
@@ -171,12 +185,9 @@ export default function ProgressPage() {
             <p className="mt-1 text-sm text-slate-500">
               Track how sleep, energy, mood, stress, and soreness change over time.
             </p>
-
           </div>
 
-
           <RecoveryProgress />
-
         </section>
 
       </div>

@@ -12,6 +12,7 @@ import {
 
 import {
   readBodyMeasurements,
+  subscribeToBodyMeasurements,
   writeBodyMeasurements,
 } from "../bodyCompositionStorage";
 
@@ -50,6 +51,10 @@ export interface BodyMeasurementInput {
   neckIn?: number;
 
   chestIn?: number;
+
+  shouldersIn?: number;
+
+  abdomenIn?: number;
 
   waistIn?: number;
 
@@ -171,21 +176,27 @@ export function useBodyMeasurements() {
 
 
   // ----------------------------------------------------------
-  // Load
+  // Load / Synchronize
   // ----------------------------------------------------------
 
   useEffect(() => {
-    const saved =
-      sortMeasurements(
-        readBodyMeasurements()
-      );
+    const refresh =
+      () => {
+        setMeasurements(
+          sortMeasurements(
+            readBodyMeasurements()
+          )
+        );
 
-    setMeasurements(
-      saved
-    );
+        setLoaded(
+          true
+        );
+      };
 
-    setLoaded(
-      true
+    refresh();
+
+    return subscribeToBodyMeasurements(
+      refresh
     );
   }, []);
 
@@ -258,6 +269,12 @@ export function useBodyMeasurements() {
       chestIn:
         input.chestIn,
 
+      shouldersIn:
+        input.shouldersIn,
+
+      abdomenIn:
+        input.abdomenIn,
+
       waistIn:
         input.waistIn,
 
@@ -306,10 +323,6 @@ export function useBodyMeasurements() {
       ]);
 
     writeBodyMeasurements(
-      updatedMeasurements
-    );
-
-    setMeasurements(
       updatedMeasurements
     );
 
@@ -379,6 +392,12 @@ export function useBodyMeasurements() {
       chestIn:
         input.chestIn,
 
+      shouldersIn:
+        input.shouldersIn,
+
+      abdomenIn:
+        input.abdomenIn,
+
       waistIn:
         input.waistIn,
 
@@ -435,10 +454,6 @@ export function useBodyMeasurements() {
       updatedMeasurements
     );
 
-    setMeasurements(
-      updatedMeasurements
-    );
-
     return updatedMeasurement;
   }
 
@@ -460,10 +475,6 @@ export function useBodyMeasurements() {
       );
 
     writeBodyMeasurements(
-      updatedMeasurements
-    );
-
-    setMeasurements(
       updatedMeasurements
     );
   }

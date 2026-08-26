@@ -268,6 +268,63 @@ BodyMeasurement[] {
 }
 
 
+export const BODY_MEASUREMENTS_CHANGED_EVENT =
+  "fitness-os-body-measurements-changed";
+
+
+export function subscribeToBodyMeasurements(
+  listener:
+    () => void
+): () => void {
+  if (
+    typeof window ===
+    "undefined"
+  ) {
+    return () => {};
+  }
+
+  const handleCustomEvent =
+    () => {
+      listener();
+    };
+
+  const handleStorageEvent =
+    (
+      event:
+        StorageEvent
+    ) => {
+      if (
+        event.key ===
+        FITNESS_OS_STORAGE_KEYS.bodyMeasurements
+      ) {
+        listener();
+      }
+    };
+
+  window.addEventListener(
+    BODY_MEASUREMENTS_CHANGED_EVENT,
+    handleCustomEvent
+  );
+
+  window.addEventListener(
+    "storage",
+    handleStorageEvent
+  );
+
+  return () => {
+    window.removeEventListener(
+      BODY_MEASUREMENTS_CHANGED_EVENT,
+      handleCustomEvent
+    );
+
+    window.removeEventListener(
+      "storage",
+      handleStorageEvent
+    );
+  };
+}
+
+
 export function writeBodyMeasurements(
   records:
     BodyMeasurement[]
@@ -276,6 +333,17 @@ export function writeBodyMeasurements(
     FITNESS_OS_STORAGE_KEYS.bodyMeasurements,
     records
   );
+
+  if (
+    typeof window !==
+    "undefined"
+  ) {
+    window.dispatchEvent(
+      new Event(
+        BODY_MEASUREMENTS_CHANGED_EVENT
+      )
+    );
+  }
 }
 
 

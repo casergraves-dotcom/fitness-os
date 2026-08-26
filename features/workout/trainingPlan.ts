@@ -37,6 +37,72 @@ function week(
 
 
 // ============================================================
+// Shared Activity Prescriptions
+// ============================================================
+
+const EASY_WALK_PRESCRIPTION = {
+  cardioIntensity:
+    "Easy" as const,
+
+  durationMin:
+    20,
+
+  durationMax:
+    30,
+
+  note:
+    "Walk at a relaxed, conversational pace. This is recovery work, not a pace or distance challenge.",
+};
+
+
+const STRETCH_RECOVERY_PRESCRIPTION = {
+  durationMin:
+    10,
+
+  durationMax:
+    15,
+
+  note:
+    "Complete a gentle full-body recovery routine: calves, hamstrings, hip flexors, glutes, adductors, lats, chest, and shoulders. Hold each stretch about 30 seconds per side and repeat tight areas as needed.",
+};
+
+const LONG_WALK_PRESCRIPTION = {
+  cardioIntensity:
+    "Easy" as const,
+
+  durationMin:
+    45,
+
+  durationMax:
+    60,
+
+  note:
+    "Walk at a comfortable conversational pace. The goal is easy aerobic movement, not speed or distance.",
+};
+
+
+const LONG_WALK_HIKE_PRESCRIPTION = {
+  cardioIntensity:
+    "Easy" as const,
+
+  durationMin:
+    60,
+
+  durationMax:
+    90,
+
+  note:
+    "Choose an easy walk or hike at a sustainable conversational effort. Keep the session aerobic and avoid turning it into a hard conditioning workout.",
+};
+
+
+const RECOVERY_DAY_PRESCRIPTION = {
+  note:
+    "No structured training is required today. Prioritize recovery, sleep, hydration, and easy movement. A short gentle walk or mobility session is optional if it feels restorative.",
+};
+
+
+// ============================================================
 // Week 0
 // Return
 // ============================================================
@@ -66,6 +132,7 @@ const week0 = week({
         id: "week-0-tuesday-walk",
         type: "Walk",
         label: "Easy Walk",
+        ...EASY_WALK_PRESCRIPTION,
         optional: true,
       }),
 
@@ -73,6 +140,7 @@ const week0 = week({
         id: "week-0-tuesday-mobility",
         type: "Mobility",
         label: "Stretch & Recovery",
+        ...STRETCH_RECOVERY_PRESCRIPTION,
         optional: true,
       }),
     ]),
@@ -82,8 +150,7 @@ const week0 = week({
         id: "week-0-wednesday-walk",
         type: "Walk",
         label: "Easy Walk",
-        durationMin: 20,
-        durationMax: 30,
+        ...EASY_WALK_PRESCRIPTION,
       }),
     ]),
 
@@ -111,6 +178,7 @@ const week0 = week({
         id: "week-0-saturday-walk",
         type: "Walk",
         label: "Long Walk",
+        ...LONG_WALK_PRESCRIPTION,
       }),
     ]),
 
@@ -119,6 +187,7 @@ const week0 = week({
         id: "week-0-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -184,6 +253,7 @@ const week1 = week({
         id: "week-1-thursday-walk",
         type: "Walk",
         label: "Easy Walk",
+        ...EASY_WALK_PRESCRIPTION,
         optional: true,
       }),
 
@@ -191,6 +261,7 @@ const week1 = week({
         id: "week-1-thursday-mobility",
         type: "Mobility",
         label: "Stretch & Recovery",
+        ...STRETCH_RECOVERY_PRESCRIPTION,
         optional: true,
       }),
     ]),
@@ -210,6 +281,7 @@ const week1 = week({
         id: "week-1-saturday-walk",
         type: "Walk",
         label: "Long Walk",
+        ...LONG_WALK_PRESCRIPTION,
       }),
     ]),
 
@@ -218,6 +290,7 @@ const week1 = week({
         id: "week-1-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -283,6 +356,7 @@ const week2 = week({
         id: "week-2-thursday-walk",
         type: "Walk",
         label: "Easy Walk",
+        ...EASY_WALK_PRESCRIPTION,
         optional: true,
       }),
 
@@ -290,6 +364,7 @@ const week2 = week({
         id: "week-2-thursday-mobility",
         type: "Mobility",
         label: "Stretch & Recovery",
+        ...STRETCH_RECOVERY_PRESCRIPTION,
         optional: true,
       }),
     ]),
@@ -309,6 +384,7 @@ const week2 = week({
         id: "week-2-saturday-walk",
         type: "Walk",
         label: "Long Walk / Hike",
+        ...LONG_WALK_HIKE_PRESCRIPTION,
       }),
     ]),
 
@@ -317,6 +393,7 @@ const week2 = week({
         id: "week-2-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -381,6 +458,7 @@ const week3 = week({
         id: "week-3-thursday-walk",
         type: "Walk",
         label: "Easy Walk",
+        ...EASY_WALK_PRESCRIPTION,
         optional: true,
       }),
 
@@ -388,6 +466,7 @@ const week3 = week({
         id: "week-3-thursday-mobility",
         type: "Mobility",
         label: "Stretch & Recovery",
+        ...STRETCH_RECOVERY_PRESCRIPTION,
         optional: true,
       }),
     ]),
@@ -406,6 +485,7 @@ const week3 = week({
         id: "week-3-saturday-walk",
         type: "Walk",
         label: "Long Walk / Hike",
+        ...LONG_WALK_HIKE_PRESCRIPTION,
       }),
     ]),
 
@@ -414,6 +494,7 @@ const week3 = week({
         id: "week-3-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -456,7 +537,8 @@ const week4 = week({
       activity({
         id: "week-4-tuesday-walk",
         type: "Walk",
-        label: "Walk",
+        label: "Easy Walk",
+        ...EASY_WALK_PRESCRIPTION,
         optional: true,
         substitutionGroup: "easy-cardio",
       }),
@@ -496,6 +578,7 @@ const week4 = week({
         id: "week-4-saturday-walk",
         type: "Walk",
         label: "Long Walk",
+        ...LONG_WALK_PRESCRIPTION,
       }),
     ]),
 
@@ -504,6 +587,7 @@ const week4 = week({
         id: "week-4-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -567,6 +651,7 @@ const week5 = week({
         id: "week-5-thursday-walk",
         type: "Walk",
         label: "Easy Walk",
+        ...EASY_WALK_PRESCRIPTION,
         optional: true,
       }),
 
@@ -574,6 +659,7 @@ const week5 = week({
         id: "week-5-thursday-mobility",
         type: "Mobility",
         label: "Stretch & Recovery",
+        ...STRETCH_RECOVERY_PRESCRIPTION,
         optional: true,
       }),
     ]),
@@ -603,6 +689,7 @@ const week5 = week({
         id: "week-5-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -673,7 +760,8 @@ const week6 = week({
       activity({
         id: "week-6-thursday-walk",
         type: "Walk",
-        label: "Walk",
+        label: "Easy Walk",
+        ...EASY_WALK_PRESCRIPTION,
         optional: true,
         substitutionGroup: "recovery-activity",
       }),
@@ -704,6 +792,7 @@ const week6 = week({
         id: "week-6-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -879,6 +968,7 @@ const steadyState = week({
         id: "steady-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],
@@ -1074,6 +1164,7 @@ export const deloadWeek = week({
         id: "deload-sunday-recovery",
         type: "Recovery",
         label: "Recovery",
+        ...RECOVERY_DAY_PRESCRIPTION,
       }),
     ]),
   ],

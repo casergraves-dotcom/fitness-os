@@ -26,6 +26,26 @@ export {
   default as BodyMeasurements,
 } from "./components/BodyMeasurements";
 
+export {
+  default as DexaRecords,
+} from "./components/DexaRecords";
+
+export {
+  default as WeeklyProgressCheckIn,
+} from "./components/WeeklyProgressCheckIn";
+
+export {
+  default as BodyWeightTrendChart,
+} from "./components/BodyWeightTrendChart";
+
+export {
+  default as BodyCompositionProgress,
+} from "./components/BodyCompositionProgress";
+
+export {
+  default as MeasurementTrendChart,
+} from "./components/MeasurementTrendChart";
+
 
 // ============================================================
 // Hooks
@@ -42,3 +62,27 @@ export {
 export {
   useBodyMeasurements,
 } from "./hooks/useBodyMeasurements";
+
+export {
+  useBodyCompositionTrends,
+} from "./hooks/useBodyCompositionTrends";
+
+export {
+  useBodyCompositionGoalProgress,
+} from "./hooks/useBodyCompositionGoalProgress";
+
+export {
+  useDexaRecords,
+} from "./hooks/useDexaRecords";
+
+export {
+  useProgressCheckIns,
+} from "./hooks/useProgressCheckIns";
+
+export {
+  useBodyCompositionMilestones,
+} from "./hooks/useBodyCompositionMilestones";
+
+export type {
+  BodyCompositionMilestone,
+} from "./hooks/useBodyCompositionMilestones";

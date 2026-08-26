@@ -13,6 +13,22 @@ import {
   useBodyCompositionGoals,
 } from "../hooks/useBodyCompositionGoals";
 
+import {
+  useBodyMeasurements,
+} from "../hooks/useBodyMeasurements";
+
+import {
+  useBodyCompositionTrends,
+} from "../hooks/useBodyCompositionTrends";
+
+import {
+  useBodyCompositionGoalProgress,
+} from "../hooks/useBodyCompositionGoalProgress";
+
+import type {
+  BodyCompositionGoalProgressStatus,
+} from "../hooks/useBodyCompositionGoalProgress";
+
 import type {
   BodyCompositionGoalType,
 } from "../bodyCompositionTypes";
@@ -144,6 +160,57 @@ function parseOptionalNumber(
 }
 
 
+function formatSignedRate(
+  value:
+    number |
+    undefined
+) {
+  if (
+    value ===
+    undefined
+  ) {
+    return "Not enough data";
+  }
+
+  const prefix =
+    value >
+    0
+      ? "+"
+      : "";
+
+  return `${prefix}${value} lb / week`;
+}
+
+
+function formatGoalProgressStatus(
+  status:
+    BodyCompositionGoalProgressStatus
+) {
+  switch (
+    status
+  ) {
+    case "OnTrack":
+      return "On track";
+
+    case "SlowerThanExpected":
+      return "Slower than expected";
+
+    case "FasterThanExpected":
+      return "Faster than expected";
+
+    case "Plateau":
+      return "Possible plateau";
+
+    case "MovingAwayFromGoal":
+      return "Moving away from goal";
+
+    case "InsufficientData":
+    default:
+      return "Not enough trend data";
+  }
+}
+
+
 // ============================================================
 // Component
 // ============================================================
@@ -155,6 +222,24 @@ export default function GoalProfile() {
     addGoal,
   } =
     useBodyCompositionGoals();
+
+  const {
+    measurements,
+  } =
+    useBodyMeasurements();
+
+  const {
+    weightTrend,
+  } =
+    useBodyCompositionTrends(
+      measurements
+    );
+
+  const goalProgress =
+    useBodyCompositionGoalProgress(
+      currentGoal,
+      weightTrend
+    );
 
   const [
     editing,
@@ -187,6 +272,18 @@ export default function GoalProfile() {
   const [
     expectedWeeklyChange,
     setExpectedWeeklyChange,
+  ] =
+    useState("");
+
+  const [
+    performanceGoals,
+    setPerformanceGoals,
+  ] =
+    useState<string[]>([]);
+
+  const [
+    performanceGoalInput,
+    setPerformanceGoalInput,
   ] =
     useState("");
 
@@ -269,6 +366,15 @@ export default function GoalProfile() {
           : ""
       );
 
+      setPerformanceGoals(
+        currentGoal.performanceGoals ??
+        []
+      );
+
+      setPerformanceGoalInput(
+        ""
+      );
+
       setNotes(
         currentGoal.notes ??
         ""
@@ -290,6 +396,14 @@ export default function GoalProfile() {
         ""
       );
 
+      setPerformanceGoals(
+        []
+      );
+
+      setPerformanceGoalInput(
+        ""
+      );
+
       setNotes(
         ""
       );
@@ -301,6 +415,56 @@ export default function GoalProfile() {
 
     setEditing(
       true
+    );
+  }
+
+
+  // ----------------------------------------------------------
+  // Performance Goals
+  // ----------------------------------------------------------
+
+  function addPerformanceGoal() {
+    const trimmedGoal =
+      performanceGoalInput.trim();
+
+    if (
+      trimmedGoal ===
+      ""
+    ) {
+      return;
+    }
+
+    setPerformanceGoals(
+      (
+        current
+      ) => [
+        ...current,
+        trimmedGoal,
+      ]
+    );
+
+    setPerformanceGoalInput(
+      ""
+    );
+  }
+
+
+  function removePerformanceGoal(
+    index:
+      number
+  ) {
+    setPerformanceGoals(
+      (
+        current
+      ) =>
+        current.filter(
+          (
+            _,
+            currentIndex
+          ) =>
+            currentIndex !==
+            index
+        )
     );
   }
 
@@ -366,6 +530,12 @@ export default function GoalProfile() {
 
       expectedWeeklyWeightChangeLb:
         parsedWeeklyChange,
+
+      performanceGoals:
+        performanceGoals.length >
+        0
+          ? performanceGoals
+          : undefined,
 
       notes:
         notes.trim() !==
@@ -608,6 +778,104 @@ export default function GoalProfile() {
           </label>
 
 
+          {/* ==================================================
+              Performance & Hobby Goals
+          ================================================== */}
+
+          <div className="block">
+
+            <span className="text-sm font-semibold text-slate-800">
+              Performance & hobby goals
+            </span>
+
+            <p className="mt-1 text-xs leading-5 text-slate-500">
+              Optional goals that matter alongside body composition,
+              such as running, strength, hiking, aerial, or other activities.
+            </p>
+
+            <div className="mt-2 flex gap-2">
+
+              <input
+                type="text"
+                value={
+                  performanceGoalInput
+                }
+                onChange={(
+                  event
+                ) =>
+                  setPerformanceGoalInput(
+                    event.target.value
+                  )
+                }
+                onKeyDown={(
+                  event
+                ) => {
+                  if (
+                    event.key ===
+                    "Enter"
+                  ) {
+                    event.preventDefault();
+
+                    addPerformanceGoal();
+                  }
+                }}
+                placeholder="e.g. Run a 10-minute mile"
+                className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 py-3 text-base text-slate-900"
+              />
+
+              <button
+                type="button"
+                onClick={
+                  addPerformanceGoal
+                }
+                className="rounded-xl border border-blue-600 px-4 py-3 text-sm font-semibold text-blue-600 hover:bg-blue-50"
+              >
+                Add
+              </button>
+
+            </div>
+
+
+            {performanceGoals.length >
+              0 && (
+              <div className="mt-3 space-y-2">
+
+                {performanceGoals.map(
+                  (
+                    goal,
+                    index
+                  ) => (
+                    <div
+                      key={`${goal}-${index}`}
+                      className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5"
+                    >
+
+                      <span className="text-sm text-slate-700">
+                        {goal}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removePerformanceGoal(
+                            index
+                          )
+                        }
+                        className="shrink-0 text-xs font-semibold text-red-600 hover:text-red-700"
+                      >
+                        Remove
+                      </button>
+
+                    </div>
+                  )
+                )}
+
+              </div>
+            )}
+
+          </div>
+
+
           <label className="block">
 
             <span className="text-sm font-semibold text-slate-800">
@@ -815,6 +1083,142 @@ export default function GoalProfile() {
       </div>
 
 
+      <div className="mt-5 rounded-xl border border-slate-200 p-4">
+
+        <div>
+
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Goal Progress
+          </p>
+
+          <p className="mt-1 text-sm leading-6 text-slate-500">
+            Progress analysis uses the rolling weight trend rather
+            than reacting to individual weigh-ins.
+          </p>
+
+        </div>
+
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+
+          <div className="rounded-xl bg-slate-50 p-4">
+
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Current Trend
+            </p>
+
+            <p className="mt-1 text-lg font-bold text-slate-900">
+              {goalProgress.currentTrendWeightLb !==
+              undefined
+                ? `${goalProgress.currentTrendWeightLb} lb`
+                : "Not enough data"}
+            </p>
+
+          </div>
+
+
+          <div className="rounded-xl bg-slate-50 p-4">
+
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Remaining
+            </p>
+
+            <p className="mt-1 text-lg font-bold text-slate-900">
+              {goalProgress.remainingWeightChangeLb !==
+              undefined
+                ? `${Math.abs(
+                    goalProgress.remainingWeightChangeLb
+                  )} lb`
+                : "Not available"}
+            </p>
+
+          </div>
+
+
+          <div className="rounded-xl bg-slate-50 p-4">
+
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Observed Rate
+            </p>
+
+            <p className="mt-1 text-lg font-bold text-slate-900">
+              {
+                formatSignedRate(
+                  goalProgress.observedWeeklyWeightChangeLb
+                )
+              }
+            </p>
+
+          </div>
+
+
+          <div className="rounded-xl bg-slate-50 p-4">
+
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Planned Projection
+            </p>
+
+            <p className="mt-1 text-lg font-bold text-slate-900">
+              {goalProgress.expectedProjectedCompletionDate
+                ? formatEffectiveDate(
+                    goalProgress.expectedProjectedCompletionDate
+                  )
+                : "Not available"}
+            </p>
+
+          </div>
+
+
+          <div className="rounded-xl bg-slate-50 p-4">
+
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Trend Projection
+            </p>
+
+            <p className="mt-1 text-lg font-bold text-slate-900">
+              {goalProgress.observedProjectedCompletionDate
+                ? formatEffectiveDate(
+                    goalProgress.observedProjectedCompletionDate
+                  )
+                : "Not enough data"}
+            </p>
+
+          </div>
+
+
+          <div className="rounded-xl bg-slate-50 p-4">
+
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Status
+            </p>
+
+            <p className="mt-1 text-lg font-bold text-slate-900">
+              {
+                formatGoalProgressStatus(
+                  goalProgress.status
+                )
+              }
+            </p>
+
+          </div>
+
+        </div>
+
+
+        {goalProgress.observedTrendDays !==
+          undefined && (
+          <p className="mt-3 text-xs text-slate-500">
+            Observed rate is based on{" "}
+            {
+              goalProgress.observedTrendDays
+            }{" "}
+            days of trend history.
+          </p>
+        )}
+
+      </div>
+
+
       <p className="mt-4 text-xs text-slate-500">
         Effective{" "}
         {
@@ -823,6 +1227,43 @@ export default function GoalProfile() {
           )
         }
       </p>
+
+
+      {currentGoal.performanceGoals &&
+        currentGoal.performanceGoals.length >
+          0 && (
+        <div className="mt-4 rounded-xl border border-slate-200 p-4">
+
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Performance & Hobby Goals
+          </p>
+
+          <ul className="mt-2 space-y-2">
+
+            {currentGoal.performanceGoals.map(
+              (
+                goal,
+                index
+              ) => (
+                <li
+                  key={`${goal}-${index}`}
+                  className="flex gap-2 text-sm leading-6 text-slate-700"
+                >
+                  <span aria-hidden="true">
+                    •
+                  </span>
+
+                  <span>
+                    {goal}
+                  </span>
+                </li>
+              )
+            )}
+
+          </ul>
+
+        </div>
+      )}
 
 
       {currentGoal.notes && (

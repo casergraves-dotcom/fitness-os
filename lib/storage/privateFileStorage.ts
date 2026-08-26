@@ -154,3 +154,34 @@ export async function deletePrivateFile(
     throw error;
   }
 }
+
+
+// ============================================================
+// Delete Multiple Private Files
+// ============================================================
+
+export async function deletePrivateFiles(
+  storagePaths: string[]
+): Promise<void> {
+  if (
+    storagePaths.length ===
+    0
+  ) {
+    return;
+  }
+
+  const {
+    error,
+  } =
+    await supabase.storage
+      .from(
+        FITNESS_OS_PRIVATE_BUCKET
+      )
+      .remove(
+        storagePaths
+      );
+
+  if (error) {
+    throw error;
+  }
+}
