@@ -59,6 +59,17 @@ import WeeklyDecisionRecord from "../components/WeeklyDecisionRecord";
 
 import WeeklySchedule from "../components/WeeklySchedule";
 
+import {
+  DailyNutritionCard,
+  useWeeklyNutritionAdherence,
+} from "@/features/nutrition";
+
+import {
+  DailyStepsCard,
+  useWeeklyStepAdherence,
+} from "@/features/dailyActivity";
+
+
 // ============================================================
 // Today Screen
 // ============================================================
@@ -76,6 +87,7 @@ export default function TodayScreen() {
       morningCheckInLoaded,
     setRatings,
   } = useMorningCheckIn();
+
 
   // ----------------------------------------------------------
   // Training Plan State
@@ -133,6 +145,25 @@ export default function TodayScreen() {
       runHistoryLoaded,
   } = useRunSession();
 
+  const {
+    loaded:
+      weeklyNutritionLoaded,
+
+    weeklyAdherence:
+      weeklyNutritionAdherence,
+  } =
+    useWeeklyNutritionAdherence();
+
+  const {
+    loaded:
+      weeklyStepLoaded,
+
+    weeklyAdherence:
+      weeklyStepAdherence,
+  } =
+    useWeeklyStepAdherence();
+
+
   useWeeklyTrainingProgression({
     state:
       trainingPlanState,
@@ -163,6 +194,7 @@ export default function TodayScreen() {
     applyWeeklyProgressionDecision,
   });
 
+
   // ----------------------------------------------------------
   // Today's Training Schedule
   // ----------------------------------------------------------
@@ -175,6 +207,7 @@ export default function TodayScreen() {
           new Date()
         )
       : null;
+
 
   // ----------------------------------------------------------
   // Current Weekly Progress
@@ -190,6 +223,7 @@ export default function TodayScreen() {
       runHistory
     );
 
+
   // ----------------------------------------------------------
   // Latest Weekly Progression Decision
   // ----------------------------------------------------------
@@ -199,11 +233,16 @@ export default function TodayScreen() {
       ?.weeklyProgressionDecisions
       ?.slice()
       .sort(
-        (a, b) =>
+        (
+          a,
+          b
+        ) =>
           b.weekStartDate.localeCompare(
             a.weekStartDate
           )
-      )[0] ?? null;
+      )[0] ??
+    null;
+
 
   // ----------------------------------------------------------
   // Coach
@@ -216,6 +255,7 @@ export default function TodayScreen() {
         []
     );
 
+
   // ----------------------------------------------------------
   // Start Plan
   // ----------------------------------------------------------
@@ -224,7 +264,6 @@ export default function TodayScreen() {
     const now =
       new Date();
 
-    // Find Monday of the current local week.
     const day =
       now.getDay();
 
@@ -247,12 +286,18 @@ export default function TodayScreen() {
     const month =
       String(
         monday.getMonth() + 1
-      ).padStart(2, "0");
+      ).padStart(
+        2,
+        "0"
+      );
 
     const date =
       String(
         monday.getDate()
-      ).padStart(2, "0");
+      ).padStart(
+        2,
+        "0"
+      );
 
     const startDate =
       `${year}-${month}-${date}`;
@@ -263,6 +308,7 @@ export default function TodayScreen() {
     );
   }
 
+
   // ----------------------------------------------------------
   // Render
   // ----------------------------------------------------------
@@ -271,19 +317,12 @@ export default function TodayScreen() {
     <AppShell>
       <div className="space-y-6">
 
-        {/* ====================================================
-            Coach
-        ==================================================== */}
-
         <CoachCard
           recommendation={
             recommendation
           }
         />
 
-        {/* ====================================================
-            Today's Training
-        ==================================================== */}
 
         <TodaysTrainingCard
           schedule={
@@ -307,8 +346,12 @@ export default function TodayScreen() {
           }
 
           onCompleteActivity={
-            (activity) => {
-              if (!schedule) {
+            (
+              activity
+            ) => {
+              if (
+                !schedule
+              ) {
                 return;
               }
 
@@ -325,8 +368,12 @@ export default function TodayScreen() {
           }
 
           onRemoveActivityCompletion={
-            (activityId) => {
-              if (!schedule) {
+            (
+              activityId
+            ) => {
+              if (
+                !schedule
+              ) {
                 return;
               }
 
@@ -342,7 +389,9 @@ export default function TodayScreen() {
               activity,
               scheduledDate
             ) => {
-              if (!schedule) {
+              if (
+                !schedule
+              ) {
                 return;
               }
 
@@ -363,9 +412,6 @@ export default function TodayScreen() {
           }
         />
 
-        {/* ====================================================
-            Mission
-        ==================================================== */}
 
         <MissionCard
           trainingActivities={
@@ -382,22 +428,22 @@ export default function TodayScreen() {
           }
         />
 
-        {/* ====================================================
-            Morning Check-In
-        ==================================================== */}
+
+        <DailyNutritionCard />
+
+        <DailyStepsCard />
+
 
         <MorningCheckIn
           ratings={
             ratings
           }
+
           onChange={
             setRatings
           }
         />
 
-        {/* ====================================================
-            Weekly Schedule
-        ==================================================== */}
 
         <WeeklySchedule
           state={
@@ -456,9 +502,6 @@ export default function TodayScreen() {
           }
         />
 
-        {/* ====================================================
-            Weekly Progress
-        ==================================================== */}
 
         <WeeklyProgress
           progress={
@@ -472,7 +515,24 @@ export default function TodayScreen() {
             workoutHistoryLoaded &&
             runHistoryLoaded
           }
+
+          nutrition={
+            weeklyNutritionAdherence
+          }
+
+          nutritionLoaded={
+            weeklyNutritionLoaded
+          }
+
+          activity={
+            weeklyStepAdherence
+          }
+
+          activityLoaded={
+            weeklyStepLoaded
+          }
         />
+
 
         <WeeklyDecisionRecord
           decision={

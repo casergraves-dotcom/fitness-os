@@ -48,6 +48,26 @@ export const FITNESS_OS_STORAGE_KEYS = {
     "fitness-os-progress-check-ins",
 
   // ----------------------------------------------------------
+  // Nutrition
+  // ----------------------------------------------------------
+
+  nutritionTargets:
+    "fitness-os-nutrition-targets",
+
+  dailyNutrition:
+    "fitness-os-daily-nutrition",
+
+  // ----------------------------------------------------------
+  // Daily Activity
+  // ----------------------------------------------------------
+
+  stepTargets:
+    "fitness-os-step-targets",
+
+  dailySteps:
+    "fitness-os-daily-steps",
+
+  // ----------------------------------------------------------
   // Device-Local Only
   // ----------------------------------------------------------
 
@@ -82,6 +102,12 @@ export const FITNESS_OS_SYNC_KEYS = [
   FITNESS_OS_STORAGE_KEYS.bodyMeasurements,
   FITNESS_OS_STORAGE_KEYS.dexaRecords,
   FITNESS_OS_STORAGE_KEYS.progressCheckIns,
+
+  FITNESS_OS_STORAGE_KEYS.nutritionTargets,
+  FITNESS_OS_STORAGE_KEYS.dailyNutrition,
+
+  FITNESS_OS_STORAGE_KEYS.stepTargets,
+  FITNESS_OS_STORAGE_KEYS.dailySteps,
 ] as const;
 
 

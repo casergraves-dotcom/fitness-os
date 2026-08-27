@@ -9,7 +9,16 @@ import {
   RunningProgress,
   WeeklyProgressCheckIn,
   BodyCompositionProgress,
+  DailyActivityProgress,
 } from "@/features/progress";
+
+import {
+  NutritionTargets,
+} from "@/features/nutrition";
+
+import {
+  StepTargets,
+} from "@/features/dailyActivity";
 
 
 // ============================================================
@@ -55,6 +64,64 @@ export default function ProgressPage() {
           <GoalProfile />
         </section>
 
+
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Nutrition
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Nutrition Targets
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Set calorie and protein targets used to evaluate daily and weekly nutrition adherence.
+            </p>
+          </div>
+
+          <NutritionTargets />
+        </section>
+
+
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Daily Activity
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Step Target
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Set the daily step target used to evaluate general-activity adherence.
+            </p>
+          </div>
+
+          <StepTargets />
+        </section>
+
+
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Daily Activity
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Activity Progress
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Review recent step consistency, data coverage, and general-activity trends.
+            </p>
+          </div>
+
+          <DailyActivityProgress />
+        </section>
+
+
         <section className="space-y-4">
 
           <div>
@@ -76,6 +143,7 @@ export default function ProgressPage() {
           <BodyCompositionProgress />
 
         </section>
+
 
         <section className="space-y-4">
           <div>

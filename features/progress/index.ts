@@ -46,6 +46,10 @@ export {
   default as MeasurementTrendChart,
 } from "./components/MeasurementTrendChart";
 
+export {
+  default as DailyActivityProgress,
+} from "./components/DailyActivityProgress";
+
 
 // ============================================================
 // Hooks

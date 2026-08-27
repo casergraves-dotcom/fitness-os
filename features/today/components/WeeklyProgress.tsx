@@ -3,8 +3,17 @@ import {
 } from "@/components/ui/card";
 
 import type {
+  WeeklyNutritionAdherence,
+} from "@/features/nutrition";
+
+import type {
+  WeeklyStepAdherence,
+} from "@/features/dailyActivity";
+
+import type {
   CurrentWeeklyProgress,
 } from "../utils/getCurrentWeeklyProgress";
+
 
 // ============================================================
 // Props
@@ -16,7 +25,20 @@ interface WeeklyProgressProps {
 
   loaded:
     boolean;
+
+  nutrition:
+    WeeklyNutritionAdherence | null;
+
+  nutritionLoaded:
+    boolean;
+
+  activity:
+    WeeklyStepAdherence | null;
+
+  activityLoaded:
+    boolean;
 }
+
 
 // ============================================================
 // Progress Row
@@ -65,19 +87,22 @@ function ProgressRow({
   );
 }
 
+
 // ============================================================
 // Status
 // ============================================================
 
 function getStatus(
-  progress: CurrentWeeklyProgress
+  progress:
+    CurrentWeeklyProgress
 ) {
   const {
     adherence,
     decision,
     evaluationReady,
     weekType,
-  } = progress;
+  } =
+    progress;
 
   if (
     weekType ===
@@ -130,7 +155,9 @@ function getStatus(
     };
   }
 
-  if (evaluationReady) {
+  if (
+    evaluationReady
+  ) {
     if (
       decision.status ===
       "Advance"
@@ -178,11 +205,13 @@ function getStatus(
       "Week in progress",
 
     detail:
-      remaining === 1
+      remaining ===
+      1
         ? "1 required training activity remains this week."
         : `${remaining} required training activities remain this week.`,
   };
 }
+
 
 // ============================================================
 // Weekly Progress
@@ -191,12 +220,18 @@ function getStatus(
 export default function WeeklyProgress({
   progress,
   loaded,
+  nutrition,
+  nutritionLoaded,
+  activity,
+  activityLoaded,
 }: WeeklyProgressProps) {
   // ----------------------------------------------------------
   // Loading
   // ----------------------------------------------------------
 
-  if (!loaded) {
+  if (
+    !loaded
+  ) {
     return (
       <Card className="rounded-2xl p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
@@ -210,11 +245,14 @@ export default function WeeklyProgress({
     );
   }
 
+
   // ----------------------------------------------------------
   // No Active Week
   // ----------------------------------------------------------
 
-  if (!progress) {
+  if (
+    !progress
+  ) {
     return (
       <Card className="rounded-2xl p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
@@ -228,10 +266,12 @@ export default function WeeklyProgress({
     );
   }
 
+
   const {
     adherence,
     decision,
-  } = progress;
+  } =
+    progress;
 
   const status =
     getStatus(
@@ -246,24 +286,28 @@ export default function WeeklyProgress({
 
   const strengthPercent =
     decision.scheduledStrengthCount ===
-      0
+    0
       ? 0
       : (
           decision.completedStrengthCount /
           decision.scheduledStrengthCount
-        ) * 100;
+        ) *
+          100;
 
   const optionalPercent =
-    adherence.optionalCount === 0
+    adherence.optionalCount ===
+    0
       ? 0
       : (
           adherence.optionalCompleted /
           adherence.optionalCount
-        ) * 100;
+        ) *
+          100;
 
   const showDecisionEvidence =
     progress.evaluationReady ||
     adherence.allRequiredCompleted;
+
 
   // ----------------------------------------------------------
   // Render
@@ -275,17 +319,23 @@ export default function WeeklyProgress({
         This Week
       </p>
 
+
       <div className="mt-5 rounded-xl bg-slate-50 p-4">
         <p className="font-semibold text-slate-900">
-          {status.title}
+          {
+            status.title
+          }
         </p>
 
         <p className="mt-1 text-sm text-slate-600">
-          {status.detail}
+          {
+            status.detail
+          }
         </p>
 
         {showDecisionEvidence &&
-          decision.factors.length > 0 && (
+          decision.factors.length >
+            0 && (
           <div className="mt-3 border-t border-slate-200 pt-3">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Why this decision
@@ -293,9 +343,13 @@ export default function WeeklyProgress({
 
             <ul className="mt-2 space-y-1 text-sm text-slate-600">
               {decision.factors.map(
-                (factor) => (
+                (
+                  factor
+                ) => (
                   <li
-                    key={factor}
+                    key={
+                      factor
+                    }
                     className="flex gap-2"
                   >
                     <span
@@ -306,7 +360,9 @@ export default function WeeklyProgress({
                     </span>
 
                     <span>
-                      {factor}
+                      {
+                        factor
+                      }
                     </span>
                   </li>
                 )
@@ -315,6 +371,7 @@ export default function WeeklyProgress({
           </div>
         )}
       </div>
+
 
       <div className="mt-5 space-y-5">
         <ProgressRow
@@ -364,6 +421,200 @@ export default function WeeklyProgress({
           />
         )}
       </div>
+
+
+      {nutritionLoaded &&
+        nutrition && (
+        <div className="mt-6 border-t border-slate-200 pt-5">
+
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Nutrition
+          </p>
+
+
+          <div className="mt-4 space-y-5">
+
+            {nutrition.protein.daysWithTarget >
+              0 && (
+              <>
+                <ProgressRow
+                  label="Protein adherence"
+                  valueLabel={
+                    nutrition.protein.daysLogged >
+                    0
+                      ? `${nutrition.protein.daysMet}/${nutrition.protein.daysLogged} days met`
+                      : "No data yet"
+                  }
+                  percent={
+                    nutrition.protein.daysMetPercent ??
+                    0
+                  }
+                />
+
+                <p className="-mt-3 text-xs text-slate-500">
+                  Protein logged on{" "}
+                  {
+                    nutrition.protein.daysLogged
+                  }
+                  /
+                  {
+                    nutrition.protein.daysWithTarget
+                  }{" "}
+                  eligible days this week.
+                </p>
+
+
+                {nutrition.protein.averageIntakePercent !==
+                  undefined && (
+                  <div className="rounded-xl bg-slate-50 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <span className="text-sm font-medium text-slate-800">
+                        Average protein intake
+                      </span>
+
+                      <span className="text-sm font-semibold text-slate-900">
+                        {
+                          nutrition.protein.averageIntakePercent
+                        }
+                        % of target
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                      Average intake is shown separately from adherence so higher-protein days do not offset days below target.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+
+
+            {nutrition.calories.daysWithTarget >
+              0 && (
+              <>
+                <ProgressRow
+                  label="Calorie adherence"
+                  valueLabel={
+                    nutrition.calories.daysLogged >
+                    0
+                      ? `${nutrition.calories.daysOnTarget}/${nutrition.calories.daysLogged} days on target`
+                      : "No data yet"
+                  }
+                  percent={
+                    nutrition.calories.daysOnTargetPercent ??
+                    0
+                  }
+                />
+
+                <p className="-mt-3 text-xs text-slate-500">
+                  Calories logged on{" "}
+                  {
+                    nutrition.calories.daysLogged
+                  }
+                  /
+                  {
+                    nutrition.calories.daysWithTarget
+                  }{" "}
+                  eligible days this week.
+                </p>
+
+
+                {nutrition.calories.averageIntakePercent !==
+                  undefined && (
+                  <div className="rounded-xl bg-slate-50 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <span className="text-sm font-medium text-slate-800">
+                        Average calorie intake
+                      </span>
+
+                      <span className="text-sm font-semibold text-slate-900">
+                        {
+                          nutrition.calories.averageIntakePercent
+                        }
+                        % of target
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                      Average intake is shown separately from adherence so you can distinguish target consistency from how high or low intake actually ran.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+
+          </div>
+
+        </div>
+      )}
+
+
+      {activityLoaded &&
+        activity &&
+        activity.daysWithTarget >
+          0 && (
+        <div className="mt-6 border-t border-slate-200 pt-5">
+
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Daily Activity
+          </p>
+
+
+          <div className="mt-4 space-y-5">
+
+            <ProgressRow
+              label="Step adherence"
+              valueLabel={
+                activity.daysLogged >
+                0
+                  ? `${activity.daysMet}/${activity.daysLogged} days met`
+                  : "No data yet"
+              }
+              percent={
+                activity.daysMetPercent ??
+                0
+              }
+            />
+
+            <p className="-mt-3 text-xs text-slate-500">
+              Steps logged on{" "}
+              {
+                activity.daysLogged
+              }
+              /
+              {
+                activity.daysWithTarget
+              }{" "}
+              eligible days this week.
+            </p>
+
+
+            {activity.averageIntakePercent !==
+              undefined && (
+              <div className="rounded-xl bg-slate-50 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="text-sm font-medium text-slate-800">
+                    Average step total
+                  </span>
+
+                  <span className="text-sm font-semibold text-slate-900">
+                    {
+                      activity.averageIntakePercent
+                    }
+                    % of target
+                  </span>
+                </div>
+
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Average steps are shown separately from adherence so high-step days do not offset days below the daily target.
+                </p>
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      )}
     </Card>
   );
 }
