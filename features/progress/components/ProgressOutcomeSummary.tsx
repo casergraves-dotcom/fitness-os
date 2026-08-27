@@ -1,5 +1,9 @@
 "use client";
 
+// ============================================================
+// Imports
+// ============================================================
+
 import {
   useMemo,
 } from "react";
@@ -23,6 +27,14 @@ import {
 import {
   useExerciseProgress,
 } from "../hooks/useExerciseProgress";
+
+import {
+  useLifestyleGoalProgressEvidence,
+} from "../hooks/useLifestyleGoalProgressEvidence";
+
+import {
+  getLifestyleGoalProgressPatterns,
+} from "../utils/getLifestyleGoalProgressPatterns";
 
 import {
   useRunSession,
@@ -113,6 +125,39 @@ export default function ProgressOutcomeSummary() {
     );
 
 
+  // ----------------------------------------------------------
+  // Lifestyle Evidence
+  // ----------------------------------------------------------
+
+  const {
+    loaded:
+      lifestyleEvidenceLoaded,
+
+    evidence:
+      lifestyleEvidence,
+  } =
+    useLifestyleGoalProgressEvidence(
+      goalProgress
+    );
+
+  const lifestylePatterns =
+    useMemo(
+      () =>
+        lifestyleEvidence
+          ? getLifestyleGoalProgressPatterns(
+              lifestyleEvidence
+            )
+          : null,
+      [
+        lifestyleEvidence,
+      ]
+    );
+
+
+  // ----------------------------------------------------------
+  // Strength
+  // ----------------------------------------------------------
+
   const {
     exercises,
   } =
@@ -172,6 +217,10 @@ export default function ProgressOutcomeSummary() {
     );
 
 
+  // ----------------------------------------------------------
+  // Cardio
+  // ----------------------------------------------------------
+
   const {
     history:
       runHistory,
@@ -227,7 +276,7 @@ export default function ProgressOutcomeSummary() {
                 a.startedAt
               ).localeCompare(
                 b.completedAt ??
-                b.startedAt
+                  b.startedAt
               )
           );
 
@@ -269,6 +318,10 @@ export default function ProgressOutcomeSummary() {
       ]
     );
 
+
+  // ----------------------------------------------------------
+  // Training Adherence
+  // ----------------------------------------------------------
 
   const {
     state:
@@ -328,9 +381,14 @@ export default function ProgressOutcomeSummary() {
       : null;
 
 
+  // ----------------------------------------------------------
+  // Loading
+  // ----------------------------------------------------------
+
   if (
     !measurementsLoaded ||
-    !adherenceLoaded
+    !adherenceLoaded ||
+    !lifestyleEvidenceLoaded
   ) {
     return (
       <div className="rounded-2xl border bg-white p-5 shadow-sm">
@@ -343,6 +401,10 @@ export default function ProgressOutcomeSummary() {
     );
   }
 
+
+  // ----------------------------------------------------------
+  // Current Approach
+  // ----------------------------------------------------------
 
   const bodyCompositionPositive =
     goalProgress.status ===
@@ -385,6 +447,10 @@ export default function ProgressOutcomeSummary() {
     cardioPositive &&
     adherencePositive;
 
+
+  // ----------------------------------------------------------
+  // Render
+  // ----------------------------------------------------------
 
   return (
     <div className="rounded-2xl border bg-white p-5 shadow-sm">
@@ -464,10 +530,181 @@ export default function ProgressOutcomeSummary() {
       </div>
 
 
-      <p className="mt-4 text-xs leading-5 text-slate-500">
+      {/* ====================================================
+          Lifestyle Context
+      ==================================================== */}
+
+      <div className="mt-6 border-t border-slate-200 pt-5">
+
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          Lifestyle Context
+        </p>
+
+        {!lifestyleEvidence ||
+        !lifestylePatterns ||
+        !lifestylePatterns.evidenceReady ? (
+          <div className="mt-3 rounded-xl bg-slate-50 p-4">
+
+            <p className="font-semibold text-slate-900">
+              Not enough multi-week lifestyle evidence yet
+            </p>
+
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              Fitness OS needs sufficient body-composition trend history plus
+              consistent nutrition or daily-activity logging before using those
+              patterns to help explain goal progress.
+            </p>
+
+
+            {lifestyleEvidence && (
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+
+                <EvidenceCoverage
+                  label="Protein"
+                  loggedDays={
+                    lifestyleEvidence
+                      .nutrition
+                      .protein
+                      .loggedDays
+                  }
+                  eligibleDays={
+                    lifestyleEvidence
+                      .nutrition
+                      .protein
+                      .eligibleDays
+                  }
+                  ready={
+                    lifestyleEvidence
+                      .nutrition
+                      .protein
+                      .evidenceReady
+                  }
+                />
+
+                <EvidenceCoverage
+                  label="Calories"
+                  loggedDays={
+                    lifestyleEvidence
+                      .nutrition
+                      .calories
+                      .loggedDays
+                  }
+                  eligibleDays={
+                    lifestyleEvidence
+                      .nutrition
+                      .calories
+                      .eligibleDays
+                  }
+                  ready={
+                    lifestyleEvidence
+                      .nutrition
+                      .calories
+                      .evidenceReady
+                  }
+                />
+
+                <EvidenceCoverage
+                  label="Steps"
+                  loggedDays={
+                    lifestyleEvidence
+                      .activity
+                      .steps
+                      .loggedDays
+                  }
+                  eligibleDays={
+                    lifestyleEvidence
+                      .activity
+                      .steps
+                      .eligibleDays
+                  }
+                  ready={
+                    lifestyleEvidence
+                      .activity
+                      .steps
+                      .evidenceReady
+                  }
+                />
+
+              </div>
+            )}
+
+          </div>
+        ) : (
+          <div className="mt-3 space-y-3">
+
+            {lifestylePatterns.patterns.length >
+            0 ? (
+              lifestylePatterns.patterns.map(
+                (
+                  pattern
+                ) => (
+                  <div
+                    key={
+                      pattern.id
+                    }
+                    className="rounded-xl bg-slate-50 p-4"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          {
+                            pattern.category
+                          }
+                        </p>
+
+                        <p className="mt-1 font-semibold text-slate-900">
+                          {
+                            pattern.summary
+                          }
+                        </p>
+                      </div>
+
+                      <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600">
+                        {
+                          formatPatternDirection(
+                            pattern.direction
+                          )
+                        }
+                      </span>
+
+                    </div>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {
+                        pattern.detail
+                      }
+                    </p>
+                  </div>
+                )
+              )
+            ) : (
+              <div className="rounded-xl bg-slate-50 p-4">
+
+                <p className="font-semibold text-slate-900">
+                  No strong lifestyle pattern stands out
+                </p>
+
+                <p className="mt-1 text-sm leading-6 text-slate-600">
+                  There is enough multi-week lifestyle data to evaluate context,
+                  but the current evidence does not show a persistent nutrition
+                  or daily-activity pattern strong enough to highlight.
+                </p>
+
+              </div>
+            )}
+
+          </div>
+        )}
+
+      </div>
+
+
+      <p className="mt-5 text-xs leading-5 text-slate-500">
         This summary uses longer-term body-composition trend data and supporting
-        training context. It should not trigger automatic training changes from
-        a single measurement or short-term fluctuation.
+        training and lifestyle context. Lifestyle patterns are contextual
+        evidence, not proof of causation, and should not trigger automatic
+        training or target changes from short-term fluctuations.
       </p>
 
     </div>
@@ -493,13 +730,95 @@ function Signal({
     <div className="rounded-xl bg-slate-50 p-4">
 
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-        {label}
+        {
+          label
+        }
       </p>
 
       <p className="mt-1 font-semibold text-slate-900">
-        {value}
+        {
+          value
+        }
       </p>
 
     </div>
   );
+}
+
+
+// ============================================================
+// Evidence Coverage
+// ============================================================
+
+function EvidenceCoverage({
+  label,
+  loggedDays,
+  eligibleDays,
+  ready,
+}: {
+  label:
+    string;
+
+  loggedDays:
+    number;
+
+  eligibleDays:
+    number;
+
+  ready:
+    boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-3">
+
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        {
+          label
+        }
+      </p>
+
+      <p className="mt-1 font-semibold text-slate-900">
+        {loggedDays}/{eligibleDays} days
+      </p>
+
+      <p className="mt-1 text-xs text-slate-500">
+        {
+          ready
+            ? "Multi-week evidence ready"
+            : "More data needed"
+        }
+      </p>
+
+    </div>
+  );
+}
+
+
+// ============================================================
+// Pattern Direction
+// ============================================================
+
+function formatPatternDirection(
+  direction:
+    "SupportsGoal" |
+    "MayLimitProgress" |
+    "MayAccelerateProgress" |
+    "ContextOnly"
+) {
+  switch (
+    direction
+  ) {
+    case "SupportsGoal":
+      return "Supports goal";
+
+    case "MayLimitProgress":
+      return "May limit progress";
+
+    case "MayAccelerateProgress":
+      return "May accelerate progress";
+
+    case "ContextOnly":
+    default:
+      return "Context";
+  }
 }

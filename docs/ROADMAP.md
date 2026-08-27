@@ -730,7 +730,7 @@ the Phase 4 core milestone.
 
 # Phase 5 — Nutrition and Daily Activity
 
-**Priority: HIGH — CURRENT**
+**Priority: COMPLETE**
 
 Nutrition and daily movement materially affect the primary fat-loss goal, but
 Fitness OS should avoid becoming a cumbersome food diary.
@@ -802,32 +802,54 @@ Progress also includes a recent daily-activity view with the current target,
 Short-term low-step days remain visible without being treated as meaningful
 goal-progress evidence by themselves.
 
-## 5.3 Goal-Progress Evidence
+## 5.3 Goal-Progress Evidence — COMPLETE
 
-- [ ] Combine nutrition adherence with Phase 4 body-composition trends.
-- [ ] Combine general-activity adherence with Phase 4 body-composition trends.
-- [ ] Use multiple weeks of evidence before identifying nutrition/activity as a
+- [x] Combine nutrition adherence with Phase 4 body-composition trends.
+- [x] Combine general-activity adherence with Phase 4 body-composition trends.
+- [x] Use multiple weeks of evidence before identifying nutrition/activity as a
   likely contributor to slower or faster progress.
-- [ ] Compare observed body-composition progress with the expected rate
+- [x] Compare observed body-composition progress with the expected rate
   established by the active goal.
-- [ ] Identify persistent patterns that may explain goal-progress trends.
-- [ ] Preserve evidence strength/coverage so missing data is not interpreted as
+- [x] Identify persistent patterns that may explain goal-progress trends.
+- [x] Preserve evidence strength/coverage so missing data is not interpreted as
   failure.
-- [ ] Avoid drawing conclusions from individual high-calorie days, low-step days,
+- [x] Avoid drawing conclusions from individual high-calorie days, low-step days,
   isolated scale measurements, or other short-term noise.
-- [ ] Produce reusable derived evidence for Phase 6 Reflect rather than embedding
+- [x] Produce reusable derived evidence for Phase 6 Reflect rather than embedding
   review/presentation logic inside Phase 5.
 
-**Milestone:** Today's Mission and Weekly Progress can include real protein and
-step data, and Fitness OS has reliable multi-week nutrition and daily-activity
-evidence available for goal-progress analysis without becoming a full food
-diary.
+**Completed outcome:** Fitness OS now combines canonical body-composition
+progress with nutrition and daily-activity adherence as supporting lifestyle
+evidence.
+
+Lifestyle evidence is evaluated across multiple weeks and preserves explicit
+data coverage so missing nutrition or step records are not interpreted as
+failures. Short-term events such as an individual high-calorie day, low-step
+day, or isolated body-weight measurement are not used to explain progress.
+
+When sufficient history exists, persistent nutrition and daily-activity patterns
+can provide context for whether observed body-composition progress is faster,
+slower, or consistent with the rate established by the active goal. These
+patterns remain contextual evidence rather than proof of causation and do not
+automatically change training or lifestyle targets.
+
+When evidence is insufficient, Fitness OS explicitly reports that more data is
+needed rather than manufacturing an explanation.
+
+The resulting goal-progress evidence is reusable by Phase 6 Reflect without
+requiring Reflect to duplicate canonical Phase 4, nutrition, or daily-activity
+analysis.
+
+**Milestone: COMPLETE:** Today's Mission and Weekly Progress include real
+nutrition and step data, and Fitness OS has reliable multi-week nutrition and
+daily-activity evidence available for goal-progress analysis without becoming a
+full food diary.
 
 ---
 
 # Phase 6 — Reflect: Reviews and Better Progress Insights
 
-**Priority: HIGH — NEXT**
+**Priority: HIGH — CURRENT**
 
 Phase 6 turns the canonical data and derived evidence established by the
 training system, Phase 4 body-composition tracking, and Phase 5
@@ -1283,25 +1305,21 @@ significant architectural problem interrupts it.
 12. Phase 3.4 — Adaptive Scheduling.
 13. Workout execution UX polish.
 14. **Phase 4 — Body Composition and Goal Progress — COMPLETE.**
-15. **Phase 5.1 — Nutrition Targets & Adherence — COMPLETE.**
+15. **Phase 5 — Nutrition and Daily Activity — COMPLETE.**
+    - 5.1 Nutrition Targets — COMPLETE
+    - 5.2 Steps / General Activity — COMPLETE
+    - 5.3 Goal-Progress Evidence — COMPLETE
 
 ## Current
 
-16. **Phase 5 — Nutrition and Daily Activity — IN PROGRESS**
-    - 5.1 Nutrition Targets — COMPLETE
-    - 5.2 Steps / General Activity — NEXT IMPLEMENTATION AREA
-    - 5.3 Goal-Progress Evidence — after 5.2
-
-## Next
-
-17. **Phase 6 — Reflect: Reviews and Better Progress Insights**
+16. **Phase 6 — Reflect: Reviews and Better Progress Insights — CURRENT**
 
 ## Later
 
-18. **Phase 7 — Personalization and Training Guidance**
-19. **Phase 8 — Health Data Integrations**
-20. **Phase 9 — Social & Challenges**
-21. **Phase 10 — Advanced Platform & Coaching Capabilities**
+17. **Phase 7 — Personalization and Training Guidance**
+18. **Phase 8 — Health Data Integrations**
+19. **Phase 9 — Social & Challenges**
+20. **Phase 10 — Advanced Platform & Coaching Capabilities**
 
 Personalization, health integrations, social features, and advanced platform work
 remain mapped for later and should not displace the core coaching loop.
