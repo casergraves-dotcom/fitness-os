@@ -17,6 +17,7 @@ import {
 
 import type {
   CoachRecommendation,
+  CoachReviewContext,
 } from "../types";
 
 
@@ -155,7 +156,7 @@ function getSorenessGuidance(
 // Coach Engine
 // ============================================================
 
-export function getCoachRecommendation(
+function getDailyCoachRecommendation(
   ratings: MorningCheckInRatings,
   activities: TrainingActivity[] = []
 ): CoachRecommendation {
@@ -1012,5 +1013,66 @@ if (aerialDay) {
 
     message:
       "No formal training session is scheduled today. Focus on your daily movement, nutrition, and recovery goals.",
+  };
+}
+
+
+// ============================================================
+// Completed Review Context
+// ============================================================
+
+function getReviewContextSummary(
+  reviewContext: CoachReviewContext
+) {
+  const decision =
+    reviewContext.finalShouldAdvance
+      ? "The plan advanced after the last completed weekly review."
+      : "The plan was held after the last completed weekly review.";
+
+  const override =
+    reviewContext.manuallyOverridden
+      ? reviewContext.overrideReason
+        ? ` You overrode the automatic result: ${reviewContext.overrideReason}`
+        : " You overrode the automatic result."
+      : "";
+
+  return {
+    label:
+      `Week of ${reviewContext.weekStartDate}`,
+
+    message:
+      `${decision} ${reviewContext.automaticReason}${override}`,
+  };
+}
+
+
+// ============================================================
+// Coach Recommendation
+// ============================================================
+
+export function getCoachRecommendation(
+  ratings: MorningCheckInRatings,
+  activities: TrainingActivity[] = [],
+  reviewContext?: CoachReviewContext
+): CoachRecommendation {
+  const recommendation =
+    getDailyCoachRecommendation(
+      ratings,
+      activities
+    );
+
+  if (
+    !reviewContext
+  ) {
+    return recommendation;
+  }
+
+  return {
+    ...recommendation,
+
+    reviewContext:
+      getReviewContextSummary(
+        reviewContext
+      ),
   };
 }

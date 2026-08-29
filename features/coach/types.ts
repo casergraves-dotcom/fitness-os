@@ -9,6 +9,26 @@ export type CoachTrainingDecision =
   | "home-workout"
   | "recovery";
 
+
+export interface CoachReviewContext {
+  weekStartDate: string;
+
+  automaticReason: string;
+
+  finalShouldAdvance: boolean;
+
+  manuallyOverridden: boolean;
+
+  overrideReason?: string;
+}
+
+
+export interface CoachReviewContextSummary {
+  label: string;
+
+  message: string;
+}
+
 export interface CoachRecommendation {
   title: string;
   message: string;
@@ -27,4 +47,8 @@ export interface CoachRecommendation {
 
   // Present when a specific strength-workout variant is recommended.
   strengthVariant?: StrengthWorkoutVariantType;
+
+  // Historical context is explanatory only. It does not replace
+  // today's schedule or recovery inputs when choosing an action.
+  reviewContext?: CoachReviewContextSummary;
 }

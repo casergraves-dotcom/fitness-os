@@ -253,7 +253,25 @@ export default function TodayScreen() {
     getCoachRecommendation(
       ratings,
       schedule?.trainingDay.activities ??
-        []
+        [],
+      latestProgressionDecision
+        ? {
+            weekStartDate:
+              latestProgressionDecision.weekStartDate,
+
+            automaticReason:
+              latestProgressionDecision.automaticReason,
+
+            finalShouldAdvance:
+              latestProgressionDecision.finalShouldAdvance,
+
+            manuallyOverridden:
+              latestProgressionDecision.manuallyOverridden,
+
+            overrideReason:
+              latestProgressionDecision.overrideReason,
+          }
+        : undefined
     );
 
 

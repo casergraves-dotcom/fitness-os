@@ -54,6 +54,22 @@ export default function CoachCard({
         {recommendation.message}
       </p>
 
+      {recommendation.reviewContext && (
+        <div className="mt-4 rounded-xl bg-slate-50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Last Completed Review · {recommendation.reviewContext.label}
+          </p>
+
+          <p className="mt-1 text-sm text-slate-600">
+            {recommendation.reviewContext.message}
+          </p>
+
+          <p className="mt-1 text-xs text-slate-500">
+            Historical review context does not override today&apos;s schedule or recovery guidance.
+          </p>
+        </div>
+      )}
+
     {recommendation.button &&
       actionHref && (
         <Link

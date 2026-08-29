@@ -1112,6 +1112,11 @@ rendered trend while the complete check-in history and existing history list
 remain intact. Production build and the available five-check-in trend were
 verified in the browser.
 
+**Pending adherence verification:** Historical adherence visualization remains
+open until the active plan has at least one complete evaluated training week.
+Use the canonical complete-week adherence results when that evidence exists;
+do not chart the current partial week as historical adherence.
+
 - [ ] Improve strength trend visualization.
 - [ ] Improve running trend visualization.
 - [x] Improve recovery trend visualization.
@@ -1146,6 +1151,14 @@ Guide integration is the final stage of the evidence pipeline:
   is faster or slower than expected.
 - [ ] Preserve explicit user control over meaningful goal, calorie, protein, and
   activity-target changes.
+
+**Guide review-context foundation:** The Guide can now receive the latest
+persisted weekly progression decision as optional completed-review context. The
+context is displayed separately from the daily recommendation and explicitly
+cannot override today's schedule or recovery guidance. Current no-review
+behavior remains unchanged and is covered by the production build; keep the
+roadmap item open until a completed weekly decision exists for browser
+verification.
 
 **Milestone:** Reflect explains what changed, why it may have changed, and what
 matters next, and those insights improve future Guide decisions.
