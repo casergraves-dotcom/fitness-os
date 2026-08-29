@@ -425,7 +425,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
   },
   {
     id: "triceps-press-machine",
-    name: "Triceps Press Machine",
+    name: "Triceps Pushdown Machine",
     category: "Arms",
     movementRoles: ["ElbowExtension"],
     requiredEquipment: ["GymMachines"],
@@ -482,20 +482,33 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     performanceType: "Reps",
   },
 
-  // Not defined in the spreadsheet.
   {
-    id: "triceps-pushdown",
-    name: "Triceps Pushdown",
+    id: "seated-dip-machine",
+    name: "Seated Dip Machine",
     category: "Arms",
     movementRoles: ["ElbowExtension"],
     requiredEquipment: ["GymMachines"],
+    sets: 2,
+    repMin: 10,
+    repMax: 15,
+    increment: 5,
+    progressionType: "Load",
+    resistanceType: "Weight",
+    performanceType: "Reps",
   },
   {
-    id: "biceps-curl",
-    name: "Biceps Curl",
+    id: "barbell-curl",
+    name: "Barbell Curl",
     category: "Arms",
     movementRoles: ["ElbowFlexion"],
-    requiredEquipment: ["Dumbbells"],
+    requiredEquipment: ["Barbell"],
+    sets: 2,
+    repMin: 10,
+    repMax: 15,
+    increment: 5,
+    progressionType: "Load",
+    resistanceType: "Weight",
+    performanceType: "Reps",
   },
 
   // ==========================================================
@@ -873,3 +886,19 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     requiredEquipment: ["Bodyweight"],
   },
 ];
+
+export function getExerciseDisplayName(
+  exerciseDefinitionId: string | undefined,
+  fallbackName: string
+) {
+  if (!exerciseDefinitionId) {
+    return fallbackName;
+  }
+
+  return (
+    exerciseLibrary.find(
+      (exercise) =>
+        exercise.id === exerciseDefinitionId
+    )?.name ?? fallbackName
+  );
+}

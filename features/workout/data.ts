@@ -169,7 +169,7 @@ const gymBExercises: Exercise[] = [
   createExercise(
     "gym-b-triceps-press",
     "triceps-press-machine",
-    "Triceps Press Machine",
+    "Triceps Pushdown Machine",
     2
   ),
 

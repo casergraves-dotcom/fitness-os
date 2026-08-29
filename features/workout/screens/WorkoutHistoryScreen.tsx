@@ -22,6 +22,7 @@ import {
 
 import {
   exerciseLibrary,
+  getExerciseDisplayName,
 } from "../exerciseLibrary";
 
 import {
@@ -545,9 +546,10 @@ export default function WorkoutHistoryScreen() {
                               >
 
                                 <h3 className="font-semibold">
-                                  {
+                                  {getExerciseDisplayName(
+                                    exercise.exerciseDefinitionId,
                                     exercise.name
-                                  }
+                                  )}
                                 </h3>
 
 

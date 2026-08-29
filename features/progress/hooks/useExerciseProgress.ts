@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 
 import { useWorkoutHistory } from "../../workout/hooks/useWorkoutHistory";
+import { getExerciseDisplayName } from "../../workout/exerciseLibrary";
 
 export interface ExerciseProgressEntry {
   workoutId: string;
@@ -54,7 +55,13 @@ export function useExerciseProgress(selectedExercise?: string) {
           continue;
         }
 
-        const normalizedName = normalizeExerciseName(exercise.name);
+        const displayName = getExerciseDisplayName(
+          exercise.exerciseDefinitionId,
+          exercise.name
+        );
+        const normalizedName = exercise.exerciseDefinitionId
+          ? `id:${exercise.exerciseDefinitionId}`
+          : normalizeExerciseName(displayName);
         const existing = byName.get(normalizedName);
 
         // Deduplicate legacy name-only history and newer permanent-ID
@@ -62,7 +69,7 @@ export function useExerciseProgress(selectedExercise?: string) {
         if (!existing || (!existing.exerciseDefinitionId && exercise.exerciseDefinitionId)) {
           byName.set(normalizedName, {
             exerciseDefinitionId: exercise.exerciseDefinitionId,
-            name: exercise.name,
+            name: displayName,
           });
         }
       }
@@ -139,7 +146,10 @@ export function useExerciseProgress(selectedExercise?: string) {
         workoutId: workout.id,
         date: workout.completedAt ?? workout.startedAt,
         exerciseDefinitionId: exercise.exerciseDefinitionId,
-        exerciseName: exercise.name,
+        exerciseName: getExerciseDisplayName(
+          exercise.exerciseDefinitionId,
+          exercise.name
+        ),
         weight: bestSet.weight,
         reps: bestSet.reps,
         estimatedOneRepMax: estimateOneRepMax(

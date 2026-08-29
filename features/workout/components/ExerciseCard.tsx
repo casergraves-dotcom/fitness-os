@@ -213,6 +213,7 @@ export default function ExerciseCard({
           "YogaMat",
           "ResistanceBands",
           "Dumbbells",
+          "Barbell",
           "Bench",
           "GymMachines",
         ];

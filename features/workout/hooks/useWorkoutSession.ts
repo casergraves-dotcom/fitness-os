@@ -1524,7 +1524,11 @@ function updateSet(
 
       const replacementExercise:
         Exercise = {
-        id: createId(),
+        // The session exercise ID represents this card's stable
+        // position in the active workout. Preserve it across a
+        // substitution so expansion and other card-level UI state
+        // remain attached to the same slot.
+        id: sourceExercise.id,
 
         exerciseDefinitionId:
           replacementDefinition.id,

@@ -344,6 +344,8 @@ the training-plan identity.
   workout and prescribed set count.
 - [x] Use the replacement exercise's own target and performance history.
 - [x] Support repeated substitutions during the same active workout.
+- [x] Keep the exercise card expanded after a successful substitution so the
+  user can immediately enter the replacement's working sets.
 - [x] Record the exercise actually performed in workout history.
 - [x] Preserve the underlying Gym A / Gym B / Gym C and workout-variant identity.
 - [x] Preserve useful progression continuity when exercises are substituted.
@@ -488,6 +490,22 @@ alternatives. Cable Woodchop and Band Woodchop recommend each other, with band
 repetitions recorded per side; Ab Crunch Machine and Cable Crunch likewise form
 a trunk-flexion pair. Verified both directions in active workouts and confirmed
 the production build passed without reintroducing plank/stability substitutions.
+
+The exercise-library audit now has an explicit history-protection boundary for
+the exercises already recorded in the app. Existing `leg-curl` history resolves
+canonically as Seated Leg Curl, while the history-bearing legacy
+`triceps-press-machine` ID resolves as Triceps Pushdown Machine because that is
+the machine actually performed. Seated Dip Machine has a new history-free ID.
+Barbell Curl and Triceps Pushdown Machine are now explicit configured equipment
+variants rather than ambiguous generic definitions. Progress and History resolve
+current canonical labels from stable definition IDs without rewriting saved
+session snapshots. Verified the corrected labels, retained targets, substitution
+choices, and production build.
+
+Exercise substitution now preserves the active session exercise ID for the
+card's stable workout position. Replacing an exercise still resets its target and
+working sets to the selected definition, but the replacement card remains
+expanded for immediate entry. Verified in an active workout and production build.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 

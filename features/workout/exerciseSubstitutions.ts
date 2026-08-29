@@ -40,12 +40,14 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "dumbbell-lateral-raise": ["lateral-raise-machine"],
   "reverse-pec-deck": ["cable-face-pull"],
   "cable-face-pull": ["reverse-pec-deck"],
-  "biceps-curl-machine": ["dumbbell-curl", "band-biceps-curl"],
-  "dumbbell-curl": ["biceps-curl-machine", "band-biceps-curl"],
-  "band-biceps-curl": ["dumbbell-curl", "biceps-curl-machine"],
-  "triceps-press-machine": ["cable-pressdown", "band-overhead-triceps-extension"],
-  "cable-pressdown": ["triceps-press-machine", "band-overhead-triceps-extension"],
-  "band-overhead-triceps-extension": ["cable-pressdown", "triceps-press-machine"],
+  "biceps-curl-machine": ["dumbbell-curl", "barbell-curl", "band-biceps-curl"],
+  "dumbbell-curl": ["biceps-curl-machine", "barbell-curl", "band-biceps-curl"],
+  "barbell-curl": ["biceps-curl-machine", "dumbbell-curl", "band-biceps-curl"],
+  "band-biceps-curl": ["dumbbell-curl", "barbell-curl", "biceps-curl-machine"],
+  "triceps-press-machine": ["seated-dip-machine", "cable-pressdown", "band-overhead-triceps-extension"],
+  "seated-dip-machine": ["triceps-press-machine", "cable-pressdown", "band-overhead-triceps-extension"],
+  "cable-pressdown": ["triceps-press-machine", "seated-dip-machine", "band-overhead-triceps-extension"],
+  "band-overhead-triceps-extension": ["cable-pressdown", "triceps-press-machine", "seated-dip-machine"],
   "cable-woodchop": ["band-woodchop"],
   "band-woodchop": ["cable-woodchop"],
   "ab-crunch-machine": ["cable-crunch"],
@@ -101,7 +103,10 @@ function getScore(
   if (
     context.environment === "Gym" &&
     candidate.requiredEquipment?.some(
-      (item) => item === "GymMachines" || item === "Dumbbells"
+      (item) =>
+        item === "GymMachines" ||
+        item === "Dumbbells" ||
+        item === "Barbell"
     )
   ) {
     score += 15;
