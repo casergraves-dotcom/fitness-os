@@ -1338,6 +1338,14 @@ open until the active plan has at least one complete evaluated training week.
 Use the canonical complete-week adherence results when that evidence exists;
 do not chart the current partial week as historical adherence.
 
+**Adherence visualization checkpoint:** Progress now has a dedicated Training
+Consistency section that keeps current-week completion distinct from a
+range-selectable complete-week adherence chart. The chart consumes canonical
+evaluated-week results and intentionally excludes the current partial week. The
+production build, current-week metrics, and no-complete-weeks state passed in
+the browser; keep the broader item open until a completed Monday–Sunday week
+allows its bar and point details to be verified.
+
 - [ ] Improve strength trend visualization.
 - [ ] Improve running trend visualization.
 - [x] Improve recovery trend visualization.

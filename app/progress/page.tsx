@@ -12,6 +12,7 @@ import {
   WeeklyReview,
   LongTermProgressReview,
   ProgressOutcomeSummary,
+  TrainingAdherenceSummary,
 } from "@/features/progress";
 
 // ============================================================
@@ -51,6 +52,25 @@ export default function ProgressPage() {
 
         <section className="space-y-4">
           <ProgressOutcomeSummary />
+        </section>
+
+
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Training
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Training Consistency
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Review current completion and adherence across complete training weeks.
+            </p>
+          </div>
+
+          <TrainingAdherenceSummary />
         </section>
 
 

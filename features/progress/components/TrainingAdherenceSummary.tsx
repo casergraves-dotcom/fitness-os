@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo, useState } from "react";
+
 import {
   useMorningCheckIn,
 } from "@/features/recovery/hooks/useMorningCheckIn";
@@ -24,12 +26,28 @@ import {
   useWorkoutHistory,
 } from "@/features/workout/hooks/useWorkoutHistory";
 
+import {
+  getProgressReviewAdherence,
+} from "../utils/getProgressReviewAdherence";
+import {
+  getProgressReviewPeriod,
+} from "../utils/getProgressReviewPeriod";
+import {
+  getProgressChartRangeStartDate,
+  isDateInProgressChartRange,
+} from "../utils/progressChartRange";
+import type { ProgressChartRange } from "../utils/progressChartRange";
+import ProgressChartRangeSelect from "./ProgressChartRangeSelect";
+import TrainingAdherenceTrendChart from "./TrainingAdherenceTrendChart";
+
 
 // ============================================================
 // Training Adherence Summary
 // ============================================================
 
 export default function TrainingAdherenceSummary() {
+  const [chartRange, setChartRange] =
+    useState<ProgressChartRange>("6m");
   const {
     state:
       trainingPlanState,
@@ -101,6 +119,44 @@ export default function TrainingAdherenceSummary() {
     weeklyProgress?.adherence ??
     null;
 
+  const adherenceHistory = useMemo(() => {
+    if (!loaded) {
+      return null;
+    }
+
+    return getProgressReviewAdherence({
+      period: getProgressReviewPeriod({
+        range: "All",
+        earliestAvailableDate: trainingPlanState?.startDate ?? null,
+      }),
+      trainingPlanState,
+      completions: trainingActivityCompletions,
+      recoveryCheckIns: morningCheckInHistory,
+      workoutHistory,
+      runHistory,
+    });
+  }, [
+    loaded,
+    morningCheckInHistory,
+    runHistory,
+    trainingActivityCompletions,
+    trainingPlanState,
+    workoutHistory,
+  ]);
+
+  const visibleAdherenceWeeks = useMemo(() => {
+    const weeks = adherenceHistory?.weeks ?? [];
+    const latestDate = weeks.at(-1)?.weekStartDate;
+    const rangeStartDate = getProgressChartRangeStartDate(
+      latestDate,
+      chartRange
+    );
+
+    return weeks.filter((week) =>
+      isDateInProgressChartRange(week.weekStartDate, rangeStartDate)
+    );
+  }, [adherenceHistory, chartRange]);
+
 
   if (
     !loaded
@@ -152,7 +208,7 @@ export default function TrainingAdherenceSummary() {
       </h3>
 
       <p className="mt-1 text-sm text-slate-500">
-        Current-week training completion alongside body-composition progress.
+        Current-week completion and historical consistency for required training.
       </p>
 
 
@@ -197,6 +253,30 @@ export default function TrainingAdherenceSummary() {
           }
         />
 
+      </div>
+
+      <div className="mt-6 border-t border-slate-200 pt-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-slate-700">
+              Complete-Week Trend
+            </p>
+            <p className="mt-1 text-xs text-slate-500">
+              The current partial week is intentionally excluded from this chart.
+            </p>
+          </div>
+          <ProgressChartRangeSelect
+            value={chartRange}
+            onChange={setChartRange}
+          />
+        </div>
+
+        <div className="mt-5">
+          <TrainingAdherenceTrendChart
+            weeks={visibleAdherenceWeeks}
+            hasHistoricalData={(adherenceHistory?.weeks.length ?? 0) > 0}
+          />
+        </div>
       </div>
 
     </div>

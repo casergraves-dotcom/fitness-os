@@ -62,6 +62,10 @@ export {
   default as ProgressOutcomeSummary,
 } from "./components/ProgressOutcomeSummary";
 
+export {
+  default as TrainingAdherenceSummary,
+} from "./components/TrainingAdherenceSummary";
+
 
 // ============================================================
 // Hooks
