@@ -1261,7 +1261,7 @@ parallel dashboards.
   → Goals & Targets; Today shows a compact read-only target summary before the
   related daily inputs, while canonical Progress views continue consuming the
   active targets as analysis context.
-- [ ] Plot time-series observations using their actual measurement date/time on
+- [x] Plot time-series observations using their actual measurement date/time on
   the x-axis so unequal collection intervals receive proportional visual
   spacing.
 - [ ] Define an intentional chart-density and history strategy as data
@@ -1269,6 +1269,14 @@ parallel dashboards.
   ranges, and aggregation or downsampling for dense periods.
 - [ ] Preserve the complete underlying history even when a chart range or
   density strategy does not render every individual observation.
+
+**Time-axis audit:** Every current time-series visualization maps its underlying
+observation date to a numeric timestamp and uses a proportional time scale.
+This covers body weight, body measurements, and exercise-strength progress, so
+unequal intervals are not rendered as equally spaced categories. Running and
+adherence currently provide summaries rather than time-series charts. Future
+charts must retain this timestamp-based convention; chart density and selectable
+history ranges remain separate follow-up work below.
 - [x] Replace alphabetical first-exercise defaults with one reusable,
   evidence-based strength-exercise selection mechanism across Longer-Term
   Review, Strength Retention, and Exercise Progress. When no exercise has enough
