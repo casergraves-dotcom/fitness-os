@@ -1039,6 +1039,15 @@ canonical reusable evidence; Phase 6 owns periodic interpretation and review.
 - [ ] Keep the existing effective-dated nutrition-target system canonical after
   the user accepts or edits a recommendation.
 
+**Calculator foundation:** A pure recommendation engine now uses the
+Mifflin–St Jeor method plus an explicit activity multiplier to estimate
+maintenance calories, then applies a reviewable lose/maintain/gain rate or
+direct calorie adjustment. Protein uses recent lean mass when supplied and
+otherwise uses body weight. The engine validates inputs and returns suggestions
+without writing targets; production build passed. Keep the follow-up items open
+until the optional setup flow lets the user review, edit, and explicitly save
+the suggested values through the canonical effective-dated target system.
+
 **Completed outcome:** Fitness OS supports effective-dated calorie and protein
 targets with preserved target history. Daily nutrition remains intentionally
 lightweight: users can record calorie totals, protein totals, and optional notes
@@ -1382,13 +1391,13 @@ Guide integration is the final stage of the evidence pipeline:
   days.
 - [x] Avoid automatically increasing training load to compensate for nutrition
   adherence.
-- [ ] Avoid changing training from body-composition data alone.
-- [ ] Require training/recovery evidence before body-composition trends influence
+- [x] Avoid changing training from body-composition data alone.
+- [x] Require training/recovery evidence before body-composition trends influence
   training-load decisions.
-- [ ] Surface persistent trends only when evidence is sufficient.
+- [x] Surface persistent trends only when evidence is sufficient.
 - [ ] Explain when available evidence is insufficient to determine why progress
   is faster or slower than expected.
-- [ ] Preserve explicit user control over meaningful goal, calorie, protein, and
+- [x] Preserve explicit user control over meaningful goal, calorie, protein, and
   activity-target changes.
 - [ ] Once sufficient intake and body-weight history exists, compare observed
   multi-week weight change against current intake before recommending a target
@@ -1428,6 +1437,16 @@ selection and explicitly cannot prescribe compensatory exercise or a
 training-load increase. The production build and insufficient-evidence Today
 state passed; keep populated observation verification pending until enough
 nutrition/activity history exists.
+
+**Guide decision-boundary audit:** Daily recommendation selection receives
+today's schedule, completion state, and recovery inputs—not raw body-composition
+changes. Completed-review, persistent-pattern, and lifestyle evidence is
+attached only after the actionable recommendation has been selected. Persistent
+patterns require repeated completed decisions, lifestyle context retains its
+multi-week coverage thresholds, and observation objects have no target-writing
+capability. Any future body-composition-informed training decision must first
+arrive through a canonical multi-signal review with supporting training or
+recovery evidence and explicit user control.
 
 **Guide completion-awareness correction:** Coach now consumes the same
 canonical scheduled-activity completion status used by Today. Completed
