@@ -369,7 +369,7 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [x] Replace the broad `Core` role with explicit rotation, trunk-flexion,
   stability, and hip-flexion intent; disclose when Home variants use practical
   stability work instead of the scheduled core pattern.
-- [ ] Rank alternatives by functional movement intent rather than treating every
+- [x] Rank alternatives by functional movement intent rather than treating every
   exercise with a shared broad role as interchangeable.
 - [x] Review the hard-coded Leg Curl alternatives so hip-hinge exercises are not
   presented as equivalent knee-flexion replacements without explicitly
@@ -414,7 +414,7 @@ implementation begins.
 - [ ] Review every preferred and dynamically ranked substitution for functional
   equivalence, equipment/setup availability, difficulty, safety, and preservation
   of the source exercise's purpose.
-- [ ] Identify substitutions that are useful fallbacks but not true equivalents,
+- [x] Identify substitutions that are useful fallbacks but not true equivalents,
   and define how the UI should label and rank those compromises.
 - [x] Review Gym A / Gym B / Gym C plus Short Gym and Home variants for missing
   movement patterns, unintended duplication, exercise-order problems, and
@@ -530,6 +530,15 @@ Row, Barbell Overhead Press, and Barbell Romanian Deadlift identify their actual
 loading equipment and movement-specific rep ranges. Verified the squat, row,
 vertical-press, hip-hinge, and horizontal-press substitution paths in active
 workouts and confirmed the production build passed.
+
+Substitution ranking now supports an explicit fallback relationship in addition
+to same-pattern equivalents. Glute Bridge and Hip Thrust Machine share bilateral
+hip-extension intent, while Glute Kickback Machine is retained as a lower-ranked
+unilateral isolation fallback and labeled `Related fallback — different movement
+setup` in the workout UI. Separating hip extension from glute-biased squatting
+also removes Glute Bridge from Leg Press recommendations without changing the
+intentional Home Gym C fallback prescription. Verified ordering, labeling,
+per-side kickback logging, Gym C loading, and the production build.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
@@ -969,6 +978,21 @@ canonical reusable evidence; Phase 6 owns periodic interpretation and review.
 - [x] Track weekly calorie adherence where data is available.
 - [x] Distinguish target values from actual/adherence data.
 
+### Nutrition Target Recommendation Follow-up
+
+- [ ] Add an optional `Calculate suggested targets` flow during nutrition-target
+  setup rather than requiring users to already know calorie and protein values.
+- [ ] Estimate maintenance calories from sex, age, height, weight, and activity
+  level using a documented standard BMR/TDEE method.
+- [ ] Support lose, maintain, and gain goals with a user-reviewable goal rate or
+  calorie adjustment.
+- [ ] Recommend protein primarily from body weight, or recent lean-mass data when
+  a suitable DEXA/body-composition record is available.
+- [ ] Present calculated values as recommendations that the user must confirm or
+  edit; never silently replace canonical nutrition targets.
+- [ ] Keep the existing effective-dated nutrition-target system canonical after
+  the user accepts or edits a recommendation.
+
 **Completed outcome:** Fitness OS supports effective-dated calorie and protein
 targets with preserved target history. Daily nutrition remains intentionally
 lightweight: users can record calorie totals, protein totals, and optional notes
@@ -1281,6 +1305,10 @@ Guide integration is the final stage of the evidence pipeline:
   is faster or slower than expected.
 - [ ] Preserve explicit user control over meaningful goal, calorie, protein, and
   activity-target changes.
+- [ ] Once sufficient intake and body-weight history exists, compare observed
+  multi-week weight change against current intake before recommending a target
+  adjustment; explain when the current intake is already producing the intended
+  rate and no change is recommended.
 
 **Guide review-context foundation:** The Guide can now receive the latest
 persisted weekly progression decision as optional completed-review context. The

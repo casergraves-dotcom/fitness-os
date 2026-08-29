@@ -631,11 +631,19 @@ export default function ExerciseCard({
                       }
                       className="flex w-full items-center rounded-lg border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50"
                     >
-                      <span className="font-medium text-slate-900">
-                        {
-                          option.exercise
-                            .name
-                        }
+                      <span>
+                        <span className="block font-medium text-slate-900">
+                          {
+                            option.exercise
+                              .name
+                          }
+                        </span>
+
+                        {option.relationship === "Fallback" && (
+                          <span className="mt-0.5 block text-xs text-slate-500">
+                            Related fallback — different movement setup
+                          </span>
+                        )}
                       </span>
                     </button>
                   )

@@ -17,6 +17,7 @@ export interface ExerciseSubstitutionContext {
 export interface ExerciseSubstitutionOption {
   exercise: ExerciseDefinition;
   sharedRoles: StrengthMovementRole[];
+  relationship: "Equivalent" | "Fallback";
   score: number;
 }
 
@@ -36,6 +37,9 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "leg-press": ["hack-squat-pendulum-squat", "goblet-squat", "reverse-lunge", "barbell-squat"],
   "hack-squat-pendulum-squat": ["leg-press", "barbell-squat", "goblet-squat", "reverse-lunge"],
   "barbell-squat": ["hack-squat-pendulum-squat", "leg-press", "goblet-squat", "reverse-lunge"],
+  "glute-bridge": ["hip-thrust-machine", "glute-kickback-machine"],
+  "hip-thrust-machine": ["glute-bridge", "glute-kickback-machine"],
+  "glute-kickback-machine": ["hip-thrust-machine", "glute-bridge"],
   "leg-curl": ["lying-leg-curl", "band-leg-curl"],
   "lying-leg-curl": ["leg-curl", "band-leg-curl"],
   "band-leg-curl": ["leg-curl", "lying-leg-curl"],
@@ -66,6 +70,18 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "hanging-leg-raise": ["lying-leg-raise"],
   "lying-leg-raise": ["hanging-leg-raise"],
 };
+
+const FALLBACK_SUBSTITUTIONS: Record<string, string[]> = {
+  "glute-bridge": ["glute-kickback-machine"],
+  "hip-thrust-machine": ["glute-kickback-machine"],
+  "glute-kickback-machine": ["hip-thrust-machine", "glute-bridge"],
+};
+
+function getRelationship(sourceId: string, candidateId: string) {
+  return FALLBACK_SUBSTITUTIONS[sourceId]?.includes(candidateId)
+    ? "Fallback" as const
+    : "Equivalent" as const;
+}
 
 function isAvailable(exercise: ExerciseDefinition, context: ExerciseSubstitutionContext) {
   if (context.unavailableExerciseIds?.includes(exercise.id)) return false;
@@ -112,6 +128,10 @@ function getScore(
   const preferred = PREFERRED_SUBSTITUTIONS[source.id] ?? [];
   const preferredIndex = preferred.indexOf(candidate.id);
   if (preferredIndex >= 0) score += 80 - preferredIndex * 10;
+
+  if (getRelationship(source.id, candidate.id) === "Fallback") {
+    score -= 40;
+  }
 
   if (
     context.environment === "Gym" &&
@@ -165,6 +185,7 @@ export function getExerciseSubstitutions(
       return {
         exercise: candidate,
         sharedRoles,
+        relationship: getRelationship(source.id, candidate.id),
         score: getScore(source, candidate, sharedRoles, context),
       };
     })
