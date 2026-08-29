@@ -266,7 +266,6 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     category: "Back",
     movementRoles: ["HorizontalPull"],
     requiredEquipment: ["ResistanceBands"],
-    requiredCapabilities: ["HighAnchor"],
     sets: 3,
     repMin: 10,
     repMax: 20,

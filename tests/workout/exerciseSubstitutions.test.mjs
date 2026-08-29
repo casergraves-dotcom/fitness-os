@@ -70,3 +70,55 @@ test("active-workout exercises are excluded from recommendations", () => {
   assert.ok(!ids.includes("barbell-row"));
   assert.ok(ids.includes("one-arm-dumbbell-row"));
 });
+
+const representativeFamilies = [
+  ["Squat", "leg-press", "hack-squat-pendulum-squat"],
+  ["SquatGlute", "leg-press", "barbell-squat"],
+  ["HipExtension", "glute-bridge", "hip-thrust-machine"],
+  ["KneeFlexion", "leg-curl", "lying-leg-curl"],
+  ["HipHinge", "dumbbell-rdl", "romanian-deadlift"],
+  ["HorizontalPush", "chest-press-machine", "dumbbell-chest-press"],
+  ["HorizontalPull", "seated-row", "cable-row"],
+  ["VerticalPush", "shoulder-press-machine", "dumbbell-shoulder-press"],
+  ["VerticalPull", "lat-pulldown", "assisted-pull-up"],
+  ["HipStability", "hip-abductor", "side-lying-hip-abduction"],
+  ["Adduction", "hip-adductor", "side-lying-hip-adduction"],
+  ["CoreRotation", "cable-woodchop", "band-woodchop"],
+  ["CoreFlexion", "ab-crunch-machine", "cable-crunch"],
+  ["CoreStability", "plank", "dead-bug"],
+  ["CoreHipFlexion", "hanging-leg-raise", "lying-leg-raise"],
+  ["ChestIsolation", "chest-fly", "cable-fly"],
+  ["ShoulderAbduction", "lateral-raise-machine", "dumbbell-lateral-raise"],
+  ["RearShoulder", "reverse-pec-deck", "cable-face-pull"],
+  ["ElbowFlexion", "biceps-curl-machine", "dumbbell-curl"],
+  ["ElbowExtension", "triceps-press-machine", "cable-pressdown"],
+  ["CalfRaise", "calf-raise", "standing-calf-raise-machine"],
+];
+
+test("every movement family has a representative same-role substitution", () => {
+  for (const [role, sourceId, expectedId] of representativeFamilies) {
+    const option = substitutionsFor(sourceId).find(
+      (candidate) => candidate.exercise.id === expectedId
+    );
+
+    assert.ok(option, `${role}: expected ${sourceId} -> ${expectedId}`);
+    assert.ok(option.sharedRoles.includes(role), `${sourceId} -> ${expectedId}`);
+  }
+});
+
+test("equipment and setup availability filter otherwise valid candidates", () => {
+  const limitedHomeContext = {
+    environment: "Home",
+    availableEquipment: ["Bodyweight", "YogaMat", "ResistanceBands"],
+    availableCapabilities: ["FloorSpace"],
+  };
+
+  const rowIds = idsFor("seated-row", limitedHomeContext);
+  assert.ok(rowIds.includes("band-row"));
+  assert.ok(rowIds.includes("backpack-row"));
+  assert.ok(!rowIds.includes("cable-row"));
+  assert.ok(!rowIds.includes("one-arm-dumbbell-row"));
+
+  const pullIds = idsFor("lat-pulldown", limitedHomeContext);
+  assert.ok(!pullIds.includes("band-pulldown"));
+});

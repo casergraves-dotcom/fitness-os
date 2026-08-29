@@ -429,7 +429,7 @@ implementation begins.
   migration before exercise IDs or semantic roles change.
 - [x] Produce a prioritized findings report separating correctness defects,
   missing coverage, UX improvements, and optional catalog expansion.
-- [ ] Add representative substitution tests for each movement family and
+- [x] Add representative substitution tests for each movement family and
   regression coverage for every confirmed defect before considering the audit
   complete.
 
@@ -547,6 +547,13 @@ Leg Press exclusion of hip-extension isolation, equivalent-before-fallback
 ordering, core-pattern separation, and active-workout duplicate exclusion. All
 six tests and the TypeScript check pass. Keep the broader representative-family
 test item open until every supported movement family has explicit coverage.
+
+Representative regression coverage now spans every supported movement role and
+also verifies equipment/setup filtering. Expanding the suite exposed an
+incorrect high-anchor requirement on Band Row; its supported seated-around-the-
+feet setup now requires only a resistance band, matching the existing Home
+workout guidance. All eight substitution tests, the TypeScript check, and the
+production build were verified after the correction.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
