@@ -383,7 +383,7 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [x] Exclude substitution candidates that do not yet have complete target and
   progression metadata, while keeping those definitions available for existing
   history and manual library use.
-- [ ] Add substitution tests confirming that Leg Curl recommendations preserve
+- [x] Add substitution tests confirming that Leg Curl recommendations preserve
   knee-flexion intent and that broader fallback movements are ranked or labeled
   appropriately.
 - [x] Add at least one fully configured knee-flexion alternative so required Leg
@@ -539,6 +539,14 @@ setup` in the workout UI. Separating hip extension from glute-biased squatting
 also removes Glute Bridge from Leg Press recommendations without changing the
 intentional Home Gym C fallback prescription. Verified ordering, labeling,
 per-side kickback logging, Gym C loading, and the production build.
+
+The workout domain now has a dependency-free automated substitution regression
+suite using Node's built-in test runner. Initial coverage verifies complete
+candidate metadata, shared movement intent, Leg Curl exclusion of hip hinges,
+Leg Press exclusion of hip-extension isolation, equivalent-before-fallback
+ordering, core-pattern separation, and active-workout duplicate exclusion. All
+six tests and the TypeScript check pass. Keep the broader representative-family
+test item open until every supported movement family has explicit coverage.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
