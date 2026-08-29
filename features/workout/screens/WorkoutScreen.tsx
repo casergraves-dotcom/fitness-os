@@ -45,6 +45,8 @@ import {
 } from "react";
 
 import {
+  currentGymWorkoutCapabilities,
+  currentGymWorkoutEquipment,
   currentHomeWorkoutCapabilities,
   currentHomeWorkoutEquipment,
   getStrengthWorkoutVariants,
@@ -1495,6 +1497,21 @@ const exerciseVolume =
                         ]
                       : []
                 )
+              }
+              substitutionEnvironment={
+                session.variantType === "Home"
+                  ? "Home"
+                  : "Gym"
+              }
+              availableEquipment={
+                session.variantType === "Home"
+                  ? currentHomeWorkoutEquipment
+                  : currentGymWorkoutEquipment
+              }
+              availableCapabilities={
+                session.variantType === "Home"
+                  ? currentHomeWorkoutCapabilities
+                  : currentGymWorkoutCapabilities
               }
               previousExercise={getPreviousExercise(
                 exercise.exerciseDefinitionId,

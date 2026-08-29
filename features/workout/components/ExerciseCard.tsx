@@ -43,6 +43,10 @@ import {
 } from "../exerciseSubstitutions";
 
 import type {
+  ExerciseSubstitutionEnvironment,
+} from "../exerciseSubstitutions";
+
+import type {
   WorkoutEquipment,
   WorkoutSetupCapability,
 } from "../types";
@@ -60,6 +64,15 @@ interface ExerciseCardProps {
 
   unavailableExerciseDefinitionIds:
     string[];
+
+  substitutionEnvironment:
+    ExerciseSubstitutionEnvironment;
+
+  availableEquipment:
+    WorkoutEquipment[];
+
+  availableCapabilities:
+    WorkoutSetupCapability[];
 
   // Most recent historical performance for this exercise.
   // Undefined means the exercise has never been logged before.
@@ -128,6 +141,9 @@ export default function ExerciseCard({
   exerciseNumber,
   exerciseCount,
   unavailableExerciseDefinitionIds,
+  substitutionEnvironment,
+  availableEquipment,
+  availableCapabilities,
   previousExercise,
   expanded,
   onToggleExpanded,
@@ -207,31 +223,9 @@ export default function ExerciseCard({
 
   const substitutionContext =
     useMemo(() => {
-      const availableEquipment:
-        WorkoutEquipment[] = [
-          "Bodyweight",
-          "YogaMat",
-          "ResistanceBands",
-          "PullUpBar",
-          "Dumbbells",
-          "Barbell",
-          "BarbellRack",
-          "WeightPlate",
-          "Bench",
-          "GymMachines",
-        ];
-
-      const availableCapabilities:
-        WorkoutSetupCapability[] = [
-          "FloorSpace",
-          "HighAnchor",
-          "LowAnchor",
-          "PullUpBarInstalled",
-        ];
-
       return {
         environment:
-          "Gym" as const,
+          substitutionEnvironment,
 
         availableEquipment,
 
@@ -241,6 +235,9 @@ export default function ExerciseCard({
           unavailableExerciseDefinitionIds,
       };
     }, [
+      availableCapabilities,
+      availableEquipment,
+      substitutionEnvironment,
       unavailableExerciseDefinitionIds,
     ]);
 

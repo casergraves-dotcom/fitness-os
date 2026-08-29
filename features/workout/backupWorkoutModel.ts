@@ -32,6 +32,28 @@ WorkoutSetupCapability[] = [
   "HighAnchor",
 ];
 
+export const currentGymWorkoutEquipment:
+WorkoutEquipment[] = [
+  "Bodyweight",
+  "YogaMat",
+  "ResistanceBands",
+  "PullUpBar",
+  "Dumbbells",
+  "Barbell",
+  "BarbellRack",
+  "WeightPlate",
+  "Bench",
+  "GymMachines",
+];
+
+export const currentGymWorkoutCapabilities:
+WorkoutSetupCapability[] = [
+  "FloorSpace",
+  "HighAnchor",
+  "LowAnchor",
+  "PullUpBarInstalled",
+];
+
 
 // ============================================================
 // Planned Strength Workout Variants

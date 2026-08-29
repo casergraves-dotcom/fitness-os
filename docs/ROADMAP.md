@@ -411,7 +411,7 @@ implementation begins.
   metadata.
 - [x] Review the movement-role taxonomy for roles that are missing, overly broad,
   overlapping, or unable to distinguish materially different training intent.
-- [ ] Review every preferred and dynamically ranked substitution for functional
+- [x] Review every preferred and dynamically ranked substitution for functional
   equivalence, equipment/setup availability, difficulty, safety, and preservation
   of the source exercise's purpose.
 - [x] Identify substitutions that are useful fallbacks but not true equivalents,
@@ -562,6 +562,14 @@ corrected per-side logging for One-Arm Dumbbell Row, Side-Lying Hip Abduction,
 and Side-Lying Hip Adduction while preserving all history-bearing IDs. Verified
 the per-side target and working-set UI, all ten catalog/substitution tests, the
 TypeScript check, and the production build.
+
+In-workout substitution filtering now uses the active session environment rather
+than assuming every workout has full gym access. Home variants receive the
+canonical bodyweight, mat, band, and setup-capability profile; Full and Short Gym
+variants receive the canonical gym profile. Verified that Home Band Row offers
+only Backpack Row, anchor-independent Home exercises can legitimately have no
+available alternative, Full Gym recommendations remain unchanged, all ten
+substitution tests pass, and the production build succeeds.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
