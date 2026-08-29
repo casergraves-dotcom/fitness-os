@@ -58,6 +58,9 @@ interface ExerciseCardProps {
 
   exerciseCount: number;
 
+  unavailableExerciseDefinitionIds:
+    string[];
+
   // Most recent historical performance for this exercise.
   // Undefined means the exercise has never been logged before.
   previousExercise?: Exercise;
@@ -94,7 +97,7 @@ interface ExerciseCardProps {
   onReplaceExercise: (
     exerciseId: string,
     replacementExerciseDefinitionId: string
-  ) => void;
+  ) => boolean;
 }
 
 // ============================================================
@@ -124,6 +127,7 @@ export default function ExerciseCard({
   exercise,
   exerciseNumber,
   exerciseCount,
+  unavailableExerciseDefinitionIds,
   previousExercise,
   expanded,
   onToggleExpanded,
@@ -147,6 +151,13 @@ export default function ExerciseCard({
     substitutionsOpen,
     setSubstitutionsOpen,
   ] = useState(false);
+
+  const [
+    substitutionFeedback,
+    setSubstitutionFeedback,
+  ] = useState<string | null>(
+    null
+  );
 
   // ----------------------------------------------------------
   // Exercise Library
@@ -221,14 +232,10 @@ export default function ExerciseCard({
         availableCapabilities,
 
         unavailableExerciseIds:
-          exercise.exerciseDefinitionId
-            ? [
-                exercise.exerciseDefinitionId,
-              ]
-            : [],
+          unavailableExerciseDefinitionIds,
       };
     }, [
-      exercise.exerciseDefinitionId,
+      unavailableExerciseDefinitionIds,
     ]);
 
   const substitutionOptions =
@@ -247,6 +254,32 @@ export default function ExerciseCard({
         substitutionContext,
       ]
     );
+
+  function handleExerciseReplacement(
+    replacementExerciseDefinitionId: string
+  ) {
+    const replaced =
+      onReplaceExercise(
+        exercise.id,
+        replacementExerciseDefinitionId
+      );
+
+    if (!replaced) {
+      setSubstitutionFeedback(
+        "That exercise could not be used because it is already in this workout or is no longer available."
+      );
+
+      return;
+    }
+
+    setSubstitutionFeedback(
+      null
+    );
+
+    setSubstitutionsOpen(
+      false
+    );
+  }
 
   // ----------------------------------------------------------
   // Progression Type
@@ -555,11 +588,15 @@ export default function ExerciseCard({
         <div className="mt-3">
           <button
             type="button"
-            onClick={() =>
+            onClick={() => {
+              setSubstitutionFeedback(
+                null
+              );
+
               setSubstitutionsOpen(
                 (open) => !open
-              )
-            }
+              );
+            }}
             className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700"
           >
             <RefreshCw size={15} />
@@ -581,16 +618,11 @@ export default function ExerciseCard({
                         option.exercise.id
                       }
                       type="button"
-                      onClick={() => {
-                        onReplaceExercise(
-                          exercise.id,
+                      onClick={() =>
+                        handleExerciseReplacement(
                           option.exercise.id
-                        );
-
-                        setSubstitutionsOpen(
-                          false
-                        );
-                      }}
+                        )
+                      }
                       className="flex w-full items-center rounded-lg border border-slate-200 bg-white px-3 py-3 text-left transition hover:border-blue-300 hover:bg-blue-50"
                     >
                       <span className="font-medium text-slate-900">
@@ -603,6 +635,15 @@ export default function ExerciseCard({
                   )
                 )}
               </div>
+
+              {substitutionFeedback && (
+                <p
+                  role="status"
+                  className="mt-3 text-sm text-red-600"
+                >
+                  {substitutionFeedback}
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -644,8 +685,7 @@ export default function ExerciseCard({
                   <button
                     type="button"
                     onClick={() =>
-                      onReplaceExercise(
-                        exercise.id,
+                      handleExerciseReplacement(
                         nextVariation.id
                       )
                     }

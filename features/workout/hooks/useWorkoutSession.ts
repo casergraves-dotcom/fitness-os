@@ -1399,141 +1399,187 @@ function updateSet(
     // ----------------------------------------------------------
 
     function replaceExercise(
-      exerciseId: string,
-      replacementExerciseDefinitionId: string
-    ) {
-      setSession(
-        (previous) => {
-          if (!previous) {
-            return previous;
-          }
+  exerciseId: string,
+  replacementExerciseDefinitionId: string
+): boolean {
+  if (!session) {
+    return false;
+  }
 
-          // Find the exercise being replaced.
-          const exerciseIndex =
-            previous.exercises.findIndex(
-              (exercise) =>
-                exercise.id ===
-                exerciseId
-            );
+  const definition =
+    exerciseLibrary.find(
+      (item) =>
+        item.id ===
+        replacementExerciseDefinitionId
+    );
 
-          if (exerciseIndex === -1) {
-            return previous;
-          }
+  if (!definition) {
+    return false;
+  }
 
-          // Find the replacement exercise in the library.
-          const definition =
-            exerciseLibrary.find(
-              (item) =>
-                item.id ===
-                replacementExerciseDefinitionId
-            );
+  const exerciseExists =
+    session.exercises.some(
+      (exercise) =>
+        exercise.id === exerciseId
+    );
 
-          if (!definition) {
-            return previous;
-          }
+  if (!exerciseExists) {
+    return false;
+  }
 
-          // Don't allow the replacement if that exercise
-          // already exists elsewhere in today's workout.
-          const alreadyExists =
-            previous.exercises.some(
-              (exercise) =>
-                exercise.id !== exerciseId &&
-                exercise.exerciseDefinitionId ===
-                  replacementExerciseDefinitionId
-            );
-
-          if (alreadyExists) {
-            return previous;
-          }
-
-          // Look for previous history belonging specifically
-          // to the replacement exercise.
-          const previousExercise =
-            getPreviousExercise(
-              definition.id,
+  const replacementAlreadyExists =
+    session.exercises.some(
+      (exercise) =>
+        exercise.id !== exerciseId &&
+        (
+          exercise.exerciseDefinitionId ===
+            replacementExerciseDefinitionId ||
+          (
+            !exercise.exerciseDefinitionId &&
+            exercise.name
+              .trim()
+              .toLowerCase() ===
               definition.name
-            );
+                .trim()
+                .toLowerCase()
+          )
+        )
+    );
 
-          // Calculate the replacement exercise's own
-          // recommended starting weight.
-          const startingWeight =
-            getStartingWeight(
-              definition,
-              previousExercise
-            );
+  if (replacementAlreadyExists) {
+    return false;
+  }
 
-          // Preserve today's workout prescription when swapping
-          // an exercise. The replacement changes the movement,
-          // not the amount of work planned for this slot.
-          const sourceExercise =
-            previous.exercises[
-              exerciseIndex
-            ];
+  setSession(
+    (previous) => {
+      if (!previous) {
+        return previous;
+      }
 
-          const setCount =
-            sourceExercise.sets.length;
+      const exerciseIndex =
+        previous.exercises.findIndex(
+          (exercise) =>
+            exercise.id === exerciseId
+        );
 
-          const replacementExercise:
-            Exercise = {
-            id: createId(),
+      if (exerciseIndex === -1) {
+        return previous;
+      }
 
-            exerciseDefinitionId:
-              definition.id,
+      const replacementDefinition =
+        exerciseLibrary.find(
+          (item) =>
+            item.id ===
+            replacementExerciseDefinitionId
+        );
 
-            name:
-              definition.name,
+      if (!replacementDefinition) {
+        return previous;
+      }
 
-            prescribedSetCount:
-              setCount,
+      // Preserve this defensive check even though duplicate
+      // candidates are filtered before being displayed.
+      const alreadyExists =
+        previous.exercises.some(
+          (exercise) =>
+            exercise.id !== exerciseId &&
+            (
+              exercise.exerciseDefinitionId ===
+                replacementExerciseDefinitionId ||
+              (
+                !exercise.exerciseDefinitionId &&
+                exercise.name
+                  .trim()
+                  .toLowerCase() ===
+                  replacementDefinition.name
+                    .trim()
+                    .toLowerCase()
+              )
+            )
+        );
 
-            sets:
-              Array.from(
-                {
-                  length:
-                    setCount,
-                },
-                () => ({
-                  id: createId(),
+      if (alreadyExists) {
+        return previous;
+      }
 
-                  weight:
-                    startingWeight,
+      const previousExercise =
+        getPreviousExercise(
+          replacementDefinition.id,
+          replacementDefinition.name
+        );
 
-                  reps: 0,
+      const startingWeight =
+        getStartingWeight(
+          replacementDefinition,
+          previousExercise
+        );
 
-                  completed:
-                    false,
-                })
-              ),
-          };
+      const sourceExercise =
+        previous.exercises[
+          exerciseIndex
+        ];
 
-          // Preserve the exercise's position in the workout.
-          const exercises = [
-            ...previous.exercises,
-          ];
+      const setCount =
+        sourceExercise.sets.length;
 
-          exercises[
-            exerciseIndex
-          ] = replacementExercise;
+      const replacementExercise:
+        Exercise = {
+        id: createId(),
 
-          return {
-            ...previous,
+        exerciseDefinitionId:
+          replacementDefinition.id,
 
-            exercises,
+        name:
+          replacementDefinition.name,
 
-            // Replacing an exercise invalidates any active
-            // rest timer associated with the old exercise.
-            restStartedAt:
-              undefined,
-          };
-        }
-      );
+        prescribedSetCount:
+          setCount,
 
-      // A replacement is intentional, so don't leave an
-      // unrelated "Undo removal" notification visible.
-      setRemovedExercise(
-        null
-      );
+        sets:
+          Array.from(
+            {
+              length:
+                setCount,
+            },
+            () => ({
+              id: createId(),
+
+              weight:
+                startingWeight,
+
+              reps: 0,
+
+              completed:
+                false,
+            })
+          ),
+      };
+
+      const exercises = [
+        ...previous.exercises,
+      ];
+
+      exercises[
+        exerciseIndex
+      ] = replacementExercise;
+
+      return {
+        ...previous,
+
+        exercises,
+
+        restStartedAt:
+          undefined,
+      };
     }
+  );
+
+  setRemovedExercise(
+    null
+  );
+
+  return true;
+}
 
   // ----------------------------------------------------------
   // Exercise Management - Remove Exercise

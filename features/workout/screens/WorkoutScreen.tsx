@@ -1484,6 +1484,18 @@ const exerciseVolume =
                 session.exercises
                   .length
               }
+              unavailableExerciseDefinitionIds={
+                session.exercises.flatMap(
+                  (sessionExercise) =>
+                    sessionExercise
+                      .exerciseDefinitionId
+                      ? [
+                          sessionExercise
+                            .exerciseDefinitionId,
+                        ]
+                      : []
+                )
+              }
               previousExercise={getPreviousExercise(
                 exercise.exerciseDefinitionId,
                 exercise.name

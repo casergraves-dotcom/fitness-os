@@ -353,7 +353,7 @@ per-exercise substitutions without changing the rest of the programmed session.
 
 **Remaining substitution UX follow-up:**
 
-- [ ] Build substitution context from the entire active workout and exclude
+- [x] Build substitution context from the entire active workout and exclude
   exercises already programmed elsewhere in the session from `Need another
   option?` recommendations, unless duplication is explicitly intentional.
 - [x] Refine the movement-role model where a broad muscle-group label does not
@@ -366,11 +366,11 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [x] Review the hard-coded Leg Curl alternatives so hip-hinge exercises are not
   presented as equivalent knee-flexion replacements without explicitly
   identifying the compromise.
-- [ ] Preserve the session-level duplicate guard as defensive validation even
+- [x] Preserve the session-level duplicate guard as defensive validation even
   after duplicate candidates are removed from the recommendation list.
-- [ ] Surface clear feedback if a replacement is rejected instead of allowing a
+- [x] Surface clear feedback if a replacement is rejected instead of allowing a
   recommended option to appear to do nothing.
-- [ ] Verify duplicate exercises cannot be recommended or introduced across
+- [x] Verify duplicate exercises cannot be recommended or introduced across
   initial and repeated substitutions in the same workout.
 - [ ] Add substitution tests confirming that Leg Curl recommendations preserve
   knee-flexion intent and that broader fallback movements are ranked or labeled
@@ -418,6 +418,13 @@ represented in its Full Gym, Short Gym, and Home pathways. Home Gym A and Gym B
 retain Band Good Morning only as explicit hip-hinge work and disclose that it
 does not replace the scheduled knee-flexion pattern. Production build verified
 after the taxonomy and variant updates.
+
+Substitution recommendations now receive the complete active-workout exercise
+context and remove exercises already programmed elsewhere in the session. The
+session-level duplicate guard remains defensive validation, and rejected
+replacements provide visible feedback. Verified in an active Gym A workout by
+adding Goblet Squat, confirming it disappeared from Leg Press alternatives, then
+removing it and confirming the option returned.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
