@@ -1264,14 +1264,19 @@ parallel dashboards.
 - [x] Plot time-series observations using their actual measurement date/time on
   the x-axis so unequal collection intervals receive proportional visual
   spacing.
-- [ ] Define an intentional chart-density and history strategy as data
+- [x] Define an intentional chart-density and history strategy as data
   accumulates, such as a recent default window, selectable 3M / 6M / 1Y / All
   ranges, and aggregation or downsampling for dense periods.
-- [ ] Preserve the complete underlying history even when a chart range or
+- [x] Preserve the complete underlying history even when a chart range or
   density strategy does not render every individual observation.
 
 **Time-axis audit:** Every current time-series visualization maps its underlying
 observation date to a numeric timestamp and uses a proportional time scale.
+
+**History-range audit:** Body-composition, recovery, and strength charts use the
+shared 3M / 6M / 1Y / All display-range model with a recent default window.
+Filtering is presentation-only; canonical measurements, performance history,
+and all-history strength summaries remain intact.
 This covers body weight, body measurements, and exercise-strength progress, so
 unequal intervals are not rendered as equally spaced categories. Running and
 adherence currently provide summaries rather than time-series charts. Future

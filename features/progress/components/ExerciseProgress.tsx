@@ -3,6 +3,12 @@
 import { useMemo, useState } from "react";
 
 import { useExerciseProgress } from "../hooks/useExerciseProgress";
+import {
+  getProgressChartRangeStartDate,
+  isDateInProgressChartRange,
+} from "../utils/progressChartRange";
+import type { ProgressChartRange } from "../utils/progressChartRange";
+import ProgressChartRangeSelect from "./ProgressChartRangeSelect";
 import StrengthProgressChart from "./StrengthProgressChart";
 
 function formatDate(date: string) {
@@ -14,8 +20,22 @@ function formatDate(date: string) {
 
 export default function ExerciseProgress() {
   const [selectedExercise, setSelectedExercise] = useState<string>();
+  const [chartRange, setChartRange] =
+    useState<ProgressChartRange>("6m");
   const { loaded, exercises, progress } =
     useExerciseProgress(selectedExercise);
+
+  const visibleProgress = useMemo(() => {
+    const latestDate = progress.at(-1)?.date;
+    const rangeStartDate = getProgressChartRangeStartDate(
+      latestDate,
+      chartRange
+    );
+
+    return progress.filter((entry) =>
+      isDateInProgressChartRange(entry.date, rangeStartDate)
+    );
+  }, [chartRange, progress]);
 
   const summary = useMemo(() => {
     if (progress.length === 0) {
@@ -117,7 +137,24 @@ export default function ExerciseProgress() {
         )}
 
         <div className="mt-6">
-          <StrengthProgressChart progress={progress} />
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-slate-700">
+                Strength Trend
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                The display range only changes the chart. Complete performance history remains below.
+              </p>
+            </div>
+            <ProgressChartRangeSelect
+              value={chartRange}
+              onChange={setChartRange}
+            />
+          </div>
+          <StrengthProgressChart
+            progress={visibleProgress}
+            hasHistoricalData={progress.length >= 2}
+          />
         </div>
 
         <div className="mt-5 space-y-2">

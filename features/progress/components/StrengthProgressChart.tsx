@@ -24,6 +24,7 @@ import type {
 
 interface StrengthProgressChartProps {
   progress: ExerciseProgressEntry[];
+  hasHistoricalData?: boolean;
 }
 
 // ============================================================
@@ -54,6 +55,7 @@ function formatDate(timestamp: number) {
 
 export default function StrengthProgressChart({
   progress,
+  hasHistoricalData = false,
 }: StrengthProgressChartProps) {
   // ----------------------------------------------------------
   // Chart Data
@@ -89,8 +91,9 @@ export default function StrengthProgressChart({
           </p>
 
           <p className="mt-1 text-sm text-slate-500">
-            Complete this exercise in another workout to
-            begin charting your progress.
+            {hasHistoricalData
+              ? "Choose a longer display range to see your strength trend."
+              : "Complete this exercise in another workout to begin charting your progress."}
           </p>
         </div>
       </div>
