@@ -86,7 +86,7 @@ const gymAExercises: Exercise[] = [
   createExercise(
     "gym-a-leg-curl",
     "leg-curl",
-    "Leg Curl",
+    "Seated Leg Curl",
     3
   ),
 
@@ -155,7 +155,7 @@ const gymBExercises: Exercise[] = [
   createExercise(
     "gym-b-leg-curl",
     "leg-curl",
-    "Leg Curl",
+    "Seated Leg Curl",
     3
   ),
 

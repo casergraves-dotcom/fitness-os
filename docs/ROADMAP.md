@@ -359,7 +359,7 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [x] Refine the movement-role model where a broad muscle-group label does not
   preserve training intent. In particular, distinguish knee-flexion hamstring
   work such as Leg Curl from hip-hinge work such as Romanian Deadlift.
-- [ ] Audit other substitution roles for the same muscle-group-versus-movement
+- [x] Audit other substitution roles for the same muscle-group-versus-movement
   ambiguity before expanding the recommendation catalog.
 - [x] Replace the broad `Accessory` role with explicit chest-isolation,
   shoulder-abduction, rear-shoulder, elbow-flexion, elbow-extension, and
@@ -384,6 +384,17 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [ ] Add substitution tests confirming that Leg Curl recommendations preserve
   knee-flexion intent and that broader fallback movements are ranked or labeled
   appropriately.
+- [x] Add at least one fully configured knee-flexion alternative so required Leg
+  Curl work is not a substitution dead end.
+- [ ] Add fully configured alternatives for rotational core and trunk-flexion
+  work so Cable Woodchop and Ab Crunch Machine can remain movement-specific
+  without becoming substitution dead ends.
+- [ ] Decide whether chest isolation, calf raises, and hip-flexion core work
+  belong in the active program or only the broader library, then either add
+  complete same-role alternatives or explicitly retain them as endpoints.
+- [ ] Correct incomplete or questionable exercise metadata before those
+  definitions can enter automatic substitution results, including Weighted
+  Plank equipment/setup requirements and preserved spreadsheet-era exercises.
 
 ### Exercise Library and Substitution Audit
 
@@ -456,6 +467,21 @@ Dead Bug and Plank as practical stability compromises rather than equivalents.
 Verified that Cable Woodchop and Ab Crunch Machine no longer offer unrelated
 alternatives, Plank remains within the stability family, and Full Gym A/C still
 load correctly. Production build passed after the Core role split.
+
+The post-taxonomy substitution audit found five isolated movement families:
+knee flexion, chest isolation, calf raises, core rotation, and core hip flexion.
+Trunk flexion has two definitions, but Cable Crunch lacks the metadata required
+for automatic recommendations. Leg Curl, Cable Woodchop, and Ab Crunch Machine
+are active-program substitution gaps; the remaining isolated families require a
+program-scope decision before expanding the catalog. Weighted Plank also needs
+an equipment/setup correction before the library audit is complete.
+
+The existing `leg-curl` definition now represents Seated Leg Curl without
+changing its stable ID, preserving its saved performance history. Lying Leg Curl
+and Band Leg Curl provide fully configured same-role alternatives, with the band
+variation requiring an available low anchor. Verified in a fresh Gym A session
+that the seated exercise retained its prior target, both alternatives appeared,
+no hip-hinge movements were offered, and the production build passed.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 

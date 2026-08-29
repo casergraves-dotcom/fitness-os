@@ -221,6 +221,7 @@ export default function ExerciseCard({
         WorkoutSetupCapability[] = [
           "FloorSpace",
           "HighAnchor",
+          "LowAnchor",
         ];
 
       return {
