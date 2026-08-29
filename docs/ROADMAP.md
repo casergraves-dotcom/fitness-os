@@ -356,14 +356,14 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [ ] Build substitution context from the entire active workout and exclude
   exercises already programmed elsewhere in the session from `Need another
   option?` recommendations, unless duplication is explicitly intentional.
-- [ ] Refine the movement-role model where a broad muscle-group label does not
+- [x] Refine the movement-role model where a broad muscle-group label does not
   preserve training intent. In particular, distinguish knee-flexion hamstring
   work such as Leg Curl from hip-hinge work such as Romanian Deadlift.
 - [ ] Audit other substitution roles for the same muscle-group-versus-movement
   ambiguity before expanding the recommendation catalog.
 - [ ] Rank alternatives by functional movement intent rather than treating every
   exercise with a shared broad role as interchangeable.
-- [ ] Review the hard-coded Leg Curl alternatives so hip-hinge exercises are not
+- [x] Review the hard-coded Leg Curl alternatives so hip-hinge exercises are not
   presented as equivalent knee-flexion replacements without explicitly
   identifying the compromise.
 - [ ] Preserve the session-level duplicate guard as defensive validation even
@@ -387,29 +387,37 @@ implementation begins.
   movement function, required equipment, setup capabilities, unilateral/per-side
   behavior, resistance type, performance type, rep range, and progression
   metadata.
-- [ ] Review the movement-role taxonomy for roles that are missing, overly broad,
+- [x] Review the movement-role taxonomy for roles that are missing, overly broad,
   overlapping, or unable to distinguish materially different training intent.
 - [ ] Review every preferred and dynamically ranked substitution for functional
   equivalence, equipment/setup availability, difficulty, safety, and preservation
   of the source exercise's purpose.
 - [ ] Identify substitutions that are useful fallbacks but not true equivalents,
   and define how the UI should label and rank those compromises.
-- [ ] Review Gym A / Gym B / Gym C plus Short Gym and Home variants for missing
+- [x] Review Gym A / Gym B / Gym C plus Short Gym and Home variants for missing
   movement patterns, unintended duplication, exercise-order problems, and
   appropriate weekly balance.
 - [ ] Identify important exercise and substitution gaps for common gym-equipment
   constraints, the supported home setup, mobility limitations, and different
   experience levels.
-- [ ] Trace every movement-role and exercise-definition consumer before changing
+- [x] Trace every movement-role and exercise-definition consumer before changing
   the taxonomy, including template validation, workout balance, substitution
   ranking, backup workouts, progression, history, and Reflect analysis.
-- [ ] Determine whether historical records require compatibility aliases or a
+- [x] Determine whether historical records require compatibility aliases or a
   migration before exercise IDs or semantic roles change.
-- [ ] Produce a prioritized findings report separating correctness defects,
+- [x] Produce a prioritized findings report separating correctness defects,
   missing coverage, UX improvements, and optional catalog expansion.
 - [ ] Add representative substitution tests for each movement family and
   regression coverage for every confirmed defect before considering the audit
   complete.
+
+**Verified incremental correction:** knee-flexion and hip-hinge work now use
+distinct canonical movement roles. Leg Curl no longer recommends hip-hinge
+movements as equivalent substitutions. Gym C's required hip-hinge intent is
+represented in its Full Gym, Short Gym, and Home pathways. Home Gym A and Gym B
+retain Band Good Morning only as explicit hip-hinge work and disclose that it
+does not replace the scheduled knee-flexion pattern. Production build verified
+after the taxonomy and variant updates.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 

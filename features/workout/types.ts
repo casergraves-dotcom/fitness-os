@@ -64,7 +64,8 @@ export type StrengthWorkoutType =
 export type StrengthMovementRole =
   | "Squat"
   | "SquatGlute"
-  | "Hamstrings"
+  | "KneeFlexion"
+  | "HipHinge"
   | "HorizontalPush"
   | "HorizontalPull"
   | "VerticalPush"

@@ -62,7 +62,7 @@ Record<
       { role: "Squat", required: true },
       { role: "HorizontalPush", required: true },
       { role: "HorizontalPull", required: true },
-      { role: "Hamstrings", required: true },
+      { role: "KneeFlexion", required: true },
       { role: "VerticalPush", required: false },
       { role: "Accessory", required: false },
       { role: "Core", required: true },
@@ -77,7 +77,7 @@ Record<
       { role: "Squat", required: true },
       { role: "VerticalPull", required: true },
       { role: "HorizontalPush", required: true },
-      { role: "Hamstrings", required: true },
+      { role: "KneeFlexion", required: true },
       { role: "Accessory", required: false },
       { role: "Accessory", required: false },
       { role: "Accessory", required: false },
@@ -90,6 +90,7 @@ Record<
 
     roles: [
       { role: "SquatGlute", required: true },
+      { role: "HipHinge", required: true },
       { role: "VerticalPull", required: true },
       { role: "HorizontalPush", required: true },
       { role: "Accessory", required: false },
@@ -134,7 +135,7 @@ StrengthWorkoutVariant[] = [
       "Squat",
       "HorizontalPush",
       "HorizontalPull",
-      "Hamstrings",
+      "KneeFlexion",
       "Core",
     ],
     exercises: [
@@ -155,7 +156,7 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "leg-curl",
-        movementRole: "Hamstrings",
+        movementRole: "KneeFlexion",
         sets: 2,
       },
       {
@@ -191,7 +192,7 @@ StrengthWorkoutVariant[] = [
       "Squat",
       "HorizontalPush",
       "HorizontalPull",
-      "Hamstrings",
+      "HipHinge",
       "VerticalPush",
       "Core",
     ],
@@ -215,7 +216,7 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "band-good-morning",
-        movementRole: "Hamstrings",
+        movementRole: "HipHinge",
         sets: 3,
       },
       {
@@ -233,7 +234,7 @@ StrengthWorkoutVariant[] = [
     durationMin: 30,
     durationMax: 40,
     note:
-      "Bands + bodyweight substitute preserving Gym A's required movement roles.",
+      "Bands + bodyweight substitute preserving most of Gym A's movement intent. Band Good Morning provides hip-hinge work but does not replace the scheduled knee-flexion pattern.",
   },
 
   // ----------------------------------------------------------
@@ -250,7 +251,7 @@ StrengthWorkoutVariant[] = [
       "Squat",
       "VerticalPull",
       "HorizontalPush",
-      "Hamstrings",
+      "KneeFlexion",
     ],
     exercises: [
       {
@@ -270,7 +271,7 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "leg-curl",
-        movementRole: "Hamstrings",
+        movementRole: "KneeFlexion",
         sets: 2,
       },
     ],
@@ -302,7 +303,7 @@ StrengthWorkoutVariant[] = [
       "Squat",
       "VerticalPull",
       "HorizontalPush",
-      "Hamstrings",
+      "HipHinge",
       "Accessory",
     ],
     exercises: [
@@ -325,7 +326,7 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "band-good-morning",
-        movementRole: "Hamstrings",
+        movementRole: "HipHinge",
         sets: 3,
       },
       {
@@ -344,7 +345,7 @@ StrengthWorkoutVariant[] = [
     durationMin: 30,
     durationMax: 40,
     note:
-      "Bands + bodyweight substitute. Vertical pulling requires a safe high band anchor.",
+      "Bands + bodyweight substitute. Vertical pulling requires a safe high band anchor. Band Good Morning provides hip-hinge work but does not replace the scheduled knee-flexion pattern.",
   },
 
   // ----------------------------------------------------------
@@ -356,9 +357,13 @@ StrengthWorkoutVariant[] = [
     label: "Gym C - Short",
     sourceStrengthWorkout: "Gym C",
     variantType: "ShortGym",
-    requiredEquipment: ["GymMachines"],
+    requiredEquipment: [
+      "GymMachines",
+      "Dumbbells",
+    ],
     movementRoles: [
       "SquatGlute",
+      "HipHinge",
       "VerticalPull",
       "HorizontalPush",
       "Core",
@@ -370,6 +375,11 @@ StrengthWorkoutVariant[] = [
         sets: 2,
         note:
           "Use the programmed high-foot setup for additional glute/posterior-chain emphasis.",
+      },
+      {
+        exerciseDefinitionId: "dumbbell-rdl",
+        movementRole: "HipHinge",
+        sets: 2,
       },
       {
         exerciseDefinitionId: "assisted-pull-up",
@@ -413,6 +423,7 @@ StrengthWorkoutVariant[] = [
     ],
     movementRoles: [
       "SquatGlute",
+      "HipHinge",
       "VerticalPull",
       "HorizontalPush",
       "HipStability",
@@ -426,6 +437,11 @@ StrengthWorkoutVariant[] = [
         sets: 3,
         note:
           "Use band resistance above the knees when appropriate.",
+      },
+      {
+        exerciseDefinitionId: "band-good-morning",
+        movementRole: "HipHinge",
+        sets: 3,
       },
       {
         exerciseDefinitionId: "band-pulldown",
