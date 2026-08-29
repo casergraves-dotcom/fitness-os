@@ -35,6 +35,16 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "hip-adductor": ["side-lying-hip-adduction"],
   "cable-woodchop": ["dead-bug", "plank", "cable-crunch"],
   "ab-crunch-machine": ["cable-crunch", "dead-bug", "plank"],
+  "lateral-raise-machine": ["dumbbell-lateral-raise"],
+  "dumbbell-lateral-raise": ["lateral-raise-machine"],
+  "reverse-pec-deck": ["cable-face-pull"],
+  "cable-face-pull": ["reverse-pec-deck"],
+  "biceps-curl-machine": ["dumbbell-curl", "band-biceps-curl"],
+  "dumbbell-curl": ["biceps-curl-machine", "band-biceps-curl"],
+  "band-biceps-curl": ["dumbbell-curl", "biceps-curl-machine"],
+  "triceps-press-machine": ["cable-pressdown", "band-overhead-triceps-extension"],
+  "cable-pressdown": ["triceps-press-machine", "band-overhead-triceps-extension"],
+  "band-overhead-triceps-extension": ["cable-pressdown", "triceps-press-machine"],
 };
 
 function isAvailable(exercise: ExerciseDefinition, context: ExerciseSubstitutionContext) {

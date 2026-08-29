@@ -361,6 +361,9 @@ per-exercise substitutions without changing the rest of the programmed session.
   work such as Leg Curl from hip-hinge work such as Romanian Deadlift.
 - [ ] Audit other substitution roles for the same muscle-group-versus-movement
   ambiguity before expanding the recommendation catalog.
+- [x] Replace the broad `Accessory` role with explicit chest-isolation,
+  shoulder-abduction, rear-shoulder, elbow-flexion, elbow-extension, and
+  calf-raise intent so unrelated accessory movements are not interchangeable.
 - [ ] Rank alternatives by functional movement intent rather than treating every
   exercise with a shared broad role as interchangeable.
 - [x] Review the hard-coded Leg Curl alternatives so hip-hinge exercises are not
@@ -434,6 +437,14 @@ resistance-type, and performance-type metadata. Verified that incomplete Barbell
 Squat, Overhead Press, and Barbell Row definitions no longer appear as automatic
 alternatives while configured options remain available. Production build passed
 after the filter was added.
+
+The broad Accessory taxonomy has been removed from the workout system. Gym A,
+Gym B, Gym C, and Home Gym B now declare the actual optional movement intent,
+while canonical exercise definitions and substitution ranking distinguish chest
+isolation, shoulder abduction, rear-shoulder work, elbow flexion, elbow extension,
+and calf raises. Verified that biceps, triceps, lateral-raise, and rear-shoulder
+recommendations remain within their respective families. Production build
+passed after the role split.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 

@@ -73,7 +73,12 @@ export type StrengthMovementRole =
   | "HipStability"
   | "Adduction"
   | "Core"
-  | "Accessory";
+  | "ChestIsolation"
+  | "ShoulderAbduction"
+  | "RearShoulder"
+  | "ElbowFlexion"
+  | "ElbowExtension"
+  | "CalfRaise";
 
 
 // ============================================================
