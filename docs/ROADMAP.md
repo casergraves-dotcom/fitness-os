@@ -1227,6 +1227,17 @@ program is too new.
   and shared views, and links to the existing private Progress Photo Comparison
   workflow.
 
+**Implemented highlight foundation:** Longer-Term Review now derives
+estimated-strength PRs against all earlier completed history while including an
+observation only when its achievement date falls inside the selected period. It
+also identifies the earliest and latest in-period progress check-ins sharing at
+least one photo view and links the resulting observation to the existing private
+photo-comparison workflow. Focused regression tests cover historical PR
+baselines, period filtering, shared-view comparison selection, and the no-valid-
+comparison state. All 13 project tests, the TypeScript check, the production
+build, and the current insufficient-evidence browser state pass; keep the two
+feature items open for the real-data cases above.
+
 ## 6.3 Review and Progress UX
 
 Extend existing Progress views where richer visualization is useful. Reflect

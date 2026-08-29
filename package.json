@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs",
+    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs",
     "start": "next start",
     "lint": "eslint"
   },

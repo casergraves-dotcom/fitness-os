@@ -103,6 +103,12 @@ function getObservationLabel(
     case "Milestone":
       return "Milestone";
 
+    case "PersonalRecord":
+      return "Strength PR";
+
+    case "ProgressPhoto":
+      return "Progress Photos";
+
     default:
       return "Progress";
   }
@@ -309,6 +315,20 @@ export default function LongTermProgressReview() {
                       observation.message
                     }
                   </p>
+
+                  {observation.actionHref &&
+                  observation.actionLabel && (
+                    <a
+                      href={
+                        observation.actionHref
+                      }
+                      className="mt-3 inline-flex text-sm font-semibold text-blue-600 hover:text-blue-700"
+                    >
+                      {
+                        observation.actionLabel
+                      }
+                    </a>
+                  )}
 
                 </div>
               )

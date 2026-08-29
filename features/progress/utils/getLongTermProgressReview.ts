@@ -27,6 +27,14 @@ import type {
 } from "./getProgressReviewPeriod";
 
 import type {
+  ProgressReviewPersonalRecord,
+} from "./getProgressReviewPersonalRecords";
+
+import type {
+  ProgressReviewPhotoComparison,
+} from "./getProgressReviewPhotoComparison";
+
+import type {
   StrengthRetentionReview,
 } from "./getStrengthRetentionReview";
 
@@ -42,7 +50,9 @@ export type LongTermProgressReviewObservationType =
   | "Running"
   | "Recovery"
   | "Adherence"
-  | "Milestone";
+  | "Milestone"
+  | "PersonalRecord"
+  | "ProgressPhoto";
 
 
 export interface LongTermProgressReviewObservation {
@@ -50,6 +60,10 @@ export interface LongTermProgressReviewObservation {
     LongTermProgressReviewObservationType;
 
   message: string;
+
+  actionHref?: string;
+
+  actionLabel?: string;
 }
 
 
@@ -76,6 +90,13 @@ export interface LongTermProgressReview {
 
   milestones:
     BodyCompositionMilestone[];
+
+  personalRecords:
+    ProgressReviewPersonalRecord[];
+
+  photoComparison:
+    ProgressReviewPhotoComparison |
+    null;
 
   observations:
     LongTermProgressReviewObservation[];
@@ -403,6 +424,56 @@ function getMilestoneObservations(
 }
 
 
+function getPersonalRecordObservations(
+  personalRecords:
+    ProgressReviewPersonalRecord[]
+): LongTermProgressReviewObservation[] {
+  return personalRecords
+    .slice(
+      0,
+      3
+    )
+    .map(
+      (
+        record
+      ) => ({
+        type:
+          "PersonalRecord",
+
+        message:
+          `${record.exerciseName} reached a new estimated 1RM of ${record.estimatedOneRepMax} lb on ${record.achievedDate}, improving the previous best by ${record.improvement} lb.`,
+      })
+    );
+}
+
+
+function getProgressPhotoObservation(
+  comparison:
+    ProgressReviewPhotoComparison |
+    null
+): LongTermProgressReviewObservation | null {
+  if (
+    !comparison
+  ) {
+    return null;
+  }
+
+  return {
+    type:
+      "ProgressPhoto",
+
+    message:
+      `${comparison.sharedViews.join(" / ")} progress photos can be compared from ${comparison.earlierDate} to ${comparison.laterDate} within this review period.`,
+
+    actionHref:
+      "#progress-photo-comparison",
+
+    actionLabel:
+      "Open photo comparison",
+  };
+}
+
+
 // ============================================================
 // Long-Term Progress Review
 // ============================================================
@@ -415,6 +486,8 @@ export function getLongTermProgressReview({
   strengthRetention,
   adherence,
   milestones,
+  personalRecords,
+  photoComparison,
 }: {
   period:
     ProgressReviewPeriod;
@@ -436,6 +509,13 @@ export function getLongTermProgressReview({
 
   milestones:
     BodyCompositionMilestone[];
+
+  personalRecords:
+    ProgressReviewPersonalRecord[];
+
+  photoComparison:
+    ProgressReviewPhotoComparison |
+    null;
 }): LongTermProgressReview {
   const resolvedDexa =
     dexa ??
@@ -547,6 +627,25 @@ export function getLongTermProgressReview({
       periodMilestones
     )
   );
+
+  observations.push(
+    ...getPersonalRecordObservations(
+      personalRecords
+    )
+  );
+
+  const progressPhotoObservation =
+    getProgressPhotoObservation(
+      photoComparison
+    );
+
+  if (
+    progressPhotoObservation
+  ) {
+    observations.push(
+      progressPhotoObservation
+    );
+  }
 
 
   // ----------------------------------------------------------
@@ -663,6 +762,10 @@ export function getLongTermProgressReview({
 
     milestones:
       periodMilestones,
+
+    personalRecords,
+
+    photoComparison,
 
     observations,
 

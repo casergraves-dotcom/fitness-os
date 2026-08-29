@@ -164,7 +164,10 @@ export default function ProgressPhotoComparison() {
 
 
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm">
+    <div
+      id="progress-photo-comparison"
+      className="scroll-mt-24 rounded-2xl border bg-white p-5 shadow-sm"
+    >
 
       <h3 className="text-lg font-bold text-slate-900">
         Progress Photo Comparison

@@ -13,6 +13,10 @@ import {
 } from "@/features/running/hooks/useRunSession";
 
 import {
+  useExerciseLibrary,
+} from "@/features/workout/hooks/useExerciseLibrary";
+
+import {
   useTrainingActivityCompletions,
 } from "@/features/workout/hooks/useTrainingActivityCompletions";
 
@@ -45,6 +49,10 @@ import {
 } from "./useDexaRecords";
 
 import {
+  useProgressCheckIns,
+} from "./useProgressCheckIns";
+
+import {
   getBodyCompositionPeriodComparison,
 } from "../utils/getBodyCompositionPeriodComparison";
 
@@ -71,6 +79,14 @@ import {
 import {
   getProgressReviewPeriod,
 } from "../utils/getProgressReviewPeriod";
+
+import {
+  getProgressReviewPersonalRecords,
+} from "../utils/getProgressReviewPersonalRecords";
+
+import {
+  getProgressReviewPhotoComparison,
+} from "../utils/getProgressReviewPhotoComparison";
 
 import type {
   ProgressReviewRange,
@@ -234,6 +250,15 @@ export function useLongTermProgressReview({
       weightTrend
     );
 
+  const {
+    loaded:
+      progressCheckInsLoaded,
+
+    checkIns:
+      progressCheckIns,
+  } =
+    useProgressCheckIns();
+
 
   // ----------------------------------------------------------
   // Running
@@ -293,6 +318,15 @@ export function useLongTermProgressReview({
   } =
     useWorkoutHistory();
 
+  const {
+    loaded:
+      exerciseLibraryLoaded,
+
+    exercises:
+      exerciseDefinitions,
+  } =
+    useExerciseLibrary();
+
 
   // ----------------------------------------------------------
   // Loading
@@ -302,11 +336,13 @@ export function useLongTermProgressReview({
     measurementsLoaded &&
     goalsLoaded &&
     dexaRecordsLoaded &&
+    progressCheckInsLoaded &&
     runHistoryLoaded &&
     recoveryLoaded &&
     trainingPlanLoaded &&
     completionsLoaded &&
-    workoutHistoryLoaded;
+    workoutHistoryLoaded &&
+    exerciseLibraryLoaded;
 
 
   // ----------------------------------------------------------
@@ -332,6 +368,13 @@ export function useLongTermProgressReview({
               record
             ) =>
               record.scanDate
+          ),
+
+          ...progressCheckIns.map(
+            (
+              checkIn
+            ) =>
+              checkIn.date
           ),
 
           ...workoutHistory.map(
@@ -361,6 +404,7 @@ export function useLongTermProgressReview({
         trainingPlanState,
         weightTrend,
         dexaRecords,
+        progressCheckIns,
         workoutHistory,
         runHistory,
         recoveryHistory,
@@ -394,6 +438,35 @@ export function useLongTermProgressReview({
         }),
       [
         workoutHistory,
+        period,
+      ]
+    );
+
+  const personalRecords =
+    useMemo(
+      () =>
+        getProgressReviewPersonalRecords({
+          workoutHistory,
+          exerciseDefinitions,
+          period,
+        }),
+      [
+        workoutHistory,
+        exerciseDefinitions,
+        period,
+      ]
+    );
+
+  const photoComparison =
+    useMemo(
+      () =>
+        getProgressReviewPhotoComparison({
+          checkIns:
+            progressCheckIns,
+          period,
+        }),
+      [
+        progressCheckIns,
         period,
       ]
     );
@@ -450,6 +523,8 @@ export function useLongTermProgressReview({
           strengthRetention,
           adherence,
           milestones,
+          personalRecords,
+          photoComparison,
         });
       },
       [
@@ -464,6 +539,8 @@ export function useLongTermProgressReview({
         workoutHistory,
         strengthRetention,
         milestones,
+        personalRecords,
+        photoComparison,
       ]
     );
 
