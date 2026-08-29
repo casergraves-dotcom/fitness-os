@@ -4,7 +4,6 @@ import {
   BodyMeasurements,
   DexaRecords,
   ExerciseProgress,
-  GoalProfile,
   RecoveryProgress,
   RunningProgress,
   WeeklyProgressCheckIn,
@@ -13,15 +12,6 @@ import {
   WeeklyReview,
   LongTermProgressReview,
 } from "@/features/progress";
-
-import {
-  NutritionTargets,
-} from "@/features/nutrition";
-
-import {
-  StepTargets,
-} from "@/features/dailyActivity";
-
 
 // ============================================================
 // Progress Page
@@ -55,63 +45,6 @@ export default function ProgressPage() {
 
         <section className="space-y-4">
           <LongTermProgressReview />
-        </section>
-
-
-        <section className="space-y-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Outcome
-            </p>
-
-            <h2 className="mt-1 text-xl font-bold">
-              Goal Profile
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Define the outcome Fitness OS should use when evaluating progress.
-            </p>
-          </div>
-
-          <GoalProfile />
-        </section>
-
-
-        <section className="space-y-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Nutrition
-            </p>
-
-            <h2 className="mt-1 text-xl font-bold">
-              Nutrition Targets
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Set calorie and protein targets used to evaluate daily and weekly nutrition adherence.
-            </p>
-          </div>
-
-          <NutritionTargets />
-        </section>
-
-
-        <section className="space-y-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-              Daily Activity
-            </p>
-
-            <h2 className="mt-1 text-xl font-bold">
-              Step Target
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500">
-              Set the daily step target used to evaluate general-activity adherence.
-            </p>
-          </div>
-
-          <StepTargets />
         </section>
 
 

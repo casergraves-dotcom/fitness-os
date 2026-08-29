@@ -8,6 +8,7 @@ import {
   Dumbbell,
   Library,
   ChevronRight,
+  Target,
 } from "lucide-react";
 
 import AppShell from "@/components/layout/AppShell";
@@ -34,8 +35,44 @@ export default function SettingsPage() {
           </h1>
 
           <p className="mt-1 text-sm text-slate-500">
-            Customize your workouts and exercise library.
+            Manage your goals, targets, workouts, and exercise library.
           </p>
+        </div>
+
+        {/* --------------------------------------------------
+            Goals and Targets
+        --------------------------------------------------- */}
+
+        <div>
+          <p className="mb-2 text-sm font-semibold text-slate-500">
+            GOALS
+          </p>
+
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <Link
+              href="/settings/goals"
+              className="flex items-center gap-3 px-4 py-4 transition hover:bg-slate-50"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <Target size={20} />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-slate-900">
+                  Goals &amp; Targets
+                </p>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  Manage outcome, nutrition, and daily-activity targets.
+                </p>
+              </div>
+
+              <ChevronRight
+                size={20}
+                className="shrink-0 text-slate-400"
+              />
+            </Link>
+          </div>
         </div>
 
         {/* --------------------------------------------------

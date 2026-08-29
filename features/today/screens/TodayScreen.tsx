@@ -13,6 +13,7 @@ import {
 
 import {
   MissionCard,
+  TodayTargets,
   WeeklyProgress,
 } from "@/features/today";
 
@@ -427,6 +428,9 @@ export default function TodayScreen() {
             isActivityCompleted
           }
         />
+
+
+        <TodayTargets />
 
 
         <DailyNutritionCard />

@@ -1030,6 +1030,18 @@ and adherence; it requires multiple available signals, treats missing evidence
 as unavailable rather than positive, and explicitly defers conclusions when the
 program is too new.
 
+**Pending real-data verification:**
+
+- Keep milestone/PR highlights open until an exercise has at least two completed
+  performances and a later performance exceeds its prior estimated-strength
+  best. Verify the PR appears only in review periods containing its achievement
+  date while earlier history remains the comparison baseline.
+- Keep progress-photo comparison integration open until at least two weekly
+  check-ins contain the same photo view. Verify the observation appears only in
+  eligible review periods, reports the correct earliest/latest comparison dates
+  and shared views, and links to the existing private Progress Photo Comparison
+  workflow.
+
 ## 6.3 Review and Progress UX
 
 Extend existing Progress views where richer visualization is useful. Reflect
@@ -1044,11 +1056,15 @@ parallel dashboards.
 - [ ] Reduce repeated conclusions and metrics across Weekly Review, outcome
   summaries, and domain-specific progress sections so each insight has one clear
   primary home.
-- [ ] Move target-setting out of Progress while continuing to display relevant
+- [x] Move target-setting out of Progress while continuing to display relevant
   targets as context for trends and outcomes. Keep quick daily inputs such as
   weight entry on Today, keep reflection and comparison in Progress / Reflect,
   and place target configuration in the most appropriate existing Goals, Plan,
   or Settings architecture rather than creating a parallel Goals system.
+  Outcome, nutrition, and step-target editors now live together under Settings
+  → Goals & Targets; Today shows a compact read-only target summary before the
+  related daily inputs, while canonical Progress views continue consuming the
+  active targets as analysis context.
 - [ ] Plot time-series observations using their actual measurement date/time on
   the x-axis so unequal collection intervals receive proportional visual
   spacing.
