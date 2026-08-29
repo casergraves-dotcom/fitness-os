@@ -746,6 +746,22 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     performanceType: "Reps",
   },
   {
+    id: "band-woodchop",
+    name: "Band Woodchop",
+    category: "Core",
+    movementRoles: ["CoreRotation"],
+    requiredEquipment: ["ResistanceBands"],
+    requiredCapabilities: ["HighAnchor"],
+    sets: 3,
+    repMin: 10,
+    repMax: 20,
+    increment: 0,
+    progressionType: "Reps",
+    resistanceType: "Band",
+    performanceType: "Reps",
+    repCounting: "PerSide",
+  },
+  {
     id: "ab-crunch-machine",
     name: "Ab Crunch Machine",
     category: "Core",
@@ -833,14 +849,22 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     repCounting: "PerSide",
   },
 
-  // Not defined in the spreadsheet.
   {
     id: "cable-crunch",
     name: "Cable Crunch",
     category: "Core",
     movementRoles: ["CoreFlexion"],
     requiredEquipment: ["GymMachines"],
+    sets: 3,
+    repMin: 10,
+    repMax: 15,
+    increment: 5,
+    progressionType: "Load",
+    resistanceType: "Weight",
+    performanceType: "Reps",
   },
+
+  // Not defined in the spreadsheet.
   {
     id: "hanging-leg-raise",
     name: "Hanging Leg Raise",

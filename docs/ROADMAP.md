@@ -386,7 +386,7 @@ per-exercise substitutions without changing the rest of the programmed session.
   appropriately.
 - [x] Add at least one fully configured knee-flexion alternative so required Leg
   Curl work is not a substitution dead end.
-- [ ] Add fully configured alternatives for rotational core and trunk-flexion
+- [x] Add fully configured alternatives for rotational core and trunk-flexion
   work so Cable Woodchop and Ab Crunch Machine can remain movement-specific
   without becoming substitution dead ends.
 - [ ] Decide whether chest isolation, calf raises, and hip-flexion core work
@@ -482,6 +482,12 @@ and Band Leg Curl provide fully configured same-role alternatives, with the band
 variation requiring an available low anchor. Verified in a fresh Gym A session
 that the seated exercise retained its prior target, both alternatives appeared,
 no hip-hinge movements were offered, and the production build passed.
+
+Rotational and trunk-flexion core work now have fully configured same-pattern
+alternatives. Cable Woodchop and Band Woodchop recommend each other, with band
+repetitions recorded per side; Ab Crunch Machine and Cable Crunch likewise form
+a trunk-flexion pair. Verified both directions in active workouts and confirmed
+the production build passed without reintroducing plank/stability substitutions.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 

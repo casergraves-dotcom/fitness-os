@@ -46,6 +46,10 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "triceps-press-machine": ["cable-pressdown", "band-overhead-triceps-extension"],
   "cable-pressdown": ["triceps-press-machine", "band-overhead-triceps-extension"],
   "band-overhead-triceps-extension": ["cable-pressdown", "triceps-press-machine"],
+  "cable-woodchop": ["band-woodchop"],
+  "band-woodchop": ["cable-woodchop"],
+  "ab-crunch-machine": ["cable-crunch"],
+  "cable-crunch": ["ab-crunch-machine"],
 };
 
 function isAvailable(exercise: ExerciseDefinition, context: ExerciseSubstitutionContext) {
