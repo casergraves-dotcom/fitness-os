@@ -6,6 +6,7 @@
 
 import {
   useMemo,
+  useState,
 } from "react";
 
 import {
@@ -15,6 +16,19 @@ import {
 import {
   calculateReadiness,
 } from "@/features/recovery/utils/readiness";
+
+import MeasurementTrendChart from "./MeasurementTrendChart";
+
+import ProgressChartRangeSelect from "./ProgressChartRangeSelect";
+
+import {
+  getProgressChartRangeStartDate,
+  isDateInProgressChartRange,
+} from "../utils/progressChartRange";
+
+import type {
+  ProgressChartRange,
+} from "../utils/progressChartRange";
 
 
 // ============================================================
@@ -51,6 +65,14 @@ function formatScore(
 
 export default function RecoveryProgress() {
 
+  const [
+    chartRange,
+    setChartRange,
+  ] =
+    useState<ProgressChartRange>(
+      "3m"
+    );
+
   const {
     history,
     loaded,
@@ -78,6 +100,48 @@ export default function RecoveryProgress() {
               )
           ),
       [history]
+    );
+
+
+  const chartRangeStartDate =
+    getProgressChartRangeStartDate(
+      completedCheckIns[0]
+        ?.date,
+      chartRange
+    );
+
+
+  const readinessTrendData =
+    useMemo(
+      () =>
+        completedCheckIns
+          .filter(
+            (
+              record
+            ) =>
+              isDateInProgressChartRange(
+                record.date,
+                chartRangeStartDate
+              )
+          )
+          .map(
+            (
+              record
+            ) => ({
+              date:
+                record.date,
+
+              value:
+                calculateReadiness(
+                  record.ratings
+                )!.score,
+            })
+          )
+          .reverse(),
+      [
+        completedCheckIns,
+        chartRangeStartDate,
+      ]
     );
 
 
@@ -379,6 +443,59 @@ export default function RecoveryProgress() {
             </p>
 
           </div>
+
+        </div>
+
+      </div>
+
+
+      {/* ======================================================
+          Readiness Trend
+      ======================================================= */}
+
+      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+
+        <div className="flex flex-wrap items-end justify-between gap-4">
+
+          <div>
+
+            <p className="text-sm font-semibold text-slate-500">
+              RECENT TREND
+            </p>
+
+            <h2 className="mt-1 text-xl font-bold">
+              Readiness Over Time
+            </h2>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Review calculated readiness across completed check-ins. Complete recovery history remains preserved.
+            </p>
+
+          </div>
+
+
+          <ProgressChartRangeSelect
+            value={
+              chartRange
+            }
+            onChange={
+              setChartRange
+            }
+          />
+
+        </div>
+
+
+        <div className="mt-5">
+
+          <MeasurementTrendChart
+            data={
+              readinessTrendData
+            }
+            unit="/ 5"
+            label="Readiness"
+            emptyMessage="Complete recovery check-ins on at least two dates in this range to chart readiness."
+          />
 
         </div>
 

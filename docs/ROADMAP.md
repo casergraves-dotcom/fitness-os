@@ -1105,9 +1105,16 @@ were verified in the browser. Keep the broader density/history items open until
 the strategy covers the other applicable progress domains and dense-history
 behavior is defined.
 
+**Recovery visualization checkpoint:** Recovery now charts canonical calculated
+readiness over actual elapsed time and reuses the shared 3-month, 6-month,
+1-year, and all-history display-range control. Range filtering affects only the
+rendered trend while the complete check-in history and existing history list
+remain intact. Production build and the available five-check-in trend were
+verified in the browser.
+
 - [ ] Improve strength trend visualization.
 - [ ] Improve running trend visualization.
-- [ ] Improve recovery trend visualization.
+- [x] Improve recovery trend visualization.
 - [ ] Improve adherence trend visualization.
 - [ ] Integrate Phase 4 body-composition views without duplicating them.
 - [ ] Integrate Phase 5 nutrition/activity context where useful.

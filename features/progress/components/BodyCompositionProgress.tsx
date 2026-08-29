@@ -36,100 +36,16 @@ import {
 
 import ProgressPhotoComparison from "./ProgressPhotoComparison";
 
+import ProgressChartRangeSelect from "./ProgressChartRangeSelect";
 
-type BodyCompositionChartRange =
-  "3m" |
-  "6m" |
-  "1y" |
-  "all";
+import {
+  getProgressChartRangeStartDate,
+  isDateInProgressChartRange,
+} from "../utils/progressChartRange";
 
-
-const BODY_COMPOSITION_CHART_RANGES: Array<{
-  value: BodyCompositionChartRange;
-  label: string;
-}> = [
-  {
-    value: "3m",
-    label: "3 months",
-  },
-  {
-    value: "6m",
-    label: "6 months",
-  },
-  {
-    value: "1y",
-    label: "1 year",
-  },
-  {
-    value: "all",
-    label: "All history",
-  },
-];
-
-
-function formatLocalDate(
-  date: Date
-) {
-  const year =
-    date.getFullYear();
-
-  const month =
-    String(
-      date.getMonth() + 1
-    ).padStart(
-      2,
-      "0"
-    );
-
-  const day =
-    String(
-      date.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
-
-  return `${year}-${month}-${day}`;
-}
-
-
-function getChartRangeStartDate(
-  latestDate: string | undefined,
-  range: BodyCompositionChartRange
-) {
-  if (
-    !latestDate ||
-    range === "all"
-  ) {
-    return undefined;
-  }
-
-  const startDate =
-    new Date(
-      `${latestDate}T12:00:00`
-    );
-
-  if (
-    range === "1y"
-  ) {
-    startDate.setFullYear(
-      startDate.getFullYear() - 1
-    );
-  } else {
-    startDate.setMonth(
-      startDate.getMonth() -
-        (
-          range === "3m"
-            ? 3
-            : 6
-        )
-    );
-  }
-
-  return formatLocalDate(
-    startDate
-  );
-}
+import type {
+  ProgressChartRange,
+} from "../utils/progressChartRange";
 
 
 function formatSignedRate(
@@ -153,7 +69,7 @@ export default function BodyCompositionProgress() {
     chartRange,
     setChartRange,
   ] =
-    useState<BodyCompositionChartRange>(
+    useState<ProgressChartRange>(
       "6m"
     );
 
@@ -213,7 +129,7 @@ export default function BodyCompositionProgress() {
 
 
   const chartRangeStartDate =
-    getChartRangeStartDate(
+    getProgressChartRangeStartDate(
       latestMeasurementDate,
       chartRange
     );
@@ -222,9 +138,10 @@ export default function BodyCompositionProgress() {
   const isInsideChartRange = (
     date: string
   ) =>
-    !chartRangeStartDate ||
-    date >=
-      chartRangeStartDate;
+    isDateInProgressChartRange(
+      date,
+      chartRangeStartDate
+    );
 
 
   const visibleWeightTrend =
@@ -390,41 +307,14 @@ export default function BodyCompositionProgress() {
           </div>
 
 
-          <label className="text-sm font-semibold text-slate-700">
-            Display Range
-
-            <select
-              value={
-                chartRange
-              }
-              onChange={(
-                event
-              ) =>
-                setChartRange(
-                  event.target.value as BodyCompositionChartRange
-                )
-              }
-              className="mt-2 block rounded-xl border border-slate-300 bg-white px-3 py-2"
-            >
-              {BODY_COMPOSITION_CHART_RANGES.map(
-                (
-                  option
-                ) => (
-                  <option
-                    key={
-                      option.value
-                    }
-                    value={
-                      option.value
-                    }
-                  >
-                    {option.label}
-                  </option>
-                )
-              )}
-            </select>
-
-          </label>
+          <ProgressChartRangeSelect
+            value={
+              chartRange
+            }
+            onChange={
+              setChartRange
+            }
+          />
 
         </div>
 
