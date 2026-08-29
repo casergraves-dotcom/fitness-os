@@ -12,6 +12,7 @@ import {
 
 import type {
   DailyNutritionRecord,
+  MetabolicRateRecord,
   NutritionTarget,
 } from "./nutritionTypes";
 
@@ -314,4 +315,59 @@ export function writeDailyNutrition(
       )
     );
   }
+}
+
+// ============================================================
+// Resting Metabolic Rate Storage
+// ============================================================
+
+function isMetabolicRateRecord(
+  value: unknown
+): value is MetabolicRateRecord {
+  if (!isObject(value)) {
+    return false;
+  }
+
+  return (
+    typeof value.id === "string" &&
+    typeof value.measuredDate === "string" &&
+    typeof value.restingCalories === "number" &&
+    (value.source === "IndirectCalorimetry" ||
+      value.source === "ProviderEstimate" ||
+      value.source === "ManualEstimate") &&
+    isOptionalNumber(value.weightLb) &&
+    isOptionalString(value.notes) &&
+    typeof value.createdAt === "string" &&
+    typeof value.updatedAt === "string"
+  );
+}
+
+export function readMetabolicRateRecords(): MetabolicRateRecord[] {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  const saved = localStorage.getItem(
+    FITNESS_OS_STORAGE_KEYS.metabolicRateRecords
+  );
+
+  if (!saved) {
+    return [];
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed.filter(isMetabolicRateRecord) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeMetabolicRateRecords(
+  records: MetabolicRateRecord[]
+): void {
+  setFitnessOsStorage(
+    FITNESS_OS_STORAGE_KEYS.metabolicRateRecords,
+    JSON.stringify(records)
+  );
 }

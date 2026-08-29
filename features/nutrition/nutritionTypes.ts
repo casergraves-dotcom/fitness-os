@@ -38,3 +38,30 @@ export interface DailyNutritionRecord {
 
   updatedAt: string;
 }
+
+// ============================================================
+// Resting Metabolic Rate Records
+// ============================================================
+
+export type MetabolicRateSource =
+  | "IndirectCalorimetry"
+  | "ProviderEstimate"
+  | "ManualEstimate";
+
+export interface MetabolicRateRecord {
+  id: string;
+
+  measuredDate: string;
+
+  restingCalories: number;
+
+  source: MetabolicRateSource;
+
+  weightLb?: number;
+
+  notes?: string;
+
+  createdAt: string;
+
+  updatedAt: string;
+}

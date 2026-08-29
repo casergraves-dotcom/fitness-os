@@ -1048,6 +1048,16 @@ without writing targets; production build passed. Keep the follow-up items open
 until the optional setup flow lets the user review, edit, and explicitly save
 the suggested values through the canonical effective-dated target system.
 
+**Calculator setup checkpoint:** The nutrition-target editor now offers an
+optional calculator that keeps suggestions separate from saving and requires an
+explicit `Use These Suggestions` step before populating the canonical editable
+fields. It prefills the latest stored body weight, latest DEXA lean mass, and
+active goal direction/rate while leaving currently unstored profile inputs
+manual. A separate canonical metabolic-rate record now preserves dated measured
+or estimated RMR values, source provenance, test-time weight, and notes; it is
+included in cloud sync. Production builds and the available calculator states
+passed. RMR entry/history and calculator consumption remain the next step.
+
 **Completed outcome:** Fitness OS supports effective-dated calorie and protein
 targets with preserved target history. Daily nutrition remains intentionally
 lightweight: users can record calorie totals, protein totals, and optional notes

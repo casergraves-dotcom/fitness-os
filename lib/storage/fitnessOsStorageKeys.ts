@@ -57,6 +57,9 @@ export const FITNESS_OS_STORAGE_KEYS = {
   dailyNutrition:
     "fitness-os-daily-nutrition",
 
+  metabolicRateRecords:
+    "fitness-os-metabolic-rate-records",
+
   // ----------------------------------------------------------
   // Daily Activity
   // ----------------------------------------------------------
@@ -105,6 +108,7 @@ export const FITNESS_OS_SYNC_KEYS = [
 
   FITNESS_OS_STORAGE_KEYS.nutritionTargets,
   FITNESS_OS_STORAGE_KEYS.dailyNutrition,
+  FITNESS_OS_STORAGE_KEYS.metabolicRateRecords,
 
   FITNESS_OS_STORAGE_KEYS.stepTargets,
   FITNESS_OS_STORAGE_KEYS.dailySteps,

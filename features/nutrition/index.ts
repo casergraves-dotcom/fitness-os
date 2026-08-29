@@ -38,6 +38,14 @@ export {
   useWeeklyNutritionAdherence,
 } from "./hooks/useWeeklyNutritionAdherence";
 
+export {
+  useMetabolicRateRecords,
+} from "./hooks/useMetabolicRateRecords";
+
+export type {
+  MetabolicRateRecordInput,
+} from "./hooks/useMetabolicRateRecords";
+
 
 // ============================================================
 // Types
@@ -45,6 +53,8 @@ export {
 
 export type {
   DailyNutritionRecord,
+  MetabolicRateRecord,
+  MetabolicRateSource,
   NutritionTarget,
 } from "./nutritionTypes";
 
