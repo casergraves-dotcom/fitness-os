@@ -1089,6 +1089,22 @@ selector was removed; and Exercise Progress starts in a neutral `Choose
 exercise` state while preserving its canonical per-exercise history after a
 manual selection. Production build and browser verification passed.
 
+**Time-axis verification checkpoint:** Weight, measurement/activity, and
+per-exercise strength charts now retain timestamps and use continuous time
+scales rather than equally spaced date categories. Production build passed, and
+weight and step spacing were verified in the browser. Keep the item open until
+the strength chart can be visually verified with at least two performances for
+one exercise.
+
+**Body-composition history-range checkpoint:** Body-weight, waist, body-fat,
+and lean-mass charts now share one 3-month, 6-month, 1-year, or all-history
+display range, defaulting to 6 months. Filtering changes only the rendered chart
+points; canonical measurements and rolling-trend calculations continue using
+the complete stored history. Production build and all available range states
+were verified in the browser. Keep the broader density/history items open until
+the strategy covers the other applicable progress domains and dense-history
+behavior is defined.
+
 - [ ] Improve strength trend visualization.
 - [ ] Improve running trend visualization.
 - [ ] Improve recovery trend visualization.

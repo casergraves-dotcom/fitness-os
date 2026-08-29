@@ -43,9 +43,19 @@ interface MeasurementTrendChartProps {
 // Helpers
 // ============================================================
 
-function formatDate(
+function getDateTimestamp(
   date:
     string
+) {
+  return new Date(
+    `${date}T12:00:00`
+  ).getTime();
+}
+
+
+function formatDate(
+  timestamp:
+    number
 ) {
   return new Intl.DateTimeFormat(
     "en-US",
@@ -58,7 +68,7 @@ function formatDate(
     }
   ).format(
     new Date(
-      `${date}T12:00:00`
+      timestamp
     )
   );
 }
@@ -80,8 +90,8 @@ export default function MeasurementTrendChart({
       (
         entry
       ) => ({
-        date:
-          formatDate(
+        timestamp:
+          getDateTimestamp(
             entry.date
           ),
 
@@ -151,7 +161,13 @@ export default function MeasurementTrendChart({
 
 
           <XAxis
-            dataKey="date"
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={[
+              "dataMin",
+              "dataMax",
+            ]}
             tickLine={
               false
             }
@@ -160,6 +176,13 @@ export default function MeasurementTrendChart({
             }
             fontSize={
               12
+            }
+            tickFormatter={(
+              timestamp
+            ) =>
+              formatDate(
+                timestamp
+              )
             }
           />
 
@@ -189,9 +212,9 @@ export default function MeasurementTrendChart({
               label,
             ]}
             labelFormatter={(
-              date
+              timestamp
             ) =>
-              `Date: ${date}`
+              `Date: ${formatDate(Number(timestamp))}`
             }
           />
 

@@ -29,9 +29,19 @@ interface BodyWeightTrendChartProps {
 // Helpers
 // ============================================================
 
-function formatDate(
+function getDateTimestamp(
   date:
     string
+) {
+  return new Date(
+    `${date}T12:00:00`
+  ).getTime();
+}
+
+
+function formatDate(
+  timestamp:
+    number
 ) {
   return new Intl.DateTimeFormat(
     "en-US",
@@ -44,7 +54,7 @@ function formatDate(
     }
   ).format(
     new Date(
-      `${date}T12:00:00`
+      timestamp
     )
   );
 }
@@ -63,8 +73,8 @@ export default function BodyWeightTrendChart({
       (
         entry
       ) => ({
-        date:
-          formatDate(
+        timestamp:
+          getDateTimestamp(
             entry.date
           ),
 
@@ -140,7 +150,13 @@ export default function BodyWeightTrendChart({
 
 
           <XAxis
-            dataKey="date"
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={[
+              "dataMin",
+              "dataMax",
+            ]}
             tickLine={
               false
             }
@@ -149,6 +165,13 @@ export default function BodyWeightTrendChart({
             }
             fontSize={
               12
+            }
+            tickFormatter={(
+              timestamp
+            ) =>
+              formatDate(
+                timestamp
+              )
             }
           />
 
@@ -203,9 +226,9 @@ export default function BodyWeightTrendChart({
               ];
             }}
             labelFormatter={(
-              label
+              timestamp
             ) =>
-              `Date: ${label}`
+              `Date: ${formatDate(Number(timestamp))}`
             }
           />
 

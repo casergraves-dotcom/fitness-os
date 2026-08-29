@@ -30,14 +30,22 @@ interface StrengthProgressChartProps {
 // Helpers
 // ============================================================
 
-function formatDate(date: string) {
+function getDateTimestamp(date: string) {
+  const timestamp = /^\d{4}-\d{2}-\d{2}$/.test(date)
+    ? new Date(`${date}T12:00:00`).getTime()
+    : new Date(date).getTime();
+
+  return timestamp;
+}
+
+function formatDate(timestamp: number) {
   return new Intl.DateTimeFormat(
     "en-US",
     {
       month: "short",
       day: "numeric",
     }
-  ).format(new Date(date));
+  ).format(new Date(timestamp));
 }
 
 // ============================================================
@@ -53,7 +61,7 @@ export default function StrengthProgressChart({
 
   const chartData = progress.map(
     (entry) => ({
-      date: formatDate(entry.date),
+      timestamp: getDateTimestamp(entry.date),
 
       // Round the estimated 1RM so the chart is easier
       // to read.
@@ -116,10 +124,16 @@ export default function StrengthProgressChart({
 
           {/* Workout dates */}
           <XAxis
-            dataKey="date"
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={["dataMin", "dataMax"]}
             tickLine={false}
             axisLine={false}
             fontSize={12}
+            tickFormatter={(timestamp) =>
+              formatDate(timestamp)
+            }
           />
 
           {/* Estimated 1RM */}
@@ -150,8 +164,8 @@ export default function StrengthProgressChart({
 
               return [value, name];
             }}
-            labelFormatter={(label) =>
-              `Workout: ${label}`
+            labelFormatter={(timestamp) =>
+              `Workout: ${formatDate(Number(timestamp))}`
             }
           />
 
