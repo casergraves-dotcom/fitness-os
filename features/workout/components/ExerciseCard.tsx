@@ -212,8 +212,10 @@ export default function ExerciseCard({
           "Bodyweight",
           "YogaMat",
           "ResistanceBands",
+          "PullUpBar",
           "Dumbbells",
           "Barbell",
+          "WeightPlate",
           "Bench",
           "GymMachines",
         ];
@@ -223,6 +225,7 @@ export default function ExerciseCard({
           "FloorSpace",
           "HighAnchor",
           "LowAnchor",
+          "PullUpBarInstalled",
         ];
 
       return {

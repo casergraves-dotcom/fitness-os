@@ -507,6 +507,14 @@ card's stable workout position. Replacing an exercise still resets its target an
 working sets to the selected definition, but the replacement card remains
 expanded for immediate entry. Verified in an active workout and production build.
 
+Core hip-flexion exercises are retained as optional library coverage rather than
+added to the active Gym A/B/C templates. Hanging Leg Raise now requires an
+installed pull-up bar and has complete progression metadata; Lying Leg Raise is
+its floor-based same-role alternative. Weighted Plank now requires floor space,
+a mat, and a weight plate. Verified both hip-flexion substitution directions,
+Weighted Plank availability within the stability family, persistent card
+expansion, and the production build.
+
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
 - [x] Allow low readiness to recommend reduced volume/intensity.

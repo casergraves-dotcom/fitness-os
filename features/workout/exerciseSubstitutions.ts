@@ -52,6 +52,8 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "band-woodchop": ["cable-woodchop"],
   "ab-crunch-machine": ["cable-crunch"],
   "cable-crunch": ["ab-crunch-machine"],
+  "hanging-leg-raise": ["lying-leg-raise"],
+  "lying-leg-raise": ["hanging-leg-raise"],
 };
 
 function isAvailable(exercise: ExerciseDefinition, context: ExerciseSubstitutionContext) {

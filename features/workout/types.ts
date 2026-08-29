@@ -102,6 +102,7 @@ export type WorkoutEquipment =
   | "PunchingBag"
   | "Dumbbells"
   | "Barbell"
+  | "WeightPlate"
   | "Bench"
   | "GymMachines";
 
