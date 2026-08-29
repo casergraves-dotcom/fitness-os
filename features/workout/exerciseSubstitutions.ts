@@ -50,6 +50,18 @@ function isAvailable(exercise: ExerciseDefinition, context: ExerciseSubstitution
   return equipmentOk && capabilitiesOk;
 }
 
+function hasCompleteProgressionMetadata(
+  exercise: ExerciseDefinition
+) {
+  return (
+    exercise.repMin !== undefined &&
+    exercise.repMax !== undefined &&
+    exercise.increment !== undefined &&
+    exercise.resistanceType !== undefined &&
+    exercise.performanceType !== undefined
+  );
+}
+
 function getSharedRoles(source: ExerciseDefinition, candidate: ExerciseDefinition) {
   const candidateRoles = candidate.movementRoles ?? [];
   return (source.movementRoles ?? []).filter(
@@ -109,7 +121,10 @@ export function getExerciseSubstitutions(
     .filter(
       (candidate) =>
         candidate.id !== source.id &&
-        isAvailable(candidate, context)
+        isAvailable(candidate, context) &&
+        hasCompleteProgressionMetadata(
+          candidate
+        )
     )
     .map((candidate) => {
       const sharedRoles = getSharedRoles(source, candidate);

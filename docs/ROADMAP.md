@@ -372,6 +372,9 @@ per-exercise substitutions without changing the rest of the programmed session.
   recommended option to appear to do nothing.
 - [x] Verify duplicate exercises cannot be recommended or introduced across
   initial and repeated substitutions in the same workout.
+- [x] Exclude substitution candidates that do not yet have complete target and
+  progression metadata, while keeping those definitions available for existing
+  history and manual library use.
 - [ ] Add substitution tests confirming that Leg Curl recommendations preserve
   knee-flexion intent and that broader fallback movements are ranked or labeled
   appropriately.
@@ -425,6 +428,12 @@ session-level duplicate guard remains defensive validation, and rejected
 replacements provide visible feedback. Verified in an active Gym A workout by
 adding Goblet Squat, confirming it disappeared from Leg Press alternatives, then
 removing it and confirming the option returned.
+
+Automatic substitutions now require complete repetition range, increment,
+resistance-type, and performance-type metadata. Verified that incomplete Barbell
+Squat, Overhead Press, and Barbell Row definitions no longer appear as automatic
+alternatives while configured options remain available. Production build passed
+after the filter was added.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
