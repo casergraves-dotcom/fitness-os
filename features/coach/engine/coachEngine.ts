@@ -18,6 +18,7 @@ import {
 import type {
   CoachRecommendation,
   CoachReviewContext,
+  CoachTrainingContext,
 } from "../types";
 
 
@@ -1053,13 +1054,34 @@ function getReviewContextSummary(
 export function getCoachRecommendation(
   ratings: MorningCheckInRatings,
   activities: TrainingActivity[] = [],
-  reviewContext?: CoachReviewContext
+  reviewContext?: CoachReviewContext,
+  trainingContext?: CoachTrainingContext
 ): CoachRecommendation {
-  const recommendation =
-    getDailyCoachRecommendation(
-      ratings,
-      activities
-    );
+  const allScheduledTrainingComplete =
+    trainingContext !==
+      undefined &&
+    trainingContext
+      .scheduledActionableCount >
+      0 &&
+    trainingContext
+      .completedActionableCount >=
+      trainingContext
+        .scheduledActionableCount;
+
+  const recommendation:
+    CoachRecommendation =
+    allScheduledTrainingComplete
+      ? {
+          title:
+            "Training Complete",
+
+          message:
+            "Today's scheduled training is complete. Focus on recovery and the remaining daily targets rather than starting the session again.",
+        }
+      : getDailyCoachRecommendation(
+          ratings,
+          activities
+        );
 
   if (
     !reviewContext

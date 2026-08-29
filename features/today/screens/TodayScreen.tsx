@@ -30,6 +30,10 @@ import {
 } from "@/features/workout/utils/getTrainingScheduleForDate";
 
 import {
+  isCompletableTrainingActivity,
+} from "@/features/workout/utils/isCompletableTrainingActivity";
+
+import {
   useTrainingActivityCompletions,
 } from "@/features/workout/hooks/useTrainingActivityCompletions";
 
@@ -249,11 +253,50 @@ export default function TodayScreen() {
   // Coach
   // ----------------------------------------------------------
 
+  const scheduledCoachActivities =
+    schedule?.trainingDay.activities ??
+    [];
+
+  const actionableCoachActivities =
+    scheduledCoachActivities.filter(
+      isCompletableTrainingActivity
+    );
+
+  const completedCoachActivities =
+    trainingActivityCompletionsLoaded &&
+    schedule
+      ? actionableCoachActivities.filter(
+          (
+            activity
+          ) =>
+            isActivityCompleted(
+              activity.id,
+              schedule.date
+            )
+        )
+      : [];
+
+  const unfinishedCoachActivities =
+    trainingActivityCompletionsLoaded &&
+    schedule
+      ? scheduledCoachActivities.filter(
+          (
+            activity
+          ) =>
+            !isCompletableTrainingActivity(
+              activity
+            ) ||
+            !isActivityCompleted(
+              activity.id,
+              schedule.date
+            )
+        )
+      : scheduledCoachActivities;
+
   const recommendation =
     getCoachRecommendation(
       ratings,
-      schedule?.trainingDay.activities ??
-        [],
+      unfinishedCoachActivities,
       latestProgressionDecision
         ? {
             weekStartDate:
@@ -270,6 +313,15 @@ export default function TodayScreen() {
 
             overrideReason:
               latestProgressionDecision.overrideReason,
+          }
+        : undefined,
+      trainingActivityCompletionsLoaded
+        ? {
+            scheduledActionableCount:
+              actionableCoachActivities.length,
+
+            completedActionableCount:
+              completedCoachActivities.length,
           }
         : undefined
     );

@@ -1160,6 +1160,14 @@ behavior remains unchanged and is covered by the production build; keep the
 roadmap item open until a completed weekly decision exists for browser
 verification.
 
+**Guide completion-awareness correction:** Coach now consumes the same
+canonical scheduled-activity completion status used by Today. Completed
+activities are removed from the remaining recommendation inputs, partially
+completed days focus only on unfinished activities, and a fully completed day
+shows `Training Complete` without a stale workout action. Rest and Recovery
+activities remain non-completable. Production build and the completed Gym B
+state were verified in the browser.
+
 **Milestone:** Reflect explains what changed, why it may have changed, and what
 matters next, and those insights improve future Guide decisions.
 

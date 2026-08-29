@@ -29,6 +29,13 @@ export interface CoachReviewContextSummary {
   message: string;
 }
 
+
+export interface CoachTrainingContext {
+  scheduledActionableCount: number;
+
+  completedActionableCount: number;
+}
+
 export interface CoachRecommendation {
   title: string;
   message: string;

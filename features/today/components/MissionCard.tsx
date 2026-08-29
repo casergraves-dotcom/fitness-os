@@ -6,6 +6,10 @@ import type {
   TrainingActivity,
 } from "@/features/workout/types";
 
+import {
+  isCompletableTrainingActivity,
+} from "@/features/workout/utils/isCompletableTrainingActivity";
+
 // ============================================================
 // Props
 // ============================================================
@@ -67,19 +71,6 @@ function getTrainingActivityLabel(
   )}`;
 }
 
-// ------------------------------------------------------------
-// Completion Behavior
-// ------------------------------------------------------------
-
-function isCompletableActivity(
-  activity: TrainingActivity
-) {
-  return (
-    activity.type !== "Rest" &&
-    activity.type !== "Recovery"
-  );
-}
-
 // ============================================================
 // Mission Card
 // ============================================================
@@ -108,7 +99,7 @@ export default function MissionCard({
           trainingActivities.map(
             (activity) => {
               const completable =
-                isCompletableActivity(
+                isCompletableTrainingActivity(
                   activity
                 );
 
