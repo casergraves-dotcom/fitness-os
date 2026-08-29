@@ -391,7 +391,7 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [x] Add fully configured alternatives for rotational core and trunk-flexion
   work so Cable Woodchop and Ab Crunch Machine can remain movement-specific
   without becoming substitution dead ends.
-- [ ] Decide whether chest isolation, calf raises, and hip-flexion core work
+- [x] Decide whether chest isolation, calf raises, and hip-flexion core work
   belong in the active program or only the broader library, then either add
   complete same-role alternatives or explicitly retain them as endpoints.
 - [ ] Correct incomplete or questionable exercise metadata before those
@@ -514,6 +514,14 @@ its floor-based same-role alternative. Weighted Plank now requires floor space,
 a mat, and a weight plate. Verified both hip-flexion substitution directions,
 Weighted Plank availability within the stability family, persistent card
 expansion, and the production build.
+
+Chest isolation and calf raises are likewise retained as optional library
+coverage rather than added to the active Gym A/B/C templates. The former generic
+Chest Fly now resolves as Pec Deck Machine and offers Cable Fly and Dumbbell Fly
+as fully configured same-role alternatives. The former generic Calf Raise now
+resolves as bodyweight Standing Calf Raise and offers standing and seated calf
+raise machine alternatives. Verified both families in an active workout and
+confirmed the production build passed.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
