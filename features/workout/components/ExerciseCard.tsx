@@ -215,6 +215,7 @@ export default function ExerciseCard({
           "PullUpBar",
           "Dumbbells",
           "Barbell",
+          "BarbellRack",
           "WeightPlate",
           "Bench",
           "GymMachines",

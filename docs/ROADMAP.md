@@ -394,7 +394,7 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [x] Decide whether chest isolation, calf raises, and hip-flexion core work
   belong in the active program or only the broader library, then either add
   complete same-role alternatives or explicitly retain them as endpoints.
-- [ ] Correct incomplete or questionable exercise metadata before those
+- [x] Correct incomplete or questionable exercise metadata before those
   definitions can enter automatic substitution results, including Weighted
   Plank equipment/setup requirements and preserved spreadsheet-era exercises.
 
@@ -522,6 +522,14 @@ as fully configured same-role alternatives. The former generic Calf Raise now
 resolves as bodyweight Standing Calf Raise and offers standing and seated calf
 raise machine alternatives. Verified both families in an active workout and
 confirmed the production build passed.
+
+The remaining preserved free-weight placeholders now have explicit identities,
+accurate equipment requirements, and complete progression metadata. Barbell
+Bench Press and Barbell Squat require a rack; Incline Dumbbell Press, Barbell
+Row, Barbell Overhead Press, and Barbell Romanian Deadlift identify their actual
+loading equipment and movement-specific rep ranges. Verified the squat, row,
+vertical-press, hip-hinge, and horizontal-press substitution paths in active
+workouts and confirmed the production build passed.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
