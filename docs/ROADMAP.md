@@ -1050,10 +1050,10 @@ parallel dashboards.
 
 **Progress cleanup handoff:**
 
-- [ ] Clarify the Progress information hierarchy so the page leads with a
+- [x] Clarify the Progress information hierarchy so the page leads with a
   concise reflection and makes supporting detail progressively available rather
   than presenting every section with equal visual weight.
-- [ ] Reduce repeated conclusions and metrics across Weekly Review, outcome
+- [x] Reduce repeated conclusions and metrics across Weekly Review, outcome
   summaries, and domain-specific progress sections so each insight has one clear
   primary home.
 - [x] Move target-setting out of Progress while continuing to display relevant
@@ -1073,11 +1073,21 @@ parallel dashboards.
   ranges, and aggregation or downsampling for dense periods.
 - [ ] Preserve the complete underlying history even when a chart range or
   density strategy does not render every individual observation.
-- [ ] Replace alphabetical first-exercise defaults with one reusable,
+- [x] Replace alphabetical first-exercise defaults with one reusable,
   evidence-based strength-exercise selection mechanism across Longer-Term
   Review, Strength Retention, and Exercise Progress. When no exercise has enough
   repeated evidence, show a neutral `Choose exercise` state instead of implying
   that an arbitrary exercise is representative.
+
+**Verified cleanup checkpoint:** Progress now leads with Weekly Review and
+Longer-Term Review, followed by the single Current Approach outcome summary and
+then supporting domain detail. The duplicated embedded outcome, strength,
+cardio, and adherence summaries were removed from Body Composition Progress.
+Longer-Term Review now evaluates whole-program strength evidence rather than
+defaulting to one arbitrary exercise; the obsolete embedded Strength Retention
+selector was removed; and Exercise Progress starts in a neutral `Choose
+exercise` state while preserving its canonical per-exercise history after a
+manual selection. Production build and browser verification passed.
 
 - [ ] Improve strength trend visualization.
 - [ ] Improve running trend visualization.

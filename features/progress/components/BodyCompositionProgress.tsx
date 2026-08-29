@@ -31,14 +31,6 @@ import {
 
 import ProgressPhotoComparison from "./ProgressPhotoComparison";
 
-import StrengthRetentionSummary from "./StrengthRetentionSummary";
-
-import CardioProgressSummary from "./CardioProgressSummary";
-
-import TrainingAdherenceSummary from "./TrainingAdherenceSummary";
-
-import ProgressOutcomeSummary from "./ProgressOutcomeSummary";
-
 
 function formatSignedRate(
   value:
@@ -369,14 +361,6 @@ export default function BodyCompositionProgress() {
         </div>
         )}
 
-        <StrengthRetentionSummary />
-
-        <CardioProgressSummary />
-
-        <TrainingAdherenceSummary />
-
-        <ProgressOutcomeSummary />
-        
         <ProgressPhotoTimeline />
 
         <ProgressPhotoComparison />

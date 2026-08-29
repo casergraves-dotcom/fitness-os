@@ -11,6 +11,7 @@ import {
   DailyActivityProgress,
   WeeklyReview,
   LongTermProgressReview,
+  ProgressOutcomeSummary,
 } from "@/features/progress";
 
 // ============================================================
@@ -45,6 +46,11 @@ export default function ProgressPage() {
 
         <section className="space-y-4">
           <LongTermProgressReview />
+        </section>
+
+
+        <section className="space-y-4">
+          <ProgressOutcomeSummary />
         </section>
 
 

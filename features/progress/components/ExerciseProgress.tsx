@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { useExerciseProgress } from "../hooks/useExerciseProgress";
 import StrengthProgressChart from "./StrengthProgressChart";
@@ -16,12 +16,6 @@ export default function ExerciseProgress() {
   const [selectedExercise, setSelectedExercise] = useState<string>();
   const { loaded, exercises, progress } =
     useExerciseProgress(selectedExercise);
-
-  useEffect(() => {
-    if (!selectedExercise && exercises.length > 0) {
-      setSelectedExercise(exercises[0]);
-    }
-  }, [exercises, selectedExercise]);
 
   const summary = useMemo(() => {
     if (progress.length === 0) {
@@ -76,6 +70,10 @@ export default function ExerciseProgress() {
           onChange={(event) => setSelectedExercise(event.target.value)}
           className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
         >
+          <option value="">
+            Choose exercise
+          </option>
+
           {exercises.map((exercise) => (
             <option key={exercise} value={exercise}>
               {exercise}
@@ -84,7 +82,8 @@ export default function ExerciseProgress() {
         </select>
       </div>
 
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+      {selectedExercise ? (
+        <div className="rounded-2xl border bg-white p-5 shadow-sm">
         <p className="text-sm font-semibold text-slate-500">PERFORMANCE</p>
         <h2 className="mt-1 text-xl font-bold">{selectedExercise}</h2>
 
@@ -139,7 +138,18 @@ export default function ExerciseProgress() {
             </div>
           ))}
         </div>
-      </div>
+        </div>
+      ) : (
+        <div className="rounded-2xl border bg-white p-6 text-center shadow-sm">
+          <h2 className="font-semibold text-slate-900">
+            Choose an exercise to review
+          </h2>
+
+          <p className="mt-2 text-sm text-slate-500">
+            Select an exercise above to review its estimated-strength history. At least two completed performances are needed to identify a trend.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

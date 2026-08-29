@@ -58,6 +58,10 @@ export {
   default as LongTermProgressReview,
 } from "./components/LongTermProgressReview";
 
+export {
+  default as ProgressOutcomeSummary,
+} from "./components/ProgressOutcomeSummary";
+
 
 // ============================================================
 // Hooks
