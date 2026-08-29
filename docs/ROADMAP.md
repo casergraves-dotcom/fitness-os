@@ -419,7 +419,7 @@ implementation begins.
 - [x] Review Gym A / Gym B / Gym C plus Short Gym and Home variants for missing
   movement patterns, unintended duplication, exercise-order problems, and
   appropriate weekly balance.
-- [ ] Identify important exercise and substitution gaps for common gym-equipment
+- [x] Identify important exercise and substitution gaps for common gym-equipment
   constraints, the supported home setup, mobility limitations, and different
   experience levels.
 - [x] Trace every movement-role and exercise-definition consumer before changing
@@ -570,6 +570,16 @@ variants receive the canonical gym profile. Verified that Home Band Row offers
 only Backpack Row, anchor-independent Home exercises can legitimately have no
 available alternative, Full Gym recommendations remain unchanged, all ten
 substitution tests pass, and the production build succeeds.
+
+The remaining catalog-gap review found no unrepresented movement family in the
+current program or fixed Home setup: every supported role has a tested same-role
+alternative or an explicitly labeled fallback/endpoint. The unresolved gaps are
+personal rather than generic—individual gym inventories, pain or mobility
+limitations, exercises a user cannot perform safely, experience level, and
+preferred complexity. These require the Phase 7 equipment/setup and training-
+preference model before recommendations can be filtered or ranked responsibly.
+Do not expand the catalog with presumed rehabilitation or beginner substitutions
+without those inputs and exercise-specific guidance metadata.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
