@@ -1121,10 +1121,20 @@ do not chart the current partial week as historical adherence.
 - [ ] Improve running trend visualization.
 - [x] Improve recovery trend visualization.
 - [ ] Improve adherence trend visualization.
-- [ ] Integrate Phase 4 body-composition views without duplicating them.
-- [ ] Integrate Phase 5 nutrition/activity context where useful.
+- [x] Integrate Phase 4 body-composition views without duplicating them.
+- [x] Integrate Phase 5 nutrition/activity context where useful.
 - [ ] Add meaningful PR/history highlights.
-- [ ] Make related progress signals easy to compare over the same time period.
+- [x] Make related progress signals easy to compare over the same time period.
+
+**Verified integration checkpoint:** Progress renders canonical Phase 4
+body-composition records, trends, comparisons, milestones, and photo workflows
+without recreating their storage or calculations. Phase 5 nutrition and
+daily-activity evidence feeds Weekly Review and Current Approach, while Daily
+Activity Progress and Today retain their appropriate tracking roles.
+Longer-Term Review applies one selected period boundary across body composition,
+strength, running, recovery, and adherence while preserving each domain's own
+evidence requirements. Production builds and the available period/range states
+were verified in the browser.
 
 ## 6.4 Guide Feedback Loop
 
