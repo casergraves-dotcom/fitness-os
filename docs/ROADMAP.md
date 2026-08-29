@@ -1376,7 +1376,7 @@ Guide integration is the final stage of the evidence pipeline:
 
 - [ ] Make Guide aware of the latest completed review.
 - [ ] Use persistent multi-week patterns as context for future recommendations.
-- [ ] Distinguish observations from actionable recommendations.
+- [x] Distinguish observations from actionable recommendations.
 - [ ] Use nutrition/activity adherence as coaching context, not punishment.
 - [ ] Avoid compensatory exercise recommendations for individual high-calorie
   days.
@@ -1410,6 +1410,14 @@ observation. The observation is displayed separately and cannot modify today's
 recommendation, schedule, or recovery guidance. The production build and
 no-pattern Today state passed; keep the broader pattern item open until repeated
 completed reviews allow the observation to be verified with real history.
+
+**Guide observation/action contract:** Coach recommendations are explicitly
+labeled as today's recommendation, while completed-review and persistent-pattern
+context use a separate typed observation collection and dedicated Observations
+section. Observations are explanatory and cannot override today's schedule or
+recovery guidance. The production build and recommendation-only Today state
+passed in the browser; observation rendering remains covered by the same pending
+real-review verification above.
 
 **Guide completion-awareness correction:** Coach now consumes the same
 canonical scheduled-activity completion status used by Today. Completed

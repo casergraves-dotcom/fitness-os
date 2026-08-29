@@ -1092,10 +1092,23 @@ export function getCoachRecommendation(
   return {
     ...recommendation,
 
-    reviewContext: reviewContext
-      ? getReviewContextSummary(reviewContext)
-      : undefined,
-
-    patternContext,
+    observations: [
+      ...(reviewContext
+        ? [
+            {
+              type: "CompletedReview" as const,
+              ...getReviewContextSummary(reviewContext),
+            },
+          ]
+        : []),
+      ...(patternContext
+        ? [
+            {
+              type: "PersistentPattern" as const,
+              ...patternContext,
+            },
+          ]
+        : []),
+    ],
   };
 }

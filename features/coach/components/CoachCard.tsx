@@ -43,7 +43,7 @@ export default function CoachCard({
   return (
     <div className="rounded-2xl border bg-white p-6 shadow-sm">
       <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
-        Coach
+        Today&apos;s Recommendation
       </p>
 
       <h2 className="text-2xl font-bold">
@@ -54,30 +54,35 @@ export default function CoachCard({
         {recommendation.message}
       </p>
 
-      {recommendation.reviewContext && (
-        <div className="mt-4 rounded-xl bg-slate-50 p-3">
+      {recommendation.observations && recommendation.observations.length > 0 && (
+        <div className="mt-5 border-t border-slate-200 pt-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Last Completed Review · {recommendation.reviewContext.label}
+            Observations
           </p>
 
-          <p className="mt-1 text-sm text-slate-600">
-            {recommendation.reviewContext.message}
-          </p>
+          <div className="mt-2 space-y-2">
+            {recommendation.observations.map((observation) => (
+              <div
+                key={`${observation.type}-${observation.label}`}
+                className="rounded-xl bg-slate-50 p-3"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {observation.type === "CompletedReview"
+                    ? "Last Completed Review"
+                    : "Persistent Pattern"}
+                  {" · "}
+                  {observation.label}
+                </p>
 
-          <p className="mt-1 text-xs text-slate-500">
-            Historical review context does not override today&apos;s schedule or recovery guidance.
-          </p>
-        </div>
-      )}
+                <p className="mt-1 text-sm text-slate-600">
+                  {observation.message}
+                </p>
+              </div>
+            ))}
+          </div>
 
-      {recommendation.patternContext && (
-        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
-            Persistent Pattern · {recommendation.patternContext.label}
-          </p>
-
-          <p className="mt-1 text-sm text-slate-600">
-            {recommendation.patternContext.message}
+          <p className="mt-2 text-xs text-slate-500">
+            Observations provide context. They do not override today&apos;s schedule or recovery guidance.
           </p>
         </div>
       )}

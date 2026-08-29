@@ -29,6 +29,14 @@ export interface CoachReviewContextSummary {
   message: string;
 }
 
+export interface CoachObservation {
+  type: "CompletedReview" | "PersistentPattern";
+
+  label: string;
+
+  message: string;
+}
+
 
 export interface CoachTrainingContext {
   scheduledActionableCount: number;
@@ -55,11 +63,7 @@ export interface CoachRecommendation {
   // Present when a specific strength-workout variant is recommended.
   strengthVariant?: StrengthWorkoutVariantType;
 
-  // Historical context is explanatory only. It does not replace
-  // today's schedule or recovery inputs when choosing an action.
-  reviewContext?: CoachReviewContextSummary;
-
-  // Persistent historical patterns are observations only. They
-  // do not independently change the daily recommendation.
-  patternContext?: CoachReviewContextSummary;
+  // Historical context is explicitly represented as observation,
+  // separate from today's actionable recommendation.
+  observations?: CoachObservation[];
 }
