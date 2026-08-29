@@ -1057,7 +1057,8 @@ export function getCoachRecommendation(
   activities: TrainingActivity[] = [],
   reviewContext?: CoachReviewContext,
   trainingContext?: CoachTrainingContext,
-  patternContext?: CoachReviewContextSummary
+  patternContext?: CoachReviewContextSummary,
+  lifestyleContext?: CoachReviewContextSummary
 ): CoachRecommendation {
   const allScheduledTrainingComplete =
     trainingContext !==
@@ -1085,7 +1086,7 @@ export function getCoachRecommendation(
           activities
         );
 
-  if (!reviewContext && !patternContext) {
+  if (!reviewContext && !patternContext && !lifestyleContext) {
     return recommendation;
   }
 
@@ -1106,6 +1107,14 @@ export function getCoachRecommendation(
             {
               type: "PersistentPattern" as const,
               ...patternContext,
+            },
+          ]
+        : []),
+      ...(lifestyleContext
+        ? [
+            {
+              type: "LifestyleContext" as const,
+              ...lifestyleContext,
             },
           ]
         : []),

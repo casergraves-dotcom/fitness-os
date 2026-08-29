@@ -1377,10 +1377,10 @@ Guide integration is the final stage of the evidence pipeline:
 - [ ] Make Guide aware of the latest completed review.
 - [ ] Use persistent multi-week patterns as context for future recommendations.
 - [x] Distinguish observations from actionable recommendations.
-- [ ] Use nutrition/activity adherence as coaching context, not punishment.
-- [ ] Avoid compensatory exercise recommendations for individual high-calorie
+- [x] Use nutrition/activity adherence as coaching context, not punishment.
+- [x] Avoid compensatory exercise recommendations for individual high-calorie
   days.
-- [ ] Avoid automatically increasing training load to compensate for nutrition
+- [x] Avoid automatically increasing training load to compensate for nutrition
   adherence.
 - [ ] Avoid changing training from body-composition data alone.
 - [ ] Require training/recovery evidence before body-composition trends influence
@@ -1418,6 +1418,16 @@ section. Observations are explanatory and cannot override today's schedule or
 recovery guidance. The production build and recommendation-only Today state
 passed in the browser; observation rendering remains covered by the same pending
 real-review verification above.
+
+**Guide lifestyle-context guardrail:** Guide now consumes the canonical 28-day
+nutrition/activity evidence model only after its existing minimum eligible-day
+and logging-coverage requirements are met. Ready protein, calorie-range, and
+step signals are summarized as neutral observations; individual days and sparse
+logging are suppressed. Lifestyle context never enters daily recommendation
+selection and explicitly cannot prescribe compensatory exercise or a
+training-load increase. The production build and insufficient-evidence Today
+state passed; keep populated observation verification pending until enough
+nutrition/activity history exists.
 
 **Guide completion-awareness correction:** Coach now consumes the same
 canonical scheduled-activity completion status used by Today. Completed

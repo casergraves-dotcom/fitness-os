@@ -13,6 +13,12 @@ import {
 import {
   getWeeklyDecisionPattern,
 } from "@/features/coach/getWeeklyDecisionPattern";
+import {
+  getLifestyleContextObservation,
+} from "@/features/coach/getLifestyleContextObservation";
+import {
+  useLifestyleGoalProgressEvidence,
+} from "@/features/progress/hooks/useLifestyleGoalProgressEvidence";
 
 import {
   MissionCard,
@@ -83,6 +89,9 @@ import {
 // ============================================================
 
 export default function TodayScreen() {
+  const {
+    evidence: lifestyleEvidence,
+  } = useLifestyleGoalProgressEvidence();
   // ----------------------------------------------------------
   // Morning Check-In
   // ----------------------------------------------------------
@@ -256,6 +265,11 @@ export default function TodayScreen() {
       trainingPlanState?.weeklyProgressionDecisions ?? []
     );
 
+  const lifestyleContext =
+    getLifestyleContextObservation(
+      lifestyleEvidence
+    );
+
 
   // ----------------------------------------------------------
   // Coach
@@ -337,7 +351,8 @@ export default function TodayScreen() {
             label: weeklyDecisionPattern.label,
             message: weeklyDecisionPattern.message,
           }
-        : undefined
+        : undefined,
+      lifestyleContext ?? undefined
     );
 
 

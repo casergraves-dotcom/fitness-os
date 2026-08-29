@@ -69,7 +69,9 @@ export default function CoachCard({
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                   {observation.type === "CompletedReview"
                     ? "Last Completed Review"
-                    : "Persistent Pattern"}
+                    : observation.type === "PersistentPattern"
+                      ? "Persistent Pattern"
+                      : "Nutrition & Activity Context"}
                   {" · "}
                   {observation.label}
                 </p>

@@ -33,7 +33,9 @@ import {
 
 export function useLifestyleGoalProgressEvidence(
   goalProgress:
-    BodyCompositionGoalProgress
+    BodyCompositionGoalProgress = {
+      status: "InsufficientData",
+    }
 ) {
   const {
     loaded:

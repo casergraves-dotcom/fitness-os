@@ -30,7 +30,10 @@ export interface CoachReviewContextSummary {
 }
 
 export interface CoachObservation {
-  type: "CompletedReview" | "PersistentPattern";
+  type:
+    | "CompletedReview"
+    | "PersistentPattern"
+    | "LifestyleContext";
 
   label: string;
 
