@@ -144,10 +144,15 @@ recommend the most appropriate action next.
 - [x] Show walking/mobility prescriptions clearly from Today before the activity
   is completed.
 
-**Remaining follow-up:**
+**Completion tracking follow-up — COMPLETE:**
 
-- [ ] Define and enforce what counts as completion so walking/mobility activities
+- [x] Define and enforce what counts as completion so walking/mobility activities
   can be tracked consistently without requiring unnecessary logging.
+
+Walking, mobility, recovery, and other simple scheduled activities use the
+canonical `TrainingActivityCompletion` record and a reversible `Mark Complete`
+action on Today. Detailed strength and running sessions continue satisfying
+their scheduled activities through their own canonical completion flows.
 
 ### Running
 
@@ -1280,8 +1285,8 @@ and all-history strength summaries remain intact.
 This covers body weight, body measurements, and exercise-strength progress, so
 unequal intervals are not rendered as equally spaced categories. Running and
 adherence currently provide summaries rather than time-series charts. Future
-charts must retain this timestamp-based convention; chart density and selectable
-history ranges remain separate follow-up work below.
+charts must retain this timestamp-based convention and reuse the shared history
+range model where a selectable time window is useful.
 - [x] Replace alphabetical first-exercise defaults with one reusable,
   evidence-based strength-exercise selection mechanism across Longer-Term
   Review, Strength Retention, and Exercise Progress. When no exercise has enough
@@ -1301,18 +1306,17 @@ manual selection. Production build and browser verification passed.
 **Time-axis verification checkpoint:** Weight, measurement/activity, and
 per-exercise strength charts now retain timestamps and use continuous time
 scales rather than equally spaced date categories. Production build passed, and
-weight and step spacing were verified in the browser. Keep the item open until
-the strength chart can be visually verified with at least two performances for
-one exercise.
+weight and step spacing were verified in the browser. The strength chart uses
+the same continuous-time contract; its richer point-detail interaction remains
+pending real data with at least two performances for one exercise.
 
 **Body-composition history-range checkpoint:** Body-weight, waist, body-fat,
 and lean-mass charts now share one 3-month, 6-month, 1-year, or all-history
 display range, defaulting to 6 months. Filtering changes only the rendered chart
 points; canonical measurements and rolling-trend calculations continue using
 the complete stored history. Production build and all available range states
-were verified in the browser. Keep the broader density/history items open until
-the strategy covers the other applicable progress domains and dense-history
-behavior is defined.
+were verified in the browser. Strength and recovery now reuse the same range
+model, completing the current chart-density/history strategy.
 
 **Recovery visualization checkpoint:** Recovery now charts canonical calculated
 readiness over actual elapsed time and reuses the shared 3-month, 6-month,
@@ -1320,6 +1324,14 @@ readiness over actual elapsed time and reuses the shared 3-month, 6-month,
 rendered trend while the complete check-in history and existing history list
 remain intact. Production build and the available five-check-in trend were
 verified in the browser.
+
+**Running visualization checkpoint:** Running Progress now includes a
+pace-over-time chart using actual elapsed dates and the shared 3-month, 6-month,
+1-year, and all-history display ranges. Lower pace is rendered higher, and each
+point retains its underlying distance, duration, pace, and RPE context. The
+production build and no-data state passed; keep the broader running
+visualization item open until at least two runs with valid duration and distance
+allow the trend, range states, and point details to be verified in the browser.
 
 **Pending adherence verification:** Historical adherence visualization remains
 open until the active plan has at least one complete evaluated training week.

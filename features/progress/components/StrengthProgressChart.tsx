@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import type { TooltipContentProps } from "recharts";
 
 import type {
   ExerciseProgressEntry,
@@ -47,6 +48,38 @@ function formatDate(timestamp: number) {
       day: "numeric",
     }
   ).format(new Date(timestamp));
+}
+
+interface StrengthChartPoint {
+  timestamp: number;
+  estimatedOneRepMax: number;
+  weight: number;
+  reps: number;
+}
+
+function StrengthProgressTooltip({
+  active,
+  payload,
+}: TooltipContentProps) {
+  if (!active || !payload?.length) {
+    return null;
+  }
+
+  const point = payload[0].payload as StrengthChartPoint;
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        {formatDate(point.timestamp)}
+      </p>
+      <p className="mt-2 font-semibold text-slate-900">
+        {point.weight} lb × {point.reps} reps
+      </p>
+      <p className="mt-1 text-sm text-blue-600">
+        Estimated 1RM: {point.estimatedOneRepMax} lb
+      </p>
+    </div>
+  );
 }
 
 // ============================================================
@@ -149,28 +182,7 @@ export default function StrengthProgressChart({
           />
 
           {/* Tap / hover workout details */}
-          <Tooltip
-            formatter={(
-              value,
-              name,
-              props
-            ) => {
-              if (
-                name ===
-                "Estimated 1RM"
-              ) {
-                return [
-                  `${value} lb`,
-                  "Estimated 1RM",
-                ];
-              }
-
-              return [value, name];
-            }}
-            labelFormatter={(timestamp) =>
-              `Workout: ${formatDate(Number(timestamp))}`
-            }
-          />
+          <Tooltip content={StrengthProgressTooltip} />
 
           {/* Strength progression */}
           <Line

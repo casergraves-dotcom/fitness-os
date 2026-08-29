@@ -6,11 +6,20 @@
 
 import {
   useMemo,
+  useState,
 } from "react";
 
 import {
   useRunSession,
 } from "@/features/running";
+
+import {
+  getProgressChartRangeStartDate,
+  isDateInProgressChartRange,
+} from "../utils/progressChartRange";
+import type { ProgressChartRange } from "../utils/progressChartRange";
+import ProgressChartRangeSelect from "./ProgressChartRangeSelect";
+import RunningPaceTrendChart from "./RunningPaceTrendChart";
 
 
 // ============================================================
@@ -77,6 +86,11 @@ function formatDate(
 
 export default function RunningProgress() {
 
+  const [
+    chartRange,
+    setChartRange,
+  ] = useState<ProgressChartRange>("6m");
+
   const {
     history,
     loaded,
@@ -101,6 +115,28 @@ export default function RunningProgress() {
         ),
       [history]
     );
+
+  const visibleRunsWithPace =
+    useMemo(() => {
+      const latestDate = runsWithPace.reduce<string | undefined>(
+        (latest, run) => {
+          const date = (run.completedAt ?? run.startedAt).slice(0, 10);
+          return !latest || date > latest ? date : latest;
+        },
+        undefined
+      );
+      const rangeStartDate = getProgressChartRangeStartDate(
+        latestDate,
+        chartRange
+      );
+
+      return runsWithPace.filter((run) =>
+        isDateInProgressChartRange(
+          (run.completedAt ?? run.startedAt).slice(0, 10),
+          rangeStartDate
+        )
+      );
+    }, [chartRange, runsWithPace]);
 
 
   // ----------------------------------------------------------
@@ -354,6 +390,29 @@ export default function RunningProgress() {
 
         </div>
 
+      </div>
+
+      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-slate-500">PACE TREND</p>
+            <h2 className="mt-1 text-xl font-bold">Pace Over Time</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              Lower pace is faster. The display range only changes this chart.
+            </p>
+          </div>
+          <ProgressChartRangeSelect
+            value={chartRange}
+            onChange={setChartRange}
+          />
+        </div>
+
+        <div className="mt-5">
+          <RunningPaceTrendChart
+            runs={visibleRunsWithPace}
+            hasHistoricalData={runsWithPace.length >= 2}
+          />
+        </div>
       </div>
 
 
