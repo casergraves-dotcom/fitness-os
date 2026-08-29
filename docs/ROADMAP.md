@@ -364,6 +364,9 @@ per-exercise substitutions without changing the rest of the programmed session.
 - [x] Replace the broad `Accessory` role with explicit chest-isolation,
   shoulder-abduction, rear-shoulder, elbow-flexion, elbow-extension, and
   calf-raise intent so unrelated accessory movements are not interchangeable.
+- [x] Replace the broad `Core` role with explicit rotation, trunk-flexion,
+  stability, and hip-flexion intent; disclose when Home variants use practical
+  stability work instead of the scheduled core pattern.
 - [ ] Rank alternatives by functional movement intent rather than treating every
   exercise with a shared broad role as interchangeable.
 - [x] Review the hard-coded Leg Curl alternatives so hip-hinge exercises are not
@@ -445,6 +448,14 @@ isolation, shoulder abduction, rear-shoulder work, elbow flexion, elbow extensio
 and calf raises. Verified that biceps, triceps, lateral-raise, and rear-shoulder
 recommendations remain within their respective families. Production build
 passed after the role split.
+
+Core substitutions now distinguish rotation, trunk flexion, stability, and
+hip-flexion patterns. Gym A and Gym C retain their intended rotational and
+trunk-flexion work in Full and Short variants, while their Home variants identify
+Dead Bug and Plank as practical stability compromises rather than equivalents.
+Verified that Cable Woodchop and Ab Crunch Machine no longer offer unrelated
+alternatives, Plank remains within the stability family, and Full Gym A/C still
+load correctly. Production build passed after the Core role split.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 

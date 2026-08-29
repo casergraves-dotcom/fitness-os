@@ -33,8 +33,6 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "band-good-morning": ["dumbbell-rdl", "romanian-deadlift"],
   "hip-abductor": ["side-lying-hip-abduction"],
   "hip-adductor": ["side-lying-hip-adduction"],
-  "cable-woodchop": ["dead-bug", "plank", "cable-crunch"],
-  "ab-crunch-machine": ["cable-crunch", "dead-bug", "plank"],
   "lateral-raise-machine": ["dumbbell-lateral-raise"],
   "dumbbell-lateral-raise": ["lateral-raise-machine"],
   "reverse-pec-deck": ["cable-face-pull"],

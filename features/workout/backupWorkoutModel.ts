@@ -65,7 +65,7 @@ Record<
       { role: "KneeFlexion", required: true },
       { role: "VerticalPush", required: false },
       { role: "ShoulderAbduction", required: false },
-      { role: "Core", required: true },
+      { role: "CoreRotation", required: true },
     ],
   },
 
@@ -96,7 +96,7 @@ Record<
       { role: "ElbowExtension", required: false },
       { role: "HipStability", required: false },
       { role: "Adduction", required: false },
-      { role: "Core", required: true },
+      { role: "CoreFlexion", required: true },
     ],
   },
 };
@@ -136,7 +136,7 @@ StrengthWorkoutVariant[] = [
       "HorizontalPush",
       "HorizontalPull",
       "KneeFlexion",
-      "Core",
+      "CoreRotation",
     ],
     exercises: [
       {
@@ -161,7 +161,7 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "cable-woodchop",
-        movementRole: "Core",
+        movementRole: "CoreRotation",
         sets: 2,
       },
     ],
@@ -194,7 +194,7 @@ StrengthWorkoutVariant[] = [
       "HorizontalPull",
       "HipHinge",
       "VerticalPush",
-      "Core",
+      "CoreStability",
     ],
     exercises: [
       {
@@ -227,14 +227,14 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "dead-bug",
-        movementRole: "Core",
+        movementRole: "CoreStability",
         sets: 3,
       },
     ],
     durationMin: 30,
     durationMax: 40,
     note:
-      "Bands + bodyweight substitute preserving most of Gym A's movement intent. Band Good Morning provides hip-hinge work but does not replace the scheduled knee-flexion pattern.",
+      "Bands + bodyweight substitute preserving most of Gym A's movement intent. Band Good Morning provides hip-hinge work but does not replace the scheduled knee-flexion pattern. Dead Bug provides practical core-stability work but does not replace the scheduled rotational pattern.",
   },
 
   // ----------------------------------------------------------
@@ -367,7 +367,7 @@ StrengthWorkoutVariant[] = [
       "HipHinge",
       "VerticalPull",
       "HorizontalPush",
-      "Core",
+      "CoreFlexion",
     ],
     exercises: [
       {
@@ -394,7 +394,7 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "ab-crunch-machine",
-        movementRole: "Core",
+        movementRole: "CoreFlexion",
         sets: 2,
       },
     ],
@@ -429,7 +429,7 @@ StrengthWorkoutVariant[] = [
       "HorizontalPush",
       "HipStability",
       "Adduction",
-      "Core",
+      "CoreStability",
     ],
     exercises: [
       {
@@ -470,14 +470,14 @@ StrengthWorkoutVariant[] = [
       },
       {
         exerciseDefinitionId: "plank",
-        movementRole: "Core",
+        movementRole: "CoreStability",
         sets: 3,
       },
     ],
     durationMin: 30,
     durationMax: 40,
     note:
-      "Bands + bodyweight substitute. Vertical pulling requires a safe high band anchor.",
+      "Bands + bodyweight substitute. Vertical pulling requires a safe high band anchor. Plank provides practical core-stability work but does not replace the scheduled trunk-flexion pattern.",
   },
 ];
 
