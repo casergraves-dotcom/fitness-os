@@ -245,6 +245,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    repCounting: "PerSide",
   },
   {
     id: "backpack-row",
@@ -777,6 +778,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    repCounting: "PerSide",
   },
   {
     id: "side-lying-hip-adduction",
@@ -792,6 +794,7 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    repCounting: "PerSide",
   },
   {
     id: "hip-adductor",

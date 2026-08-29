@@ -405,7 +405,7 @@ role or substitution changes. The audit should identify affected consumers,
 historical-data implications, and any required migration strategy before
 implementation begins.
 
-- [ ] Review every canonical exercise definition for accurate naming, category,
+- [x] Review every canonical exercise definition for accurate naming, category,
   movement function, required equipment, setup capabilities, unilateral/per-side
   behavior, resistance type, performance type, rep range, and progression
   metadata.
@@ -554,6 +554,14 @@ incorrect high-anchor requirement on Band Row; its supported seated-around-the-
 feet setup now requires only a resistance band, matching the existing Home
 workout guidance. All eight substitution tests, the TypeScript check, and the
 production build were verified after the correction.
+
+The canonical exercise-definition audit now covers all 67 library entries.
+Automated invariants protect unique IDs and names, complete progression fields,
+valid rep ranges, required equipment, and movement roles. The final manual pass
+corrected per-side logging for One-Arm Dumbbell Row, Side-Lying Hip Abduction,
+and Side-Lying Hip Adduction while preserving all history-bearing IDs. Verified
+the per-side target and working-set UI, all ten catalog/substitution tests, the
+TypeScript check, and the production build.
 
 ## 2.3 Coach-Recommended Modification — COMPLETE
 

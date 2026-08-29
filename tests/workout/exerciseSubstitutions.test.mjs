@@ -122,3 +122,39 @@ test("equipment and setup availability filter otherwise valid candidates", () =>
   const pullIds = idsFor("lat-pulldown", limitedHomeContext);
   assert.ok(!pullIds.includes("band-pulldown"));
 });
+
+test("canonical exercise identities and programming metadata are complete", () => {
+  const ids = exerciseLibrary.map((exercise) => exercise.id);
+  const names = exerciseLibrary.map((exercise) => exercise.name);
+
+  assert.equal(new Set(ids).size, ids.length, "exercise IDs must be unique");
+  assert.equal(new Set(names).size, names.length, "exercise names must be unique");
+
+  for (const exercise of exerciseLibrary) {
+    assert.ok(exercise.sets > 0, `${exercise.id}: sets`);
+    assert.ok(exercise.repMin > 0, `${exercise.id}: repMin`);
+    assert.ok(exercise.repMax >= exercise.repMin, `${exercise.id}: rep range`);
+    assert.notEqual(exercise.increment, undefined, `${exercise.id}: increment`);
+    assert.ok(exercise.progressionType, `${exercise.id}: progressionType`);
+    assert.ok(exercise.resistanceType, `${exercise.id}: resistanceType`);
+    assert.ok(exercise.performanceType, `${exercise.id}: performanceType`);
+    assert.ok(exercise.requiredEquipment?.length > 0, `${exercise.id}: equipment`);
+    assert.ok(exercise.movementRoles?.length > 0, `${exercise.id}: movement role`);
+  }
+});
+
+test("unilateral exercises explicitly record repetitions per side", () => {
+  const unilateralIds = [
+    "reverse-lunge",
+    "one-arm-dumbbell-row",
+    "side-lying-hip-abduction",
+    "side-lying-hip-adduction",
+    "band-woodchop",
+    "glute-kickback-machine",
+  ];
+
+  for (const exerciseId of unilateralIds) {
+    const exercise = exerciseLibrary.find((candidate) => candidate.id === exerciseId);
+    assert.equal(exercise?.repCounting, "PerSide", exerciseId);
+  }
+});
