@@ -70,6 +70,18 @@ export default function CoachCard({
         </div>
       )}
 
+      {recommendation.patternContext && (
+        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/50 p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+            Persistent Pattern · {recommendation.patternContext.label}
+          </p>
+
+          <p className="mt-1 text-sm text-slate-600">
+            {recommendation.patternContext.message}
+          </p>
+        </div>
+      )}
+
     {recommendation.button &&
       actionHref && (
         <Link

@@ -18,6 +18,7 @@ import {
 import type {
   CoachRecommendation,
   CoachReviewContext,
+  CoachReviewContextSummary,
   CoachTrainingContext,
 } from "../types";
 
@@ -1055,7 +1056,8 @@ export function getCoachRecommendation(
   ratings: MorningCheckInRatings,
   activities: TrainingActivity[] = [],
   reviewContext?: CoachReviewContext,
-  trainingContext?: CoachTrainingContext
+  trainingContext?: CoachTrainingContext,
+  patternContext?: CoachReviewContextSummary
 ): CoachRecommendation {
   const allScheduledTrainingComplete =
     trainingContext !==
@@ -1083,18 +1085,17 @@ export function getCoachRecommendation(
           activities
         );
 
-  if (
-    !reviewContext
-  ) {
+  if (!reviewContext && !patternContext) {
     return recommendation;
   }
 
   return {
     ...recommendation,
 
-    reviewContext:
-      getReviewContextSummary(
-        reviewContext
-      ),
+    reviewContext: reviewContext
+      ? getReviewContextSummary(reviewContext)
+      : undefined,
+
+    patternContext,
   };
 }

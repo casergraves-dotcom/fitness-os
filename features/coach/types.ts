@@ -58,4 +58,8 @@ export interface CoachRecommendation {
   // Historical context is explanatory only. It does not replace
   // today's schedule or recovery inputs when choosing an action.
   reviewContext?: CoachReviewContextSummary;
+
+  // Persistent historical patterns are observations only. They
+  // do not independently change the daily recommendation.
+  patternContext?: CoachReviewContextSummary;
 }

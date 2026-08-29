@@ -10,6 +10,9 @@ import {
   CoachCard,
   getCoachRecommendation,
 } from "@/features/coach";
+import {
+  getWeeklyDecisionPattern,
+} from "@/features/coach/getWeeklyDecisionPattern";
 
 import {
   MissionCard,
@@ -248,6 +251,11 @@ export default function TodayScreen() {
       )[0] ??
     null;
 
+  const weeklyDecisionPattern =
+    getWeeklyDecisionPattern(
+      trainingPlanState?.weeklyProgressionDecisions ?? []
+    );
+
 
   // ----------------------------------------------------------
   // Coach
@@ -322,6 +330,12 @@ export default function TodayScreen() {
 
             completedActionableCount:
               completedCoachActivities.length,
+          }
+        : undefined,
+      weeklyDecisionPattern
+        ? {
+            label: weeklyDecisionPattern.label,
+            message: weeklyDecisionPattern.message,
           }
         : undefined
     );

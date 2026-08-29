@@ -1403,6 +1403,14 @@ behavior remains unchanged and is covered by the production build; keep the
 roadmap item open until a completed weekly decision exists for browser
 verification.
 
+**Guide persistent-pattern foundation:** Guide now evaluates persisted weekly
+progression decisions for a repeated final outcome. Only two or more consecutive
+completed reviews with the same advance/hold result produce a Persistent Pattern
+observation. The observation is displayed separately and cannot modify today's
+recommendation, schedule, or recovery guidance. The production build and
+no-pattern Today state passed; keep the broader pattern item open until repeated
+completed reviews allow the observation to be verified with real history.
+
 **Guide completion-awareness correction:** Coach now consumes the same
 canonical scheduled-activity completion status used by Today. Completed
 activities are removed from the remaining recommendation inputs, partially
