@@ -50,6 +50,14 @@ export {
   default as DailyActivityProgress,
 } from "./components/DailyActivityProgress";
 
+export {
+  default as WeeklyReview,
+} from "./components/WeeklyReview";
+
+export {
+  default as LongTermProgressReview,
+} from "./components/LongTermProgressReview";
+
 
 // ============================================================
 // Hooks

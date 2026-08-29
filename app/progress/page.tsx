@@ -10,6 +10,8 @@ import {
   WeeklyProgressCheckIn,
   BodyCompositionProgress,
   DailyActivityProgress,
+  WeeklyReview,
+  LongTermProgressReview,
 } from "@/features/progress";
 
 import {
@@ -44,6 +46,16 @@ export default function ProgressPage() {
             Track your performance and recovery over time.
           </p>
         </div>
+
+
+        <section className="space-y-4">
+          <WeeklyReview />
+        </section>
+
+
+        <section className="space-y-4">
+          <LongTermProgressReview />
+        </section>
 
 
         <section className="space-y-4">

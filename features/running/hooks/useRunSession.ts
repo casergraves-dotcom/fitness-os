@@ -17,6 +17,10 @@ import type {
 } from "../../workout/types";
 
 import {
+  normalizeRpe,
+} from "../../workout/rpe";
+
+import {
   fitnessOsTrainingPlan,
 } from "../../workout/trainingPlan";
 
@@ -610,17 +614,9 @@ export function useRunSession() {
     rpe: number
   ) {
     const safeRpe =
-      Number.isFinite(
+      normalizeRpe(
         rpe
-      )
-        ? Math.min(
-            10,
-            Math.max(
-              1,
-              Math.round(rpe)
-            )
-          )
-        : 1;
+      );
 
     setSession(
       (previous) => {

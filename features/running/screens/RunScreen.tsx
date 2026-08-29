@@ -15,6 +15,12 @@ import {
 
 import AppShell from "@/components/layout/AppShell";
 
+import RpeLegend from "../../workout/components/RpeLegend";
+
+import {
+  RPE_SCALE,
+} from "../../workout/rpe";
+
 import {
   useRunSession,
 } from "../hooks/useRunSession";
@@ -828,9 +834,17 @@ export default function RunScreen() {
 
               <div>
 
-                <p className="text-sm font-semibold text-slate-700">
-                  Effort
-                </p>
+                <div className="flex items-center gap-2">
+
+                  <p className="text-sm font-semibold text-slate-700">
+                    Effort
+                  </p>
+
+                  <RpeLegend
+                    context="CardioSession"
+                  />
+
+                </div>
 
                 <p className="mt-1 text-xs text-slate-500">
                   How hard did this run feel?
@@ -850,32 +864,29 @@ export default function RunScreen() {
 
             <div className="mt-3 grid grid-cols-10 gap-1">
 
-              {Array.from(
-                {
-                  length: 10,
-                },
-                (_, index) =>
-                  index + 1
-              ).map(
-                (value) => (
+              {RPE_SCALE.map(
+                (
+                  entry
+                ) => (
                   <button
                     key={
-                      value
+                      entry.value
                     }
                     type="button"
                     onClick={
                       () =>
                         updateRpe(
-                          value
+                          entry.value
                         )
                     }
                     className={
-                      session.rpe === value
+                      session.rpe ===
+                        entry.value
                         ? "rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white"
                         : "rounded-lg border border-slate-200 bg-white py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
                     }
                   >
-                    {value}
+                    {entry.value}
                   </button>
                 )
               )}

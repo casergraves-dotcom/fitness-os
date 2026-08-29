@@ -22,6 +22,10 @@ import {
 } from "../getExerciseTarget";
 
 import {
+  normalizeRpe,
+} from "../rpe";
+
+import {
   strengthWorkoutVariants,
 } from "../backupWorkoutModel";
 
@@ -1091,7 +1095,11 @@ function updateSet(
   const validatedValue =
     field === "rpe"
       ? safeValue >= 1
-        ? Math.min(10, Math.max(1, Math.floor(safeValue)))
+        ? normalizeRpe(
+            Math.floor(
+              safeValue
+            )
+          )
         : undefined
       : field === "reps"
       ? Math.max(

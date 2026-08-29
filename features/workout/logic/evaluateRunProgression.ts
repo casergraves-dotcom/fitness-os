@@ -4,6 +4,13 @@ import type {
   RunSession,
 } from "../types";
 
+import {
+  isValidRpe,
+  RPE_HIGH_EFFORT_MIN,
+  RPE_MAXIMAL,
+  RPE_SUSTAINABLE_MAX,
+} from "../rpe";
+
 
 // ============================================================
 // Types
@@ -174,8 +181,7 @@ export function evaluateRunProgression(
     run.durationMinutes;
 
   const rpe =
-    run.rpe !== undefined &&
-    Number.isFinite(
+    isValidRpe(
       run.rpe
     )
       ? run.rpe
@@ -232,7 +238,8 @@ export function evaluateRunProgression(
   if (
     durationCompletionRate <
       POOR_DURATION_RATE ||
-    rpe === 10
+    rpe ===
+      RPE_MAXIMAL
   ) {
     return createEvaluation(
       run,
@@ -254,7 +261,11 @@ export function evaluateRunProgression(
   if (
     durationCompletionRate <
       ACCEPTABLE_DURATION_RATE ||
-    rpe === 9
+    (
+      rpe !== null &&
+      rpe >=
+        RPE_HIGH_EFFORT_MIN
+    )
   ) {
     return createEvaluation(
       run,
@@ -278,7 +289,8 @@ export function evaluateRunProgression(
       STRONG_DURATION_RATE &&
     (
       rpe === null ||
-      rpe <= 7
+      rpe <=
+        RPE_SUSTAINABLE_MAX
     )
   ) {
     return createEvaluation(

@@ -2,6 +2,11 @@ import type {
   RunSession,
 } from "../types";
 
+import {
+  isValidRpe,
+  RPE_HIGH_EFFORT_MIN,
+} from "../rpe";
+
 // ============================================================
 // Weekly Running Load
 // ============================================================
@@ -29,7 +34,6 @@ export interface WeeklyRunningLoadEvaluation {
 
 const LIMITED_DURATION_RATE = 0.75;
 const POOR_DURATION_RATE = 0.5;
-const HIGH_RPE = 9;
 
 // ============================================================
 // Date Helpers
@@ -147,8 +151,9 @@ export function evaluateWeeklyRunningLoad(
   const rpes =
     scheduledRuns.flatMap(
       (run) =>
-        run.rpe !== undefined &&
-        Number.isFinite(run.rpe)
+        isValidRpe(
+          run.rpe
+        )
           ? [run.rpe]
           : []
     );
@@ -210,7 +215,8 @@ export function evaluateWeeklyRunningLoad(
     ) ||
     (
       averageRpe !== null &&
-      averageRpe >= HIGH_RPE
+      averageRpe >=
+        RPE_HIGH_EFFORT_MIN
     )
   ) {
     const details: string[] = [];

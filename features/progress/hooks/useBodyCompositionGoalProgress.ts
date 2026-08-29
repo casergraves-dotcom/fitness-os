@@ -313,20 +313,16 @@ function findObservedTrendStart(
 
 
 // ============================================================
-// Hook
+// Progress Calculation
 // ============================================================
 
-export function useBodyCompositionGoalProgress(
+export function getBodyCompositionGoalProgress(
   currentGoal:
     BodyCompositionGoal |
     null,
   weightTrend:
     BodyWeightTrendEntry[]
-) {
-  return useMemo<
-    BodyCompositionGoalProgress
-  >(
-    () => {
+): BodyCompositionGoalProgress {
 
       // --------------------------------------------------------
       // Goal / Trend Availability
@@ -588,7 +584,7 @@ export function useBodyCompositionGoalProgress(
       // Result
       // --------------------------------------------------------
 
-      return {
+  return {
         status,
 
         currentTrendWeightLb,
@@ -619,8 +615,27 @@ export function useBodyCompositionGoalProgress(
                     latest.date
               ).length
             : undefined,
-      };
-    },
+  };
+}
+
+
+// ============================================================
+// Hook
+// ============================================================
+
+export function useBodyCompositionGoalProgress(
+  currentGoal:
+    BodyCompositionGoal |
+    null,
+  weightTrend:
+    BodyWeightTrendEntry[]
+) {
+  return useMemo(
+    () =>
+      getBodyCompositionGoalProgress(
+        currentGoal,
+        weightTrend
+      ),
     [
       currentGoal,
       weightTrend,

@@ -186,6 +186,16 @@ export default function WorkoutScreen() {
     null
   );
 
+  const [
+    expandedExerciseIds,
+    setExpandedExerciseIds,
+  ] = useState<string[]>([]);
+
+  const expansionSessionId =
+    useRef<string | null>(
+      null
+    );
+
   // ----------------------------------------------------------
   // Workout Session
   // ----------------------------------------------------------
@@ -215,6 +225,91 @@ export default function WorkoutScreen() {
 
     getPreviousExercise,
   } = useWorkoutSession();
+
+  // ----------------------------------------------------------
+  // Exercise Card Expansion
+  // ----------------------------------------------------------
+
+  useEffect(() => {
+    if (!session) {
+      if (
+        expansionSessionId.current !==
+          null
+      ) {
+        expansionSessionId.current =
+          null;
+
+        setExpandedExerciseIds(
+          []
+        );
+      }
+
+      return;
+    }
+
+    if (
+      expansionSessionId.current ===
+        session.id
+    ) {
+      return;
+    }
+
+    const firstIncompleteExercise =
+      session.exercises.find(
+        (
+          exercise
+        ) =>
+          exercise.sets.some(
+            (
+              set
+            ) =>
+              !set.completed
+          )
+      );
+
+    const initiallyExpandedExercise =
+      firstIncompleteExercise ??
+      session.exercises[0];
+
+    expansionSessionId.current =
+      session.id;
+
+    setExpandedExerciseIds(
+      initiallyExpandedExercise
+        ? [
+            initiallyExpandedExercise
+              .id,
+          ]
+        : []
+    );
+  }, [
+    session,
+  ]);
+
+  function toggleExerciseExpanded(
+    exerciseId:
+      string
+  ) {
+    setExpandedExerciseIds(
+      (
+        current
+      ) =>
+        current.includes(
+          exerciseId
+        )
+          ? current.filter(
+              (
+                currentExerciseId
+              ) =>
+                currentExerciseId !==
+                exerciseId
+            )
+          : [
+              ...current,
+              exerciseId,
+            ]
+    );
+  }
 
   // ----------------------------------------------------------
   // Exercise Library
@@ -1345,23 +1440,6 @@ const exerciseVolume =
       0
     );
 
-  // Find the first exercise that still contains an
-  // incomplete set.
-  const activeExerciseIndex =
-    session.exercises.findIndex(
-      (exercise) =>
-        exercise.sets.some(
-          (set) =>
-            !set.completed
-        )
-    );
-
-  const currentExerciseIndex =
-    activeExerciseIndex === -1
-      ? session.exercises.length -
-        1
-      : activeExerciseIndex;
-
   // ----------------------------------------------------------
   // Active Workout
   // ----------------------------------------------------------
@@ -1398,13 +1476,28 @@ const exerciseVolume =
               exercise={
                 exercise
               }
+              exerciseNumber={
+                index +
+                1
+              }
+              exerciseCount={
+                session.exercises
+                  .length
+              }
               previousExercise={getPreviousExercise(
                 exercise.exerciseDefinitionId,
                 exercise.name
               )}
               expanded={
-                index ===
-                currentExerciseIndex
+                expandedExerciseIds.includes(
+                  exercise.id
+                )
+              }
+              onToggleExpanded={
+                () =>
+                  toggleExerciseExpanded(
+                    exercise.id
+                  )
               }
               onToggleSet={
                 toggleSet

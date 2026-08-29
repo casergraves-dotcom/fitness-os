@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import {
+  getBodyCompositionGoalProgress,
   useBodyCompositionGoalProgress,
 } from "../hooks/useBodyCompositionGoalProgress";
 
@@ -25,24 +26,44 @@ import {
 } from "../hooks/useBodyMeasurements";
 
 import {
-  useExerciseProgress,
-} from "../hooks/useExerciseProgress";
-
-import {
   useLifestyleGoalProgressEvidence,
 } from "../hooks/useLifestyleGoalProgressEvidence";
+
+import {
+  getCurrentApproachEvidence,
+} from "../utils/getCurrentApproachEvidence";
+
+import {
+  getCurrentApproachReview,
+} from "../utils/getCurrentApproachReview";
+
+import {
+  getCurrentProgramReviewPeriod,
+} from "../utils/getCurrentProgramReviewPeriod";
 
 import {
   getLifestyleGoalProgressPatterns,
 } from "../utils/getLifestyleGoalProgressPatterns";
 
 import {
-  useRunSession,
-} from "@/features/running/hooks/useRunSession";
+  getPeriodStrengthRetentionReview,
+} from "../utils/getPeriodStrengthRetentionReview";
 
 import {
-  getCurrentWeeklyProgress,
-} from "@/features/today/utils/getCurrentWeeklyProgress";
+  getProgressReviewAdherence,
+} from "../utils/getProgressReviewAdherence";
+
+import {
+  filterRecordsByProgressReviewPeriod,
+} from "../utils/getProgressReviewPeriod";
+
+import {
+  getRunningProgressTrend,
+} from "../utils/getRunningProgressTrend";
+
+import {
+  useRunSession,
+} from "@/features/running/hooks/useRunSession";
 
 import {
   useMorningCheckIn,
@@ -64,34 +85,6 @@ import {
 // ============================================================
 // Helpers
 // ============================================================
-
-function getBodyCompositionMessage(
-  status:
-    string
-) {
-  switch (
-    status
-  ) {
-    case "OnTrack":
-      return "Body-composition progress is moving in the intended direction.";
-
-    case "FasterThanExpected":
-      return "Body-composition progress is moving faster than planned.";
-
-    case "SlowerThanExpected":
-      return "Body-composition progress is moving toward the goal, but slower than planned.";
-
-    case "Plateau":
-      return "The recent body-composition trend appears relatively flat.";
-
-    case "MovingAwayFromGoal":
-      return "The recent body-composition trend is moving away from the current goal.";
-
-    default:
-      return "There is not enough body-composition trend data yet to judge progress confidently.";
-  }
-}
-
 
 // ============================================================
 // Progress Outcome Summary
@@ -155,70 +148,7 @@ export default function ProgressOutcomeSummary() {
 
 
   // ----------------------------------------------------------
-  // Strength
-  // ----------------------------------------------------------
-
-  const {
-    exercises,
-  } =
-    useExerciseProgress();
-
-  const primaryExercise =
-    exercises[0];
-
-  const {
-    progress:
-      strengthProgress,
-  } =
-    useExerciseProgress(
-      primaryExercise
-    );
-
-
-  const strengthChange =
-    useMemo(
-      () => {
-        if (
-          strengthProgress.length <
-          2
-        ) {
-          return undefined;
-        }
-
-        const first =
-          strengthProgress[0]
-            .estimatedOneRepMax;
-
-        const latest =
-          strengthProgress[
-            strengthProgress.length -
-            1
-          ].estimatedOneRepMax;
-
-        if (
-          first ===
-          0
-        ) {
-          return undefined;
-        }
-
-        return (
-          (
-            latest -
-            first
-          ) /
-          first
-        ) *
-          100;
-      },
-      [
-        strengthProgress,
-      ]
-    );
-
-
-  // ----------------------------------------------------------
-  // Cardio
+  // Cardio History
   // ----------------------------------------------------------
 
   const {
@@ -230,97 +160,8 @@ export default function ProgressOutcomeSummary() {
   } =
     useRunSession();
 
-
-  const runsWithPace =
-    useMemo(
-      () =>
-        runHistory.filter(
-          (
-            run
-          ) =>
-            run.durationMinutes !==
-              undefined &&
-            run.durationMinutes >
-              0 &&
-            run.distanceMiles !==
-              undefined &&
-            run.distanceMiles >
-              0
-        ),
-      [
-        runHistory,
-      ]
-    );
-
-
-  const paceChange =
-    useMemo(
-      () => {
-        if (
-          runsWithPace.length <
-          2
-        ) {
-          return undefined;
-        }
-
-        const chronological =
-          [
-            ...runsWithPace,
-          ].sort(
-            (
-              a,
-              b
-            ) =>
-              (
-                a.completedAt ??
-                a.startedAt
-              ).localeCompare(
-                b.completedAt ??
-                  b.startedAt
-              )
-          );
-
-        const first =
-          chronological[0];
-
-        const latest =
-          chronological[
-            chronological.length -
-            1
-          ];
-
-        const firstPace =
-          first.durationMinutes! /
-          first.distanceMiles!;
-
-        const latestPace =
-          latest.durationMinutes! /
-          latest.distanceMiles!;
-
-        if (
-          firstPace ===
-          0
-        ) {
-          return undefined;
-        }
-
-        return (
-          (
-            firstPace -
-            latestPace
-          ) /
-          firstPace
-        ) *
-          100;
-      },
-      [
-        runsWithPace,
-      ]
-    );
-
-
   // ----------------------------------------------------------
-  // Training Adherence
+  // Training History
   // ----------------------------------------------------------
 
   const {
@@ -359,7 +200,6 @@ export default function ProgressOutcomeSummary() {
   } =
     useWorkoutHistory();
 
-
   const adherenceLoaded =
     trainingPlanStateLoaded &&
     trainingActivityCompletionsLoaded &&
@@ -367,18 +207,155 @@ export default function ProgressOutcomeSummary() {
     workoutHistoryLoaded &&
     runHistoryLoaded;
 
+  // ----------------------------------------------------------
+  // Current-Approach Evidence
+  // ----------------------------------------------------------
 
-  const weeklyProgress =
-    adherenceLoaded
-      ? getCurrentWeeklyProgress(
+  const currentApproachEvidence =
+    useMemo(
+      () =>
+        getCurrentApproachEvidence({
           trainingPlanState,
-          trainingActivityCompletions,
-          new Date(),
-          morningCheckInHistory,
-          workoutHistory,
-          runHistory
-        )
-      : null;
+          weightTrend,
+        }),
+      [
+        trainingPlanState,
+        weightTrend,
+      ]
+    );
+
+  const currentProgramPeriod =
+    useMemo(
+      () =>
+        getCurrentProgramReviewPeriod({
+          evidence:
+            currentApproachEvidence,
+        }),
+      [
+        currentApproachEvidence,
+      ]
+    );
+
+  const currentProgramWeightTrend =
+    useMemo(
+      () =>
+        currentProgramPeriod
+          ? filterRecordsByProgressReviewPeriod(
+              weightTrend,
+              (
+                entry
+              ) =>
+                entry.date,
+              currentProgramPeriod
+            )
+          : [],
+      [
+        currentProgramPeriod,
+        weightTrend,
+      ]
+    );
+
+  const currentProgramGoalProgress =
+    useMemo(
+      () =>
+        getBodyCompositionGoalProgress(
+          currentGoal,
+          currentProgramWeightTrend
+        ),
+      [
+        currentGoal,
+        currentProgramWeightTrend,
+      ]
+    );
+
+  const currentProgramStrengthRetention =
+    useMemo(
+      () =>
+        currentProgramPeriod
+          ? getPeriodStrengthRetentionReview({
+              workoutHistory,
+              period:
+                currentProgramPeriod,
+            })
+          : null,
+      [
+        currentProgramPeriod,
+        workoutHistory,
+      ]
+    );
+
+  const currentProgramRunningTrend =
+    useMemo(
+      () =>
+        currentProgramPeriod
+          ? getRunningProgressTrend(
+              filterRecordsByProgressReviewPeriod(
+                runHistory,
+                (
+                  run
+                ) =>
+                  run.completedAt ??
+                  "",
+                currentProgramPeriod
+              )
+            )
+          : null,
+      [
+        currentProgramPeriod,
+        runHistory,
+      ]
+    );
+
+  const currentProgramAdherence =
+    useMemo(
+      () =>
+        currentProgramPeriod
+          ? getProgressReviewAdherence({
+              period:
+                currentProgramPeriod,
+              trainingPlanState,
+              completions:
+                trainingActivityCompletions,
+              recoveryCheckIns:
+                morningCheckInHistory,
+              workoutHistory,
+              runHistory,
+            })
+          : null,
+      [
+        currentProgramPeriod,
+        morningCheckInHistory,
+        runHistory,
+        trainingActivityCompletions,
+        trainingPlanState,
+        workoutHistory,
+      ]
+    );
+
+  const currentApproachReview =
+    useMemo(
+      () =>
+        getCurrentApproachReview({
+          evidence:
+            currentApproachEvidence,
+          bodyCompositionStatus:
+            currentProgramGoalProgress
+              .status,
+          strengthRetention:
+            currentProgramStrengthRetention,
+          runningTrend:
+            currentProgramRunningTrend,
+          adherence:
+            currentProgramAdherence,
+        }),
+      [
+        currentApproachEvidence,
+        currentProgramAdherence,
+        currentProgramGoalProgress,
+        currentProgramRunningTrend,
+        currentProgramStrengthRetention,
+      ]
+    );
 
 
   // ----------------------------------------------------------
@@ -403,52 +380,6 @@ export default function ProgressOutcomeSummary() {
 
 
   // ----------------------------------------------------------
-  // Current Approach
-  // ----------------------------------------------------------
-
-  const bodyCompositionPositive =
-    goalProgress.status ===
-      "OnTrack" ||
-    goalProgress.status ===
-      "FasterThanExpected" ||
-    goalProgress.status ===
-      "SlowerThanExpected";
-
-  const strengthPositive =
-    strengthChange ===
-      undefined ||
-    strengthChange >=
-      -5;
-
-  const cardioPositive =
-    paceChange ===
-      undefined ||
-    paceChange >=
-      -5;
-
-  const adherencePositive =
-    weeklyProgress?.evaluationReady
-      ? weeklyProgress
-          .adherence
-          .adherenceRate >=
-        0.75
-      : true;
-
-
-  const enoughEvidence =
-    goalProgress.status !==
-    "InsufficientData";
-
-
-  const working =
-    enoughEvidence &&
-    bodyCompositionPositive &&
-    strengthPositive &&
-    cardioPositive &&
-    adherencePositive;
-
-
-  // ----------------------------------------------------------
   // Render
   // ----------------------------------------------------------
 
@@ -461,71 +392,43 @@ export default function ProgressOutcomeSummary() {
 
       <h3 className="mt-1 text-lg font-bold text-slate-900">
         {
-          !enoughEvidence
-            ? "Not enough evidence yet"
-            : working
-              ? "The current approach appears to be working"
-              : "The current approach may need attention"
+          currentApproachReview.title
         }
       </h3>
 
       <p className="mt-2 text-sm leading-6 text-slate-600">
         {
-          getBodyCompositionMessage(
-            goalProgress.status
-          )
+          currentApproachReview.message
         }
       </p>
 
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
-        <Signal
-          label="Body Composition"
-          value={
-            bodyCompositionPositive
-              ? "Positive"
-              : "Needs attention"
-          }
-        />
-
-        <Signal
-          label="Strength"
-          value={
-            strengthChange ===
-            undefined
-              ? "Not enough data"
-              : strengthPositive
-                ? "Maintained"
-                : "Declining"
-          }
-        />
-
-        <Signal
-          label="Cardio"
-          value={
-            paceChange ===
-            undefined
-              ? "Not enough data"
-              : cardioPositive
-                ? "Maintained"
-                : "Declining"
-          }
-        />
-
-        <Signal
-          label="Adherence"
-          value={
-            weeklyProgress?.adherence
-              ? `${Math.round(
-                  weeklyProgress
-                    .adherence
-                    .adherenceRate *
-                  100
-                )}%`
-              : "Not enough data"
-          }
-        />
+        {
+          currentApproachReview
+            .signals
+            .map(
+              (
+                signal
+              ) => (
+                <Signal
+                  key={
+                    signal.domain
+                  }
+                  label={
+                    signal.domain ===
+                    "BodyComposition"
+                      ? "Body Composition"
+                      : signal.domain
+                  }
+                  value={
+                    signal.label
+                  }
+                />
+              )
+            )
+        }
 
       </div>
 
@@ -701,8 +604,9 @@ export default function ProgressOutcomeSummary() {
 
 
       <p className="mt-5 text-xs leading-5 text-slate-500">
-        This summary uses longer-term body-composition trend data and supporting
-        training and lifestyle context. Lifestyle patterns are contextual
+        Historical trends describe the available measurements. Fitness OS only
+        evaluates the current approach after enough recent evidence has been
+        collected during the active program. Lifestyle patterns are contextual
         evidence, not proof of causation, and should not trigger automatic
         training or target changes from short-term fluctuations.
       </p>

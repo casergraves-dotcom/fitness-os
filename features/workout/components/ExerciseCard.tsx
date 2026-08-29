@@ -11,6 +11,7 @@ import {
 
 import {
   Check,
+  ChevronDown,
   MoreVertical,
   RefreshCw,
   Trash2,
@@ -18,6 +19,12 @@ import {
 } from "lucide-react";
 
 import { Card } from "@/components/ui";
+
+import RpeLegend from "./RpeLegend";
+
+import {
+  RPE_SCALE,
+} from "../rpe";
 
 import type {
   Exercise,
@@ -47,11 +54,17 @@ import type {
 interface ExerciseCardProps {
   exercise: Exercise;
 
+  exerciseNumber: number;
+
+  exerciseCount: number;
+
   // Most recent historical performance for this exercise.
   // Undefined means the exercise has never been logged before.
   previousExercise?: Exercise;
 
   expanded: boolean;
+
+  onToggleExpanded: () => void;
 
   onToggleSet: (
     exerciseId: string,
@@ -109,7 +122,11 @@ const BAND_RESISTANCE_OPTIONS = [
 
 export default function ExerciseCard({
   exercise,
+  exerciseNumber,
+  exerciseCount,
   previousExercise,
+  expanded,
+  onToggleExpanded,
   onToggleSet,
   onUpdateSet,
   onAddSet,
@@ -279,6 +296,20 @@ export default function ExerciseCard({
       ? "reps / side"
       : "reps";
 
+  const completedSetCount =
+    exercise.sets.filter(
+      (
+        set
+      ) =>
+        set.completed
+    ).length;
+
+  const exerciseComplete =
+    exercise.sets.length >
+      0 &&
+    completedSetCount ===
+      exercise.sets.length;
+
   // ----------------------------------------------------------
   // Today's Target
   // ----------------------------------------------------------
@@ -425,15 +456,57 @@ export default function ExerciseCard({
   // ----------------------------------------------------------
 
   return (
-    <Card className="rounded-2xl border bg-white p-6 shadow-sm">
+    <Card
+      className={
+        exerciseComplete
+          ? "rounded-2xl border border-green-300 bg-green-50 p-6 shadow-sm"
+          : "rounded-2xl border bg-white p-6 shadow-sm"
+      }
+    >
       {/* ----------------------------------------------------
           Exercise Header
       ----------------------------------------------------- */}
 
       <div className="relative flex items-center justify-between">
-        <h2 className="text-lg font-semibold">
-          {exercise.name}
-        </h2>
+
+        <button
+          type="button"
+          aria-expanded={
+            expanded
+          }
+          onClick={
+            onToggleExpanded
+          }
+          className="flex min-w-0 flex-1 items-center gap-3 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        >
+
+          <ChevronDown
+            size={20}
+            className={
+              expanded
+                ? "shrink-0 rotate-180 text-slate-500 transition-transform"
+                : "shrink-0 text-slate-500 transition-transform"
+            }
+          />
+
+          <span className="min-w-0">
+
+            <span className="block truncate text-lg font-semibold text-slate-900">
+              {exercise.name}
+            </span>
+
+            <span className="mt-0.5 block text-xs text-slate-500">
+              Exercise {exerciseNumber} of {exerciseCount}
+              {" · "}
+              {completedSetCount}/{exercise.sets.length} sets
+              {exerciseComplete
+                ? " · Complete"
+                : ""}
+            </span>
+
+          </span>
+
+        </button>
 
         <button
           type="button"
@@ -470,6 +543,9 @@ export default function ExerciseCard({
           </div>
         )}
       </div>
+
+      {expanded && (
+        <>
 
       {/* ----------------------------------------------------
           Exercise Substitution
@@ -587,7 +663,21 @@ export default function ExerciseCard({
           Exercise Sets
       ----------------------------------------------------- */}
 
-      <div className="mt-4 space-y-2">
+      <div className="mt-4">
+
+        <div className="mb-2 flex items-center justify-between gap-3">
+
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Working Sets
+          </p>
+
+          <RpeLegend
+            context="StrengthSet"
+          />
+
+        </div>
+
+        <div className="space-y-2">
         {exercise.sets.map(
           (set, index) => {
             // Match today's set with the same set number
@@ -1122,15 +1212,24 @@ export default function ExerciseCard({
                       className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-base sm:text-xs"
                     >
                       <option value="">Optional</option>
-                      {Array.from({ length: 10 }, (_, rpeIndex) => {
-                        const rpe = rpeIndex + 1;
-
-                        return (
-                          <option key={rpe} value={rpe}>
-                            {rpe}
+                      {RPE_SCALE.map(
+                        (
+                          entry
+                        ) => (
+                          <option
+                            key={
+                              entry.value
+                            }
+                            value={
+                              entry.value
+                            }
+                          >
+                            {
+                              entry.value
+                            }
                           </option>
-                        );
-                      })}
+                        )
+                      )}
                     </select>
                   </label>
 
@@ -1252,6 +1351,8 @@ export default function ExerciseCard({
             );
           }
         )}
+        </div>
+
       </div>
 
       {/* ----------------------------------------------------
@@ -1269,6 +1370,10 @@ export default function ExerciseCard({
       >
         + Add Set
       </button>
+
+        </>
+      )}
+
     </Card>
   );
 }

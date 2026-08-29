@@ -2,6 +2,11 @@ import type {
   WorkoutSession,
 } from "../types";
 
+import {
+  isValidRpe,
+  RPE_HIGH_EFFORT_MIN,
+} from "../rpe";
+
 
 // ============================================================
 // Types
@@ -201,13 +206,16 @@ export function evaluateWeeklyStrengthQuality(
         completedSetCount += 1;
 
         if (
-          typeof set.rpe === "number" &&
-          set.rpe >= 1 &&
-          set.rpe <= 10
+          isValidRpe(
+            set.rpe
+          )
         ) {
           ratedSetCount += 1;
 
-          if (set.rpe >= 9) {
+          if (
+            set.rpe >=
+              RPE_HIGH_EFFORT_MIN
+          ) {
             highEffortSetCount += 1;
           }
         }
@@ -277,7 +285,7 @@ export function evaluateWeeklyStrengthQuality(
     const factor =
       completionRate < 0.8
         ? `${sessionLabel} reviewed; ${completedSetCount} of ${prescribedSetCount} prescribed working sets were completed.`
-        : `${sessionLabel} reviewed; ${highEffortSetCount} of ${ratedSetCount} rated working sets were logged at RPE 9 or higher.`;
+        : `${sessionLabel} reviewed; ${highEffortSetCount} of ${ratedSetCount} rated working sets were logged at RPE ${RPE_HIGH_EFFORT_MIN} or higher.`;
 
     return {
       status: "Limited",

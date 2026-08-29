@@ -351,6 +351,66 @@ the training-plan identity.
 **Completed outcome:** active strength workouts support explicit, ranked
 per-exercise substitutions without changing the rest of the programmed session.
 
+**Remaining substitution UX follow-up:**
+
+- [ ] Build substitution context from the entire active workout and exclude
+  exercises already programmed elsewhere in the session from `Need another
+  option?` recommendations, unless duplication is explicitly intentional.
+- [ ] Refine the movement-role model where a broad muscle-group label does not
+  preserve training intent. In particular, distinguish knee-flexion hamstring
+  work such as Leg Curl from hip-hinge work such as Romanian Deadlift.
+- [ ] Audit other substitution roles for the same muscle-group-versus-movement
+  ambiguity before expanding the recommendation catalog.
+- [ ] Rank alternatives by functional movement intent rather than treating every
+  exercise with a shared broad role as interchangeable.
+- [ ] Review the hard-coded Leg Curl alternatives so hip-hinge exercises are not
+  presented as equivalent knee-flexion replacements without explicitly
+  identifying the compromise.
+- [ ] Preserve the session-level duplicate guard as defensive validation even
+  after duplicate candidates are removed from the recommendation list.
+- [ ] Surface clear feedback if a replacement is rejected instead of allowing a
+  recommended option to appear to do nothing.
+- [ ] Verify duplicate exercises cannot be recommended or introduced across
+  initial and repeated substitutions in the same workout.
+- [ ] Add substitution tests confirming that Leg Curl recommendations preserve
+  knee-flexion intent and that broader fallback movements are ranked or labeled
+  appropriately.
+
+### Exercise Library and Substitution Audit
+
+Complete a read-only catalog and architecture audit before making broad movement
+role or substitution changes. The audit should identify affected consumers,
+historical-data implications, and any required migration strategy before
+implementation begins.
+
+- [ ] Review every canonical exercise definition for accurate naming, category,
+  movement function, required equipment, setup capabilities, unilateral/per-side
+  behavior, resistance type, performance type, rep range, and progression
+  metadata.
+- [ ] Review the movement-role taxonomy for roles that are missing, overly broad,
+  overlapping, or unable to distinguish materially different training intent.
+- [ ] Review every preferred and dynamically ranked substitution for functional
+  equivalence, equipment/setup availability, difficulty, safety, and preservation
+  of the source exercise's purpose.
+- [ ] Identify substitutions that are useful fallbacks but not true equivalents,
+  and define how the UI should label and rank those compromises.
+- [ ] Review Gym A / Gym B / Gym C plus Short Gym and Home variants for missing
+  movement patterns, unintended duplication, exercise-order problems, and
+  appropriate weekly balance.
+- [ ] Identify important exercise and substitution gaps for common gym-equipment
+  constraints, the supported home setup, mobility limitations, and different
+  experience levels.
+- [ ] Trace every movement-role and exercise-definition consumer before changing
+  the taxonomy, including template validation, workout balance, substitution
+  ranking, backup workouts, progression, history, and Reflect analysis.
+- [ ] Determine whether historical records require compatibility aliases or a
+  migration before exercise IDs or semantic roles change.
+- [ ] Produce a prioritized findings report separating correctness defects,
+  missing coverage, UX improvements, and optional catalog expansion.
+- [ ] Add representative substitution tests for each movement family and
+  regression coverage for every confirmed defect before considering the audit
+  complete.
+
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
 - [x] Allow low readiness to recommend reduced volume/intensity.
@@ -526,6 +586,45 @@ preserving canonical training-plan identity.
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
 calendar.
+
+## Workout Execution UX Follow-up
+
+These items improve workout preparation and input consistency without changing
+the canonical training-plan or progression systems.
+
+- [ ] Inspect the active-workout, template, history, and progression architecture
+  before introducing warm-up records.
+- [ ] Add an explicit general/session warm-up experience before working sets.
+- [ ] Support exercise-specific ramp-up sets where appropriate.
+- [ ] Keep warm-up and ramp-up sets distinct from working sets so they do not
+  affect prescribed working-set completion, training volume, PR detection, or
+  progression decisions.
+- [x] Define one canonical RPE scale and explanation for Fitness OS.
+- [x] Add a lightweight reusable RPE legend/help component anywhere RPE is
+  entered or interpreted, including strength workouts and running. Prefer a
+  compact help button that opens a popup or mobile-friendly sheet rather than
+  permanently adding height to workout cards.
+- [x] Use consistent reps-in-reserve guidance, including RPE 10 as maximal
+  effort/no reps remaining, RPE 9 as approximately one rep remaining, RPE 8 as
+  approximately two, and RPE 7 as approximately three.
+- [x] Ensure existing stored RPE values remain compatible if the input UX or
+  explanatory component changes.
+- [x] Activate the existing exercise-card expansion contract so each exercise
+  can be collapsed or expanded independently during an active workout.
+- [x] Keep a compact exercise header visible when collapsed, including exercise
+  position and completed/total set progress.
+- [x] Give completed exercises a clear pale-green card/header state while
+  keeping them reopenable for review or correction.
+- [x] Preserve entered set state and allow exercises to be completed out of
+  program order when equipment or machine availability requires jumping around.
+- [x] Initially expand the first incomplete exercise without forcing the user to
+  follow workout order or restricting multiple manually expanded cards.
+- [x] Verify completion styling and the first-incomplete exercise remain correct
+  after adding/removing sets, substituting an exercise, and completing exercises
+  out of order.
+- [ ] Evaluate a compact sticky exercise navigator or exercise-list sheet after
+  collapsible cards are implemented; add it only if jumping between distant
+  exercises still requires excessive scrolling.
 
 ---
 
@@ -858,47 +957,111 @@ nutrition/activity tracking into concise periodic reflection.
 Reflect should interpret existing data rather than duplicate the underlying
 tracking dashboards or recalculate canonical domain logic.
 
-## 6.1 Weekly Review
+## 6.1 Weekly Review — COMPLETE
 
-- [ ] Add a structured weekly review.
-- [ ] Summarize scheduled vs completed training.
-- [ ] Summarize strength progress.
-- [ ] Summarize running/cardio progress.
-- [ ] Summarize recovery trend.
-- [ ] Summarize body-composition trend when sufficient data is available.
-- [ ] Summarize nutrition and daily-activity adherence when available.
-- [ ] Compare current progress with the active goal and expected rate.
-- [ ] Explain the next week's training decision.
-- [ ] Highlight one or two useful observations rather than dumping metrics.
-- [ ] Distinguish meaningful trends from normal short-term noise.
-- [ ] Explicitly acknowledge when insufficient data exists to draw a useful
+- [x] Add a structured weekly review.
+- [x] Summarize scheduled vs completed training.
+- [x] Summarize strength progress.
+- [x] Summarize running/cardio progress.
+- [x] Summarize recovery trend.
+- [x] Summarize body-composition trend when sufficient data is available.
+- [x] Summarize nutrition and daily-activity adherence when available.
+- [x] Compare current progress with the active goal and expected rate.
+- [x] Explain the next week's training decision.
+- [x] Highlight one or two useful observations rather than dumping metrics.
+- [x] Distinguish meaningful trends from normal short-term noise.
+- [x] Explicitly acknowledge when insufficient data exists to draw a useful
   conclusion.
-- [ ] Use the current week for adherence reporting, but require multi-week
+- [x] Use the current week for adherence reporting, but require multi-week
   evidence before attributing body-composition progress to nutrition or daily
   activity.
+
+**Completed outcome:** Reflect now provides a concise current-week review using
+current training adherence, training quality, recovery support, and the next
+week's provisional training decision. What Stands Out remains current-week
+focused, while longer-term body-composition, strength, running, recovery,
+nutrition, and daily-activity evidence is reserved for Longer-Term Review or
+kept under Still Learning until it is sufficient.
 
 ## 6.2 Longer-Term Progress Review
 
 Longer-term reviews should consume canonical Phase 4 progress analysis and
 existing training/cardio history rather than reimplementing their calculations.
 
-- [ ] Support useful longer-term review periods.
-- [ ] Compare current body-composition progress with earlier periods.
-- [ ] Summarize strength retention/progression during fat loss.
-- [ ] Summarize cardiovascular progress.
-- [ ] Summarize adherence over the review period.
+**Reflect interpretation handoff:**
+
+- [x] Separate what historical measurements show from conclusions about whether
+  the current approach is working.
+- [x] Account for evidence freshness, including when the most recent relevant
+  measurement occurred.
+- [x] Identify whether the available evidence represents the current training
+  program period rather than relying on measurements that substantially predate
+  it.
+- [x] Require sufficient elapsed time and relevant evidence under the current
+  approach before evaluating its effectiveness.
+- [x] Prefer an explicit conclusion such as `Too early to evaluate the current
+  approach` when the active program has not accumulated enough relevant
+  evidence, while still allowing older historical trends to be described as
+  context.
+- [x] Ensure any Reflect interpretation of training quality, fatigue, or
+  progression uses the same canonical RPE definition shown during data entry;
+  do not draw confident conclusions from inconsistently defined effort data.
+
+- [x] Support useful longer-term review periods.
+- [x] Compare current body-composition progress with earlier periods.
+- [x] Summarize strength retention/progression during fat loss.
+- [x] Summarize cardiovascular progress.
+- [x] Summarize adherence over the review period.
 - [ ] Surface meaningful milestones and PR/history highlights.
-- [ ] Incorporate DEXA comparisons when available.
+- [x] Incorporate DEXA comparisons when available.
 - [ ] Incorporate progress-photo comparisons when useful.
-- [ ] Evaluate whether the current approach appears to be moving toward the
+- [x] Evaluate whether the current approach appears to be moving toward the
   active goal.
-- [ ] Avoid treating any single metric as the definition of success.
+- [x] Avoid treating any single metric as the definition of success.
+
+**Implemented checkpoint:** Longer-Term Review supports 4-week, 12-week,
+6-month, 1-year, and all-history periods over canonical body-composition,
+whole-program strength, running, recovery, adherence, milestone, and DEXA data.
+Each domain retains its own evidence requirements, DEXA comparisons use scans
+contained within the selected period, and insufficient evidence is reported
+without manufacturing a conclusion. Current Approach now evaluates only the
+active-program period across body composition, whole-program strength, cardio,
+and adherence; it requires multiple available signals, treats missing evidence
+as unavailable rather than positive, and explicitly defers conclusions when the
+program is too new.
 
 ## 6.3 Review and Progress UX
 
 Extend existing Progress views where richer visualization is useful. Reflect
 should link, summarize, or consume those canonical views rather than creating
 parallel dashboards.
+
+**Progress cleanup handoff:**
+
+- [ ] Clarify the Progress information hierarchy so the page leads with a
+  concise reflection and makes supporting detail progressively available rather
+  than presenting every section with equal visual weight.
+- [ ] Reduce repeated conclusions and metrics across Weekly Review, outcome
+  summaries, and domain-specific progress sections so each insight has one clear
+  primary home.
+- [ ] Move target-setting out of Progress while continuing to display relevant
+  targets as context for trends and outcomes. Keep quick daily inputs such as
+  weight entry on Today, keep reflection and comparison in Progress / Reflect,
+  and place target configuration in the most appropriate existing Goals, Plan,
+  or Settings architecture rather than creating a parallel Goals system.
+- [ ] Plot time-series observations using their actual measurement date/time on
+  the x-axis so unequal collection intervals receive proportional visual
+  spacing.
+- [ ] Define an intentional chart-density and history strategy as data
+  accumulates, such as a recent default window, selectable 3M / 6M / 1Y / All
+  ranges, and aggregation or downsampling for dense periods.
+- [ ] Preserve the complete underlying history even when a chart range or
+  density strategy does not render every individual observation.
+- [ ] Replace alphabetical first-exercise defaults with one reusable,
+  evidence-based strength-exercise selection mechanism across Longer-Term
+  Review, Strength Retention, and Exercise Progress. When no exercise has enough
+  repeated evidence, show a neutral `Choose exercise` state instead of implying
+  that an arbitrary exercise is representative.
 
 - [ ] Improve strength trend visualization.
 - [ ] Improve running trend visualization.

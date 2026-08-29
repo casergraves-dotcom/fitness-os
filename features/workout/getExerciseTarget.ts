@@ -3,6 +3,11 @@ import type {
   ExerciseDefinition,
 } from "./types";
 
+import {
+  isValidRpe,
+  RPE_HIGH_EFFORT_MIN,
+} from "./rpe";
+
 // ============================================================
 // Types
 // ============================================================
@@ -306,7 +311,11 @@ export function getExerciseTarget(
   const highestReportedRpe =
     completedSets.reduce<number | undefined>(
       (highest, set) => {
-        if (set.rpe === undefined) {
+        if (
+          !isValidRpe(
+            set.rpe
+          )
+        ) {
           return highest;
         }
 
@@ -320,7 +329,8 @@ export function getExerciseTarget(
   const reachedTopWithHighEffort =
     reachedTopOfRange &&
     highestReportedRpe !== undefined &&
-    highestReportedRpe >= 9;
+    highestReportedRpe >=
+      RPE_HIGH_EFFORT_MIN;
 
   const belowTarget =
     isConsistentlyBelowRange(

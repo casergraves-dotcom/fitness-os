@@ -34,6 +34,7 @@ import {
 
 import type {
   WeeklyRecoveryCheckIn,
+  WeeklyRecoveryEvaluation,
 } from "@/features/workout/logic/evaluateWeeklyRecovery";
 
 import type {
@@ -44,8 +45,16 @@ import {
   evaluateWeeklyStrengthQuality,
 } from "@/features/workout/logic/evaluateWeeklyStrengthQuality";
 
+import type {
+  WeeklyStrengthQualityEvaluation,
+} from "@/features/workout/logic/evaluateWeeklyStrengthQuality";
+
 import {
   evaluateWeeklyRunningLoad,
+} from "@/features/workout/logic/evaluateWeeklyRunningLoad";
+
+import type {
+  WeeklyRunningLoadEvaluation,
 } from "@/features/workout/logic/evaluateWeeklyRunningLoad";
 
 import {
@@ -60,6 +69,7 @@ import {
   getResolvedWeeklyActivityOccurrences,
 } from "@/features/workout/logic/getResolvedWeeklyActivityOccurrences";
 
+
 // ============================================================
 // Types
 // ============================================================
@@ -73,8 +83,18 @@ export interface CurrentWeeklyProgress {
 
   decision: WeeklyProgressionDecision;
 
+  recovery:
+    WeeklyRecoveryEvaluation;
+
+  strengthQuality:
+    WeeklyStrengthQualityEvaluation;
+
+  runningLoad:
+    WeeklyRunningLoadEvaluation;
+
   evaluationReady: boolean;
 }
+
 
 // ============================================================
 // Date Helpers
@@ -89,6 +109,7 @@ function startOfLocalDay(
     date.getDate()
   );
 }
+
 
 function getMonday(
   date: Date
@@ -114,6 +135,7 @@ function getMonday(
   return result;
 }
 
+
 function formatLocalDate(
   date: Date
 ) {
@@ -132,6 +154,7 @@ function formatLocalDate(
 
   return `${year}-${month}-${day}`;
 }
+
 
 // ============================================================
 // Training Week Resolution
@@ -155,6 +178,7 @@ function resolveTrainingWeek(
     )
   );
 }
+
 
 // ============================================================
 // Requirement Deadline
@@ -205,6 +229,7 @@ function getLatestRequirementDate(
     null
   );
 }
+
 
 // ============================================================
 // Current Weekly Progress
@@ -280,25 +305,52 @@ export function getCurrentWeeklyProgress(
     return null;
   }
 
+
+  // ----------------------------------------------------------
+  // Structured Weekly Evidence
+  // ----------------------------------------------------------
+
+  const recovery =
+    evaluateWeeklyRecovery(
+      weekStartDate,
+      recoveryCheckIns
+    );
+
+  const strengthQuality =
+    evaluateWeeklyStrengthQuality(
+      weekStartDate,
+      workoutHistory
+    );
+
+  const runningLoad =
+    evaluateWeeklyRunningLoad(
+      weekStartDate,
+      runHistory
+    );
+
+  const aerialLoad =
+    evaluateWeeklyAerialLoad(
+      adherence
+    );
+
+
+  // ----------------------------------------------------------
+  // Progression Decision
+  // ----------------------------------------------------------
+
   const decision =
     getWeeklyProgressionDecision(
       adherence,
-      evaluateWeeklyRecovery(
-        weekStartDate,
-        recoveryCheckIns
-      ),
-      evaluateWeeklyStrengthQuality(
-        weekStartDate,
-        workoutHistory
-      ),
-      evaluateWeeklyRunningLoad(
-        weekStartDate,
-        runHistory
-      ),
-      evaluateWeeklyAerialLoad(
-        adherence
-      )
+      recovery,
+      strengthQuality,
+      runningLoad,
+      aerialLoad
     );
+
+
+  // ----------------------------------------------------------
+  // Evaluation Readiness
+  // ----------------------------------------------------------
 
   const latestRequirementDate =
     getLatestRequirementDate(
@@ -315,6 +367,11 @@ export function getCurrentWeeklyProgress(
     todayDate >=
       latestRequirementDate;
 
+
+  // ----------------------------------------------------------
+  // Result
+  // ----------------------------------------------------------
+
   return {
     weekStartDate,
 
@@ -324,6 +381,12 @@ export function getCurrentWeeklyProgress(
     adherence,
 
     decision,
+
+    recovery,
+
+    strengthQuality,
+
+    runningLoad,
 
     evaluationReady,
   };
