@@ -22,6 +22,7 @@ import {
 
 import { useWorkoutSession } from "../hooks/useWorkoutSession";
 import WorkoutWarmupCard from "../components/WorkoutWarmupCard";
+import WorkoutExerciseNavigator from "../components/WorkoutExerciseNavigator";
 
 import {
   useExerciseLibrary,
@@ -321,6 +322,20 @@ export default function WorkoutScreen() {
               exerciseId,
             ]
     );
+  }
+
+  function jumpToExercise(exerciseId: string) {
+    setExpandedExerciseIds((current) =>
+      current.includes(exerciseId)
+        ? current
+        : [...current, exerciseId]
+    );
+
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById(`workout-exercise-${exerciseId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 
   // ----------------------------------------------------------
@@ -1487,12 +1502,21 @@ const exerciseVolume =
           onReset={resetWarmup}
         />
 
+        <WorkoutExerciseNavigator
+          exercises={session.exercises}
+          onSelect={jumpToExercise}
+        />
+
         {/* Exercise cards */}
 
         {session.exercises.map(
           (exercise, index) => (
-            <ExerciseCard
+            <div
               key={exercise.id}
+              id={`workout-exercise-${exercise.id}`}
+              className="scroll-mt-24"
+            >
+            <ExerciseCard
               exercise={
                 exercise
               }
@@ -1578,6 +1602,7 @@ const exerciseVolume =
                 replaceExercise
               }
             />
+            </div>
           )
         )}
 

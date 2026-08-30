@@ -821,9 +821,17 @@ confirmed PR isolation; all tests, TypeScript, and the production build passed.
 - [x] Verify completion styling and the first-incomplete exercise remain correct
   after adding/removing sets, substituting an exercise, and completing exercises
   out of order.
-- [ ] Evaluate a compact sticky exercise navigator or exercise-list sheet after
+- [x] Evaluate a compact sticky exercise navigator or exercise-list sheet after
   collapsible cards are implemented; add it only if jumping between distant
   exercises still requires excessive scrolling.
+
+**Exercise navigator checkpoint:** Long active workouts now include a compact
+sticky horizontal navigator with workout-order numbering and live completed/
+total working-set progress. Selecting an exercise expands it when needed and
+scrolls directly to its card; completed exercises receive a distinct success
+state without changing the existing free-order completion model. Jumping from
+Leg Press to Shoulder Press, sticky behavior, the fixed bottom navigation, and
+the production build passed in the browser.
 
 ---
 
