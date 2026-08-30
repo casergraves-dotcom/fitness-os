@@ -1263,6 +1263,115 @@ function updateSet(
     );
   }
 
+  function addRampUpSet(exerciseId: string) {
+    setSession((previous) => {
+      if (!previous) return previous;
+
+      return {
+        ...previous,
+        exercises: previous.exercises.map((exercise) => {
+          if (exercise.id !== exerciseId) return exercise;
+
+          const rampUpSets = exercise.rampUpSets ?? [];
+          if (rampUpSets.length >= 3) return exercise;
+
+          const workingWeight = exercise.sets[0]?.weight ?? 0;
+          const factors = [0.5, 0.7, 0.85];
+          const reps = [8, 5, 3];
+          const index = rampUpSets.length;
+
+          return {
+            ...exercise,
+            rampUpSets: [
+              ...rampUpSets,
+              {
+                id: createId(),
+                weight: Math.round((workingWeight * factors[index]) / 5) * 5,
+                reps: reps[index],
+                completed: false,
+              },
+            ],
+          };
+        }),
+      };
+    });
+  }
+
+  function updateRampUpSet(
+    exerciseId: string,
+    setId: string,
+    field: "weight" | "reps",
+    value: number
+  ) {
+    const safeValue = Number.isFinite(value) ? value : 0;
+    const validatedValue =
+      field === "reps"
+        ? Math.max(0, Math.floor(safeValue))
+        : Math.max(0, safeValue);
+
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            exercises: previous.exercises.map((exercise) =>
+              exercise.id !== exerciseId
+                ? exercise
+                : {
+                    ...exercise,
+                    rampUpSets: (exercise.rampUpSets ?? []).map((set) =>
+                      set.id === setId
+                        ? { ...set, [field]: validatedValue }
+                        : set
+                    ),
+                  }
+            ),
+          }
+        : previous
+    );
+  }
+
+  function toggleRampUpSet(exerciseId: string, setId: string) {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            exercises: previous.exercises.map((exercise) =>
+              exercise.id !== exerciseId
+                ? exercise
+                : {
+                    ...exercise,
+                    rampUpSets: (exercise.rampUpSets ?? []).map((set) =>
+                      set.id === setId
+                        ? { ...set, completed: !set.completed }
+                        : set
+                    ),
+                  }
+            ),
+          }
+        : previous
+    );
+  }
+
+  function removeRampUpSet(exerciseId: string, setId: string) {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            exercises: previous.exercises.map((exercise) =>
+              exercise.id !== exerciseId
+                ? exercise
+                : {
+                    ...exercise,
+                    rampUpSets: (exercise.rampUpSets ?? []).filter(
+                      (set) => set.id !== setId
+                    ),
+                  }
+            ),
+          }
+        : previous
+    );
+  }
+
   // ----------------------------------------------------------
   // Exercise Management - Add Exercise
   // ----------------------------------------------------------
@@ -1984,6 +2093,42 @@ function dismissFinishedWorkout() {
   // Public API
   // ----------------------------------------------------------
 
+  function completeWarmup() {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            warmupCompletedAt: new Date().toISOString(),
+            warmupSkippedAt: undefined,
+          }
+        : previous
+    );
+  }
+
+  function skipWarmup() {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            warmupCompletedAt: undefined,
+            warmupSkippedAt: new Date().toISOString(),
+          }
+        : previous
+    );
+  }
+
+  function resetWarmup() {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            warmupCompletedAt: undefined,
+            warmupSkippedAt: undefined,
+          }
+        : previous
+    );
+  }
+
   return {
     session,
 
@@ -2010,10 +2155,19 @@ function dismissFinishedWorkout() {
     cancelWorkout,
     dismissFinishedWorkout,
 
+    completeWarmup,
+    skipWarmup,
+    resetWarmup,
+
     toggleSet,
     updateSet,
     addSet,
     removeSet,
+
+    addRampUpSet,
+    updateRampUpSet,
+    toggleRampUpSet,
+    removeRampUpSet,
 
     addExercise,
     replaceExercise,

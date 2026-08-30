@@ -13,6 +13,7 @@ import {
   Check,
   ChevronDown,
   MoreVertical,
+  Plus,
   RefreshCw,
   Trash2,
   TrendingUp,
@@ -103,6 +104,19 @@ interface ExerciseCardProps {
     setId: string
   ) => void;
 
+  onAddRampUpSet: (exerciseId: string) => void;
+
+  onUpdateRampUpSet: (
+    exerciseId: string,
+    setId: string,
+    field: "weight" | "reps",
+    value: number
+  ) => void;
+
+  onToggleRampUpSet: (exerciseId: string, setId: string) => void;
+
+  onRemoveRampUpSet: (exerciseId: string, setId: string) => void;
+
   onRemoveExercise: (
     exerciseId: string
   ) => void;
@@ -151,6 +165,10 @@ export default function ExerciseCard({
   onUpdateSet,
   onAddSet,
   onRemoveSet,
+  onAddRampUpSet,
+  onUpdateRampUpSet,
+  onToggleRampUpSet,
+  onRemoveRampUpSet,
   onRemoveExercise,
   onReplaceExercise,
 }: ExerciseCardProps) {
@@ -319,6 +337,10 @@ export default function ExerciseCard({
   const usesTraditionalInputs =
     !progressionType ||
     (isLoad && !isWeightDuration);
+
+  const supportsRampUpSets =
+    exerciseDefinition?.resistanceType === "Weight" &&
+    exerciseDefinition?.performanceType !== "Duration";
 
   // Repetition values for unilateral exercises are stored as the
   // number completed on each side. The numeric value itself stays
@@ -707,6 +729,42 @@ export default function ExerciseCard({
                 )}
             </div>
           </div>
+        </div>
+      )}
+
+      {supportsRampUpSets && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Ramp-up sets</p>
+              <p className="mt-1 text-xs text-slate-600">Optional light practice before working sets. Not counted in volume, completion, or PRs.</p>
+            </div>
+            {(exercise.rampUpSets?.length ?? 0) < 3 && (
+              <button type="button" onClick={() => onAddRampUpSet(exercise.id)} className="inline-flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-semibold text-amber-800">
+                <Plus size={14} /> Add ramp-up set
+              </button>
+            )}
+          </div>
+
+          {(exercise.rampUpSets?.length ?? 0) > 0 && (
+            <div className="mt-3 space-y-2">
+              {exercise.rampUpSets?.map((set, index) => (
+                <div key={set.id} className={`flex flex-wrap items-center gap-3 rounded-xl border p-3 ${set.completed ? "border-emerald-300 bg-emerald-50" : "border-amber-200 bg-white"}`}>
+                  <button type="button" onClick={() => onToggleRampUpSet(exercise.id, set.id)} aria-label={`${set.completed ? "Uncomplete" : "Complete"} ramp-up set ${index + 1}`} className={`flex h-7 w-7 items-center justify-center rounded-full ${set.completed ? "bg-emerald-500 text-white" : "border-2 border-amber-500 bg-amber-50"}`}>
+                    {set.completed && <Check size={16} />}
+                  </button>
+                  <span className="text-sm font-medium text-slate-700">Warm-up {index + 1}</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <input type="number" inputMode="decimal" min={0} value={getNumericInputValue(set.weight)} disabled={set.completed} onChange={(event) => onUpdateRampUpSet(exercise.id, set.id, "weight", parseWeightInput(event.target.value))} className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base disabled:bg-transparent" />
+                    <span className="text-sm text-slate-500">lb ×</span>
+                    <input type="number" inputMode="numeric" min={0} step={1} value={getNumericInputValue(set.reps)} disabled={set.completed} onChange={(event) => onUpdateRampUpSet(exercise.id, set.id, "reps", parseRepsInput(event.target.value))} className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base disabled:bg-transparent" />
+                    <span className="text-sm text-slate-500">{repsUnitLabel}</span>
+                    <button type="button" onClick={() => onRemoveRampUpSet(exercise.id, set.id)} aria-label={`Remove ramp-up set ${index + 1}`} className="text-slate-400 hover:text-red-600"><Trash2 size={16} /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

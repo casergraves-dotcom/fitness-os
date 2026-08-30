@@ -48,6 +48,29 @@ test("period PRs use earlier history as the comparison baseline", () => {
   assert.equal(records[0].estimatedOneRepMax, 147);
 });
 
+test("ramp-up sets do not affect estimated-strength personal records", () => {
+  const current = completedExercise(95, 10);
+  current.rampUpSets = [
+    { id: crypto.randomUUID(), weight: 500, reps: 20, completed: true },
+  ];
+
+  const records = getProgressReviewPersonalRecords({
+    workoutHistory: [
+      workout("baseline", "2026-01-15T18:00:00", completedExercise(100, 10)),
+      workout("current", "2026-02-10T18:00:00", current),
+    ],
+    exerciseDefinitions: [{
+      id: "chest-press-machine", name: "Chest Press Machine", category: "Chest",
+      movementRoles: ["HorizontalPush"], requiredEquipment: ["GymMachines"],
+      sets: 3, repMin: 8, repMax: 12, increment: 5, progressionType: "Load",
+      resistanceType: "Weight", performanceType: "Reps",
+    }],
+    period,
+  });
+
+  assert.equal(records.length, 0);
+});
+
 test("photo comparison selects the earliest and latest eligible shared views", () => {
   const comparison = getProgressReviewPhotoComparison({
     checkIns: [

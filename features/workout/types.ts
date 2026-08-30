@@ -34,6 +34,10 @@ export interface Exercise {
   // Optional so older saved workouts remain compatible.
   prescribedSetCount?: number;
 
+  // Optional exercise-specific preparation. Kept outside `sets` so ramp-up
+  // work never enters prescribed working-set completion or analysis.
+  rampUpSets?: ExerciseSet[];
+
   sets: ExerciseSet[];
 }
 
@@ -256,6 +260,12 @@ export interface WorkoutSession {
   variantLabel?: string;
 
   startedAt: string;
+
+  // Session preparation is recorded separately from ExerciseSet so it cannot
+  // affect working-set completion, volume, PRs, or progression decisions.
+  warmupCompletedAt?: string;
+  warmupSkippedAt?: string;
+
   completedAt?: string;
   restStartedAt?: string;
 

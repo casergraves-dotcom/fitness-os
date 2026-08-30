@@ -773,13 +773,31 @@ calendar.
 These items improve workout preparation and input consistency without changing
 the canonical training-plan or progression systems.
 
-- [ ] Inspect the active-workout, template, history, and progression architecture
+- [x] Inspect the active-workout, template, history, and progression architecture
   before introducing warm-up records.
-- [ ] Add an explicit general/session warm-up experience before working sets.
-- [ ] Support exercise-specific ramp-up sets where appropriate.
-- [ ] Keep warm-up and ramp-up sets distinct from working sets so they do not
+- [x] Add an explicit general/session warm-up experience before working sets.
+- [x] Support exercise-specific ramp-up sets where appropriate.
+- [x] Keep warm-up and ramp-up sets distinct from working sets so they do not
   affect prescribed working-set completion, training volume, PR detection, or
   progression decisions.
+
+**Session warm-up checkpoint:** Active strength workouts now show a concrete
+three-step preparation card before exercise working sets: easy cardio, one
+movement round, and a light practice set for the first main exercise. Completion
+or an intentional skip persists on the canonical workout session and can be
+reopened. Session warm-up state is stored outside `ExerciseSet`, so it cannot
+enter prescribed set counts, volume, PRs, or progression. TypeScript, the
+production build, initial/completed states, and persistence after refresh passed.
+
+**Exercise ramp-up checkpoint:** Externally weighted repetition exercises now
+offer up to three optional, editable ramp-up sets stored under a separate
+`rampUpSets` collection. Defaults scale conservatively from the first working
+load at approximately 50% × 8, 70% × 5, and 85% × 3. The verified 210 lb Leg
+Press example produced 105×8, 145×5, and 180×3; completion styling worked while
+the workout header remained at 0/19 working sets. Ramp-up records persist with
+the canonical workout session but are not read by working-set completion,
+volume, progression, or PR logic. A deliberately extreme ramp-up regression
+confirmed PR isolation; all tests, TypeScript, and the production build passed.
 - [x] Define one canonical RPE scale and explanation for Fitness OS.
 - [x] Add a lightweight reusable RPE legend/help component anywhere RPE is
   entered or interpreted, including strength workouts and running. Prefer a
@@ -1409,14 +1427,17 @@ do not chart the current partial week as historical adherence.
 Consistency section that keeps current-week completion distinct from a
 range-selectable complete-week adherence chart. The chart consumes canonical
 evaluated-week results and intentionally excludes the current partial week. The
-production build, current-week metrics, and no-complete-weeks state passed in
-the browser; keep the broader item open until a completed Sunday–Saturday week
-allows its bar and point details to be verified.
+production build and current-week metrics passed, followed by browser
+verification of the completed Aug 23–29 Sunday–Saturday week at 100%. The
+current partial week remains excluded from the historical chart. Current-week
+tiles use the same due-so-far boundary as Reflect, so future required and
+optional opportunities are not counted prematurely; the Sunday 0/0 state and
+production build were verified in the browser.
 
 - [ ] Improve strength trend visualization.
 - [ ] Improve running trend visualization.
 - [x] Improve recovery trend visualization.
-- [ ] Improve adherence trend visualization.
+- [x] Improve adherence trend visualization.
 - [x] Integrate Phase 4 body-composition views without duplicating them.
 - [x] Integrate Phase 5 nutrition/activity context where useful.
 - [ ] Add meaningful PR/history highlights.
@@ -1441,7 +1462,7 @@ Guide integration is the final stage of the evidence pipeline:
 3. Reflect interprets that evidence.
 4. Guide uses appropriate persistent patterns as context for recommendations.
 
-- [ ] Make Guide aware of the latest completed review.
+- [x] Make Guide aware of the latest completed review.
 - [ ] Use persistent multi-week patterns as context for future recommendations.
 - [x] Distinguish observations from actionable recommendations.
 - [x] Use nutrition/activity adherence as coaching context, not punishment.
@@ -1474,9 +1495,9 @@ regressions, TypeScript, and the production build passed.
 persisted weekly progression decision as optional completed-review context. The
 context is displayed separately from the daily recommendation and explicitly
 cannot override today's schedule or recovery guidance. Current no-review
-behavior remains unchanged and is covered by the production build; keep the
-roadmap item open until a completed weekly decision exists for browser
-verification.
+behavior remains unchanged. The production build and populated Today state were
+verified with the completed review for the week of 2026-08-23 displayed under
+Observations while the independent Recovery Day recommendation remained intact.
 
 **Guide persistent-pattern foundation:** Guide now evaluates persisted weekly
 progression decisions for a repeated final outcome. Only two or more consecutive

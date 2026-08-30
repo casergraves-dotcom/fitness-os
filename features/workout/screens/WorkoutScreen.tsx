@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import { useWorkoutSession } from "../hooks/useWorkoutSession";
+import WorkoutWarmupCard from "../components/WorkoutWarmupCard";
 
 import {
   useExerciseLibrary,
@@ -214,10 +215,19 @@ export default function WorkoutScreen() {
     cancelWorkout,
     dismissFinishedWorkout,
 
+    completeWarmup,
+    skipWarmup,
+    resetWarmup,
+
     toggleSet,
     updateSet,
     addSet,
     removeSet,
+
+    addRampUpSet,
+    updateRampUpSet,
+    toggleRampUpSet,
+    removeRampUpSet,
 
     addExercise,
     replaceExercise,
@@ -1469,6 +1479,14 @@ const exerciseVolume =
           }
         />
 
+        <WorkoutWarmupCard
+          completed={Boolean(session.warmupCompletedAt)}
+          skipped={Boolean(session.warmupSkippedAt)}
+          onComplete={completeWarmup}
+          onSkip={skipWarmup}
+          onReset={resetWarmup}
+        />
+
         {/* Exercise cards */}
 
         {session.exercises.map(
@@ -1539,6 +1557,18 @@ const exerciseVolume =
               }
               onRemoveSet={
                 removeSet
+              }
+              onAddRampUpSet={
+                addRampUpSet
+              }
+              onUpdateRampUpSet={
+                updateRampUpSet
+              }
+              onToggleRampUpSet={
+                toggleRampUpSet
+              }
+              onRemoveRampUpSet={
+                removeRampUpSet
               }
               onRemoveExercise={
                 removeExercise

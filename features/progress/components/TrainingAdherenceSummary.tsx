@@ -29,6 +29,7 @@ import {
 import {
   getProgressReviewAdherence,
 } from "../utils/getProgressReviewAdherence";
+import { getRequiredAdherenceToDate } from "../utils/getRequiredAdherenceToDate";
 import {
   getProgressReviewPeriod,
 } from "../utils/getProgressReviewPeriod";
@@ -118,6 +119,29 @@ export default function TrainingAdherenceSummary() {
   const adherence =
     weeklyProgress?.adherence ??
     null;
+
+  const today = new Date();
+  const currentDate = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0"),
+  ].join("-");
+
+  const requiredToDate =
+    adherence
+      ? getRequiredAdherenceToDate(adherence, currentDate)
+      : null;
+
+  const optionalToDate =
+    adherence
+      ? adherence.activities.filter(
+          (item) =>
+            !item.required &&
+            item.activity.optional === true &&
+            !item.activity.substitutionGroup &&
+            item.date <= currentDate
+        )
+      : [];
 
   const adherenceHistory = useMemo(() => {
     if (!loaded) {
@@ -217,28 +241,27 @@ export default function TrainingAdherenceSummary() {
         <Metric
           label="Adherence"
           value={
-            `${Math.round(
-              adherence.adherenceRate *
-              100
-            )}%`
+            requiredToDate && requiredToDate.requiredScheduled > 0
+              ? `${Math.round(requiredToDate.adherenceRate * 100)}%`
+              : "—"
           }
-          detail="Required work"
+          detail="Required work due so far"
         />
 
         <Metric
           label="Required"
           value={
-            `${adherence.requiredCompleted}/${adherence.requiredCount}`
+            `${requiredToDate?.requiredCompleted ?? 0}/${requiredToDate?.requiredScheduled ?? 0}`
           }
-          detail="Completed"
+          detail="Due so far"
         />
 
         <Metric
           label="Optional"
           value={
-            `${adherence.optionalCompleted}/${adherence.optionalCount}`
+            `${optionalToDate.filter((item) => item.completed).length}/${optionalToDate.length}`
           }
-          detail="Completed"
+          detail="Available so far"
         />
 
         <Metric
