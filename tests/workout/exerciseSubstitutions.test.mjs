@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { exerciseLibrary } from "../../features/workout/exerciseLibrary.ts";
 import { getExerciseSubstitutions } from "../../features/workout/exerciseSubstitutions.ts";
+import { getEnabledTrainingModalitiesForDate } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
 
 const gymContext = {
   environment: "Gym",
@@ -17,6 +18,22 @@ function substitutionsFor(exerciseId, context = gymContext, limit = 20) {
 function idsFor(exerciseId, context = gymContext) {
   return substitutionsFor(exerciseId, context).map((option) => option.exercise.id);
 }
+
+test("participation preferences are effective-dated and preserve earlier schedules", () => {
+  const history = [{
+    effectiveDate: "2026-08-27",
+    enabledModalities: ["Strength", "Run"],
+    createdAt: "2026-08-27T08:00:00.000Z",
+    updatedAt: "2026-08-27T08:00:00.000Z",
+  }];
+
+  assert.deepEqual(getEnabledTrainingModalitiesForDate(history, "2026-08-26"), [
+    "Strength", "Run", "Aerial",
+  ]);
+  assert.deepEqual(getEnabledTrainingModalitiesForDate(history, "2026-08-27"), [
+    "Strength", "Run",
+  ]);
+});
 
 test("every automatic substitution preserves a movement role and has complete metadata", () => {
   for (const source of exerciseLibrary) {

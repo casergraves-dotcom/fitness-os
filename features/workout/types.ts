@@ -586,6 +586,18 @@ export type TrainingActivityType =
   | "Recovery"
   | "Rest";
 
+export type TrainingModality =
+  | "Strength"
+  | "Run"
+  | "Aerial";
+
+export interface TrainingParticipationPreference {
+  effectiveDate: string;
+  enabledModalities: TrainingModality[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 // ============================================================
 // Cardio Intensity
@@ -1060,6 +1072,10 @@ export interface TrainingPlanState {
 
   // Local calendar date on which Week 0 begins.
   startDate: string;
+
+  // Effective-dated participation choices preserve historical schedule and
+  // adherence interpretation when a modality is enabled or disabled later.
+  trainingParticipationPreferences?: TrainingParticipationPreference[];
 
   // Calendar weeks that were intentionally repeated because
   // adherence was too low to advance.

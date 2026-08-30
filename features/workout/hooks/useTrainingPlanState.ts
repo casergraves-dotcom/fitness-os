@@ -35,6 +35,7 @@ import type {
   RunProgressionPrescription,
   RunProgressionRole,
   TrainingInterruptionReason,
+  TrainingModality,
   TrainingPlanState,
   TrainingWeek,
   WeeklyProgressionDecisionRecord,
@@ -52,6 +53,13 @@ import {
 
 const STORAGE_KEY =
   "fitness-os-training-plan-state";
+
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 
 // ============================================================
@@ -591,6 +599,33 @@ export function useTrainingPlanState() {
   // Public API
   // ----------------------------------------------------------
 
+  function setTrainingParticipationPreferences(
+    enabledModalities: TrainingModality[],
+    effectiveDate = formatLocalDate(new Date())
+  ) {
+    if (!state) return;
+
+    const now = new Date().toISOString();
+    const existing = state.trainingParticipationPreferences ?? [];
+    const priorForDate = existing.find(
+      (record) => record.effectiveDate === effectiveDate
+    );
+    const record = {
+      effectiveDate,
+      enabledModalities: [...enabledModalities],
+      createdAt: priorForDate?.createdAt ?? now,
+      updatedAt: now,
+    };
+
+    saveState({
+      ...state,
+      trainingParticipationPreferences: [
+        ...existing.filter((item) => item.effectiveDate !== effectiveDate),
+        record,
+      ].sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate)),
+    });
+  }
+
   return {
     state,
     loaded,
@@ -612,6 +647,8 @@ export function useTrainingPlanState() {
     rescheduleTrainingActivities,
 
     applyAdaptiveScheduleRecommendation,
+
+    setTrainingParticipationPreferences,
 
     clearTrainingPlan,
   };

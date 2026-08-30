@@ -1578,8 +1578,8 @@ Training preferences provide constraints and ranking signals to the existing
 training-plan and adaptive-scheduling systems. They do not directly replace
 scheduled activities or create a parallel schedule.
 
-- [ ] Add configurable training modalities/activities the user participates in.
-- [ ] Allow users to disable supported training modalities that do not apply to
+- [x] Add configurable training modalities/activities the user participates in.
+- [x] Allow users to disable supported training modalities that do not apply to
   them.
   - Example: a user who does not participate in aerials should not have aerial
     scheduled by the training plan.
@@ -1594,6 +1594,17 @@ scheduled activities or create a parallel schedule.
   system.
 - [ ] Preserve the distinction between persistent preferences, temporary
   schedule constraints, and recovery-driven modifications.
+
+**Training-participation checkpoint:** Settings now stores effective-dated
+Strength, Running, and Aerial participation preferences in the canonical
+training-plan state. The canonical schedule resolver applies the preference for
+the requested date, so Today, weekly schedules, adherence, progression, and
+schedule adjustments agree while support activities such as walking, mobility,
+recovery, and rest remain available. Changes apply from their effective date
+forward and do not rewrite earlier schedules or adherence. Disabling and
+re-enabling Aerial was verified in the browser, including preservation of an
+existing moved activity; 26 regressions, TypeScript, and the production build
+passed.
 
 ## 7.2 Coaching and Interaction Preferences
 

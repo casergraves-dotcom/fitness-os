@@ -15,6 +15,8 @@ import type {
 import {
   getTrainingWeekStart,
 } from "@/lib/date/trainingWeek";
+import { getEnabledTrainingModalitiesForDate } from "../logic/getTrainingParticipationPreferenceForDate";
+import type { TrainingModality } from "../types";
 
 
 // ============================================================
@@ -1220,10 +1222,32 @@ export function getTrainingScheduleForDate(
     return null;
   }
 
-  return applyActivityRescheduling(
+  const resolvedSchedule = applyActivityRescheduling(
     plan,
     state,
     targetDate,
     baseSchedule
   );
+
+  const enabledModalities = getEnabledTrainingModalitiesForDate(
+    state.trainingParticipationPreferences,
+    formatLocalDate(targetDate)
+  );
+  const participationModalities: TrainingModality[] = [
+    "Strength",
+    "Run",
+    "Aerial",
+  ];
+
+  return {
+    ...resolvedSchedule,
+    trainingDay: {
+      ...resolvedSchedule.trainingDay,
+      activities: resolvedSchedule.trainingDay.activities.filter(
+        (activity) =>
+          !participationModalities.includes(activity.type as TrainingModality) ||
+          enabledModalities.includes(activity.type as TrainingModality)
+      ),
+    },
+  };
 }
