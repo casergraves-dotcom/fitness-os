@@ -4,6 +4,7 @@ import test from "node:test";
 import { exerciseLibrary } from "../../features/workout/exerciseLibrary.ts";
 import { getExerciseSubstitutions } from "../../features/workout/exerciseSubstitutions.ts";
 import {
+  getAerialSessionsForDate,
   getEnabledTrainingModalitiesForDate,
   getPreferredTrainingDaysForDate,
 } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
@@ -30,6 +31,21 @@ test("participation preferences are effective-dated and preserve earlier schedul
       Strength: ["Monday", "Friday"],
       Run: ["Wednesday"],
     },
+    aerialSessions: [
+      {
+        id: "thursday-lyra",
+        day: "Thursday",
+        sessionType: "Class",
+        name: "Lyra",
+        constraint: "Fixed",
+      },
+      {
+        id: "saturday-open-studio",
+        day: "Saturday",
+        sessionType: "OpenStudio",
+        constraint: "Flexible",
+      },
+    ],
     createdAt: "2026-08-27T08:00:00.000Z",
     updatedAt: "2026-08-27T08:00:00.000Z",
   }];
@@ -47,6 +63,17 @@ test("participation preferences are effective-dated and preserve earlier schedul
   assert.deepEqual(
     getPreferredTrainingDaysForDate(history, "2026-08-27", "Strength"),
     ["Monday", "Friday"]
+  );
+  assert.deepEqual(getAerialSessionsForDate(history, "2026-08-26"), []);
+  assert.deepEqual(
+    getAerialSessionsForDate(history, "2026-08-27").map((session) => ({
+      day: session.day,
+      constraint: session.constraint,
+    })),
+    [
+      { day: "Thursday", constraint: "Fixed" },
+      { day: "Saturday", constraint: "Flexible" },
+    ]
   );
 });
 

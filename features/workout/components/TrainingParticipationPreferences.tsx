@@ -9,6 +9,7 @@ import {
   getTrainingParticipationPreferenceForDate,
 } from "../logic/getTrainingParticipationPreferenceForDate";
 import type {
+  AerialSessionPreference,
   TrainingDayOfWeek,
   TrainingModality,
 } from "../types";
@@ -56,14 +57,27 @@ export default function TrainingParticipationPreferences() {
       : {},
     [state, today]
   );
+  const currentAerialSessions = useMemo(
+    () => state
+      ? getTrainingParticipationPreferenceForDate(
+          state.trainingParticipationPreferences,
+          today
+        )?.aerialSessions ?? []
+      : [],
+    [state, today]
+  );
   const [selected, setSelected] = useState<TrainingModality[]>(current);
   const [preferredDays, setPreferredDays] = useState<PreferredDays>(
     currentPreferredDays
+  );
+  const [aerialSessions, setAerialSessions] = useState<AerialSessionPreference[]>(
+    currentAerialSessions
   );
   const [saved, setSaved] = useState(false);
 
   useEffect(() => setSelected(current), [current]);
   useEffect(() => setPreferredDays(currentPreferredDays), [currentPreferredDays]);
+  useEffect(() => setAerialSessions(currentAerialSessions), [currentAerialSessions]);
 
   if (!loaded) {
     return <div className="rounded-2xl border bg-white p-5 shadow-sm text-sm text-slate-500">Loading training preferences...</div>;
@@ -101,6 +115,49 @@ export default function TrainingParticipationPreferences() {
           : [...currentDays, day],
       };
     });
+  }
+
+  function addAerialSession() {
+    setSaved(false);
+    setPreferredDays((values) => ({
+      ...values,
+      Aerial: Array.from(new Set([...(values.Aerial ?? []), "Thursday"])),
+    }));
+    setAerialSessions((sessions) => [
+      ...sessions,
+      {
+        id: `aerial-${Date.now()}`,
+        day: "Thursday",
+        sessionType: "Class",
+        name: "",
+        constraint: "Fixed",
+      },
+    ]);
+  }
+
+  function updateAerialSession(
+    id: string,
+    changes: Partial<AerialSessionPreference>
+  ) {
+    setSaved(false);
+    setAerialSessions((sessions) =>
+      sessions.map((session) =>
+        session.id === id ? { ...session, ...changes } : session
+      )
+    );
+    if (changes.day) {
+      setPreferredDays((values) => ({
+        ...values,
+        Aerial: Array.from(new Set([...(values.Aerial ?? []), changes.day!])),
+      }));
+    }
+  }
+
+  function removeAerialSession(id: string) {
+    setSaved(false);
+    setAerialSessions((sessions) =>
+      sessions.filter((session) => session.id !== id)
+    );
   }
 
   return (
@@ -147,6 +204,64 @@ export default function TrainingParticipationPreferences() {
                       );
                     })}
                   </div>
+
+                  {option.value === "Aerial" && (
+                    <div className="mt-5 rounded-xl bg-slate-50 p-4">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-slate-900">
+                            Recurring aerial sessions
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            Distinguish fixed classes from flexible open-studio opportunities.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={addAerialSession}
+                          className="rounded-lg border border-blue-600 bg-white px-3 py-2 text-sm font-semibold text-blue-700"
+                        >
+                          + Add session
+                        </button>
+                      </div>
+
+                      {aerialSessions.length > 0 && (
+                        <div className="mt-4 space-y-3">
+                          {aerialSessions.map((session) => (
+                            <div key={session.id} className="grid gap-3 rounded-xl border border-slate-200 bg-white p-3 md:grid-cols-[0.8fr_1fr_1.2fr_1.4fr_auto]">
+                              <label className="text-xs font-semibold text-slate-500">
+                                Day
+                                <select value={session.day} onChange={(event) => updateAerialSession(session.id, { day: event.target.value as TrainingDayOfWeek })} className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-normal text-slate-900">
+                                  {DAYS.map((day) => <option key={day.value} value={day.value}>{day.label}</option>)}
+                                </select>
+                              </label>
+                              <label className="text-xs font-semibold text-slate-500">
+                                Session
+                                <select value={session.sessionType} onChange={(event) => updateAerialSession(session.id, { sessionType: event.target.value as AerialSessionPreference["sessionType"] })} className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-normal text-slate-900">
+                                  <option value="Class">Class</option>
+                                  <option value="OpenStudio">Open studio</option>
+                                </select>
+                              </label>
+                              <label className="text-xs font-semibold text-slate-500">
+                                Name or apparatus
+                                <input value={session.name ?? ""} onChange={(event) => updateAerialSession(session.id, { name: event.target.value })} placeholder="e.g. Lyra" className="mt-1 block w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900" />
+                              </label>
+                              <label className="text-xs font-semibold text-slate-500">
+                                Scheduling
+                                <select value={session.constraint} onChange={(event) => updateAerialSession(session.id, { constraint: event.target.value as AerialSessionPreference["constraint"] })} className="mt-1 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-normal text-slate-900">
+                                  <option value="Fixed">Fixed weekly commitment</option>
+                                  <option value="Flexible">Flexible opportunity</option>
+                                </select>
+                              </label>
+                              <button type="button" onClick={() => removeAerialSession(session.id)} className="self-end rounded-lg px-3 py-2 text-sm font-medium text-red-600">
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -159,7 +274,7 @@ export default function TrainingParticipationPreferences() {
       </p>
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
+        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays, aerialSessions); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved for {today}</span>}
       </div>
     </section>

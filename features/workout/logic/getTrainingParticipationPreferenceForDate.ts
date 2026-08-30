@@ -1,4 +1,5 @@
 import type {
+  AerialSessionPreference,
   TrainingDayOfWeek,
   TrainingModality,
   TrainingParticipationPreference,
@@ -36,4 +37,12 @@ export function getPreferredTrainingDaysForDate(
 ): TrainingDayOfWeek[] {
   return getTrainingParticipationPreferenceForDate(history, date)
     ?.preferredDaysByModality?.[modality] ?? [];
+}
+
+export function getAerialSessionsForDate(
+  history: TrainingParticipationPreference[] | undefined,
+  date: string
+): AerialSessionPreference[] {
+  return getTrainingParticipationPreferenceForDate(history, date)
+    ?.aerialSessions ?? [];
 }

@@ -591,6 +591,22 @@ export type TrainingModality =
   | "Run"
   | "Aerial";
 
+export type AerialSessionType =
+  | "Class"
+  | "OpenStudio";
+
+export type TrainingPreferenceConstraint =
+  | "Fixed"
+  | "Flexible";
+
+export interface AerialSessionPreference {
+  id: string;
+  day: TrainingDayOfWeek;
+  sessionType: AerialSessionType;
+  name?: string;
+  constraint: TrainingPreferenceConstraint;
+}
+
 export interface TrainingParticipationPreference {
   effectiveDate: string;
   enabledModalities: TrainingModality[];
@@ -600,6 +616,7 @@ export interface TrainingParticipationPreference {
   preferredDaysByModality?: Partial<
     Record<TrainingModality, TrainingDayOfWeek[]>
   >;
+  aerialSessions?: AerialSessionPreference[];
   createdAt: string;
   updatedAt: string;
 }

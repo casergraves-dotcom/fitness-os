@@ -1588,7 +1588,7 @@ scheduled activities or create a parallel schedule.
 - [ ] Add running availability/preferences when running is enabled.
 - [ ] Add available home/gym equipment and setup capabilities.
 - [ ] Add typical session-duration constraints.
-- [ ] Distinguish hard availability constraints from soft preferences.
+- [x] Distinguish hard availability constraints from soft preferences.
 - [ ] Allow preferences to influence training-plan construction, adaptive
   scheduling, and workout alternatives without creating a parallel planning
   system.
@@ -1614,6 +1614,15 @@ are explicitly soft planning signals: saving or refreshing preserves the
 selection, but does not rewrite the current schedule or disturb manual activity
 moves. Strength and Aerial selections, persistence, unchanged current-week
 scheduling, 26 regressions, TypeScript, and the production build were verified.
+
+**Recurring aerial-session checkpoint:** Aerial preferences now distinguish
+named recurring classes and open-studio sessions, including their weekday and
+whether each is a fixed weekly commitment or a flexible opportunity. Session
+details remain effective-dated with the participation record and add their days
+to Aerial's preferred-day signals without rewriting the current schedule.
+Tuesday Building Blocks and Thursday Lyra were verified as fixed commitments,
+with Saturday open studio verified as flexible; persistence, 26 regressions,
+TypeScript, and the production build passed.
 
 ## 7.2 Coaching and Interaction Preferences
 
