@@ -4,10 +4,27 @@ import type {
 import {
   getLifestyleGoalProgressPatterns,
 } from "../progress/utils/getLifestyleGoalProgressPatterns.ts";
+import {
+  getAdaptiveNutritionTargetFeedback,
+} from "../progress/utils/getAdaptiveNutritionTargetFeedback.ts";
 
 import type {
   CoachReviewContextSummary,
 } from "./types";
+
+function formatWeightRate(rate: number) {
+  const magnitude = Math.abs(rate).toFixed(1);
+
+  if (rate < -0.05) {
+    return `${magnitude} lb/week loss`;
+  }
+
+  if (rate > 0.05) {
+    return `${magnitude} lb/week gain`;
+  }
+
+  return "approximately stable weight";
+}
 
 export function getLifestyleContextObservation(
   evidence: LifestyleGoalProgressEvidence | null
@@ -19,6 +36,8 @@ export function getLifestyleContextObservation(
   const signals: string[] = [];
   const interpretation =
     getLifestyleGoalProgressPatterns(evidence);
+  const adaptiveNutrition =
+    getAdaptiveNutritionTargetFeedback(evidence);
 
   if (
     evidence.nutrition.protein.evidenceReady &&
@@ -68,8 +87,29 @@ export function getLifestyleContextObservation(
     };
   }
 
+  let nutritionFeedback =
+    "The available evidence describes consistency only; no calorie-target adjustment is recommended yet.";
+
+  if (adaptiveNutrition.status === "NoAdjustmentRecommended") {
+    nutritionFeedback =
+      `Average logged intake was ${Math.round(adaptiveNutrition.averageActualCalories)} cal/day. ` +
+      `Observed ${formatWeightRate(adaptiveNutrition.observedWeeklyWeightChangeLb)} is reasonably close to the expected ${formatWeightRate(adaptiveNutrition.expectedWeeklyWeightChangeLb)}, so no calorie-target adjustment is recommended.`;
+  }
+
+  if (adaptiveNutrition.status === "ReviewSuggested") {
+    const direction =
+      adaptiveNutrition.adjustmentDirection === "Increase"
+        ? "increase"
+        : "decrease";
+
+    nutritionFeedback =
+      `Average logged intake was ${Math.round(adaptiveNutrition.averageActualCalories)} cal/day. ` +
+      `Observed ${formatWeightRate(adaptiveNutrition.observedWeeklyWeightChangeLb)} differs from the expected ${formatWeightRate(adaptiveNutrition.expectedWeeklyWeightChangeLb)}. ` +
+      `If this pattern persists, review a roughly ${adaptiveNutrition.suggestedAdjustmentCalories} cal/day ${direction}; any target change requires confirmation.`;
+  }
+
   return {
     label: `${evidence.windowStartDate} to ${evidence.windowEndDate}`,
-    message: `Available 28-day context: ${signals.join("; ")}. This describes consistency only and does not prescribe compensatory exercise or a training-load change.`,
+    message: `Available 28-day context: ${signals.join("; ")}. ${nutritionFeedback} This does not prescribe compensatory exercise or a training-load change.`,
   };
 }

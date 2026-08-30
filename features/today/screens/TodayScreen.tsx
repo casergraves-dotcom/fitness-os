@@ -71,6 +71,7 @@ import {
 import WeeklyDecisionRecord from "../components/WeeklyDecisionRecord";
 
 import WeeklySchedule from "../components/WeeklySchedule";
+import ConfirmYesterdayCard from "../components/ConfirmYesterdayCard";
 
 import {
   DailyNutritionCard,
@@ -421,6 +422,8 @@ export default function TodayScreen() {
             recommendation
           }
         />
+
+        <ConfirmYesterdayCard />
 
 
         <TodaysTrainingCard

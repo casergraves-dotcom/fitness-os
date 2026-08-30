@@ -184,6 +184,9 @@ function isDailyNutritionRecord(
     isOptionalString(
       value.notes
     ) &&
+    isOptionalString(
+      value.confirmedAt
+    ) &&
     typeof value.createdAt ===
       "string" &&
     typeof value.updatedAt ===

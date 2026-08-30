@@ -34,6 +34,8 @@ export interface DailyNutritionRecord {
 
   notes?: string;
 
+  confirmedAt?: string;
+
   createdAt: string;
 
   updatedAt: string;

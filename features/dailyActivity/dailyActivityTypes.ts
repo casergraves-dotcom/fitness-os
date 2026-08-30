@@ -41,6 +41,8 @@ export interface DailyStepRecord {
 
   notes?: string;
 
+  confirmedAt?: string;
+
   createdAt: string;
 
   updatedAt: string;

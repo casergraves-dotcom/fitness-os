@@ -31,6 +31,8 @@ export interface DailyStepInput {
   steps: number;
 
   notes?: string;
+
+  confirmedAt?: string;
 }
 
 
@@ -245,6 +247,9 @@ export function useDailySteps() {
         notes:
           input.notes,
 
+        confirmedAt:
+          input.confirmedAt,
+
         updatedAt:
           now,
       };
@@ -284,6 +289,9 @@ export function useDailySteps() {
 
       notes:
         input.notes,
+
+      confirmedAt:
+        input.confirmedAt,
 
       createdAt:
         now,

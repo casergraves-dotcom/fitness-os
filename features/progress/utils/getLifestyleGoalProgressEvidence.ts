@@ -15,6 +15,7 @@ import type {
   DailyStepRecord,
   StepTarget,
 } from "@/features/dailyActivity/dailyActivityTypes";
+import { isDailyRecordSettled } from "@/features/dailyActivity/utils/isDailyRecordSettled";
 
 import type {
   BodyCompositionGoalProgress,
@@ -57,6 +58,10 @@ export interface CalorieGoalProgressEvidence
   adherencePercent?: number;
 
   averagePercentOfTarget?: number;
+
+  averageActualCalories?: number;
+
+  averageTargetCalories?: number;
 }
 
 
@@ -301,6 +306,23 @@ function getAveragePercent(
   );
 }
 
+function getAverageValue(
+  values: {
+    actual: number;
+    target: number;
+  }[],
+  key: "actual" | "target"
+) {
+  if (values.length === 0) {
+    return undefined;
+  }
+
+  return Math.round(
+    values.reduce((total, value) => total + value[key], 0) /
+      values.length
+  );
+}
+
 
 // ============================================================
 // Evidence
@@ -367,7 +389,12 @@ export function getLifestyleGoalProgressEvidence({
               candidate
             ) =>
               candidate.date ===
-              date
+                date &&
+              isDailyRecordSettled({
+                recordDate: candidate.date,
+                confirmedAt: candidate.confirmedAt,
+                currentDate: windowEndDate,
+              })
           ) ??
           null;
 
@@ -569,13 +596,18 @@ export function getLifestyleGoalProgressEvidence({
             date
           );
 
-        const record =
-          stepRecords.find(
+          const record =
+            stepRecords.find(
             (
               candidate
             ) =>
-              candidate.date ===
-              date
+                candidate.date ===
+                  date &&
+                isDailyRecordSettled({
+                  recordDate: candidate.date,
+                  confirmedAt: candidate.confirmedAt,
+                  currentDate: windowEndDate,
+                })
           ) ??
           null;
 
@@ -788,6 +820,18 @@ export function getLifestyleGoalProgressEvidence({
         averagePercentOfTarget:
           getAveragePercent(
             calorieValues
+          ),
+
+        averageActualCalories:
+          getAverageValue(
+            calorieValues,
+            "actual"
+          ),
+
+        averageTargetCalories:
+          getAverageValue(
+            calorieValues,
+            "target"
           ),
       },
     },

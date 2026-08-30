@@ -1095,6 +1095,25 @@ target range while separately showing average intake relative to target.
 Current-week nutrition adherence is surfaced in Weekly Progress with explicit
 data coverage so unlogged days are not silently treated as adherence failures.
 
+### Previous-Day Finalization
+
+- [x] Prompt on Today when yesterday contains provisional nutrition or step
+  totals.
+- [x] Allow the user to confirm the displayed values or correct and confirm them
+  together.
+- [x] Keep unconfirmed yesterday data out of Reflect lifestyle evidence.
+- [x] Preserve existing history by treating records older than the one-day
+  confirmation window as settled.
+
+**Finalization checkpoint:** Canonical daily nutrition and step records now
+support an optional confirmation timestamp. Today displays a compact Confirm
+Yesterday card with calories, protein, and steps when yesterday has unresolved
+data. Confirm and Edit continue through the existing canonical storage hooks;
+no parallel daily dataset was introduced. Reflect excludes unresolved yesterday
+records, while the grace rule leaves older and legacy history usable. The
+provisional/confirmed/grace regression, TypeScript, production build, populated
+Today state, Confirm action, and persistence after refresh passed.
+
 ## 5.2 Steps / General Activity — COMPLETE
 
 - [x] Add configurable daily step target.
@@ -1438,10 +1457,18 @@ Guide integration is the final stage of the evidence pipeline:
   is faster or slower than expected.
 - [x] Preserve explicit user control over meaningful goal, calorie, protein, and
   activity-target changes.
-- [ ] Once sufficient intake and body-weight history exists, compare observed
+- [x] Once sufficient intake and body-weight history exists, compare observed
   multi-week weight change against current intake before recommending a target
   adjustment; explain when the current intake is already producing the intended
   rate and no change is recommended.
+
+**Adaptive nutrition-feedback checkpoint:** Canonical 28-day evidence now
+includes average logged and target calories. After at least 21 days of adequate
+calorie and body-weight evidence, Guide explains when observed progress is close
+enough to the intended rate that no target change is recommended. A persistent
+mismatch produces only a conservative 100–250 calorie/day review suggestion;
+targets never change without confirmation. On-plan, slower, and faster trend
+regressions, TypeScript, and the production build passed.
 
 **Guide review-context foundation:** The Guide can now receive the latest
 persisted weekly progression decision as optional completed-review context. The

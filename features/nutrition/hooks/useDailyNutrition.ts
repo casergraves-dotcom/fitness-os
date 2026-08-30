@@ -33,6 +33,8 @@ export interface DailyNutritionInput {
   proteinGrams?: number;
 
   notes?: string;
+
+  confirmedAt?: string;
 }
 
 
@@ -250,6 +252,9 @@ export function useDailyNutrition() {
         notes:
           input.notes,
 
+        confirmedAt:
+          input.confirmedAt,
+
         updatedAt:
           now,
       };
@@ -289,6 +294,9 @@ export function useDailyNutrition() {
 
       notes:
         input.notes,
+
+      confirmedAt:
+        input.confirmedAt,
 
       createdAt:
         now,

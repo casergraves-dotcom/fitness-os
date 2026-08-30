@@ -3,6 +3,8 @@ import test from "node:test";
 
 import { calculateNutritionTargetRecommendation } from "../../features/nutrition/utils/calculateNutritionTargetRecommendation.ts";
 import { getLifestyleContextObservation } from "../../features/coach/getLifestyleContextObservation.ts";
+import { getAdaptiveNutritionTargetFeedback } from "../../features/progress/utils/getAdaptiveNutritionTargetFeedback.ts";
+import { isDailyRecordSettled } from "../../features/dailyActivity/utils/isDailyRecordSettled.ts";
 import { getRequiredAdherenceToDate } from "../../features/progress/utils/getRequiredAdherenceToDate.ts";
 import {
   getTrainingWeekStartDate,
@@ -14,6 +16,37 @@ const baseInput = {
   sex: "Male", ageYears: 31, heightInches: 67, weightLb: 196,
   activityLevel: "Moderate", goal: "Lose", goalRateLbPerWeek: 1,
 };
+
+function getReadyLifestyleEvidence(observedWeeklyWeightChangeLb) {
+  return {
+    windowStartDate: "2026-08-02", windowEndDate: "2026-08-29", windowDays: 28,
+    bodyComposition: {
+      status: "OnTrack", expectedWeeklyWeightChangeLb: -1,
+      observedWeeklyWeightChangeLb, observedTrendDays: 28, evidenceReady: true,
+    },
+    nutrition: {
+      protein: {
+        eligibleDays: 28, loggedDays: 24, coveragePercent: 86,
+        evidenceReady: true, daysMeetingTarget: 21,
+        adherencePercent: 88, averagePercentOfTarget: 100,
+      },
+      calories: {
+        eligibleDays: 28, loggedDays: 24, coveragePercent: 86,
+        evidenceReady: true, daysOnTarget: 20, daysBelowTarget: 2,
+        daysAboveTarget: 2, adherencePercent: 83, averagePercentOfTarget: 100,
+        averageActualCalories: 2200, averageTargetCalories: 2200,
+      },
+    },
+    activity: {
+      steps: {
+        eligibleDays: 28, loggedDays: 24, coveragePercent: 86,
+        evidenceReady: true, daysMeetingTarget: 20,
+        adherencePercent: 83, averagePercentOfTarget: 100,
+      },
+    },
+    lifestyleEvidenceReady: true,
+  };
+}
 
 test("lean mass refines the protein range without becoming the literal target", () => {
   const result = calculateNutritionTargetRecommendation({ ...baseInput, leanMassLb: 125 });
@@ -57,6 +90,45 @@ test("Guide explains missing evidence instead of suppressing sparse context", ()
   assert.match(observation?.message ?? "", /cannot yet determine why progress/i);
   assert.match(observation?.message ?? "", /Body-composition trend history/i);
   assert.match(observation?.message ?? "", /Calorie logging/i);
+});
+
+test("adaptive feedback keeps the calorie target when observed progress is close to plan", () => {
+  const evidence = getReadyLifestyleEvidence(-0.8);
+  const feedback = getAdaptiveNutritionTargetFeedback(evidence);
+  const observation = getLifestyleContextObservation(evidence);
+
+  assert.equal(feedback.status, "NoAdjustmentRecommended");
+  assert.match(observation?.message ?? "", /2200 cal\/day/i);
+  assert.match(observation?.message ?? "", /no calorie-target adjustment is recommended/i);
+});
+
+test("adaptive feedback suggests a conservative review when loss is slower than plan", () => {
+  const feedback = getAdaptiveNutritionTargetFeedback(getReadyLifestyleEvidence(-0.2));
+
+  assert.equal(feedback.status, "ReviewSuggested");
+  assert.equal(feedback.adjustmentDirection, "Decrease");
+  assert.equal(feedback.suggestedAdjustmentCalories, 250);
+});
+
+test("adaptive feedback suggests more intake when loss is materially faster than plan", () => {
+  const feedback = getAdaptiveNutritionTargetFeedback(getReadyLifestyleEvidence(-1.6));
+
+  assert.equal(feedback.status, "ReviewSuggested");
+  assert.equal(feedback.adjustmentDirection, "Increase");
+  assert.equal(feedback.suggestedAdjustmentCalories, 250);
+});
+
+test("yesterday remains provisional until confirmed while older history settles", () => {
+  assert.equal(isDailyRecordSettled({
+    recordDate: "2026-08-29", currentDate: "2026-08-30",
+  }), false);
+  assert.equal(isDailyRecordSettled({
+    recordDate: "2026-08-29", currentDate: "2026-08-30",
+    confirmedAt: "2026-08-30T15:00:00.000Z",
+  }), true);
+  assert.equal(isDailyRecordSettled({
+    recordDate: "2026-08-28", currentDate: "2026-08-30",
+  }), true);
 });
 
 test("week-so-far adherence excludes future required opportunities", () => {
