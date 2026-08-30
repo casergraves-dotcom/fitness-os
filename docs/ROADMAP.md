@@ -1026,17 +1026,17 @@ canonical reusable evidence; Phase 6 owns periodic interpretation and review.
 
 ### Nutrition Target Recommendation Follow-up
 
-- [ ] Add an optional `Calculate suggested targets` flow during nutrition-target
+- [x] Add an optional `Calculate suggested targets` flow during nutrition-target
   setup rather than requiring users to already know calorie and protein values.
-- [ ] Estimate maintenance calories from sex, age, height, weight, and activity
+- [x] Estimate maintenance calories from sex, age, height, weight, and activity
   level using a documented standard BMR/TDEE method.
-- [ ] Support lose, maintain, and gain goals with a user-reviewable goal rate or
+- [x] Support lose, maintain, and gain goals with a user-reviewable goal rate or
   calorie adjustment.
 - [ ] Recommend protein primarily from body weight, or recent lean-mass data when
   a suitable DEXA/body-composition record is available.
-- [ ] Present calculated values as recommendations that the user must confirm or
+- [x] Present calculated values as recommendations that the user must confirm or
   edit; never silently replace canonical nutrition targets.
-- [ ] Keep the existing effective-dated nutrition-target system canonical after
+- [x] Keep the existing effective-dated nutrition-target system canonical after
   the user accepts or edits a recommendation.
 
 **Calculator foundation:** A pure recommendation engine now uses the
@@ -1053,10 +1053,13 @@ optional calculator that keeps suggestions separate from saving and requires an
 explicit `Use These Suggestions` step before populating the canonical editable
 fields. It prefills the latest stored body weight, latest DEXA lean mass, and
 active goal direction/rate while leaving currently unstored profile inputs
-manual. A separate canonical metabolic-rate record now preserves dated measured
+manual. A separate canonical metabolic-rate record preserves dated measured
 or estimated RMR values, source provenance, test-time weight, and notes; it is
-included in cloud sync. Production builds and the available calculator states
-passed. RMR entry/history and calculator consumption remain the next step.
+included in cloud sync. Settings now provides RMR entry and history, and the
+calculator immediately prefers the latest stored RMR while retaining Mifflin-St
+Jeor as its explicit fallback. Entry, history, calculator consumption, deletion
+fallback, and the production build were verified. Protein remains open for a
+range-based cross-check that avoids an abrupt lean-mass-versus-body-weight result.
 
 **Completed outcome:** Fitness OS supports effective-dated calorie and protein
 targets with preserved target history. Daily nutrition remains intentionally

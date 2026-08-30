@@ -19,16 +19,17 @@ export interface NutritionTargetRecommendationInput {
   goalRateLbPerWeek?: number;
   calorieAdjustment?: number;
   leanMassLb?: number;
+  restingMetabolicRateCalories?: number;
 }
 
 export interface NutritionTargetRecommendation {
-  bmrCalories: number;
+  restingCalories: number;
   maintenanceCalories: number;
   calorieAdjustment: number;
   suggestedCalories: number;
   suggestedProteinGrams: number;
   proteinBasis: "LeanMass" | "BodyWeight";
-  method: "MifflinStJeor";
+  method: "MifflinStJeor" | "StoredRmr";
 }
 
 const ACTIVITY_MULTIPLIERS: Record<NutritionActivityLevel, number> = {
@@ -65,6 +66,10 @@ export function calculateNutritionTargetRecommendation(
     throw new Error("Lean mass must be greater than zero and no more than body weight.");
   }
 
+  if (input.restingMetabolicRateCalories !== undefined) {
+    requirePositive(input.restingMetabolicRateCalories, "Resting metabolic rate");
+  }
+
   if (
     input.goalRateLbPerWeek !== undefined &&
     (!Number.isFinite(input.goalRateLbPerWeek) || input.goalRateLbPerWeek < 0)
@@ -77,7 +82,8 @@ export function calculateNutritionTargetRecommendation(
   const sexConstant = input.sex === "Male" ? 5 : -161;
   const bmr =
     10 * weightKg + 6.25 * heightCm - 5 * input.ageYears + sexConstant;
-  const maintenance = bmr * ACTIVITY_MULTIPLIERS[input.activityLevel];
+  const restingCalories = input.restingMetabolicRateCalories ?? bmr;
+  const maintenance = restingCalories * ACTIVITY_MULTIPLIERS[input.activityLevel];
 
   const defaultRate = input.goal === "Maintain" ? 0 : 0.5;
   const goalRate = input.goalRateLbPerWeek ?? defaultRate;
@@ -95,12 +101,15 @@ export function calculateNutritionTargetRecommendation(
       : input.weightLb * (input.goal === "Lose" ? 0.9 : 0.8);
 
   return {
-    bmrCalories: roundTo(bmr, 10),
+    restingCalories: roundTo(restingCalories, 10),
     maintenanceCalories: roundTo(maintenance, 10),
     calorieAdjustment: roundTo(calorieAdjustment, 10),
     suggestedCalories: roundTo(maintenance + calorieAdjustment, 10),
     suggestedProteinGrams: roundTo(proteinGrams, 5),
     proteinBasis,
-    method: "MifflinStJeor",
+    method:
+      input.restingMetabolicRateCalories !== undefined
+        ? "StoredRmr"
+        : "MifflinStJeor",
   };
 }

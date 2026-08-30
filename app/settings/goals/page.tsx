@@ -5,6 +5,7 @@ import {
 } from "@/features/dailyActivity";
 
 import {
+  MetabolicRateRecords,
   NutritionTargets,
 } from "@/features/nutrition";
 
@@ -65,6 +66,7 @@ export default function GoalsSettingsPage() {
           </div>
 
           <NutritionTargets />
+          <MetabolicRateRecords />
         </section>
 
 

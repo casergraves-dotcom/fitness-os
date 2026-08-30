@@ -10,6 +10,10 @@ export {
   default as DailyNutritionCard,
 } from "./components/DailyNutritionCard";
 
+export {
+  default as MetabolicRateRecords,
+} from "./components/MetabolicRateRecords";
+
 // ============================================================
 // Hooks
 // ============================================================

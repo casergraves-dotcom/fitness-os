@@ -11,6 +11,9 @@ import type {
   MetabolicRateSource,
 } from "../nutritionTypes";
 
+const METABOLIC_RATE_RECORDS_CHANGED_EVENT =
+  "fitness-os:metabolic-rate-records-changed";
+
 export interface MetabolicRateRecordInput {
   measuredDate: string;
   restingCalories: number;
@@ -37,8 +40,17 @@ export function useMetabolicRateRecords() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setRecords(sortRecords(readMetabolicRateRecords()));
+    const refresh = () => {
+      setRecords(sortRecords(readMetabolicRateRecords()));
+    };
+
+    refresh();
     setLoaded(true);
+
+    window.addEventListener(METABOLIC_RATE_RECORDS_CHANGED_EVENT, refresh);
+    return () => {
+      window.removeEventListener(METABOLIC_RATE_RECORDS_CHANGED_EVENT, refresh);
+    };
   }, []);
 
   const latestRecord = useMemo(() => records[0] ?? null, [records]);
@@ -63,6 +75,7 @@ export function useMetabolicRateRecords() {
 
     writeMetabolicRateRecords(updated);
     setRecords(updated);
+    window.dispatchEvent(new Event(METABOLIC_RATE_RECORDS_CHANGED_EVENT));
     return record;
   }
 
@@ -70,6 +83,7 @@ export function useMetabolicRateRecords() {
     const updated = records.filter((record) => record.id !== id);
     writeMetabolicRateRecords(updated);
     setRecords(updated);
+    window.dispatchEvent(new Event(METABOLIC_RATE_RECORDS_CHANGED_EVENT));
   }
 
   return {

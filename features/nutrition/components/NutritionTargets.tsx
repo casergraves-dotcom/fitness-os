@@ -29,6 +29,9 @@ import {
 import {
   useDexaRecords,
 } from "../../progress/hooks/useDexaRecords";
+import {
+  useMetabolicRateRecords,
+} from "../hooks/useMetabolicRateRecords";
 
 
 // ============================================================
@@ -97,6 +100,8 @@ export default function NutritionTargets() {
   const { measurements } = useBodyMeasurements();
   const { records: dexaRecords } = useDexaRecords();
   const { currentGoal } = useBodyCompositionGoals();
+  const { latestRecord: latestMetabolicRateRecord } =
+    useMetabolicRateRecords();
 
   const [
     editing,
@@ -228,6 +233,8 @@ export default function NutritionTargets() {
         goalRateLbPerWeek:
           calculatorGoal === "Maintain" ? 0 : Number(calculatorGoalRate),
         leanMassLb: parseOptionalNumber(calculatorLeanMass),
+        restingMetabolicRateCalories:
+          latestMetabolicRateRecord?.restingCalories,
       });
 
       setCalculatorResult(result);
@@ -452,6 +459,9 @@ export default function NutritionTargets() {
                   {currentGoal
                     ? "Goal direction and rate are prefilled from your active body-composition goal."
                     : "No active body-composition goal was available."}
+                  {latestMetabolicRateRecord
+                    ? ` Maintenance will use your ${latestMetabolicRateRecord.measuredDate} RMR record.`
+                    : " No stored RMR was available, so maintenance will use the BMR formula."}
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <CalculatorSelect
@@ -517,7 +527,10 @@ export default function NutritionTargets() {
                       <CalculatorMetric label="Protein" value={`${calculatorResult.suggestedProteinGrams} g`} />
                     </div>
                     <p className="mt-3 text-xs leading-5 text-slate-500">
-                      Formula estimate using Mifflin–St Jeor. Protein is based on {calculatorResult.proteinBasis === "LeanMass" ? "the entered lean mass" : "body weight"}. These suggestions have not changed your targets.
+                      {calculatorResult.method === "StoredRmr"
+                        ? "Maintenance starts from your latest stored RMR. "
+                        : "Maintenance starts from a Mifflin–St Jeor estimate. "}
+                      Protein is based on {calculatorResult.proteinBasis === "LeanMass" ? "the entered lean mass" : "body weight"}. These suggestions have not changed your targets.
                     </p>
                     <button
                       type="button"
