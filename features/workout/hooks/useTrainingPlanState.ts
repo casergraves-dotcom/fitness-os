@@ -34,6 +34,7 @@ import {
 import type {
   RunProgressionPrescription,
   RunProgressionRole,
+  TrainingDayOfWeek,
   TrainingInterruptionReason,
   TrainingModality,
   TrainingPlanState,
@@ -601,6 +602,9 @@ export function useTrainingPlanState() {
 
   function setTrainingParticipationPreferences(
     enabledModalities: TrainingModality[],
+    preferredDaysByModality: Partial<
+      Record<TrainingModality, TrainingDayOfWeek[]>
+    > = {},
     effectiveDate = formatLocalDate(new Date())
   ) {
     if (!state) return;
@@ -613,6 +617,7 @@ export function useTrainingPlanState() {
     const record = {
       effectiveDate,
       enabledModalities: [...enabledModalities],
+      preferredDaysByModality,
       createdAt: priorForDate?.createdAt ?? now,
       updatedAt: now,
     };

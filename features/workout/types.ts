@@ -594,6 +594,12 @@ export type TrainingModality =
 export interface TrainingParticipationPreference {
   effectiveDate: string;
   enabledModalities: TrainingModality[];
+  // Soft planning signals. These do not move an existing scheduled activity;
+  // schedule construction and adaptive planning may use them when choosing
+  // among otherwise valid days.
+  preferredDaysByModality?: Partial<
+    Record<TrainingModality, TrainingDayOfWeek[]>
+  >;
   createdAt: string;
   updatedAt: string;
 }

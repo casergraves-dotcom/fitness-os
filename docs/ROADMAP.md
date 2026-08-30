@@ -1583,8 +1583,8 @@ scheduled activities or create a parallel schedule.
   them.
   - Example: a user who does not participate in aerials should not have aerial
     scheduled by the training plan.
-- [ ] Add preferred training days for enabled modalities.
-- [ ] Add preferred aerial days when aerial is enabled.
+- [x] Add preferred training days for enabled modalities.
+- [x] Add preferred aerial days when aerial is enabled.
 - [ ] Add running availability/preferences when running is enabled.
 - [ ] Add available home/gym equipment and setup capabilities.
 - [ ] Add typical session-duration constraints.
@@ -1605,6 +1605,15 @@ forward and do not rewrite earlier schedules or adherence. Disabling and
 re-enabling Aerial was verified in the browser, including preservation of an
 existing moved activity; 26 regressions, TypeScript, and the production build
 passed.
+
+**Preferred training-day checkpoint:** Each enabled modality now accepts
+optional Sunday-through-Saturday preferred days in Training Preferences.
+Selections are stored on the same effective-dated participation record, so
+earlier preferences and history retain their original interpretation. These
+are explicitly soft planning signals: saving or refreshing preserves the
+selection, but does not rewrite the current schedule or disturb manual activity
+moves. Strength and Aerial selections, persistence, unchanged current-week
+scheduling, 26 regressions, TypeScript, and the production build were verified.
 
 ## 7.2 Coaching and Interaction Preferences
 

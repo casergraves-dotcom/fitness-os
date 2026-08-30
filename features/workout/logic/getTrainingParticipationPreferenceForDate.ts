@@ -1,4 +1,5 @@
 import type {
+  TrainingDayOfWeek,
   TrainingModality,
   TrainingParticipationPreference,
 } from "../types";
@@ -26,4 +27,13 @@ export function getEnabledTrainingModalitiesForDate(
     getTrainingParticipationPreferenceForDate(history, date)?.enabledModalities ??
     DEFAULT_TRAINING_MODALITIES
   );
+}
+
+export function getPreferredTrainingDaysForDate(
+  history: TrainingParticipationPreference[] | undefined,
+  date: string,
+  modality: TrainingModality
+): TrainingDayOfWeek[] {
+  return getTrainingParticipationPreferenceForDate(history, date)
+    ?.preferredDaysByModality?.[modality] ?? [];
 }

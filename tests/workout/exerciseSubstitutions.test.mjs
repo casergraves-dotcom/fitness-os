@@ -3,7 +3,10 @@ import test from "node:test";
 
 import { exerciseLibrary } from "../../features/workout/exerciseLibrary.ts";
 import { getExerciseSubstitutions } from "../../features/workout/exerciseSubstitutions.ts";
-import { getEnabledTrainingModalitiesForDate } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
+import {
+  getEnabledTrainingModalitiesForDate,
+  getPreferredTrainingDaysForDate,
+} from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
 
 const gymContext = {
   environment: "Gym",
@@ -23,6 +26,10 @@ test("participation preferences are effective-dated and preserve earlier schedul
   const history = [{
     effectiveDate: "2026-08-27",
     enabledModalities: ["Strength", "Run"],
+    preferredDaysByModality: {
+      Strength: ["Monday", "Friday"],
+      Run: ["Wednesday"],
+    },
     createdAt: "2026-08-27T08:00:00.000Z",
     updatedAt: "2026-08-27T08:00:00.000Z",
   }];
@@ -33,6 +40,14 @@ test("participation preferences are effective-dated and preserve earlier schedul
   assert.deepEqual(getEnabledTrainingModalitiesForDate(history, "2026-08-27"), [
     "Strength", "Run",
   ]);
+  assert.deepEqual(
+    getPreferredTrainingDaysForDate(history, "2026-08-26", "Strength"),
+    []
+  );
+  assert.deepEqual(
+    getPreferredTrainingDaysForDate(history, "2026-08-27", "Strength"),
+    ["Monday", "Friday"]
+  );
 });
 
 test("every automatic substitution preserves a movement role and has complete metadata", () => {
