@@ -524,13 +524,17 @@ export default function NutritionTargets() {
                     <div className="mt-3 grid gap-3 sm:grid-cols-3">
                       <CalculatorMetric label="Maintenance" value={`${calculatorResult.maintenanceCalories} cal`} />
                       <CalculatorMetric label="Calories" value={`${calculatorResult.suggestedCalories} cal`} />
-                      <CalculatorMetric label="Protein" value={`${calculatorResult.suggestedProteinGrams} g`} />
+                      <CalculatorMetric
+                        label="Protein"
+                        value={`${calculatorResult.suggestedProteinGrams} g`}
+                        detail={`${calculatorResult.proteinMinimumGrams}–${calculatorResult.proteinMaximumGrams} g useful range`}
+                      />
                     </div>
                     <p className="mt-3 text-xs leading-5 text-slate-500">
                       {calculatorResult.method === "StoredRmr"
                         ? "Maintenance starts from your latest stored RMR. "
                         : "Maintenance starts from a Mifflin–St Jeor estimate. "}
-                      Protein is based on {calculatorResult.proteinBasis === "LeanMass" ? "the entered lean mass" : "body weight"}. These suggestions have not changed your targets.
+                      Protein uses {calculatorResult.proteinBasis === "LeanMass" ? "lean mass refined by a body-weight cross-check" : "a body-weight range"}; the displayed default is a practical starting point within that range. These suggestions have not changed your targets.
                     </p>
                     <button
                       type="button"
@@ -954,14 +958,17 @@ function CalculatorSelect({
 function CalculatorMetric({
   label,
   value,
+  detail,
 }: {
   label: string;
   value: string;
+  detail?: string;
 }) {
   return (
     <div className="rounded-xl bg-slate-50 p-3">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
       <p className="mt-1 text-lg font-bold text-slate-900">{value}</p>
+      {detail && <p className="mt-1 text-xs text-slate-500">{detail}</p>}
     </div>
   );
 }

@@ -1024,7 +1024,7 @@ canonical reusable evidence; Phase 6 owns periodic interpretation and review.
 - [x] Track weekly calorie adherence where data is available.
 - [x] Distinguish target values from actual/adherence data.
 
-### Nutrition Target Recommendation Follow-up
+### Nutrition Target Recommendation Follow-up — COMPLETE
 
 - [x] Add an optional `Calculate suggested targets` flow during nutrition-target
   setup rather than requiring users to already know calorie and protein values.
@@ -1032,7 +1032,7 @@ canonical reusable evidence; Phase 6 owns periodic interpretation and review.
   level using a documented standard BMR/TDEE method.
 - [x] Support lose, maintain, and gain goals with a user-reviewable goal rate or
   calorie adjustment.
-- [ ] Recommend protein primarily from body weight, or recent lean-mass data when
+- [x] Recommend protein primarily from body weight, or recent lean-mass data when
   a suitable DEXA/body-composition record is available.
 - [x] Present calculated values as recommendations that the user must confirm or
   edit; never silently replace canonical nutrition targets.
@@ -1058,8 +1058,17 @@ or estimated RMR values, source provenance, test-time weight, and notes; it is
 included in cloud sync. Settings now provides RMR entry and history, and the
 calculator immediately prefers the latest stored RMR while retaining Mifflin-St
 Jeor as its explicit fallback. Entry, history, calculator consumption, deletion
-fallback, and the production build were verified. Protein remains open for a
+fallback, and the production build were verified. Protein recommendations use a
 range-based cross-check that avoids an abrupt lean-mass-versus-body-weight result.
+
+**Protein recommendation checkpoint:** Protein now uses a bounded useful range
+with one editable starting recommendation rather than treating lean mass as the
+literal gram target. Recent lean mass refines the range and body weight
+cross-checks it; body weight supplies the range when lean mass is unavailable.
+For the verified 196 lb body-weight and 125 lb lean-mass example, the calculator
+shows a 135–175 g useful range with a 150 g starting recommendation. Accepting
+the suggestion still populates only the editable canonical target field. The
+calculation tests and production build passed.
 
 **Completed outcome:** Fitness OS supports effective-dated calorie and protein
 targets with preserved target history. Daily nutrition remains intentionally

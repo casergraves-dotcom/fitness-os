@@ -28,6 +28,8 @@ export interface NutritionTargetRecommendation {
   calorieAdjustment: number;
   suggestedCalories: number;
   suggestedProteinGrams: number;
+  proteinMinimumGrams: number;
+  proteinMaximumGrams: number;
   proteinBasis: "LeanMass" | "BodyWeight";
   method: "MifflinStJeor" | "StoredRmr";
 }
@@ -48,6 +50,46 @@ function requirePositive(value: number, label: string) {
   if (!Number.isFinite(value) || value <= 0) {
     throw new Error(`${label} must be greater than zero.`);
   }
+}
+
+function getProteinRecommendation(
+  weightLb: number,
+  leanMassLb: number | undefined,
+  goal: NutritionGoalDirection
+) {
+  const bodyWeightMinimum = weightLb * 0.7;
+  const bodyWeightMaximum = weightLb * 0.9;
+
+  if (leanMassLb === undefined) {
+    return {
+      minimum: bodyWeightMinimum,
+      maximum: bodyWeightMaximum,
+      suggested: weightLb * (goal === "Lose" ? 0.8 : 0.75),
+      basis: "BodyWeight" as const,
+    };
+  }
+
+  const leanMassMinimum = leanMassLb;
+  const leanMassMaximum = leanMassLb * 1.4;
+  const rangesOverlap =
+    bodyWeightMinimum <= leanMassMaximum &&
+    leanMassMinimum <= bodyWeightMaximum;
+  const minimum = rangesOverlap
+    ? Math.max(leanMassMinimum, bodyWeightMinimum)
+    : leanMassMinimum;
+  const maximum = rangesOverlap
+    ? Math.min(leanMassMaximum, bodyWeightMaximum)
+    : leanMassMaximum;
+
+  return {
+    minimum,
+    maximum,
+    suggested: Math.min(
+      maximum,
+      Math.max(minimum, leanMassLb * (goal === "Lose" ? 1.2 : 1.1))
+    ),
+    basis: "LeanMass" as const,
+  };
 }
 
 export function calculateNutritionTargetRecommendation(
@@ -93,20 +135,21 @@ export function calculateNutritionTargetRecommendation(
       : (goalRate * 3500) / 7 * (input.goal === "Lose" ? -1 : 1);
   const calorieAdjustment = input.calorieAdjustment ?? formulaAdjustment;
 
-  const proteinBasis =
-    input.leanMassLb !== undefined ? "LeanMass" : "BodyWeight";
-  const proteinGrams =
-    input.leanMassLb !== undefined
-      ? input.leanMassLb
-      : input.weightLb * (input.goal === "Lose" ? 0.9 : 0.8);
+  const protein = getProteinRecommendation(
+    input.weightLb,
+    input.leanMassLb,
+    input.goal
+  );
 
   return {
     restingCalories: roundTo(restingCalories, 10),
     maintenanceCalories: roundTo(maintenance, 10),
     calorieAdjustment: roundTo(calorieAdjustment, 10),
     suggestedCalories: roundTo(maintenance + calorieAdjustment, 10),
-    suggestedProteinGrams: roundTo(proteinGrams, 5),
-    proteinBasis,
+    suggestedProteinGrams: roundTo(protein.suggested, 5),
+    proteinMinimumGrams: roundTo(protein.minimum, 5),
+    proteinMaximumGrams: roundTo(protein.maximum, 5),
+    proteinBasis: protein.basis,
     method:
       input.restingMetabolicRateCalories !== undefined
         ? "StoredRmr"
