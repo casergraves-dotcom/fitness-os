@@ -30,6 +30,9 @@ import {
 import type {
   AdaptiveWeeklyScheduleRecommendation,
 } from "@/features/workout/logic/getAdaptiveWeeklyScheduleRecommendation";
+import {
+  getTrainingWeekStart,
+} from "@/lib/date/trainingWeek";
 
 
 // ============================================================
@@ -88,23 +91,10 @@ interface WeeklyScheduleProps {
 // Date Helpers
 // ============================================================
 
-function getMonday(
+function getCanonicalWeekStart(
   date: Date
 ) {
-  const day =
-    date.getDay();
-
-  const daysSinceMonday =
-    day === 0
-      ? 6
-      : day - 1;
-
-  return new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate() -
-      daysSinceMonday
-  );
+  return getTrainingWeekStart(date);
 }
 
 
@@ -393,7 +383,7 @@ export default function WeeklySchedule({
   // ----------------------------------------------------------
 
   const weekStart =
-    getMonday(
+    getCanonicalWeekStart(
       currentDate
     );
 

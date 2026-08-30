@@ -200,6 +200,12 @@ control center driven entirely by real Fitness OS state.
 real, current Fitness OS state. Protein and step goals return in Phase 5 once
 their data sources are real.
 
+**Today hierarchy cleanup:** The separate Today's Mission card was removed after
+Today's Training became the canonical schedule, status, and execution surface.
+Today's Recommendation retains prioritization and explanation, while daily
+nutrition and activity targets remain in their own tracking cards. The underlying
+mission derivation remains available without duplicating the visible schedule.
+
 ## 1.2 Real Weekly Progress — COMPLETE
 
 - [x] Replace static weekly progress values.
@@ -1204,6 +1210,17 @@ focused, while longer-term body-composition, strength, running, recovery,
 nutrition, and daily-activity evidence is reserved for Longer-Term Review or
 kept under Still Learning until it is sufficient.
 
+**Training-week boundary correction:** Fitness OS now uses Sunday–Saturday as
+the canonical training week so Sunday can serve as recovery, planning, and the
+start of the upcoming schedule. Active-week Reflect is labeled `Week So Far`,
+counts only required opportunities due to date, and keeps the next-week decision
+pending until the boundary closes. Automatic progression continues to persist
+only completed-week decisions. Existing dated activity history remains unchanged;
+legacy evaluated-week identifiers receive Sunday aliases to prevent duplicate
+evaluation, while finalized decision records remain preserved as originally
+recorded. The migration, schedule ordering, history retention, current-week
+presentation, production build, and boundary regression tests passed.
+
 ## 6.2 Longer-Term Progress Review
 
 Longer-term reviews should consume canonical Phase 4 progress analysis and
@@ -1374,7 +1391,7 @@ Consistency section that keeps current-week completion distinct from a
 range-selectable complete-week adherence chart. The chart consumes canonical
 evaluated-week results and intentionally excludes the current partial week. The
 production build, current-week metrics, and no-complete-weeks state passed in
-the browser; keep the broader item open until a completed Monday–Sunday week
+the browser; keep the broader item open until a completed Sunday–Saturday week
 allows its bar and point details to be verified.
 
 - [ ] Improve strength trend visualization.
@@ -1417,7 +1434,7 @@ Guide integration is the final stage of the evidence pipeline:
 - [x] Require training/recovery evidence before body-composition trends influence
   training-load decisions.
 - [x] Surface persistent trends only when evidence is sufficient.
-- [ ] Explain when available evidence is insufficient to determine why progress
+- [x] Explain when available evidence is insufficient to determine why progress
   is faster or slower than expected.
 - [x] Preserve explicit user control over meaningful goal, calorie, protein, and
   activity-target changes.
@@ -1459,6 +1476,12 @@ selection and explicitly cannot prescribe compensatory exercise or a
 training-load increase. The production build and insufficient-evidence Today
 state passed; keep populated observation verification pending until enough
 nutrition/activity history exists.
+
+When the canonical evidence model is not ready, Guide now surfaces a neutral
+`Still learning` observation naming the missing body-composition, nutrition, or
+activity coverage instead of silently suppressing context. The observation is
+explanatory only and cannot change training or targets. The sparse-evidence state,
+regression test, and production build passed.
 
 **Guide decision-boundary audit:** Daily recommendation selection receives
 today's schedule, completion state, and recovery inputs—not raw body-composition

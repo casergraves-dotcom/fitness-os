@@ -24,6 +24,12 @@ import {
 import {
   overrideWeeklyProgressionDecision,
 } from "../logic/overrideWeeklyProgressionDecision";
+import {
+  normalizeTrainingPlanWeekStarts,
+} from "../logic/normalizeTrainingPlanWeekStarts";
+import {
+  normalizeLegacyTrainingWeekStartDate,
+} from "@/lib/date/trainingWeek";
 
 import type {
   RunProgressionPrescription,
@@ -112,7 +118,11 @@ export function useTrainingPlanState() {
             parsed
           )
         ) {
-          setState(parsed);
+          const normalized = normalizeTrainingPlanWeekStarts(parsed);
+          setState(normalized);
+          if (JSON.stringify(normalized) !== JSON.stringify(parsed)) {
+            setFitnessOsStorage(STORAGE_KEY, JSON.stringify(normalized));
+          }
         } else {
           localStorage.removeItem(
             STORAGE_KEY
@@ -155,7 +165,7 @@ export function useTrainingPlanState() {
   ) {
     saveState({
       trainingPlanId,
-      startDate,
+      startDate: normalizeLegacyTrainingWeekStartDate(startDate),
 
       heldWeekStartDates: [],
 
@@ -284,7 +294,7 @@ export function useTrainingPlanState() {
     // The existing caller supplies repeatedWeekStartDate when
     // holding and nextWeekStartDate for normal progression.
     //
-    // They represent the same following calendar Monday, so
+    // They represent the same following calendar Sunday, so
     // normalize them before passing the transition to the pure
     // progression engine.
     const followingWeekStartDate =

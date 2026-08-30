@@ -841,7 +841,7 @@ export type WeeklyProgressionDecisionStatus =
 
 
 export interface WeeklyProgressionDecisionRecord {
-  // Monday of the calendar week that was evaluated.
+  // Start date of the calendar week that was evaluated.
   weekStartDate: string;
 
   // Program week type whose progression was evaluated.
@@ -909,7 +909,7 @@ export interface TrainingInterruption {
   // 6 = Transition
   returnRampWeek: number;
 
-  // Monday of the calendar week in which the temporary
+  // Start date of the calendar week in which the temporary
   // return-to-training ramp begins.
   returnWeekStartDate: string;
 }
@@ -1076,7 +1076,7 @@ export interface TrainingPlanState {
   // Calendar weeks whose progression decision has already
   // been evaluated.
   //
-  // Each value is the Monday start date of the week that was
+  // Each value is the canonical start date of the week that was
   // evaluated.
   //
   // This prevents the same completed week from being

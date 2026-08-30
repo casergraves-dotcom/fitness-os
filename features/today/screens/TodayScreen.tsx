@@ -21,7 +21,6 @@ import {
 } from "@/features/progress/hooks/useLifestyleGoalProgressEvidence";
 
 import {
-  MissionCard,
   TodayTargets,
   WeeklyProgress,
 } from "@/features/today";
@@ -509,22 +508,6 @@ export default function TodayScreen() {
 
           onResetPlan={
             clearTrainingPlan
-          }
-        />
-
-
-        <MissionCard
-          trainingActivities={
-            schedule?.trainingDay.activities ??
-            []
-          }
-
-          trainingDate={
-            schedule?.date
-          }
-
-          isActivityCompleted={
-            isActivityCompleted
           }
         />
 

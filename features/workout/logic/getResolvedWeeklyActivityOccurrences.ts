@@ -253,7 +253,7 @@ export function getResolvedWeeklyActivityOccurrences(
 
 
   // ----------------------------------------------------------
-  // Resolve Original Monday-Sunday Occurrences
+  // Resolve Original Sunday-Saturday Occurrences
   // ----------------------------------------------------------
   //
   // We intentionally resolve each ORIGINAL date with activity

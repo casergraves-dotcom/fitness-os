@@ -26,6 +26,9 @@ import {
 import type {
   OptionalScheduleConflictResolution,
 } from "./classifyOptionalScheduleConflict";
+import {
+  getTrainingWeekStart,
+} from "@/lib/date/trainingWeek";
 
 
 // ============================================================
@@ -168,30 +171,10 @@ function parseLocalDate(
 }
 
 
-function getMonday(
+function getCanonicalWeekStart(
   date: Date
 ) {
-  const result =
-    new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-  const day =
-    result.getDay();
-
-  const daysSinceMonday =
-    day === 0
-      ? 6
-      : day - 1;
-
-  result.setDate(
-    result.getDate() -
-      daysSinceMonday
-  );
-
-  return result;
+  return getTrainingWeekStart(date);
 }
 
 
@@ -336,7 +319,7 @@ function getRelevantWeekStarts(
   // calendar weeks as well.
   //
   // This prevents a rearrangement from appearing safe only
-  // because a conflict falls just outside the Monday-Sunday
+  // because a conflict falls just outside the Sunday-Saturday
   // planning window. For example, moving a full-body strength
   // session to Sunday must still be evaluated against the
   // following Monday's prescribed strength session.
@@ -391,7 +374,7 @@ function getRelevantWeekStarts(
 
 
     const destinationMonday =
-      getMonday(
+      getCanonicalWeekStart(
         destination
       );
 

@@ -68,6 +68,9 @@ import {
 import {
   getResolvedWeeklyActivityOccurrences,
 } from "@/features/workout/logic/getResolvedWeeklyActivityOccurrences";
+import {
+  getTrainingWeekStart,
+} from "@/lib/date/trainingWeek";
 
 
 // ============================================================
@@ -108,31 +111,6 @@ function startOfLocalDay(
     date.getMonth(),
     date.getDate()
   );
-}
-
-
-function getMonday(
-  date: Date
-) {
-  const result =
-    startOfLocalDay(
-      date
-    );
-
-  const day =
-    result.getDay();
-
-  const daysSinceMonday =
-    day === 0
-      ? 6
-      : day - 1;
-
-  result.setDate(
-    result.getDate() -
-      daysSinceMonday
-  );
-
-  return result;
 }
 
 
@@ -254,7 +232,7 @@ export function getCurrentWeeklyProgress(
   }
 
   const weekStart =
-    getMonday(
+    getTrainingWeekStart(
       date
     );
 

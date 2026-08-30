@@ -22,7 +22,7 @@ export const STEADY_STATE_WEEKS_BEFORE_DELOAD =
 export interface ApplyTrainingProgressionInput {
   state: TrainingPlanState;
 
-  // Monday of the calendar week that just ended.
+  // Start date of the calendar week that just ended.
   evaluatedWeekStartDate: string;
 
   // Whether the adherence/progression engine decided that
@@ -35,7 +35,7 @@ export interface ApplyTrainingProgressionInput {
   // Full template for the week that was just completed.
   completedWeek?: TrainingWeek;
 
-  // Monday of the following calendar week.
+  // Sunday start of the following calendar week.
   nextWeekStartDate?: string;
 
   // Role-specific running prescriptions produced from runs

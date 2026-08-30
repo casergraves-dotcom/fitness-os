@@ -12,6 +12,9 @@ import type {
   TrainingWeek,
   TrainingWeekType,
 } from "../types";
+import {
+  getTrainingWeekStart,
+} from "@/lib/date/trainingWeek";
 
 
 // ============================================================
@@ -209,30 +212,10 @@ function formatLocalDate(
 // Get Monday
 // ------------------------------------------------------------
 
-function getMonday(
+function getCanonicalWeekStart(
   date: Date
 ) {
-  const result =
-    new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-  const day =
-    result.getDay();
-
-  const daysSinceMonday =
-    day === 0
-      ? 6
-      : day - 1;
-
-  result.setDate(
-    result.getDate() -
-      daysSinceMonday
-  );
-
-  return result;
+  return getTrainingWeekStart(date);
 }
 
 
@@ -350,12 +333,12 @@ function getReturnToTrainingWeek(
 
 
   const targetWeekStart =
-    getMonday(
+    getCanonicalWeekStart(
       targetDate
     );
 
   const returnWeekStartMonday =
-    getMonday(
+    getCanonicalWeekStart(
       returnWeekStart
     );
 
@@ -407,7 +390,7 @@ function getReturnToTrainingWeek(
 
         const heldDayNumber =
           getCalendarDayNumber(
-            getMonday(
+            getCanonicalWeekStart(
               heldDate
             )
           );
@@ -452,7 +435,7 @@ function isDeloadWeek(
   targetDate: Date
 ) {
   const weekStart =
-    getMonday(
+    getCanonicalWeekStart(
       targetDate
     );
 
@@ -746,7 +729,7 @@ function getBaseTrainingScheduleForDate(
   // Current Calendar Week Is Repeated
   // ----------------------------------------------------------
   //
-  // heldWeekStartDates stores the Monday of each calendar week
+  // heldWeekStartDates stores the Sunday of each calendar week
   // that was inserted because the previous program week was
   // held.
   //
@@ -756,7 +739,7 @@ function getBaseTrainingScheduleForDate(
   // past.
 
   const targetWeekStart =
-    getMonday(
+    getCanonicalWeekStart(
       targetDate
     );
 

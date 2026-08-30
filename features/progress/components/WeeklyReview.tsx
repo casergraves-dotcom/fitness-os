@@ -343,14 +343,14 @@ export default function WeeklyReview() {
           </p>
 
           <h3 className="mt-1 text-lg font-bold text-slate-900">
-            Weekly Review
+            {review.trainingDecision.isFinal ? "Weekly Review" : "Week So Far"}
           </h3>
 
           <p className="mt-1 text-sm text-slate-500">
             {
               review.trainingDecision.isFinal
                 ? "A completed-week summary of what matters most."
-                : "A current-week reflection. The final training decision may still change."
+                : "A current-week reflection. Final adherence and next week's decision wait until this training week closes."
             }
           </p>
         </div>
@@ -376,14 +376,12 @@ export default function WeeklyReview() {
         <Metric
           label="Training Adherence"
           value={
-            `${Math.round(
-              review.training
-                .adherenceRate *
-              100
-            )}%`
+            review.training.requiredScheduled === 0
+              ? "—"
+              : `${Math.round(review.training.adherenceRate * 100)}%`
           }
           detail={
-            `${review.training.requiredCompleted}/${review.training.requiredScheduled} required activities`
+            `${review.training.requiredCompleted}/${review.training.requiredScheduled} required activities due so far`
           }
         />
 
@@ -400,14 +398,14 @@ export default function WeeklyReview() {
         <Metric
           label="Next Week"
           value={
-            formatDecisionStatus(
-              review.trainingDecision.status
-            )
+            review.trainingDecision.isFinal
+              ? formatDecisionStatus(review.trainingDecision.status)
+              : "Pending"
           }
           detail={
             review.trainingDecision.isFinal
               ? "Current training decision"
-              : "Provisional decision"
+              : "Evaluated after the week closes"
           }
         />
 
@@ -557,12 +555,14 @@ export default function WeeklyReview() {
       <div className="mt-5">
 
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          Training Decision
+          {review.trainingDecision.isFinal ? "Training Decision" : "Decision Timing"}
         </p>
 
         <p className="mt-2 text-sm leading-6 text-slate-700">
           {
-            review.trainingDecision.reason
+            review.trainingDecision.isFinal
+              ? review.trainingDecision.reason
+              : "The final training decision will be evaluated after this training week closes. Activities not yet due are not counted against adherence."
           }
         </p>
 

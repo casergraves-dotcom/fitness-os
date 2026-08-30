@@ -81,7 +81,7 @@ export default function TrainingAdherenceTrendChart({
           <p className="mt-1 text-sm text-slate-500">
             {hasHistoricalData
               ? "Choose a longer display range to review complete training weeks."
-              : "A week appears here only after the full Monday–Sunday period can be evaluated."}
+              : "A week appears here only after the full Sunday–Saturday period can be evaluated."}
           </p>
         </div>
       </div>

@@ -18,6 +18,9 @@ import type {
   ScheduleConflict,
   ScheduleConflictEvaluation,
 } from "./evaluateScheduleConflicts";
+import {
+  getTrainingWeekStart,
+} from "@/lib/date/trainingWeek";
 
 
 // ============================================================
@@ -107,30 +110,10 @@ function parseLocalDate(
 }
 
 
-function getMonday(
+function getCanonicalWeekStart(
   date: Date
 ) {
-  const result =
-    new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-  const day =
-    result.getDay();
-
-  const daysSinceMonday =
-    day === 0
-      ? 6
-      : day - 1;
-
-  result.setDate(
-    result.getDate() -
-      daysSinceMonday
-  );
-
-  return result;
+  return getTrainingWeekStart(date);
 }
 
 
@@ -301,14 +284,14 @@ export function evaluateProposedActivityReschedule({
 
   const owningWeekStartDate =
     formatLocalDate(
-      getMonday(
+      getCanonicalWeekStart(
         original
       )
     );
 
   const destinationWeekStartDate =
     formatLocalDate(
-      getMonday(
+      getCanonicalWeekStart(
         destination
       )
     );

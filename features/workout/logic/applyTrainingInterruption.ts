@@ -18,7 +18,7 @@ export interface ApplyTrainingInterruptionInput {
   reason:
     TrainingInterruptionReason;
 
-  // Monday of the calendar week in which the user resumes
+  // Sunday of the calendar week in which the user resumes
   // structured training.
   returnWeekStartDate: string;
 }

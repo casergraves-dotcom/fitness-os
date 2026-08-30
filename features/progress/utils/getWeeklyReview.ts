@@ -30,6 +30,9 @@ import type {
 import type {
   StrengthProgressTrend,
 } from "./getStrengthProgressTrend";
+import {
+  getRequiredAdherenceToDate,
+} from "./getRequiredAdherenceToDate.ts";
 
 
 // ============================================================
@@ -556,54 +559,39 @@ function getRecoveryTrendSummary(
 
 function getTrainingObservation(
   weeklyProgress:
-    CurrentWeeklyProgress
-): RankedWeeklyReviewObservation {
-  if (
-    weeklyProgress
-      .evaluationReady
-  ) {
-    return {
-      observation: {
-        type:
-          "Training",
-
-        message:
-          weeklyProgress
-            .decision
-            .reason,
-      },
-
-      priority:
-        weeklyProgress
-          .decision
-          .shouldAdvance
-          ? 60
-          : 100,
-    };
+    CurrentWeeklyProgress,
+  adherenceToDate: {
+    requiredScheduled: number;
+    requiredCompleted: number;
+    adherenceRate: number;
   }
-
+): RankedWeeklyReviewObservation {
   return {
     observation: {
       type:
         "Training",
 
       message:
-        `${weeklyProgress.adherence.requiredCompleted} of ` +
-        `${weeklyProgress.adherence.requiredCount} required activities are complete so far this week. ` +
+        `${adherenceToDate.requiredCompleted} of ` +
+        `${adherenceToDate.requiredScheduled} required activities due so far are complete. ` +
         `${weeklyProgress.decision.completedStrengthCount} of ` +
         `${weeklyProgress.decision.requiredStrengthCount} minimum strength sessions are complete.`,
     },
 
     priority:
-      weeklyProgress
-        .adherence
-        .adherenceRate <
+      adherenceToDate.adherenceRate <
       0.75
         ? 65
         : 20,
   };
 }
 
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 function getGoalProgressObservation(
   goalProgress:
@@ -937,9 +925,16 @@ function getMaintainedObservations(
 
 function getRankedObservations({
   weeklyProgress,
+  adherenceToDate,
 }: {
   weeklyProgress:
     CurrentWeeklyProgress;
+
+  adherenceToDate: {
+    requiredScheduled: number;
+    requiredCompleted: number;
+    adherenceRate: number;
+  };
 
   goalProgress:
     BodyCompositionGoalProgress;
@@ -959,7 +954,8 @@ function getRankedObservations({
 }): WeeklyReviewObservation[] {
   const trainingObservation =
     getTrainingObservation(
-      weeklyProgress
+      weeklyProgress,
+      adherenceToDate
     );
 
   return [
@@ -1050,6 +1046,7 @@ export function getWeeklyReview({
   strengthProgressTrend,
   runningProgressTrend,
   recoveryProgressTrend,
+  reviewDate = new Date(),
 }: {
   weeklyProgress:
     CurrentWeeklyProgress | null;
@@ -1069,6 +1066,8 @@ export function getWeeklyReview({
 
   recoveryProgressTrend:
     RecoveryProgressTrend;
+
+  reviewDate?: Date;
 }): WeeklyReview | null {
   if (!weeklyProgress) {
     return null;
@@ -1079,22 +1078,21 @@ export function getWeeklyReview({
   // Training Summary
   // ----------------------------------------------------------
 
+  const adherenceToDate = getRequiredAdherenceToDate(
+    weeklyProgress.adherence,
+    formatLocalDate(reviewDate)
+  );
+
   const training:
     WeeklyReviewTrainingSummary = {
       requiredScheduled:
-        weeklyProgress
-          .adherence
-          .requiredCount,
+        adherenceToDate.requiredScheduled,
 
       requiredCompleted:
-        weeklyProgress
-          .adherence
-          .requiredCompleted,
+        adherenceToDate.requiredCompleted,
 
       adherenceRate:
-        weeklyProgress
-          .adherence
-          .adherenceRate,
+        adherenceToDate.adherenceRate,
 
       scheduledStrengthCount:
         weeklyProgress
@@ -1188,8 +1186,7 @@ export function getWeeklyReview({
       ],
 
       isFinal:
-        weeklyProgress
-          .evaluationReady,
+        false,
     };
 
 
@@ -1200,6 +1197,7 @@ export function getWeeklyReview({
   const observations =
     getRankedObservations({
       weeklyProgress,
+      adherenceToDate,
       goalProgress,
       strengthProgress,
       runningProgress,

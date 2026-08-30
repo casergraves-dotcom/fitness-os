@@ -16,6 +16,9 @@ import type {
 import type {
   ProgressReviewPeriod,
 } from "./getProgressReviewPeriod";
+import {
+  getTrainingWeekStartOnOrAfter,
+} from "@/lib/date/trainingWeek";
 
 
 // ============================================================
@@ -141,31 +144,11 @@ function addDays(
 }
 
 
-function getMondayOnOrAfter(
+function getWeekStartOnOrAfter(
   date:
     Date
 ) {
-  const result =
-    new Date(
-      date
-    );
-
-  const day =
-    result.getDay();
-
-  const daysUntilMonday =
-    (
-      8 -
-      day
-    ) %
-    7;
-
-  result.setDate(
-    result.getDate() +
-      daysUntilMonday
-  );
-
-  return result;
+  return getTrainingWeekStartOnOrAfter(date);
 }
 
 
@@ -289,7 +272,7 @@ export function getProgressReviewAdherence({
       : planStart;
 
   let weekStart =
-    getMondayOnOrAfter(
+    getWeekStartOnOrAfter(
       effectiveStart
     );
 
