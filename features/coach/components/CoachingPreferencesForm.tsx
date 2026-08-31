@@ -6,6 +6,7 @@ import { useCoachingPreferences } from "../hooks/useCoachingPreferences";
 import type {
   CoachingAdjustmentStyle,
   CoachingBalanceLevel,
+  CoachingCheckInPrompt,
   CoachingFocus,
   CoachingPreferences,
 } from "../coachingPreferences";
@@ -32,6 +33,16 @@ const ADJUSTMENT_STYLE_OPTIONS: Array<{
   { value: "Conservative", label: "Conservative", description: "Prefer smaller changes and more time before escalating." },
   { value: "Balanced", label: "Balanced", description: "Use measured changes when the evidence supports them." },
   { value: "Assertive", label: "Assertive", description: "Prefer the stronger option within the same safe range." },
+];
+
+const CHECK_IN_OPTIONS: Array<{
+  value: CoachingCheckInPrompt;
+  label: string;
+  description: string;
+}> = [
+  { value: "Daily", label: "Every day", description: "Keep the morning check-in open on Today." },
+  { value: "TrainingDays", label: "Training days", description: "Open it when a workout or other completable training is scheduled." },
+  { value: "Manual", label: "Only when I open it", description: "Keep it collapsed until you choose to check in." },
 ];
 
 export default function CoachingPreferencesForm() {
@@ -99,6 +110,26 @@ export default function CoachingPreferencesForm() {
       </div>
 
       <div className="mt-6 border-t border-slate-200 pt-5">
+        <h3 className="font-semibold text-slate-900">Morning check-in prompt</h3>
+        <p className="mt-1 text-sm text-slate-500">
+          This controls the in-app Today card. System notifications are not enabled here.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {CHECK_IN_OPTIONS.map((option) => (
+            <label key={option.value} className={`cursor-pointer rounded-xl border p-4 ${draft.checkInPrompt === option.value ? "border-blue-600 bg-blue-50" : "border-slate-200"}`}>
+              <span className="flex items-start gap-3">
+                <input type="radio" name="coaching-check-in-prompt" value={option.value} checked={draft.checkInPrompt === option.value} onChange={() => { setSaved(false); setDraft((current) => ({ ...current, checkInPrompt: option.value })); }} className="mt-1 h-4 w-4" />
+                <span>
+                  <span className="block font-semibold text-slate-900">{option.label}</span>
+                  <span className="mt-1 block text-sm text-slate-500">{option.description}</span>
+                </span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 border-t border-slate-200 pt-5">
         <h3 className="font-semibold text-slate-900">Discretionary training balance</h3>
         <p className="mt-1 text-sm text-slate-500">Adjust optional emphasis without changing required sessions.</p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
@@ -118,7 +149,7 @@ export default function CoachingPreferencesForm() {
       </div>
 
       <div className="mt-6 flex items-center gap-3">
-        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, adjustmentStyle: draft.adjustmentStyle, modalityBalance: draft.modalityBalance }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
+        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, adjustmentStyle: draft.adjustmentStyle, checkInPrompt: draft.checkInPrompt, modalityBalance: draft.modalityBalance }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved</span>}
       </div>
     </section>

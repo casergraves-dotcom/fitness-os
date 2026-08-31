@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 // ============================================================
 // Imports
 // ============================================================
@@ -91,6 +93,7 @@ import {
 
 export default function TodayScreen() {
   const { preferences: coachingPreferences } = useCoachingPreferences();
+  const [showManualCheckIn, setShowManualCheckIn] = useState(false);
   const {
     evidence: lifestyleEvidence,
   } = useLifestyleGoalProgressEvidence();
@@ -285,6 +288,12 @@ export default function TodayScreen() {
     scheduledCoachActivities.filter(
       isCompletableTrainingActivity
     );
+
+  const shouldShowMorningCheckIn =
+    showManualCheckIn ||
+    coachingPreferences.checkInPrompt === "Daily" ||
+    (coachingPreferences.checkInPrompt === "TrainingDays" &&
+      actionableCoachActivities.length > 0);
 
   const completedCoachActivities =
     trainingActivityCompletionsLoaded &&
@@ -526,15 +535,24 @@ export default function TodayScreen() {
         <DailyStepsCard />
 
 
-        <MorningCheckIn
-          ratings={
-            ratings
-          }
-
-          onChange={
-            setRatings
-          }
-        />
+        {shouldShowMorningCheckIn ? (
+          <MorningCheckIn
+            ratings={ratings}
+            onChange={setRatings}
+          />
+        ) : (
+          <section className="rounded-2xl border bg-white p-5 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-semibold text-slate-900">Morning Check-In</h2>
+                <p className="mt-1 text-sm text-slate-500">Open it whenever you want readiness guidance.</p>
+              </div>
+              <button type="button" onClick={() => setShowManualCheckIn(true)} className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700">
+                Open check-in
+              </button>
+            </div>
+          </section>
+        )}
 
 
         <WeeklySchedule

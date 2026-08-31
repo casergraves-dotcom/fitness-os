@@ -1680,7 +1680,7 @@ recovery-driven modifications remain separate overlays. Existing preferences
 survived migration, save, and refresh in the browser; 26 tests, TypeScript, and
 the production build passed.
 
-## 7.2 Coaching and Interaction Preferences
+## 7.2 Coaching and Interaction Preferences — COMPLETE
 
 Coaching preferences influence recommendation ranking, explanation, and
 discretionary choices. They must not silently override required training,
@@ -1690,9 +1690,9 @@ progression rules, recovery safeguards, or the active goal.
 - [x] Add preferred balance between strength, running/cardio, and enabled active
   hobbies.
 - [x] Add coaching aggressiveness/conservatism preferences where appropriate.
-- [ ] Add preferred reminder/check-in behavior where appropriate.
-- [ ] Keep goal configuration owned by Phase 4.
-- [ ] Keep nutrition and activity targets owned by Phase 5.
+- [x] Add preferred reminder/check-in behavior where appropriate.
+- [x] Keep goal configuration owned by Phase 4.
+- [x] Keep nutrition and activity targets owned by Phase 5.
 
 **Coaching-preference source checkpoint:** Settings now provides a dedicated,
 cloud-synced Coaching Preferences record. Users can choose an overall
@@ -1718,6 +1718,19 @@ within an already-safe range. Existing records migrate to Balanced, and the UI
 reiterates that recovery and progression safeguards remain authoritative. The
 saved selection persisted after refresh; all 28 project tests, TypeScript, and
 the production build passed.
+
+**In-app check-in preference checkpoint:** Users can keep the Morning Check-In
+open every day, open it automatically only on days with completable training, or
+leave it collapsed until requested. Manual mode retains a compact Today card so
+readiness guidance remains immediately accessible. The setting explicitly
+controls only in-app behavior and does not claim system-notification support.
+Save, refresh, collapsed-card behavior, all 28 project tests, TypeScript, and the
+production build passed.
+
+**Completed outcome:** Coaching Preferences now persist and safely influence
+discretionary focus, modality balance, adjustment style, and in-app check-in
+presentation without taking ownership from active goals, nutrition/activity
+targets, required training, progression rules, or recovery safeguards.
 
 ## 7.3 Exercise Guidance
 

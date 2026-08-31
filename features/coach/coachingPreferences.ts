@@ -15,9 +15,15 @@ export type CoachingAdjustmentStyle =
   | "Balanced"
   | "Assertive";
 
+export type CoachingCheckInPrompt =
+  | "Daily"
+  | "TrainingDays"
+  | "Manual";
+
 export interface CoachingPreferences {
   focus: CoachingFocus;
   adjustmentStyle: CoachingAdjustmentStyle;
+  checkInPrompt: CoachingCheckInPrompt;
   modalityBalance: {
     strength: CoachingBalanceLevel;
     running: CoachingBalanceLevel;
@@ -29,6 +35,7 @@ export interface CoachingPreferences {
 export const DEFAULT_COACHING_PREFERENCES: CoachingPreferences = {
   focus: "Balanced",
   adjustmentStyle: "Balanced",
+  checkInPrompt: "Daily",
   modalityBalance: {
     strength: "Standard",
     running: "Standard",
@@ -45,6 +52,7 @@ export function normalizeCoachingPreferences(value: unknown): CoachingPreference
   const focuses: CoachingFocus[] = ["Balanced", "Performance", "Consistency", "Recovery", "Enjoyment"];
   const levels: CoachingBalanceLevel[] = ["Lower", "Standard", "Higher"];
   const adjustmentStyles: CoachingAdjustmentStyle[] = ["Conservative", "Balanced", "Assertive"];
+  const checkInPrompts: CoachingCheckInPrompt[] = ["Daily", "TrainingDays", "Manual"];
   const balance = candidate.modalityBalance;
   return {
     focus: focuses.includes(candidate.focus as CoachingFocus)
@@ -53,6 +61,9 @@ export function normalizeCoachingPreferences(value: unknown): CoachingPreference
     adjustmentStyle: adjustmentStyles.includes(candidate.adjustmentStyle as CoachingAdjustmentStyle)
       ? candidate.adjustmentStyle as CoachingAdjustmentStyle
       : "Balanced",
+    checkInPrompt: checkInPrompts.includes(candidate.checkInPrompt as CoachingCheckInPrompt)
+      ? candidate.checkInPrompt as CoachingCheckInPrompt
+      : "Daily",
     modalityBalance: {
       strength: levels.includes(balance?.strength as CoachingBalanceLevel)
         ? balance!.strength

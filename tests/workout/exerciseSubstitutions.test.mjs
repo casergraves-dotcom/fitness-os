@@ -51,7 +51,9 @@ test("older coaching preferences migrate to balanced adjustment style", () => {
   });
 
   assert.equal(preferences.adjustmentStyle, "Balanced");
+  assert.equal(preferences.checkInPrompt, "Daily");
   assert.equal(normalizeCoachingPreferences({ adjustmentStyle: "Assertive" }).adjustmentStyle, "Assertive");
+  assert.equal(normalizeCoachingPreferences({ checkInPrompt: "Manual" }).checkInPrompt, "Manual");
 });
 
 test("participation preferences are effective-dated and preserve earlier schedules", () => {
