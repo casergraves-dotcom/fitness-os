@@ -16,6 +16,7 @@ import {
 import {
   getLifestyleContextObservation,
 } from "@/features/coach/getLifestyleContextObservation";
+import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPreferences";
 import {
   useLifestyleGoalProgressEvidence,
 } from "@/features/progress/hooks/useLifestyleGoalProgressEvidence";
@@ -89,6 +90,7 @@ import {
 // ============================================================
 
 export default function TodayScreen() {
+  const { preferences: coachingPreferences } = useCoachingPreferences();
   const {
     evidence: lifestyleEvidence,
   } = useLifestyleGoalProgressEvidence();
@@ -352,7 +354,8 @@ export default function TodayScreen() {
             message: weeklyDecisionPattern.message,
           }
         : undefined,
-      lifestyleContext ?? undefined
+      lifestyleContext ?? undefined,
+      coachingPreferences
     );
 
 

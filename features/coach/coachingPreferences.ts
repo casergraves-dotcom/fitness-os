@@ -56,3 +56,33 @@ export function normalizeCoachingPreferences(value: unknown): CoachingPreference
     updatedAt: typeof candidate.updatedAt === "string" ? candidate.updatedAt : "",
   };
 }
+
+export type CoachingPreferenceArea =
+  | "strength"
+  | "running"
+  | "activeHobbies"
+  | "recovery";
+
+export function getCoachingPreferencePriority(
+  preferences: CoachingPreferences,
+  area: CoachingPreferenceArea
+): number {
+  const balance = area === "recovery"
+    ? 0
+    : preferences.modalityBalance[area] === "Higher"
+      ? 2
+      : preferences.modalityBalance[area] === "Lower"
+        ? -1
+        : 0;
+
+  const focusBonus =
+    preferences.focus === "Performance" && (area === "strength" || area === "running")
+      ? 1
+      : preferences.focus === "Recovery" && area === "recovery"
+        ? 2
+        : preferences.focus === "Enjoyment" && area === "activeHobbies"
+          ? 1
+          : 0;
+
+  return balance + focusBonus;
+}

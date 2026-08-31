@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { exerciseLibrary } from "../../features/workout/exerciseLibrary.ts";
 import { getExerciseSubstitutions } from "../../features/workout/exerciseSubstitutions.ts";
+import { getCoachingPreferencePriority } from "../../features/coach/coachingPreferences.ts";
 import {
   getAerialSessionsForDate,
   getEnabledTrainingModalitiesForDate,
@@ -26,6 +27,22 @@ function substitutionsFor(exerciseId, context = gymContext, limit = 20) {
 function idsFor(exerciseId, context = gymContext) {
   return substitutionsFor(exerciseId, context).map((option) => option.exercise.id);
 }
+
+test("coaching preferences rank only discretionary emphasis", () => {
+  const preferences = {
+    focus: "Consistency",
+    modalityBalance: {
+      strength: "Standard",
+      running: "Lower",
+      activeHobbies: "Higher",
+    },
+    updatedAt: "2026-08-30T20:00:00.000Z",
+  };
+  assert.equal(getCoachingPreferencePriority(preferences, "strength"), 0);
+  assert.equal(getCoachingPreferencePriority(preferences, "running"), -1);
+  assert.equal(getCoachingPreferencePriority(preferences, "activeHobbies"), 2);
+  assert.equal(getCoachingPreferencePriority(preferences, "recovery"), 0);
+});
 
 test("participation preferences are effective-dated and preserve earlier schedules", () => {
   const history = [{

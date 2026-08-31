@@ -2,6 +2,9 @@ import type {
   StrengthWorkoutType,
   StrengthWorkoutVariantType,
 } from "@/features/workout/types";
+import type { CoachingPreferences } from "./coachingPreferences";
+
+export type CoachPreferenceContext = CoachingPreferences;
 
 export type CoachTrainingDecision =
   | "as-planned"

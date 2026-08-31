@@ -19,8 +19,36 @@ import type {
   CoachRecommendation,
   CoachReviewContext,
   CoachReviewContextSummary,
+  CoachPreferenceContext,
   CoachTrainingContext,
 } from "../types";
+import {
+  getCoachingPreferencePriority,
+} from "../coachingPreferences";
+
+function getPreferenceArea(activity: TrainingActivity) {
+  if (activity.type === "Strength") return "strength" as const;
+  if (activity.type === "Run") return "running" as const;
+  if (activity.type === "Aerial") return "activeHobbies" as const;
+  return "recovery" as const;
+}
+
+function getPreferenceRankedOptionalActivities(
+  activities: TrainingActivity[],
+  preferences?: CoachPreferenceContext
+) {
+  if (!preferences || activities.length === 0 || activities.some((activity) => !activity.optional)) {
+    return activities;
+  }
+  const scored = activities.map((activity) => ({
+    activity,
+    score: getCoachingPreferencePriority(preferences, getPreferenceArea(activity)),
+  }));
+  const scores = scored.map((item) => item.score);
+  if (Math.max(...scores) === Math.min(...scores)) return activities;
+  const best = Math.max(...scores);
+  return scored.filter((item) => item.score === best).map((item) => item.activity);
+}
 
 
 
@@ -1058,7 +1086,8 @@ export function getCoachRecommendation(
   reviewContext?: CoachReviewContext,
   trainingContext?: CoachTrainingContext,
   patternContext?: CoachReviewContextSummary,
-  lifestyleContext?: CoachReviewContextSummary
+  lifestyleContext?: CoachReviewContextSummary,
+  preferenceContext?: CoachPreferenceContext
 ): CoachRecommendation {
   const allScheduledTrainingComplete =
     trainingContext !==
@@ -1083,7 +1112,7 @@ export function getCoachRecommendation(
         }
       : getDailyCoachRecommendation(
           ratings,
-          activities
+          getPreferenceRankedOptionalActivities(activities, preferenceContext)
         );
 
   if (!reviewContext && !patternContext && !lifestyleContext) {

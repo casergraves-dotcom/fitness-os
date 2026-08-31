@@ -1704,6 +1704,14 @@ or recovery safeguards. Consistency focus with higher Active Hobbies emphasis
 was saved and verified after refresh; 26 tests, TypeScript, and the production
 build passed. Coach consumption remains the next slice.
 
+**Guide preference-consumption checkpoint:** Guide now uses the saved coaching
+focus and modality balance to rank activities only when every activity in the
+choice is optional. Required activities retain their original order and remain
+unaffected, while readiness and recovery safeguards continue to determine the
+safe recommendation. Equal preference scores preserve the existing behavior.
+Focused preference-ranking coverage, all 27 project tests, TypeScript, and the
+production build passed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by
