@@ -1743,7 +1743,7 @@ workout execution rather than maintaining a separate exercise-guidance catalog.
 - [x] Show concise setup and execution instructions.
 - [ ] Add visual demonstrations where they materially improve exercise
   understanding.
-- [ ] Surface exercise-specific guidance such as unilateral/per-side execution.
+- [x] Surface exercise-specific guidance such as unilateral/per-side execution.
 - [x] Keep guidance unobtrusive during normal workout logging.
 
 **Canonical exercise-guidance checkpoint:** The existing `ExerciseDefinition`
@@ -1759,7 +1759,64 @@ by default and opens inline into distinct Setup and Execution steps, preserving
 the normal target, ramp-up, and working-set flow. The Leg Press closed and open
 states, all 29 project tests, TypeScript, and the production build passed.
 
-## 7.4 Mobility & Flexibility Guidance
+**Per-side guidance checkpoint:** Guided unilateral exercises now identify the
+prescription as per-side inside the optional How to panel and explicitly direct
+the user to complete the target on each side. Reverse Lunge rendering, all 29
+project tests, TypeScript, and the production build passed.
+
+## 7.4 Shared Mobile Layout and Today Refinement
+
+Mobile refinement must preserve the current visual system and shared layout
+architecture. Fix shared layout primitives rather than adding page-specific
+spacing workarounds.
+
+- [ ] Audit iOS/PWA viewport and safe-area handling in the shared application
+  shell.
+- [ ] Ensure page content clears the status bar and other top safe-area insets.
+- [ ] Ensure every scrollable screen clears the persistent bottom navigation and
+  bottom safe-area inset.
+- [ ] Reorder or regroup Today so readiness, today's training, nutrition, steps,
+  and important actions are immediately scannable.
+- [ ] Distinguish primary daily actions from supporting context without removing
+  existing functionality.
+- [ ] Reduce excessive Today card padding, repeated headings, and persistent
+  explanatory copy.
+- [ ] Move secondary explanation behind concise Details/Why affordances where
+  useful.
+- [ ] Verify shared layout and Today changes on representative mobile viewport
+  sizes before marking complete.
+
+## 7.5 Progress Navigation and Mobile Density
+
+Progress should answer “How am I changing?” through a concise overview while
+retaining every canonical detail workflow behind domain navigation or
+progressive disclosure. Do not duplicate calculations, hooks, or storage to
+create the overview.
+
+- [ ] Introduce architecture-preserving domain navigation or progressive
+  disclosure for Current Approach, Body Composition, Training, Daily Activity,
+  Strength, Cardio, Recovery, and Lifestyle.
+- [ ] Keep the default Progress view summary-first instead of rendering every
+  detailed analytics and data-management surface in one scroll.
+- [ ] Compress Still Learning and other insufficient-evidence states into
+  scannable domain rows with optional methodology details.
+- [ ] Compress unavailable Current Approach domains while preserving evidence
+  requirements and conservative conclusions.
+- [ ] Tighten Lifestyle Context, Training Consistency, and Daily Activity metric
+  layouts without weakening coverage semantics.
+- [ ] Group canonical Body Composition charts, measurements, weekly check-ins,
+  photos, and DEXA under a clear detail hierarchy.
+- [ ] Keep Exercise Progress and detailed recovery/running history available as
+  domain details rather than permanently expanded overview sections.
+- [ ] Clarify sparse two-point body-composition charts without suppressing the
+  observations.
+- [ ] Compact milestone presentation while preserving thresholds and completion
+  state.
+- [ ] Review repeated typography, card nesting, spacing, and helper copy after
+  the information architecture is stable.
+- [ ] Perform final mobile visual QA across Today and Progress.
+
+## 7.6 Mobility & Flexibility Guidance
 
 Mobility and stretching should remain a focused training-support feature, not
 expand Fitness OS into a general yoga application.
