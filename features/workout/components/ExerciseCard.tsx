@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import {
+  BookOpen,
   Check,
   ChevronDown,
   MoreVertical,
@@ -184,6 +185,11 @@ export default function ExerciseCard({
   const [
     substitutionsOpen,
     setSubstitutionsOpen,
+  ] = useState(false);
+
+  const [
+    guidanceOpen,
+    setGuidanceOpen,
   ] = useState(false);
 
   const [
@@ -677,6 +683,46 @@ export default function ExerciseCard({
                   {substitutionFeedback}
                 </p>
               )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {exerciseDefinition?.guidance && (
+        <div className="mt-3">
+          <button
+            type="button"
+            aria-expanded={guidanceOpen}
+            onClick={() => setGuidanceOpen((open) => !open)}
+            className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700"
+          >
+            <BookOpen size={15} />
+            How to
+          </button>
+
+          {guidanceOpen && (
+            <div className="mt-3 grid gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4 md:grid-cols-2">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                  Setup
+                </p>
+                <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
+                  {exerciseDefinition.guidance.setup.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                  Execution
+                </p>
+                <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
+                  {exerciseDefinition.guidance.execution.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+              </div>
             </div>
           )}
         </div>

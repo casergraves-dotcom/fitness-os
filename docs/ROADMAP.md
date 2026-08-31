@@ -1739,12 +1739,12 @@ workout execution rather than maintaining a separate exercise-guidance catalog.
 
 - [x] Extend canonical exercise metadata with guidance rather than creating a
   parallel exercise catalog.
-- [ ] Add an optional exercise demo/details view.
-- [ ] Show concise setup and execution instructions.
+- [x] Add an optional exercise demo/details view.
+- [x] Show concise setup and execution instructions.
 - [ ] Add visual demonstrations where they materially improve exercise
   understanding.
 - [ ] Surface exercise-specific guidance such as unilateral/per-side execution.
-- [ ] Keep guidance unobtrusive during normal workout logging.
+- [x] Keep guidance unobtrusive during normal workout logging.
 
 **Canonical exercise-guidance checkpoint:** The existing `ExerciseDefinition`
 model now supports optional concise setup and execution guidance. Push-Ups,
@@ -1752,6 +1752,12 @@ Seated Row, Leg Press, Reverse Lunge, and Dead Bug provide an initial
 representative set directly in the canonical built-in library; no parallel
 guidance catalog was introduced. Metadata validation, all 29 project tests,
 TypeScript, and the production build passed.
+
+**Optional guidance-view checkpoint:** Guided workout exercises now show a small
+How to control only while the exercise card is expanded. Guidance remains closed
+by default and opens inline into distinct Setup and Execution steps, preserving
+the normal target, ramp-up, and working-set flow. The Leg Press closed and open
+states, all 29 project tests, TypeScript, and the production build passed.
 
 ## 7.4 Mobility & Flexibility Guidance
 
