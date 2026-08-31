@@ -1,6 +1,10 @@
 import type {
+  TrainingModality,
   TrainingPlanState,
 } from "../types";
+import {
+  getTrainingDayPreferencePenalty,
+} from "./getTrainingParticipationPreferenceForDate";
 
 import {
   applyTrainingActivityReschedule,
@@ -111,6 +115,9 @@ export interface WeeklyScheduleRearrangementEvaluation {
     WeeklyScheduleRearrangementStatus;
 
   score:
+    number;
+
+  preferencePenalty?:
     number;
 
   hasHighConflict:
@@ -764,6 +771,26 @@ export function evaluateWeeklyScheduleRearrangement({
       0
     );
 
+  const preferencePenalty = moves.reduce(
+    (total, move) => {
+      const occurrence = proposedResolvedOccurrences.find(
+        (candidate) =>
+          candidate.activity.id === move.trainingActivityId &&
+          candidate.originalDate === move.originalDate
+      );
+      const type = occurrence?.activity.type;
+      if (type !== "Strength" && type !== "Run" && type !== "Aerial") {
+        return total;
+      }
+      return total + getTrainingDayPreferencePenalty(
+        state.trainingParticipationPreferences,
+        move.scheduledDate,
+        type as TrainingModality
+      );
+    },
+    0
+  );
+
 
   const score =
     (
@@ -790,7 +817,8 @@ export function evaluateWeeklyScheduleRearrangement({
       moves.length *
       3
     ) +
-    totalMoveDistance;
+    totalMoveDistance +
+    preferencePenalty;
 
 
   // ----------------------------------------------------------
@@ -891,6 +919,8 @@ export function evaluateWeeklyScheduleRearrangement({
     status,
 
     score,
+
+    preferencePenalty,
 
     hasHighConflict:
       highConflictCount >

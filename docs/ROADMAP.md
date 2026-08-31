@@ -1659,6 +1659,16 @@ Twenty-six tests, TypeScript, and the production build passed. Keep the broader
 preference-influence item open until plan construction and adaptive scheduling
 also consume the relevant preference signals.
 
+**Adaptive preference-ranking checkpoint:** The canonical weekly
+rearrangement evaluator now applies a small preference cost to proposed moves.
+Unavailable dates and recovery/training-load conflicts remain dominant; among
+otherwise safe choices, enabled-modality preferred days rank higher, fixed
+Aerial commitments rank above flexible opportunities, and dates outside the
+saved preferences rank lower. Existing schedules and manual moves are not
+rewritten. Preference-penalty regression coverage, 26 tests, TypeScript, and
+the production build passed. Keep the broader preference-influence item open
+until initial plan construction also consumes these signals.
+
 ## 7.2 Coaching and Interaction Preferences
 
 Coaching preferences influence recommendation ranking, explanation, and

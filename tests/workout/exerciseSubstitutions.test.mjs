@@ -10,6 +10,7 @@ import {
   getPreferredTrainingDaysForDate,
   getRunningPreferenceForDate,
   getSessionDurationPreferenceForDate,
+  getTrainingDayPreferencePenalty,
 } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
 
 const gymContext = {
@@ -33,6 +34,7 @@ test("participation preferences are effective-dated and preserve earlier schedul
     preferredDaysByModality: {
       Strength: ["Monday", "Friday"],
       Run: ["Wednesday"],
+      Aerial: ["Thursday", "Saturday"],
     },
     aerialSessions: [
       {
@@ -118,6 +120,11 @@ test("participation preferences are effective-dated and preserve earlier schedul
     getSessionDurationPreferenceForDate(history, "2026-08-26", "Strength"),
     {}
   );
+  assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-28", "Strength"), 0);
+  assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-29", "Strength"), 2);
+  assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-27", "Aerial"), 0);
+  assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-29", "Aerial"), 1);
+  assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-28", "Aerial"), 6);
 });
 
 test("every automatic substitution preserves a movement role and has complete metadata", () => {
