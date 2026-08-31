@@ -1686,13 +1686,23 @@ Coaching preferences influence recommendation ranking, explanation, and
 discretionary choices. They must not silently override required training,
 progression rules, recovery safeguards, or the active goal.
 
-- [ ] Add preferred training emphasis for discretionary coaching decisions.
-- [ ] Add preferred balance between strength, running/cardio, and enabled active
+- [x] Add preferred training emphasis for discretionary coaching decisions.
+- [x] Add preferred balance between strength, running/cardio, and enabled active
   hobbies.
 - [ ] Add coaching aggressiveness/conservatism preferences where appropriate.
 - [ ] Add preferred reminder/check-in behavior where appropriate.
 - [ ] Keep goal configuration owned by Phase 4.
 - [ ] Keep nutrition and activity targets owned by Phase 5.
+
+**Coaching-preference source checkpoint:** Settings now provides a dedicated,
+cloud-synced Coaching Preferences record. Users can choose an overall
+discretionary focus (Balanced, Performance, Consistency, Recovery, or
+Enjoyment) and independently set lower, standard, or higher optional emphasis
+for Strength, Running/Cardio, and Active Hobbies. The UI explicitly states that
+these signals cannot override the active goal, required training, progression,
+or recovery safeguards. Consistency focus with higher Active Hobbies emphasis
+was saved and verified after refresh; 26 tests, TypeScript, and the production
+build passed. Coach consumption remains the next slice.
 
 ## 7.3 Exercise Guidance
 

@@ -1,0 +1,58 @@
+export type CoachingFocus =
+  | "Balanced"
+  | "Performance"
+  | "Consistency"
+  | "Recovery"
+  | "Enjoyment";
+
+export type CoachingBalanceLevel =
+  | "Lower"
+  | "Standard"
+  | "Higher";
+
+export interface CoachingPreferences {
+  focus: CoachingFocus;
+  modalityBalance: {
+    strength: CoachingBalanceLevel;
+    running: CoachingBalanceLevel;
+    activeHobbies: CoachingBalanceLevel;
+  };
+  updatedAt: string;
+}
+
+export const DEFAULT_COACHING_PREFERENCES: CoachingPreferences = {
+  focus: "Balanced",
+  modalityBalance: {
+    strength: "Standard",
+    running: "Standard",
+    activeHobbies: "Standard",
+  },
+  updatedAt: "",
+};
+
+export function normalizeCoachingPreferences(value: unknown): CoachingPreferences {
+  if (typeof value !== "object" || value === null) {
+    return DEFAULT_COACHING_PREFERENCES;
+  }
+  const candidate = value as Partial<CoachingPreferences>;
+  const focuses: CoachingFocus[] = ["Balanced", "Performance", "Consistency", "Recovery", "Enjoyment"];
+  const levels: CoachingBalanceLevel[] = ["Lower", "Standard", "Higher"];
+  const balance = candidate.modalityBalance;
+  return {
+    focus: focuses.includes(candidate.focus as CoachingFocus)
+      ? candidate.focus as CoachingFocus
+      : "Balanced",
+    modalityBalance: {
+      strength: levels.includes(balance?.strength as CoachingBalanceLevel)
+        ? balance!.strength
+        : "Standard",
+      running: levels.includes(balance?.running as CoachingBalanceLevel)
+        ? balance!.running
+        : "Standard",
+      activeHobbies: levels.includes(balance?.activeHobbies as CoachingBalanceLevel)
+        ? balance!.activeHobbies
+        : "Standard",
+    },
+    updatedAt: typeof candidate.updatedAt === "string" ? candidate.updatedAt : "",
+  };
+}
