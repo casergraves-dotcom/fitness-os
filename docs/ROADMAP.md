@@ -1649,6 +1649,16 @@ maximum from contradicting the typical duration. A 45-minute typical and
 coverage, 26 tests, TypeScript, and the production build passed. Schedule and
 workout adaptation remain part of the later preference-influence item.
 
+**Workout preference-consumption checkpoint:** The live workout screen now
+resolves the effective Home/Gym equipment profile for the scheduled session
+date. Workout-version availability and exercise substitutions use that profile
+instead of hard-coded equipment assumptions. Home exercise selection was
+verified using only configured equipment, and removing the required setup made
+the Home Gym C variant unavailable while Full Gym and Short Gym remained.
+Twenty-six tests, TypeScript, and the production build passed. Keep the broader
+preference-influence item open until plan construction and adaptive scheduling
+also consume the relevant preference signals.
+
 ## 7.2 Coaching and Interaction Preferences
 
 Coaching preferences influence recommendation ranking, explanation, and

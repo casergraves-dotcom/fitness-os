@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import { useWorkoutSession } from "../hooks/useWorkoutSession";
+import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import WorkoutWarmupCard from "../components/WorkoutWarmupCard";
 import WorkoutExerciseNavigator from "../components/WorkoutExerciseNavigator";
 
@@ -39,6 +40,9 @@ import {
 import {
   getExerciseTarget,
 } from "../getExerciseTarget";
+import {
+  getEquipmentProfileForDate,
+} from "../logic/getTrainingParticipationPreferenceForDate";
 
 import {
   useEffect,
@@ -113,6 +117,13 @@ function formatDuration(
   return `${hours} hr ${minutes} min`;
 }
 
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 function formatNumber(
   value: number
 ) {
@@ -183,6 +194,7 @@ function getVariantDescription(
 // ============================================================
 
 export default function WorkoutScreen() {
+  const { state: trainingPlanState } = useTrainingPlanState();
   const [
     selectedWorkoutType,
     setSelectedWorkoutType,
@@ -238,6 +250,27 @@ export default function WorkoutScreen() {
 
     getPreviousExercise,
   } = useWorkoutSession();
+
+  const equipmentPreferenceDate =
+    session?.scheduledDate ?? formatLocalDate(new Date());
+  const homeEquipmentProfile = getEquipmentProfileForDate(
+    trainingPlanState?.trainingParticipationPreferences,
+    equipmentPreferenceDate,
+    "Home",
+    {
+      equipment: currentHomeWorkoutEquipment,
+      capabilities: currentHomeWorkoutCapabilities,
+    }
+  );
+  const gymEquipmentProfile = getEquipmentProfileForDate(
+    trainingPlanState?.trainingParticipationPreferences,
+    equipmentPreferenceDate,
+    "Gym",
+    {
+      equipment: currentGymWorkoutEquipment,
+      capabilities: currentGymWorkoutCapabilities,
+    }
+  );
 
   // ----------------------------------------------------------
   // Exercise Card Expansion
@@ -1259,13 +1292,16 @@ const exerciseVolume =
 
     const availableVariants =
       variants.filter(
-        (variant) =>
-          variant.variantType !== "Home" ||
-          isStrengthWorkoutVariantAvailable(
+        (variant) => {
+          const profile = variant.variantType === "Home"
+            ? homeEquipmentProfile
+            : gymEquipmentProfile;
+          return isStrengthWorkoutVariantAvailable(
             variant,
-            currentHomeWorkoutEquipment,
-            currentHomeWorkoutCapabilities
-          )
+            profile.equipment,
+            profile.capabilities
+          );
+        }
       );
 
     return (
@@ -1547,13 +1583,13 @@ const exerciseVolume =
               }
               availableEquipment={
                 session.variantType === "Home"
-                  ? currentHomeWorkoutEquipment
-                  : currentGymWorkoutEquipment
+                  ? homeEquipmentProfile.equipment
+                  : gymEquipmentProfile.equipment
               }
               availableCapabilities={
                 session.variantType === "Home"
-                  ? currentHomeWorkoutCapabilities
-                  : currentGymWorkoutCapabilities
+                  ? homeEquipmentProfile.capabilities
+                  : gymEquipmentProfile.capabilities
               }
               previousExercise={getPreviousExercise(
                 exercise.exerciseDefinitionId,
