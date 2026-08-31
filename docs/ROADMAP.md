@@ -1689,7 +1689,7 @@ progression rules, recovery safeguards, or the active goal.
 - [x] Add preferred training emphasis for discretionary coaching decisions.
 - [x] Add preferred balance between strength, running/cardio, and enabled active
   hobbies.
-- [ ] Add coaching aggressiveness/conservatism preferences where appropriate.
+- [x] Add coaching aggressiveness/conservatism preferences where appropriate.
 - [ ] Add preferred reminder/check-in behavior where appropriate.
 - [ ] Keep goal configuration owned by Phase 4.
 - [ ] Keep nutrition and activity targets owned by Phase 5.
@@ -1711,6 +1711,13 @@ unaffected, while readiness and recovery safeguards continue to determine the
 safe recommendation. Equal preference scores preserve the existing behavior.
 Focused preference-ranking coverage, all 27 project tests, TypeScript, and the
 production build passed.
+
+**Adjustment-style checkpoint:** Coaching Preferences now offers Conservative,
+Balanced, and Assertive adjustment styles for choosing how strongly Guide acts
+within an already-safe range. Existing records migrate to Balanced, and the UI
+reiterates that recovery and progression safeguards remain authoritative. The
+saved selection persisted after refresh; all 28 project tests, TypeScript, and
+the production build passed.
 
 ## 7.3 Exercise Guidance
 

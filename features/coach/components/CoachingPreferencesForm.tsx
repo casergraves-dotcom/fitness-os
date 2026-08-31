@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { useCoachingPreferences } from "../hooks/useCoachingPreferences";
 import type {
+  CoachingAdjustmentStyle,
   CoachingBalanceLevel,
   CoachingFocus,
   CoachingPreferences,
@@ -21,6 +22,16 @@ const BALANCE_OPTIONS: Array<{ value: CoachingBalanceLevel; label: string }> = [
   { value: "Lower", label: "Lower emphasis" },
   { value: "Standard", label: "Standard emphasis" },
   { value: "Higher", label: "Higher emphasis" },
+];
+
+const ADJUSTMENT_STYLE_OPTIONS: Array<{
+  value: CoachingAdjustmentStyle;
+  label: string;
+  description: string;
+}> = [
+  { value: "Conservative", label: "Conservative", description: "Prefer smaller changes and more time before escalating." },
+  { value: "Balanced", label: "Balanced", description: "Use measured changes when the evidence supports them." },
+  { value: "Assertive", label: "Assertive", description: "Prefer the stronger option within the same safe range." },
 ];
 
 export default function CoachingPreferencesForm() {
@@ -68,6 +79,26 @@ export default function CoachingPreferencesForm() {
       </div>
 
       <div className="mt-6 border-t border-slate-200 pt-5">
+        <h3 className="font-semibold text-slate-900">Adjustment style</h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Choose how strongly Guide should act when several options are already safe.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {ADJUSTMENT_STYLE_OPTIONS.map((option) => (
+            <label key={option.value} className={`cursor-pointer rounded-xl border p-4 ${draft.adjustmentStyle === option.value ? "border-blue-600 bg-blue-50" : "border-slate-200"}`}>
+              <span className="flex items-start gap-3">
+                <input type="radio" name="coaching-adjustment-style" value={option.value} checked={draft.adjustmentStyle === option.value} onChange={() => { setSaved(false); setDraft((current) => ({ ...current, adjustmentStyle: option.value })); }} className="mt-1 h-4 w-4" />
+                <span>
+                  <span className="block font-semibold text-slate-900">{option.label}</span>
+                  <span className="mt-1 block text-sm text-slate-500">{option.description}</span>
+                </span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 border-t border-slate-200 pt-5">
         <h3 className="font-semibold text-slate-900">Discretionary training balance</h3>
         <p className="mt-1 text-sm text-slate-500">Adjust optional emphasis without changing required sessions.</p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
@@ -87,7 +118,7 @@ export default function CoachingPreferencesForm() {
       </div>
 
       <div className="mt-6 flex items-center gap-3">
-        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, modalityBalance: draft.modalityBalance }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
+        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, adjustmentStyle: draft.adjustmentStyle, modalityBalance: draft.modalityBalance }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved</span>}
       </div>
     </section>

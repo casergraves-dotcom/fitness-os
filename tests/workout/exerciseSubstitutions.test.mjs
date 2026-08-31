@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { exerciseLibrary } from "../../features/workout/exerciseLibrary.ts";
 import { getExerciseSubstitutions } from "../../features/workout/exerciseSubstitutions.ts";
-import { getCoachingPreferencePriority } from "../../features/coach/coachingPreferences.ts";
+import { getCoachingPreferencePriority, normalizeCoachingPreferences } from "../../features/coach/coachingPreferences.ts";
 import {
   getAerialSessionsForDate,
   getEnabledTrainingModalitiesForDate,
@@ -42,6 +42,16 @@ test("coaching preferences rank only discretionary emphasis", () => {
   assert.equal(getCoachingPreferencePriority(preferences, "running"), -1);
   assert.equal(getCoachingPreferencePriority(preferences, "activeHobbies"), 2);
   assert.equal(getCoachingPreferencePriority(preferences, "recovery"), 0);
+});
+
+test("older coaching preferences migrate to balanced adjustment style", () => {
+  const preferences = normalizeCoachingPreferences({
+    focus: "Consistency",
+    modalityBalance: { strength: "Standard", running: "Lower", activeHobbies: "Higher" },
+  });
+
+  assert.equal(preferences.adjustmentStyle, "Balanced");
+  assert.equal(normalizeCoachingPreferences({ adjustmentStyle: "Assertive" }).adjustmentStyle, "Assertive");
 });
 
 test("participation preferences are effective-dated and preserve earlier schedules", () => {

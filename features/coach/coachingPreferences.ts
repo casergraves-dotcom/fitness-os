@@ -10,8 +10,14 @@ export type CoachingBalanceLevel =
   | "Standard"
   | "Higher";
 
+export type CoachingAdjustmentStyle =
+  | "Conservative"
+  | "Balanced"
+  | "Assertive";
+
 export interface CoachingPreferences {
   focus: CoachingFocus;
+  adjustmentStyle: CoachingAdjustmentStyle;
   modalityBalance: {
     strength: CoachingBalanceLevel;
     running: CoachingBalanceLevel;
@@ -22,6 +28,7 @@ export interface CoachingPreferences {
 
 export const DEFAULT_COACHING_PREFERENCES: CoachingPreferences = {
   focus: "Balanced",
+  adjustmentStyle: "Balanced",
   modalityBalance: {
     strength: "Standard",
     running: "Standard",
@@ -37,10 +44,14 @@ export function normalizeCoachingPreferences(value: unknown): CoachingPreference
   const candidate = value as Partial<CoachingPreferences>;
   const focuses: CoachingFocus[] = ["Balanced", "Performance", "Consistency", "Recovery", "Enjoyment"];
   const levels: CoachingBalanceLevel[] = ["Lower", "Standard", "Higher"];
+  const adjustmentStyles: CoachingAdjustmentStyle[] = ["Conservative", "Balanced", "Assertive"];
   const balance = candidate.modalityBalance;
   return {
     focus: focuses.includes(candidate.focus as CoachingFocus)
       ? candidate.focus as CoachingFocus
+      : "Balanced",
+    adjustmentStyle: adjustmentStyles.includes(candidate.adjustmentStyle as CoachingAdjustmentStyle)
+      ? candidate.adjustmentStyle as CoachingAdjustmentStyle
       : "Balanced",
     modalityBalance: {
       strength: levels.includes(balance?.strength as CoachingBalanceLevel)
