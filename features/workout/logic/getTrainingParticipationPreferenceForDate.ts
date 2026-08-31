@@ -1,9 +1,11 @@
 import type {
   AerialSessionPreference,
   RunningPreference,
+  TrainingEquipmentProfile,
   TrainingDayOfWeek,
   TrainingModality,
   TrainingParticipationPreference,
+  WorkoutEnvironment,
 } from "../types";
 
 export const DEFAULT_TRAINING_MODALITIES: TrainingModality[] = [
@@ -59,4 +61,14 @@ export function getRunningPreferenceForDate(
 ): RunningPreference {
   return getTrainingParticipationPreferenceForDate(history, date)
     ?.runningPreference ?? DEFAULT_RUNNING_PREFERENCE;
+}
+
+export function getEquipmentProfileForDate(
+  history: TrainingParticipationPreference[] | undefined,
+  date: string,
+  environment: WorkoutEnvironment,
+  fallback: TrainingEquipmentProfile
+): TrainingEquipmentProfile {
+  return getTrainingParticipationPreferenceForDate(history, date)
+    ?.equipmentProfiles?.[environment] ?? fallback;
 }

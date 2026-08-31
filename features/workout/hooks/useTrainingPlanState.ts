@@ -34,6 +34,7 @@ import {
 import type {
   AerialSessionPreference,
   RunningPreference,
+  TrainingEquipmentProfile,
   RunProgressionPrescription,
   RunProgressionRole,
   TrainingDayOfWeek,
@@ -41,6 +42,7 @@ import type {
   TrainingModality,
   TrainingPlanState,
   TrainingWeek,
+  WorkoutEnvironment,
   WeeklyProgressionDecisionRecord,
 } from "../types";
 
@@ -612,6 +614,9 @@ export function useTrainingPlanState() {
       environment: "Either",
       format: "Either",
     },
+    equipmentProfiles: Partial<
+      Record<WorkoutEnvironment, TrainingEquipmentProfile>
+    > = {},
     effectiveDate = formatLocalDate(new Date())
   ) {
     if (!state) return;
@@ -627,6 +632,7 @@ export function useTrainingPlanState() {
       preferredDaysByModality,
       aerialSessions,
       runningPreference,
+      equipmentProfiles,
       createdAt: priorForDate?.createdAt ?? now,
       updatedAt: now,
     };

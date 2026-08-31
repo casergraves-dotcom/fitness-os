@@ -1586,7 +1586,7 @@ scheduled activities or create a parallel schedule.
 - [x] Add preferred training days for enabled modalities.
 - [x] Add preferred aerial days when aerial is enabled.
 - [x] Add running availability/preferences when running is enabled.
-- [ ] Add available home/gym equipment and setup capabilities.
+- [x] Add available home/gym equipment and setup capabilities.
 - [ ] Add typical session-duration constraints.
 - [x] Distinguish hard availability constraints from soft preferences.
 - [ ] Allow preferences to influence training-plan construction, adaptive
@@ -1631,6 +1631,15 @@ planning signals and explicitly remain subordinate to recovery and adaptive
 running-progression safeguards. Outdoor and run/walk preferences were verified
 in the browser; persistence regression coverage, 26 tests, TypeScript, and the
 production build passed.
+
+**Equipment-profile checkpoint:** The Strength preference card now captures
+separate Home and Gym equipment plus safe setup capabilities using the same
+canonical equipment vocabulary already used by workout variants and exercise
+substitutions. Defaults preserve the application's existing assumptions, while
+saved profiles are effective-dated with the rest of the training preferences.
+The controls were verified inside the Strength section, with persistence
+coverage, 26 tests, TypeScript, and the production build passing; live workout
+alternative consumption remains part of the later preference-influence item.
 
 ## 7.2 Coaching and Interaction Preferences
 

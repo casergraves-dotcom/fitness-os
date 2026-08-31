@@ -622,6 +622,15 @@ export interface RunningPreference {
   format: RunningFormatPreference;
 }
 
+export type WorkoutEnvironment =
+  | "Home"
+  | "Gym";
+
+export interface TrainingEquipmentProfile {
+  equipment: WorkoutEquipment[];
+  capabilities: WorkoutSetupCapability[];
+}
+
 export interface TrainingParticipationPreference {
   effectiveDate: string;
   enabledModalities: TrainingModality[];
@@ -633,6 +642,9 @@ export interface TrainingParticipationPreference {
   >;
   aerialSessions?: AerialSessionPreference[];
   runningPreference?: RunningPreference;
+  equipmentProfiles?: Partial<
+    Record<WorkoutEnvironment, TrainingEquipmentProfile>
+  >;
   createdAt: string;
   updatedAt: string;
 }

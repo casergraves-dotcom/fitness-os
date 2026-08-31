@@ -6,6 +6,7 @@ import { getExerciseSubstitutions } from "../../features/workout/exerciseSubstit
 import {
   getAerialSessionsForDate,
   getEnabledTrainingModalitiesForDate,
+  getEquipmentProfileForDate,
   getPreferredTrainingDaysForDate,
   getRunningPreferenceForDate,
 } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
@@ -51,6 +52,12 @@ test("participation preferences are effective-dated and preserve earlier schedul
       environment: "Outdoor",
       format: "RunWalk",
     },
+    equipmentProfiles: {
+      Home: {
+        equipment: ["Bodyweight", "YogaMat", "ResistanceBands"],
+        capabilities: ["FloorSpace", "HighAnchor"],
+      },
+    },
     createdAt: "2026-08-27T08:00:00.000Z",
     updatedAt: "2026-08-27T08:00:00.000Z",
   }];
@@ -88,6 +95,16 @@ test("participation preferences are effective-dated and preserve earlier schedul
     environment: "Outdoor",
     format: "RunWalk",
   });
+  assert.deepEqual(
+    getEquipmentProfileForDate(history, "2026-08-27", "Home", {
+      equipment: ["Bodyweight"],
+      capabilities: [],
+    }),
+    {
+      equipment: ["Bodyweight", "YogaMat", "ResistanceBands"],
+      capabilities: ["FloorSpace", "HighAnchor"],
+    }
+  );
 });
 
 test("every automatic substitution preserves a movement role and has complete metadata", () => {

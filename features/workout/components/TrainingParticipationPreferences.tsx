@@ -4,16 +4,27 @@ import { useEffect, useMemo, useState } from "react";
 
 import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import {
+  currentGymWorkoutCapabilities,
+  currentGymWorkoutEquipment,
+  currentHomeWorkoutCapabilities,
+  currentHomeWorkoutEquipment,
+} from "../backupWorkoutModel";
+import {
   DEFAULT_TRAINING_MODALITIES,
   getEnabledTrainingModalitiesForDate,
+  getEquipmentProfileForDate,
   getRunningPreferenceForDate,
   getTrainingParticipationPreferenceForDate,
 } from "../logic/getTrainingParticipationPreferenceForDate";
 import type {
   AerialSessionPreference,
   RunningPreference,
+  TrainingEquipmentProfile,
   TrainingDayOfWeek,
   TrainingModality,
+  WorkoutEnvironment,
+  WorkoutEquipment,
+  WorkoutSetupCapability,
 } from "../types";
 
 const OPTIONS: Array<{ value: TrainingModality; label: string; description: string }> = [
@@ -33,6 +44,29 @@ const DAYS: Array<{ value: TrainingDayOfWeek; label: string }> = [
 ];
 
 type PreferredDays = Partial<Record<TrainingModality, TrainingDayOfWeek[]>>;
+type EquipmentProfiles = Record<WorkoutEnvironment, TrainingEquipmentProfile>;
+
+const EQUIPMENT_OPTIONS: Array<{ value: WorkoutEquipment; label: string }> = [
+  { value: "Bodyweight", label: "Bodyweight" },
+  { value: "YogaMat", label: "Yoga mat" },
+  { value: "ResistanceBands", label: "Resistance bands" },
+  { value: "PullUpBar", label: "Pull-up bar" },
+  { value: "PunchingBag", label: "Punching bag" },
+  { value: "Dumbbells", label: "Dumbbells" },
+  { value: "Barbell", label: "Barbell" },
+  { value: "BarbellRack", label: "Barbell rack" },
+  { value: "WeightPlate", label: "Weight plates" },
+  { value: "Bench", label: "Bench" },
+  { value: "GymMachines", label: "Gym machines" },
+];
+
+const CAPABILITY_OPTIONS: Array<{ value: WorkoutSetupCapability; label: string }> = [
+  { value: "FloorSpace", label: "Floor space" },
+  { value: "HighAnchor", label: "High band/cable anchor" },
+  { value: "LowAnchor", label: "Low band/cable anchor" },
+  { value: "DoorAnchor", label: "Door anchor" },
+  { value: "PullUpBarInstalled", label: "Installed pull-up bar" },
+];
 
 function formatLocalDate(date: Date) {
   const year = date.getFullYear();
@@ -77,6 +111,26 @@ export default function TrainingParticipationPreferences() {
       : { environment: "Either", format: "Either" } as RunningPreference,
     [state, today]
   );
+  const currentEquipmentProfiles = useMemo<EquipmentProfiles>(() => ({
+    Home: getEquipmentProfileForDate(
+      state?.trainingParticipationPreferences,
+      today,
+      "Home",
+      {
+        equipment: currentHomeWorkoutEquipment,
+        capabilities: currentHomeWorkoutCapabilities,
+      }
+    ),
+    Gym: getEquipmentProfileForDate(
+      state?.trainingParticipationPreferences,
+      today,
+      "Gym",
+      {
+        equipment: currentGymWorkoutEquipment,
+        capabilities: currentGymWorkoutCapabilities,
+      }
+    ),
+  }), [state, today]);
   const [selected, setSelected] = useState<TrainingModality[]>(current);
   const [preferredDays, setPreferredDays] = useState<PreferredDays>(
     currentPreferredDays
@@ -87,12 +141,16 @@ export default function TrainingParticipationPreferences() {
   const [runningPreference, setRunningPreference] = useState<RunningPreference>(
     currentRunningPreference
   );
+  const [equipmentProfiles, setEquipmentProfiles] = useState<EquipmentProfiles>(
+    currentEquipmentProfiles
+  );
   const [saved, setSaved] = useState(false);
 
   useEffect(() => setSelected(current), [current]);
   useEffect(() => setPreferredDays(currentPreferredDays), [currentPreferredDays]);
   useEffect(() => setAerialSessions(currentAerialSessions), [currentAerialSessions]);
   useEffect(() => setRunningPreference(currentRunningPreference), [currentRunningPreference]);
+  useEffect(() => setEquipmentProfiles(currentEquipmentProfiles), [currentEquipmentProfiles]);
 
   if (!loaded) {
     return <div className="rounded-2xl border bg-white p-5 shadow-sm text-sm text-slate-500">Loading training preferences...</div>;
@@ -175,6 +233,44 @@ export default function TrainingParticipationPreferences() {
     );
   }
 
+  function toggleEquipment(
+    environment: WorkoutEnvironment,
+    equipment: WorkoutEquipment
+  ) {
+    setSaved(false);
+    setEquipmentProfiles((profiles) => {
+      const currentItems = profiles[environment].equipment;
+      return {
+        ...profiles,
+        [environment]: {
+          ...profiles[environment],
+          equipment: currentItems.includes(equipment)
+            ? currentItems.filter((item) => item !== equipment)
+            : [...currentItems, equipment],
+        },
+      };
+    });
+  }
+
+  function toggleCapability(
+    environment: WorkoutEnvironment,
+    capability: WorkoutSetupCapability
+  ) {
+    setSaved(false);
+    setEquipmentProfiles((profiles) => {
+      const currentItems = profiles[environment].capabilities;
+      return {
+        ...profiles,
+        [environment]: {
+          ...profiles[environment],
+          capabilities: currentItems.includes(capability)
+            ? currentItems.filter((item) => item !== capability)
+            : [...currentItems, capability],
+        },
+      };
+    });
+  }
+
   return (
     <section className="rounded-2xl border bg-white p-5 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Training participation</p>
@@ -219,6 +315,40 @@ export default function TrainingParticipationPreferences() {
                       );
                     })}
                   </div>
+
+                  {option.value === "Strength" && (
+                    <div className="mt-5 rounded-xl bg-slate-50 p-4">
+                      <p className="text-sm font-semibold text-slate-900">Equipment and setup</p>
+                      <p className="mt-1 text-xs text-slate-500">
+                        Equipment means it is usable in that location. Setup describes what can be safely installed or anchored there.
+                      </p>
+                      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                        {(["Home", "Gym"] as WorkoutEnvironment[]).map((environment) => (
+                          <details key={environment} open className="rounded-xl border border-slate-200 bg-white p-4">
+                            <summary className="cursor-pointer font-semibold text-slate-900">{environment}</summary>
+                            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-500">Available equipment</p>
+                            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                              {EQUIPMENT_OPTIONS.map((equipmentOption) => (
+                                <label key={equipmentOption.value} className="flex items-center gap-2 text-sm text-slate-700">
+                                  <input type="checkbox" checked={equipmentProfiles[environment].equipment.includes(equipmentOption.value)} onChange={() => toggleEquipment(environment, equipmentOption.value)} className="h-4 w-4" />
+                                  {equipmentOption.label}
+                                </label>
+                              ))}
+                            </div>
+                            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-500">Setup capabilities</p>
+                            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                              {CAPABILITY_OPTIONS.map((capabilityOption) => (
+                                <label key={capabilityOption.value} className="flex items-center gap-2 text-sm text-slate-700">
+                                  <input type="checkbox" checked={equipmentProfiles[environment].capabilities.includes(capabilityOption.value)} onChange={() => toggleCapability(environment, capabilityOption.value)} className="h-4 w-4" />
+                                  {capabilityOption.label}
+                                </label>
+                              ))}
+                            </div>
+                          </details>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {option.value === "Run" && (
                     <div className="mt-5 grid gap-4 rounded-xl bg-slate-50 p-4 md:grid-cols-2">
@@ -334,7 +464,7 @@ export default function TrainingParticipationPreferences() {
       </p>
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays, aerialSessions, runningPreference); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
+        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays, aerialSessions, runningPreference, equipmentProfiles); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved for {today}</span>}
       </div>
     </section>
