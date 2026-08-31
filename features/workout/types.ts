@@ -607,6 +607,21 @@ export interface AerialSessionPreference {
   constraint: TrainingPreferenceConstraint;
 }
 
+export type RunningEnvironmentPreference =
+  | "Either"
+  | "Outdoor"
+  | "Treadmill";
+
+export type RunningFormatPreference =
+  | "Either"
+  | "RunWalk"
+  | "Continuous";
+
+export interface RunningPreference {
+  environment: RunningEnvironmentPreference;
+  format: RunningFormatPreference;
+}
+
 export interface TrainingParticipationPreference {
   effectiveDate: string;
   enabledModalities: TrainingModality[];
@@ -617,6 +632,7 @@ export interface TrainingParticipationPreference {
     Record<TrainingModality, TrainingDayOfWeek[]>
   >;
   aerialSessions?: AerialSessionPreference[];
+  runningPreference?: RunningPreference;
   createdAt: string;
   updatedAt: string;
 }

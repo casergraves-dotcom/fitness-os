@@ -1,5 +1,6 @@
 import type {
   AerialSessionPreference,
+  RunningPreference,
   TrainingDayOfWeek,
   TrainingModality,
   TrainingParticipationPreference,
@@ -45,4 +46,17 @@ export function getAerialSessionsForDate(
 ): AerialSessionPreference[] {
   return getTrainingParticipationPreferenceForDate(history, date)
     ?.aerialSessions ?? [];
+}
+
+export const DEFAULT_RUNNING_PREFERENCE: RunningPreference = {
+  environment: "Either",
+  format: "Either",
+};
+
+export function getRunningPreferenceForDate(
+  history: TrainingParticipationPreference[] | undefined,
+  date: string
+): RunningPreference {
+  return getTrainingParticipationPreferenceForDate(history, date)
+    ?.runningPreference ?? DEFAULT_RUNNING_PREFERENCE;
 }

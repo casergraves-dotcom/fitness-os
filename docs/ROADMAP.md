@@ -1585,7 +1585,7 @@ scheduled activities or create a parallel schedule.
     scheduled by the training plan.
 - [x] Add preferred training days for enabled modalities.
 - [x] Add preferred aerial days when aerial is enabled.
-- [ ] Add running availability/preferences when running is enabled.
+- [x] Add running availability/preferences when running is enabled.
 - [ ] Add available home/gym equipment and setup capabilities.
 - [ ] Add typical session-duration constraints.
 - [x] Distinguish hard availability constraints from soft preferences.
@@ -1623,6 +1623,14 @@ to Aerial's preferred-day signals without rewriting the current schedule.
 Tuesday Building Blocks and Thursday Lyra were verified as fixed commitments,
 with Saturday open studio verified as flexible; persistence, 26 regressions,
 TypeScript, and the production build passed.
+
+**Running-preferences checkpoint:** When Running is enabled, Training
+Preferences now combines preferred weekdays with an outdoor/treadmill setting
+and a run/walk/continuous-format preference. The choices are effective-dated
+planning signals and explicitly remain subordinate to recovery and adaptive
+running-progression safeguards. Outdoor and run/walk preferences were verified
+in the browser; persistence regression coverage, 26 tests, TypeScript, and the
+production build passed.
 
 ## 7.2 Coaching and Interaction Preferences
 

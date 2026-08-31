@@ -6,10 +6,12 @@ import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import {
   DEFAULT_TRAINING_MODALITIES,
   getEnabledTrainingModalitiesForDate,
+  getRunningPreferenceForDate,
   getTrainingParticipationPreferenceForDate,
 } from "../logic/getTrainingParticipationPreferenceForDate";
 import type {
   AerialSessionPreference,
+  RunningPreference,
   TrainingDayOfWeek,
   TrainingModality,
 } from "../types";
@@ -66,6 +68,15 @@ export default function TrainingParticipationPreferences() {
       : [],
     [state, today]
   );
+  const currentRunningPreference = useMemo(
+    () => state
+      ? getRunningPreferenceForDate(
+          state.trainingParticipationPreferences,
+          today
+        )
+      : { environment: "Either", format: "Either" } as RunningPreference,
+    [state, today]
+  );
   const [selected, setSelected] = useState<TrainingModality[]>(current);
   const [preferredDays, setPreferredDays] = useState<PreferredDays>(
     currentPreferredDays
@@ -73,11 +84,15 @@ export default function TrainingParticipationPreferences() {
   const [aerialSessions, setAerialSessions] = useState<AerialSessionPreference[]>(
     currentAerialSessions
   );
+  const [runningPreference, setRunningPreference] = useState<RunningPreference>(
+    currentRunningPreference
+  );
   const [saved, setSaved] = useState(false);
 
   useEffect(() => setSelected(current), [current]);
   useEffect(() => setPreferredDays(currentPreferredDays), [currentPreferredDays]);
   useEffect(() => setAerialSessions(currentAerialSessions), [currentAerialSessions]);
+  useEffect(() => setRunningPreference(currentRunningPreference), [currentRunningPreference]);
 
   if (!loaded) {
     return <div className="rounded-2xl border bg-white p-5 shadow-sm text-sm text-slate-500">Loading training preferences...</div>;
@@ -205,6 +220,51 @@ export default function TrainingParticipationPreferences() {
                     })}
                   </div>
 
+                  {option.value === "Run" && (
+                    <div className="mt-5 grid gap-4 rounded-xl bg-slate-50 p-4 md:grid-cols-2">
+                      <label className="text-sm font-semibold text-slate-700">
+                        Where do you prefer to run?
+                        <select
+                          value={runningPreference.environment}
+                          onChange={(event) => {
+                            setSaved(false);
+                            setRunningPreference((value) => ({
+                              ...value,
+                              environment: event.target.value as RunningPreference["environment"],
+                            }));
+                          }}
+                          className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal text-slate-900"
+                        >
+                          <option value="Either">Either outdoor or treadmill</option>
+                          <option value="Outdoor">Prefer outdoors</option>
+                          <option value="Treadmill">Prefer treadmill</option>
+                        </select>
+                      </label>
+
+                      <label className="text-sm font-semibold text-slate-700">
+                        Preferred running format
+                        <select
+                          value={runningPreference.format}
+                          onChange={(event) => {
+                            setSaved(false);
+                            setRunningPreference((value) => ({
+                              ...value,
+                              format: event.target.value as RunningPreference["format"],
+                            }));
+                          }}
+                          className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal text-slate-900"
+                        >
+                          <option value="Either">No preference</option>
+                          <option value="RunWalk">Prefer run/walk intervals</option>
+                          <option value="Continuous">Prefer continuous running</option>
+                        </select>
+                      </label>
+                      <p className="text-xs text-slate-500 md:col-span-2">
+                        These guide future planning. Recovery and progression safeguards still determine the appropriate prescription.
+                      </p>
+                    </div>
+                  )}
+
                   {option.value === "Aerial" && (
                     <div className="mt-5 rounded-xl bg-slate-50 p-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -274,7 +334,7 @@ export default function TrainingParticipationPreferences() {
       </p>
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays, aerialSessions); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
+        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays, aerialSessions, runningPreference); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved for {today}</span>}
       </div>
     </section>

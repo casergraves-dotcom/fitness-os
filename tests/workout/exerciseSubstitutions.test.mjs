@@ -7,6 +7,7 @@ import {
   getAerialSessionsForDate,
   getEnabledTrainingModalitiesForDate,
   getPreferredTrainingDaysForDate,
+  getRunningPreferenceForDate,
 } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
 
 const gymContext = {
@@ -46,6 +47,10 @@ test("participation preferences are effective-dated and preserve earlier schedul
         constraint: "Flexible",
       },
     ],
+    runningPreference: {
+      environment: "Outdoor",
+      format: "RunWalk",
+    },
     createdAt: "2026-08-27T08:00:00.000Z",
     updatedAt: "2026-08-27T08:00:00.000Z",
   }];
@@ -75,6 +80,14 @@ test("participation preferences are effective-dated and preserve earlier schedul
       { day: "Saturday", constraint: "Flexible" },
     ]
   );
+  assert.deepEqual(getRunningPreferenceForDate(history, "2026-08-26"), {
+    environment: "Either",
+    format: "Either",
+  });
+  assert.deepEqual(getRunningPreferenceForDate(history, "2026-08-27"), {
+    environment: "Outdoor",
+    format: "RunWalk",
+  });
 });
 
 test("every automatic substitution preserves a movement role and has complete metadata", () => {

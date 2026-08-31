@@ -33,6 +33,7 @@ import {
 
 import type {
   AerialSessionPreference,
+  RunningPreference,
   RunProgressionPrescription,
   RunProgressionRole,
   TrainingDayOfWeek,
@@ -607,6 +608,10 @@ export function useTrainingPlanState() {
       Record<TrainingModality, TrainingDayOfWeek[]>
     > = {},
     aerialSessions: AerialSessionPreference[] = [],
+    runningPreference: RunningPreference = {
+      environment: "Either",
+      format: "Either",
+    },
     effectiveDate = formatLocalDate(new Date())
   ) {
     if (!state) return;
@@ -621,6 +626,7 @@ export function useTrainingPlanState() {
       enabledModalities: [...enabledModalities],
       preferredDaysByModality,
       aerialSessions,
+      runningPreference,
       createdAt: priorForDate?.createdAt ?? now,
       updatedAt: now,
     };
