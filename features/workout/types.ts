@@ -454,6 +454,14 @@ export type ExerciseRepCounting =
   | "Total"
   | "PerSide";
 
+export interface ExerciseGuidance {
+  // Short setup steps shown before the user begins the set.
+  setup: string[];
+
+  // Short execution cues shown while learning or reviewing the movement.
+  execution: string[];
+}
+
 
 // ============================================================
 // Exercise Definition
@@ -536,6 +544,10 @@ export interface ExerciseDefinition {
   //
   // Omitted defaults to Total for backwards compatibility.
   repCounting?: ExerciseRepCounting;
+
+  // Optional learning guidance belongs to the canonical exercise definition so
+  // workout execution and the Exercise Library share one source of truth.
+  guidance?: ExerciseGuidance;
 
   // ----------------------------------------------------------
   // Exercise Progression Path

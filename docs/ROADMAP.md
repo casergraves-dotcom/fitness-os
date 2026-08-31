@@ -1737,7 +1737,7 @@ targets, required training, progression rules, or recovery safeguards.
 Exercise guidance should extend canonical exercise definitions/metadata used by
 workout execution rather than maintaining a separate exercise-guidance catalog.
 
-- [ ] Extend canonical exercise metadata with guidance rather than creating a
+- [x] Extend canonical exercise metadata with guidance rather than creating a
   parallel exercise catalog.
 - [ ] Add an optional exercise demo/details view.
 - [ ] Show concise setup and execution instructions.
@@ -1745,6 +1745,13 @@ workout execution rather than maintaining a separate exercise-guidance catalog.
   understanding.
 - [ ] Surface exercise-specific guidance such as unilateral/per-side execution.
 - [ ] Keep guidance unobtrusive during normal workout logging.
+
+**Canonical exercise-guidance checkpoint:** The existing `ExerciseDefinition`
+model now supports optional concise setup and execution guidance. Push-Ups,
+Seated Row, Leg Press, Reverse Lunge, and Dead Bug provide an initial
+representative set directly in the canonical built-in library; no parallel
+guidance catalog was introduced. Metadata validation, all 29 project tests,
+TypeScript, and the production build passed.
 
 ## 7.4 Mobility & Flexibility Guidance
 

@@ -94,6 +94,16 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Place your hands just outside shoulder width and form a straight line from head to heels.",
+        "Brace your trunk before the first repetition.",
+      ],
+      execution: [
+        "Lower your chest under control while keeping your elbows angled slightly back.",
+        "Press the floor away without letting your hips sag or rise first.",
+      ],
+    },
     nextVariationId:
       "feet-elevated-push-ups",
   },
@@ -217,6 +227,16 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Set the seat so you can reach the handles with a tall torso and relaxed shoulders.",
+        "Plant your feet and brace lightly before pulling.",
+      ],
+      execution: [
+        "Drive your elbows back without leaning away from the pad or rounding forward.",
+        "Return the weight under control until your arms are long.",
+      ],
+    },
   },
   {
     id: "cable-row",
@@ -591,6 +611,16 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Place your feet where your heels stay planted and your knees track with your toes.",
+        "Set the seat so the starting depth is comfortable and your lower back stays supported.",
+      ],
+      execution: [
+        "Lower the sled under control to your comfortable depth.",
+        "Press through your whole foot without locking your knees hard at the top.",
+      ],
+    },
   },
   {
     id: "hack-squat-pendulum-squat",
@@ -634,6 +664,16 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     resistanceType: "None",
     performanceType: "Reps",
     repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Stand tall with enough clear space to step backward.",
+        "Brace your trunk and keep your front foot planted.",
+      ],
+      execution: [
+        "Step back and lower both knees while keeping the front knee aligned with the toes.",
+        "Drive through the front foot to return to standing before changing sides.",
+      ],
+    },
   },
   {
     id: "leg-curl",
@@ -1008,6 +1048,16 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     resistanceType: "None",
     performanceType: "Reps",
     repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Lie on your back with hips and knees bent to 90 degrees and arms reaching upward.",
+        "Gently brace so your ribs stay down and your lower back remains supported.",
+      ],
+      execution: [
+        "Slowly extend the opposite arm and leg without losing trunk position.",
+        "Return with control, then repeat on the other side.",
+      ],
+    },
   },
 
   {
