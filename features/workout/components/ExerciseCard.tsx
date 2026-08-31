@@ -702,6 +702,13 @@ export default function ExerciseCard({
 
           {guidanceOpen && (
             <div className="mt-3 grid gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4 md:grid-cols-2">
+              {isPerSide && (
+                <div className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm text-blue-800 md:col-span-2">
+                  <span className="font-semibold">Per-side exercise:</span>{" "}
+                  complete the prescribed repetitions on each side.
+                </div>
+              )}
+
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
                   Setup
