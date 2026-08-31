@@ -2,6 +2,7 @@ import type {
   AerialSessionPreference,
   RunningPreference,
   TrainingEquipmentProfile,
+  TrainingSessionDurationPreference,
   TrainingDayOfWeek,
   TrainingModality,
   TrainingParticipationPreference,
@@ -71,4 +72,13 @@ export function getEquipmentProfileForDate(
 ): TrainingEquipmentProfile {
   return getTrainingParticipationPreferenceForDate(history, date)
     ?.equipmentProfiles?.[environment] ?? fallback;
+}
+
+export function getSessionDurationPreferenceForDate(
+  history: TrainingParticipationPreference[] | undefined,
+  date: string,
+  modality: TrainingModality
+): TrainingSessionDurationPreference {
+  return getTrainingParticipationPreferenceForDate(history, date)
+    ?.sessionDurationByModality?.[modality] ?? {};
 }

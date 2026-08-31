@@ -35,6 +35,7 @@ import type {
   AerialSessionPreference,
   RunningPreference,
   TrainingEquipmentProfile,
+  TrainingSessionDurationPreference,
   RunProgressionPrescription,
   RunProgressionRole,
   TrainingDayOfWeek,
@@ -617,6 +618,9 @@ export function useTrainingPlanState() {
     equipmentProfiles: Partial<
       Record<WorkoutEnvironment, TrainingEquipmentProfile>
     > = {},
+    sessionDurationByModality: Partial<
+      Record<TrainingModality, TrainingSessionDurationPreference>
+    > = {},
     effectiveDate = formatLocalDate(new Date())
   ) {
     if (!state) return;
@@ -633,6 +637,7 @@ export function useTrainingPlanState() {
       aerialSessions,
       runningPreference,
       equipmentProfiles,
+      sessionDurationByModality,
       createdAt: priorForDate?.createdAt ?? now,
       updatedAt: now,
     };

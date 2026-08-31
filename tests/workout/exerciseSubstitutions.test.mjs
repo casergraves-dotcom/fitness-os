@@ -9,6 +9,7 @@ import {
   getEquipmentProfileForDate,
   getPreferredTrainingDaysForDate,
   getRunningPreferenceForDate,
+  getSessionDurationPreferenceForDate,
 } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
 
 const gymContext = {
@@ -58,6 +59,10 @@ test("participation preferences are effective-dated and preserve earlier schedul
         capabilities: ["FloorSpace", "HighAnchor"],
       },
     },
+    sessionDurationByModality: {
+      Strength: { typicalMinutes: 60, maximumMinutes: 75 },
+      Run: { typicalMinutes: 30, maximumMinutes: 45 },
+    },
     createdAt: "2026-08-27T08:00:00.000Z",
     updatedAt: "2026-08-27T08:00:00.000Z",
   }];
@@ -104,6 +109,14 @@ test("participation preferences are effective-dated and preserve earlier schedul
       equipment: ["Bodyweight", "YogaMat", "ResistanceBands"],
       capabilities: ["FloorSpace", "HighAnchor"],
     }
+  );
+  assert.deepEqual(
+    getSessionDurationPreferenceForDate(history, "2026-08-27", "Strength"),
+    { typicalMinutes: 60, maximumMinutes: 75 }
+  );
+  assert.deepEqual(
+    getSessionDurationPreferenceForDate(history, "2026-08-26", "Strength"),
+    {}
   );
 });
 

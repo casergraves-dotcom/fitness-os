@@ -14,12 +14,14 @@ import {
   getEnabledTrainingModalitiesForDate,
   getEquipmentProfileForDate,
   getRunningPreferenceForDate,
+  getSessionDurationPreferenceForDate,
   getTrainingParticipationPreferenceForDate,
 } from "../logic/getTrainingParticipationPreferenceForDate";
 import type {
   AerialSessionPreference,
   RunningPreference,
   TrainingEquipmentProfile,
+  TrainingSessionDurationPreference,
   TrainingDayOfWeek,
   TrainingModality,
   WorkoutEnvironment,
@@ -45,6 +47,9 @@ const DAYS: Array<{ value: TrainingDayOfWeek; label: string }> = [
 
 type PreferredDays = Partial<Record<TrainingModality, TrainingDayOfWeek[]>>;
 type EquipmentProfiles = Record<WorkoutEnvironment, TrainingEquipmentProfile>;
+type SessionDurations = Partial<Record<TrainingModality, TrainingSessionDurationPreference>>;
+
+const DURATION_OPTIONS = [15, 20, 30, 45, 60, 75, 90, 120];
 
 const EQUIPMENT_OPTIONS: Array<{ value: WorkoutEquipment; label: string }> = [
   { value: "Bodyweight", label: "Bodyweight" },
@@ -131,6 +136,23 @@ export default function TrainingParticipationPreferences() {
       }
     ),
   }), [state, today]);
+  const currentSessionDurations = useMemo<SessionDurations>(() => ({
+    Strength: getSessionDurationPreferenceForDate(
+      state?.trainingParticipationPreferences,
+      today,
+      "Strength"
+    ),
+    Run: getSessionDurationPreferenceForDate(
+      state?.trainingParticipationPreferences,
+      today,
+      "Run"
+    ),
+    Aerial: getSessionDurationPreferenceForDate(
+      state?.trainingParticipationPreferences,
+      today,
+      "Aerial"
+    ),
+  }), [state, today]);
   const [selected, setSelected] = useState<TrainingModality[]>(current);
   const [preferredDays, setPreferredDays] = useState<PreferredDays>(
     currentPreferredDays
@@ -144,6 +166,9 @@ export default function TrainingParticipationPreferences() {
   const [equipmentProfiles, setEquipmentProfiles] = useState<EquipmentProfiles>(
     currentEquipmentProfiles
   );
+  const [sessionDurations, setSessionDurations] = useState<SessionDurations>(
+    currentSessionDurations
+  );
   const [saved, setSaved] = useState(false);
 
   useEffect(() => setSelected(current), [current]);
@@ -151,6 +176,7 @@ export default function TrainingParticipationPreferences() {
   useEffect(() => setAerialSessions(currentAerialSessions), [currentAerialSessions]);
   useEffect(() => setRunningPreference(currentRunningPreference), [currentRunningPreference]);
   useEffect(() => setEquipmentProfiles(currentEquipmentProfiles), [currentEquipmentProfiles]);
+  useEffect(() => setSessionDurations(currentSessionDurations), [currentSessionDurations]);
 
   if (!loaded) {
     return <div className="rounded-2xl border bg-white p-5 shadow-sm text-sm text-slate-500">Loading training preferences...</div>;
@@ -271,6 +297,35 @@ export default function TrainingParticipationPreferences() {
     });
   }
 
+  function updateSessionDuration(
+    modality: TrainingModality,
+    field: keyof TrainingSessionDurationPreference,
+    rawValue: string
+  ) {
+    setSaved(false);
+    setSessionDurations((values) => {
+      const value = rawValue ? Number(rawValue) : undefined;
+      const next = { ...(values[modality] ?? {}), [field]: value };
+      if (
+        field === "typicalMinutes" &&
+        value !== undefined &&
+        next.maximumMinutes !== undefined &&
+        next.maximumMinutes < value
+      ) {
+        next.maximumMinutes = value;
+      }
+      if (
+        field === "maximumMinutes" &&
+        value !== undefined &&
+        next.typicalMinutes !== undefined &&
+        next.typicalMinutes > value
+      ) {
+        next.typicalMinutes = value;
+      }
+      return { ...values, [modality]: next };
+    });
+  }
+
   return (
     <section className="rounded-2xl border bg-white p-5 shadow-sm">
       <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">Training participation</p>
@@ -314,6 +369,31 @@ export default function TrainingParticipationPreferences() {
                         </button>
                       );
                     })}
+                  </div>
+
+                  <div className="mt-5 grid gap-4 rounded-xl bg-slate-50 p-4 md:grid-cols-2">
+                    <label className="text-sm font-semibold text-slate-700">
+                      Typical session length
+                      <select
+                        value={sessionDurations[option.value]?.typicalMinutes ?? ""}
+                        onChange={(event) => updateSessionDuration(option.value, "typicalMinutes", event.target.value)}
+                        className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal text-slate-900"
+                      >
+                        <option value="">No preference</option>
+                        {DURATION_OPTIONS.map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}
+                      </select>
+                    </label>
+                    <label className="text-sm font-semibold text-slate-700">
+                      Maximum time available
+                      <select
+                        value={sessionDurations[option.value]?.maximumMinutes ?? ""}
+                        onChange={(event) => updateSessionDuration(option.value, "maximumMinutes", event.target.value)}
+                        className="mt-2 block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-normal text-slate-900"
+                      >
+                        <option value="">No limit specified</option>
+                        {DURATION_OPTIONS.map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}
+                      </select>
+                    </label>
                   </div>
 
                   {option.value === "Strength" && (
@@ -464,7 +544,7 @@ export default function TrainingParticipationPreferences() {
       </p>
 
       <div className="mt-5 flex items-center gap-3">
-        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays, aerialSessions, runningPreference, equipmentProfiles); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
+        <button type="button" onClick={() => { setTrainingParticipationPreferences(selected, preferredDays, aerialSessions, runningPreference, equipmentProfiles, sessionDurations); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved for {today}</span>}
       </div>
     </section>

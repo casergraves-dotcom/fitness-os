@@ -631,6 +631,11 @@ export interface TrainingEquipmentProfile {
   capabilities: WorkoutSetupCapability[];
 }
 
+export interface TrainingSessionDurationPreference {
+  typicalMinutes?: number;
+  maximumMinutes?: number;
+}
+
 export interface TrainingParticipationPreference {
   effectiveDate: string;
   enabledModalities: TrainingModality[];
@@ -644,6 +649,9 @@ export interface TrainingParticipationPreference {
   runningPreference?: RunningPreference;
   equipmentProfiles?: Partial<
     Record<WorkoutEnvironment, TrainingEquipmentProfile>
+  >;
+  sessionDurationByModality?: Partial<
+    Record<TrainingModality, TrainingSessionDurationPreference>
   >;
   createdAt: string;
   updatedAt: string;

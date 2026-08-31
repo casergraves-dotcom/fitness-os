@@ -1587,7 +1587,7 @@ scheduled activities or create a parallel schedule.
 - [x] Add preferred aerial days when aerial is enabled.
 - [x] Add running availability/preferences when running is enabled.
 - [x] Add available home/gym equipment and setup capabilities.
-- [ ] Add typical session-duration constraints.
+- [x] Add typical session-duration constraints.
 - [x] Distinguish hard availability constraints from soft preferences.
 - [ ] Allow preferences to influence training-plan construction, adaptive
   scheduling, and workout alternatives without creating a parallel planning
@@ -1640,6 +1640,14 @@ saved profiles are effective-dated with the rest of the training preferences.
 The controls were verified inside the Strength section, with persistence
 coverage, 26 tests, TypeScript, and the production build passing; live workout
 alternative consumption remains part of the later preference-influence item.
+
+**Session-duration checkpoint:** Each enabled training modality now accepts an
+optional typical session length and maximum available time. Values are stored
+on the effective-dated training-preference record, and the editor keeps the
+maximum from contradicting the typical duration. A 45-minute typical and
+60-minute maximum Strength session was verified in the browser; persistence
+coverage, 26 tests, TypeScript, and the production build passed. Schedule and
+workout adaptation remain part of the later preference-influence item.
 
 ## 7.2 Coaching and Interaction Preferences
 
