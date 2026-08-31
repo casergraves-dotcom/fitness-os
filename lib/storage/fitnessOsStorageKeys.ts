@@ -19,6 +19,9 @@ export const FITNESS_OS_STORAGE_KEYS = {
   trainingPlanState:
     "fitness-os-training-plan-state",
 
+  trainingPreferences:
+    "fitness-os-training-preferences",
+
   trainingActivityCompletions:
     "fitness-os-training-activity-completions",
 
@@ -96,6 +99,7 @@ export const FITNESS_OS_SYNC_KEYS = [
   FITNESS_OS_STORAGE_KEYS.customExercises,
   FITNESS_OS_STORAGE_KEYS.workoutTemplates,
   FITNESS_OS_STORAGE_KEYS.trainingPlanState,
+  FITNESS_OS_STORAGE_KEYS.trainingPreferences,
   FITNESS_OS_STORAGE_KEYS.trainingActivityCompletions,
   FITNESS_OS_STORAGE_KEYS.morningCheckIns,
   FITNESS_OS_STORAGE_KEYS.workoutHistory,

@@ -10,7 +10,6 @@ import {
   currentHomeWorkoutEquipment,
 } from "../backupWorkoutModel";
 import {
-  DEFAULT_TRAINING_MODALITIES,
   getEnabledTrainingModalitiesForDate,
   getEquipmentProfileForDate,
   getRunningPreferenceForDate,
@@ -81,44 +80,33 @@ function formatLocalDate(date: Date) {
 }
 
 export default function TrainingParticipationPreferences() {
-  const { state, loaded, setTrainingParticipationPreferences } = useTrainingPlanState();
+  const { trainingPreferences, loaded, setTrainingParticipationPreferences } = useTrainingPlanState();
   const today = formatLocalDate(new Date());
   const current = useMemo(
-    () => state
-      ? getEnabledTrainingModalitiesForDate(state.trainingParticipationPreferences, today)
-      : DEFAULT_TRAINING_MODALITIES,
-    [state, today]
+    () => getEnabledTrainingModalitiesForDate(trainingPreferences, today),
+    [trainingPreferences, today]
   );
   const currentPreferredDays = useMemo(
-    () => state
-      ? getTrainingParticipationPreferenceForDate(
-          state.trainingParticipationPreferences,
-          today
-        )?.preferredDaysByModality ?? {}
-      : {},
-    [state, today]
+    () => getTrainingParticipationPreferenceForDate(
+      trainingPreferences,
+      today
+    )?.preferredDaysByModality ?? {},
+    [trainingPreferences, today]
   );
   const currentAerialSessions = useMemo(
-    () => state
-      ? getTrainingParticipationPreferenceForDate(
-          state.trainingParticipationPreferences,
-          today
-        )?.aerialSessions ?? []
-      : [],
-    [state, today]
+    () => getTrainingParticipationPreferenceForDate(
+      trainingPreferences,
+      today
+    )?.aerialSessions ?? [],
+    [trainingPreferences, today]
   );
   const currentRunningPreference = useMemo(
-    () => state
-      ? getRunningPreferenceForDate(
-          state.trainingParticipationPreferences,
-          today
-        )
-      : { environment: "Either", format: "Either" } as RunningPreference,
-    [state, today]
+    () => getRunningPreferenceForDate(trainingPreferences, today),
+    [trainingPreferences, today]
   );
   const currentEquipmentProfiles = useMemo<EquipmentProfiles>(() => ({
     Home: getEquipmentProfileForDate(
-      state?.trainingParticipationPreferences,
+      trainingPreferences,
       today,
       "Home",
       {
@@ -127,7 +115,7 @@ export default function TrainingParticipationPreferences() {
       }
     ),
     Gym: getEquipmentProfileForDate(
-      state?.trainingParticipationPreferences,
+      trainingPreferences,
       today,
       "Gym",
       {
@@ -135,24 +123,24 @@ export default function TrainingParticipationPreferences() {
         capabilities: currentGymWorkoutCapabilities,
       }
     ),
-  }), [state, today]);
+  }), [trainingPreferences, today]);
   const currentSessionDurations = useMemo<SessionDurations>(() => ({
     Strength: getSessionDurationPreferenceForDate(
-      state?.trainingParticipationPreferences,
+      trainingPreferences,
       today,
       "Strength"
     ),
     Run: getSessionDurationPreferenceForDate(
-      state?.trainingParticipationPreferences,
+      trainingPreferences,
       today,
       "Run"
     ),
     Aerial: getSessionDurationPreferenceForDate(
-      state?.trainingParticipationPreferences,
+      trainingPreferences,
       today,
       "Aerial"
     ),
-  }), [state, today]);
+  }), [trainingPreferences, today]);
   const [selected, setSelected] = useState<TrainingModality[]>(current);
   const [preferredDays, setPreferredDays] = useState<PreferredDays>(
     currentPreferredDays
@@ -180,15 +168,6 @@ export default function TrainingParticipationPreferences() {
 
   if (!loaded) {
     return <div className="rounded-2xl border bg-white p-5 shadow-sm text-sm text-slate-500">Loading training preferences...</div>;
-  }
-
-  if (!state) {
-    return (
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
-        <h2 className="text-lg font-bold">Training Participation</h2>
-        <p className="mt-2 text-sm text-slate-600">Start a training plan before changing participation preferences.</p>
-      </div>
-    );
   }
 
   function toggle(value: TrainingModality) {

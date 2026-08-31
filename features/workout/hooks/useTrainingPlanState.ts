@@ -42,6 +42,7 @@ import type {
   TrainingInterruptionReason,
   TrainingModality,
   TrainingPlanState,
+  TrainingParticipationPreference,
   TrainingWeek,
   WorkoutEnvironment,
   WeeklyProgressionDecisionRecord,
@@ -59,6 +60,9 @@ import {
 
 const STORAGE_KEY =
   "fitness-os-training-plan-state";
+
+const PREFERENCES_STORAGE_KEY =
+  "fitness-os-training-preferences";
 
 function formatLocalDate(date: Date) {
   const year = date.getFullYear();
@@ -93,6 +97,21 @@ function isTrainingPlanState(
   );
 }
 
+function isTrainingPreferenceHistory(
+  value: unknown
+): value is TrainingParticipationPreference[] {
+  return Array.isArray(value) && value.every((record) => {
+    if (typeof record !== "object" || record === null) return false;
+    const candidate = record as Partial<TrainingParticipationPreference>;
+    return (
+      typeof candidate.effectiveDate === "string" &&
+      Array.isArray(candidate.enabledModalities) &&
+      typeof candidate.createdAt === "string" &&
+      typeof candidate.updatedAt === "string"
+    );
+  });
+}
+
 
 // ============================================================
 // Training Plan State Hook
@@ -107,6 +126,11 @@ export function useTrainingPlanState() {
   );
 
   const [
+    trainingPreferences,
+    setTrainingPreferences,
+  ] = useState<TrainingParticipationPreference[]>([]);
+
+  const [
     loaded,
     setLoaded,
   ] = useState(false);
@@ -117,6 +141,21 @@ export function useTrainingPlanState() {
   // ----------------------------------------------------------
 
   useEffect(() => {
+    let preferenceHistory: TrainingParticipationPreference[] = [];
+    let hasPreferenceStore = false;
+    const savedPreferences = localStorage.getItem(PREFERENCES_STORAGE_KEY);
+    if (savedPreferences) {
+      try {
+        const parsedPreferences: unknown = JSON.parse(savedPreferences);
+        if (isTrainingPreferenceHistory(parsedPreferences)) {
+          preferenceHistory = parsedPreferences;
+          hasPreferenceStore = true;
+        }
+      } catch {
+        localStorage.removeItem(PREFERENCES_STORAGE_KEY);
+      }
+    }
+
     const saved =
       localStorage.getItem(
         STORAGE_KEY
@@ -133,9 +172,20 @@ export function useTrainingPlanState() {
           )
         ) {
           const normalized = normalizeTrainingPlanWeekStarts(parsed);
-          setState(normalized);
-          if (JSON.stringify(normalized) !== JSON.stringify(parsed)) {
-            setFitnessOsStorage(STORAGE_KEY, JSON.stringify(normalized));
+          if (!hasPreferenceStore && normalized.trainingParticipationPreferences) {
+            preferenceHistory = normalized.trainingParticipationPreferences;
+            setFitnessOsStorage(
+              PREFERENCES_STORAGE_KEY,
+              JSON.stringify(preferenceHistory)
+            );
+          }
+          const withPreferences = {
+            ...normalized,
+            trainingParticipationPreferences: preferenceHistory,
+          };
+          setState(withPreferences);
+          if (JSON.stringify(withPreferences) !== JSON.stringify(parsed)) {
+            setFitnessOsStorage(STORAGE_KEY, JSON.stringify(withPreferences));
           }
         } else {
           localStorage.removeItem(
@@ -148,6 +198,8 @@ export function useTrainingPlanState() {
         );
       }
     }
+
+    setTrainingPreferences(preferenceHistory);
 
     setLoaded(true);
   }, []);
@@ -191,6 +243,8 @@ export function useTrainingPlanState() {
         0,
 
       deloadWeekStartDates: [],
+
+      trainingParticipationPreferences: trainingPreferences,
     });
   }
 
@@ -623,10 +677,8 @@ export function useTrainingPlanState() {
     > = {},
     effectiveDate = formatLocalDate(new Date())
   ) {
-    if (!state) return;
-
     const now = new Date().toISOString();
-    const existing = state.trainingParticipationPreferences ?? [];
+    const existing = trainingPreferences;
     const priorForDate = existing.find(
       (record) => record.effectiveDate === effectiveDate
     );
@@ -642,17 +694,28 @@ export function useTrainingPlanState() {
       updatedAt: now,
     };
 
-    saveState({
-      ...state,
-      trainingParticipationPreferences: [
-        ...existing.filter((item) => item.effectiveDate !== effectiveDate),
-        record,
-      ].sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate)),
-    });
+    const nextPreferences = [
+      ...existing.filter((item) => item.effectiveDate !== effectiveDate),
+      record,
+    ].sort((a, b) => a.effectiveDate.localeCompare(b.effectiveDate));
+
+    setTrainingPreferences(nextPreferences);
+    setFitnessOsStorage(
+      PREFERENCES_STORAGE_KEY,
+      JSON.stringify(nextPreferences)
+    );
+
+    if (state) {
+      saveState({
+        ...state,
+        trainingParticipationPreferences: nextPreferences,
+      });
+    }
   }
 
   return {
     state,
+    trainingPreferences,
     loaded,
 
     startTrainingPlan,

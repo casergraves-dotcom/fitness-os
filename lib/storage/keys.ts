@@ -15,6 +15,9 @@ export const STORAGE_KEYS = {
   trainingPlanState:
     "fitness-os-training-plan-state",
 
+  trainingPreferences:
+    "fitness-os-training-preferences",
+
   customExercises:
     "fitness-os-custom-exercises",
 
@@ -69,6 +72,7 @@ export const CLOUD_SYNC_STORAGE_KEYS = [
   STORAGE_KEYS.morningCheckIns,
   STORAGE_KEYS.runHistory,
   STORAGE_KEYS.trainingPlanState,
+  STORAGE_KEYS.trainingPreferences,
   STORAGE_KEYS.customExercises,
   STORAGE_KEYS.workoutTemplates,
   STORAGE_KEYS.workoutHistory,

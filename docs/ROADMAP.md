@@ -1589,10 +1589,10 @@ scheduled activities or create a parallel schedule.
 - [x] Add available home/gym equipment and setup capabilities.
 - [x] Add typical session-duration constraints.
 - [x] Distinguish hard availability constraints from soft preferences.
-- [ ] Allow preferences to influence training-plan construction, adaptive
+- [x] Allow preferences to influence training-plan construction, adaptive
   scheduling, and workout alternatives without creating a parallel planning
   system.
-- [ ] Preserve the distinction between persistent preferences, temporary
+- [x] Preserve the distinction between persistent preferences, temporary
   schedule constraints, and recovery-driven modifications.
 
 **Training-participation checkpoint:** Settings now stores effective-dated
@@ -1668,6 +1668,17 @@ saved preferences rank lower. Existing schedules and manual moves are not
 rewritten. Preference-penalty regression coverage, 26 tests, TypeScript, and
 the production build passed. Keep the broader preference-influence item open
 until initial plan construction also consumes these signals.
+
+**Persistent-preference boundary checkpoint:** Training preferences now have a
+dedicated cloud-synced record rather than being owned by the active plan. The
+hook automatically migrates existing effective-dated preferences, keeps them
+editable without an active plan, preserves them through plan reset, and injects
+them when a new plan starts. Plan construction therefore begins with modality
+constraints, adaptive rearrangement uses day/commitment ranking, and workout
+alternatives use equipment/setup profiles, while manual reschedules and
+recovery-driven modifications remain separate overlays. Existing preferences
+survived migration, save, and refresh in the browser; 26 tests, TypeScript, and
+the production build passed.
 
 ## 7.2 Coaching and Interaction Preferences
 
