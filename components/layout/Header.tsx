@@ -3,6 +3,7 @@
 // ============================================================
 
 import Link from "next/link";
+import Image from "next/image";
 
 // ============================================================
 // Header
@@ -52,14 +53,28 @@ export default function Header() {
             App Title / Greeting
         ------------------------------------------------- */}
 
-        <div>
-          <p className="text-sm font-semibold tracking-wider text-blue-600">
-            FITNESS OS
-          </p>
+        <div className="flex min-w-0 items-center gap-3">
+          <Image
+            src="/icons/crg-app-icon-master.svg"
+            alt="CRG"
+            width={42}
+            height={42}
+            priority
+            className="h-10 w-10 shrink-0 rounded-xl shadow-sm"
+          />
 
-          <h1 className="mt-1 text-2xl font-bold text-slate-900">
-            {greeting}, Cody
-          </h1>
+          <div className="min-w-0">
+            <p className="flex items-baseline gap-2 text-sm font-semibold uppercase tracking-wider text-blue-600">
+              <span>Fitness OS</span>
+              <span className="text-[0.65rem] font-medium tracking-[0.16em] text-slate-500">
+                by CRG
+              </span>
+            </p>
+
+            <h1 className="mt-0.5 truncate text-xl font-bold text-slate-900 sm:text-2xl">
+              {greeting}, Cody
+            </h1>
+          </div>
         </div>
 
         {/* ------------------------------------------------
