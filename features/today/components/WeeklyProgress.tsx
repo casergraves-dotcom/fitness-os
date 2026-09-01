@@ -92,7 +92,7 @@ function ProgressRow({
 // Status
 // ============================================================
 
-function getStatus(
+export function getWeeklyProgressStatus(
   progress:
     CurrentWeeklyProgress
 ) {
@@ -274,7 +274,7 @@ export default function WeeklyProgress({
     progress;
 
   const status =
-    getStatus(
+    getWeeklyProgressStatus(
       progress
     );
 

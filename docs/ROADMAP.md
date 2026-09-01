@@ -1764,7 +1764,7 @@ prescription as per-side inside the optional How to panel and explicitly direct
 the user to complete the target on each side. Reverse Lunge rendering, all 29
 project tests, TypeScript, and the production build passed.
 
-## 7.4 Shared Mobile Layout and Today Refinement
+## 7.4 Shared Mobile Layout and Today Refinement — COMPLETE
 
 Mobile refinement must preserve the current visual system and shared layout
 architecture. Fix shared layout primitives rather than adding page-specific
@@ -1775,15 +1775,15 @@ spacing workarounds.
 - [x] Ensure page content clears the status bar and other top safe-area insets.
 - [x] Ensure every scrollable screen clears the persistent bottom navigation and
   bottom safe-area inset.
-- [ ] Reorder or regroup Today so readiness, today's training, nutrition, steps,
+- [x] Reorder or regroup Today so readiness, today's training, nutrition, steps,
   and important actions are immediately scannable.
 - [x] Distinguish primary daily actions from supporting context without removing
   existing functionality.
-- [ ] Reduce excessive Today card padding, repeated headings, and persistent
+- [x] Reduce excessive Today card padding, repeated headings, and persistent
   explanatory copy.
 - [x] Move secondary explanation behind concise Details/Why affordances where
   useful.
-- [ ] Verify shared layout and Today changes on representative mobile viewport
+- [x] Verify shared layout and Today changes on representative mobile viewport
   sizes before marking complete.
 
 **Shared mobile-layout checkpoint:** The shared application shell now keeps an
@@ -1818,6 +1818,17 @@ Training Week Schedule as a compact row by default. View Week mounts the existin
 canonical schedule with all move and adjustment controls intact, and Hide Full
 Week returns to the compact dashboard state. Both states, schedule interactions,
 all 29 project tests, TypeScript, and the production build passed.
+
+**Weekly-progress disclosure checkpoint:** Today now derives a compact This Week
+summary from the same canonical weekly-status logic used by the detailed card.
+View Progress opens the unchanged training, nutrition, and activity adherence
+detail, while Hide Weekly Progress restores the dashboard state. Both states,
+status text, all 29 project tests, TypeScript, and the production build passed.
+
+**Completed outcome:** Shared safe-area handling protects content around mobile
+system UI, and Today now prioritizes readiness, Guide, today's training, and
+daily actions while progressively disclosing weekly schedule, adherence, and
+supporting explanation.
 
 ## 7.5 Progress Navigation and Mobile Density
 

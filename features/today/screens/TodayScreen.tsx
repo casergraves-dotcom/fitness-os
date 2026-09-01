@@ -24,6 +24,7 @@ import {
 } from "@/features/progress/hooks/useLifestyleGoalProgressEvidence";
 
 import {
+  getWeeklyProgressStatus,
   TodayTargets,
   WeeklyProgress,
 } from "@/features/today";
@@ -95,6 +96,7 @@ export default function TodayScreen() {
   const { preferences: coachingPreferences } = useCoachingPreferences();
   const [showManualCheckIn, setShowManualCheckIn] = useState(false);
   const [showWeeklySchedule, setShowWeeklySchedule] = useState(false);
+  const [showWeeklyProgress, setShowWeeklyProgress] = useState(false);
   const {
     evidence: lifestyleEvidence,
   } = useLifestyleGoalProgressEvidence();
@@ -245,6 +247,18 @@ export default function TodayScreen() {
       workoutHistory,
       runHistory
     );
+
+  const weeklyProgressLoaded =
+    trainingPlanStateLoaded &&
+    trainingActivityCompletionsLoaded &&
+    morningCheckInLoaded &&
+    workoutHistoryLoaded &&
+    runHistoryLoaded;
+
+  const weeklyProgressStatus =
+    weeklyProgress
+      ? getWeeklyProgressStatus(weeklyProgress)
+      : null;
 
 
   // ----------------------------------------------------------
@@ -647,17 +661,25 @@ export default function TodayScreen() {
         )}
 
 
-        <WeeklyProgress
+        {showWeeklyProgress ? (
+          <div className="space-y-3">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowWeeklyProgress(false)}
+                className="text-sm font-semibold text-blue-700"
+              >
+                Hide weekly progress
+              </button>
+            </div>
+
+            <WeeklyProgress
           progress={
             weeklyProgress
           }
 
           loaded={
-            trainingPlanStateLoaded &&
-            trainingActivityCompletionsLoaded &&
-            morningCheckInLoaded &&
-            workoutHistoryLoaded &&
-            runHistoryLoaded
+            weeklyProgressLoaded
           }
 
           nutrition={
@@ -675,7 +697,35 @@ export default function TodayScreen() {
           activityLoaded={
             weeklyStepLoaded
           }
-        />
+            />
+          </div>
+        ) : (
+          <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                This Week
+              </p>
+              <h2 className="mt-1 font-bold text-slate-900">
+                {!weeklyProgressLoaded
+                  ? "Loading weekly progress..."
+                  : weeklyProgressStatus?.title ?? "Weekly progress begins with your plan"}
+              </h2>
+              {weeklyProgressStatus && (
+                <p className="mt-1 text-sm text-slate-500">
+                  {weeklyProgressStatus.detail}
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              disabled={!weeklyProgressLoaded}
+              onClick={() => setShowWeeklyProgress(true)}
+              className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              View progress
+            </button>
+          </section>
+        )}
 
 
         <WeeklyDecisionRecord
