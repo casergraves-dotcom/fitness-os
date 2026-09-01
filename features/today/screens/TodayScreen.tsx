@@ -94,6 +94,7 @@ import {
 export default function TodayScreen() {
   const { preferences: coachingPreferences } = useCoachingPreferences();
   const [showManualCheckIn, setShowManualCheckIn] = useState(false);
+  const [showWeeklySchedule, setShowWeeklySchedule] = useState(false);
   const {
     evidence: lifestyleEvidence,
   } = useLifestyleGoalProgressEvidence();
@@ -556,7 +557,19 @@ export default function TodayScreen() {
         <DailyStepsCard />
 
 
-        <WeeklySchedule
+        {showWeeklySchedule ? (
+          <div className="space-y-3">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowWeeklySchedule(false)}
+                className="text-sm font-semibold text-blue-700"
+              >
+                Hide full week
+              </button>
+            </div>
+
+            <WeeklySchedule
           state={
             trainingPlanState
           }
@@ -611,7 +624,27 @@ export default function TodayScreen() {
               );
             }
           }
-        />
+            />
+          </div>
+        ) : (
+          <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                Training Week
+              </p>
+              <h2 className="mt-1 font-bold text-slate-900">
+                Full schedule and adjustments
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowWeeklySchedule(true)}
+              className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700"
+            >
+              View week
+            </button>
+          </section>
+        )}
 
 
         <WeeklyProgress

@@ -1813,6 +1813,12 @@ action rows, while their full editors remain unchanged after the user chooses to
 log data. Mobile rendering, all 29 project tests, TypeScript, and the production
 build passed.
 
+**Weekly-schedule disclosure checkpoint:** Today now represents the detailed
+Training Week Schedule as a compact row by default. View Week mounts the existing
+canonical schedule with all move and adjustment controls intact, and Hide Full
+Week returns to the compact dashboard state. Both states, schedule interactions,
+all 29 project tests, TypeScript, and the production build passed.
+
 ## 7.5 Progress Navigation and Mobile Density
 
 Progress should answer “How am I changing?” through a concise overview while
