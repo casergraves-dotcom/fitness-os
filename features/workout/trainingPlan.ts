@@ -56,6 +56,9 @@ const EASY_WALK_PRESCRIPTION = {
 
 
 const STRETCH_RECOVERY_PRESCRIPTION = {
+  mobilityRoutineId:
+    "full-body-recovery" as const,
+
   durationMin:
     10,
 
@@ -63,7 +66,7 @@ const STRETCH_RECOVERY_PRESCRIPTION = {
     15,
 
   note:
-    "Complete a gentle full-body recovery routine: calves, hamstrings, hip flexors, glutes, adductors, lats, chest, and shoulders. Hold each stretch about 30 seconds per side and repeat tight areas as needed.",
+    "Use the guided full-body routine and keep every position gentle and restorative.",
 };
 
 const LONG_WALK_PRESCRIPTION = {

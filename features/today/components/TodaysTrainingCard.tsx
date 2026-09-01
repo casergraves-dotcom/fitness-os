@@ -31,6 +31,8 @@ import type {
   StrengthWorkoutVariant,
 } from "@/features/workout/types";
 
+import MobilityRoutinePreview from "@/features/mobility/components/MobilityRoutinePreview";
+
 
 // ============================================================
 // Props
@@ -941,6 +943,10 @@ export default function TodaysTrainingCard({
               !isStrength &&
               !isRun;
 
+            const isMobility =
+              activity.type ===
+              "Mobility";
+
             const strengthWorkout =
               activity.strengthWorkout as
                 | StrengthWorkoutType
@@ -1052,6 +1058,10 @@ export default function TodaysTrainingCard({
                   <p className="mt-3 text-sm text-slate-600">
                     {activity.note}
                   </p>
+                )}
+
+                {isMobility && activity.mobilityRoutineId && (
+                  <MobilityRoutinePreview routineId={activity.mobilityRoutineId} />
                 )}
 
 

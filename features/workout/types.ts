@@ -598,6 +598,9 @@ export type TrainingActivityType =
   | "Recovery"
   | "Rest";
 
+export type MobilityRoutineId =
+  | "full-body-recovery";
+
 export type TrainingModality =
   | "Strength"
   | "Run"
@@ -783,6 +786,9 @@ export interface TrainingActivity {
   // Run 3 min / Walk 2 min × 25 min
   runIntervalMinutes?: number;
   walkIntervalMinutes?: number;
+
+  // Structured guidance used when type === "Mobility".
+  mobilityRoutineId?: MobilityRoutineId;
 
   // ----------------------------------------------------------
   // Schedule Behavior

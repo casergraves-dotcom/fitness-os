@@ -24,6 +24,7 @@ import { useWorkoutSession } from "../hooks/useWorkoutSession";
 import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import WorkoutWarmupCard from "../components/WorkoutWarmupCard";
 import WorkoutExerciseNavigator from "../components/WorkoutExerciseNavigator";
+import MobilityRoutineSession from "@/features/mobility/components/MobilityRoutineSession";
 
 import {
   useExerciseLibrary,
@@ -201,6 +202,11 @@ export default function WorkoutScreen() {
   ] = useState<StrengthWorkoutType | null>(
     null
   );
+
+  const [
+    mobilityRoutineActive,
+    setMobilityRoutineActive,
+  ] = useState(false);
 
   const [
     expandedExerciseIds,
@@ -1261,6 +1267,16 @@ const exerciseVolume =
   // ----------------------------------------------------------
 
   if (!session) {
+    if (mobilityRoutineActive) {
+      return (
+        <AppShell>
+          <MobilityRoutineSession
+            onClose={() => setMobilityRoutineActive(false)}
+          />
+        </AppShell>
+      );
+    }
+
     const workoutDescriptions:
       Record<
         StrengthWorkoutType,
@@ -1359,6 +1375,26 @@ const exerciseVolume =
                   </button>
                 )
               )}
+
+              <button
+                type="button"
+                onClick={() => setMobilityRoutineActive(true)}
+                className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
+              >
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-semibold">Mobility & Stretching</p>
+                    <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+                      10 min
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Gentle full-body recovery you can do anytime
+                  </p>
+                </div>
+
+                <span className="text-xl">→</span>
+              </button>
             </div>
           ) : (
             <div className="mt-6">
