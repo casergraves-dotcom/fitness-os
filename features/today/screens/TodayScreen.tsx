@@ -7,6 +7,8 @@ import { useState } from "react";
 // ============================================================
 
 import AppShell from "@/components/layout/AppShell";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 import {
   CoachCard,
@@ -452,17 +454,17 @@ export default function TodayScreen() {
             compactWhenComplete
           />
         ) : (
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
+          <Card className="p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="font-semibold text-slate-900">Morning Check-In</h2>
                 <p className="mt-1 text-sm text-slate-500">Open it whenever you want readiness guidance.</p>
               </div>
-              <button type="button" onClick={() => setShowManualCheckIn(true)} className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700">
+              <Button type="button" variant="outline" onClick={() => setShowManualCheckIn(true)}>
                 Open check-in
-              </button>
+              </Button>
             </div>
-          </section>
+          </Card>
         )}
 
         <CoachCard
@@ -574,13 +576,14 @@ export default function TodayScreen() {
         {showWeeklySchedule ? (
           <div className="space-y-3">
             <div className="flex justify-end">
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowWeeklySchedule(false)}
-                className="text-sm font-semibold text-blue-700"
+                variant="link"
+                size="sm"
               >
                 Hide full week
-              </button>
+              </Button>
             </div>
 
             <WeeklySchedule
@@ -641,7 +644,7 @@ export default function TodayScreen() {
             />
           </div>
         ) : (
-          <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
+          <Card className="flex-row flex-wrap items-center justify-between gap-4 p-4 sm:p-5">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
                 Training Week
@@ -650,27 +653,28 @@ export default function TodayScreen() {
                 Full schedule and adjustments
               </h2>
             </div>
-            <button
+            <Button
               type="button"
               onClick={() => setShowWeeklySchedule(true)}
-              className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700"
+              variant="outline"
             >
               View week
-            </button>
-          </section>
+            </Button>
+          </Card>
         )}
 
 
         {showWeeklyProgress ? (
           <div className="space-y-3">
             <div className="flex justify-end">
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowWeeklyProgress(false)}
-                className="text-sm font-semibold text-blue-700"
+                variant="link"
+                size="sm"
               >
                 Hide weekly progress
-              </button>
+              </Button>
             </div>
 
             <WeeklyProgress
@@ -700,7 +704,7 @@ export default function TodayScreen() {
             />
           </div>
         ) : (
-          <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
+          <Card className="flex-row flex-wrap items-center justify-between gap-4 p-4 sm:p-5">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
                 This Week
@@ -716,15 +720,15 @@ export default function TodayScreen() {
                 </p>
               )}
             </div>
-            <button
+            <Button
               type="button"
               disabled={!weeklyProgressLoaded}
               onClick={() => setShowWeeklyProgress(true)}
-              className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              variant="outline"
             >
               View progress
-            </button>
-          </section>
+            </Button>
+          </Card>
         )}
 
 
