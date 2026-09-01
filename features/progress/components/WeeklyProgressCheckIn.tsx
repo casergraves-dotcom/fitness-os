@@ -14,6 +14,11 @@ import {
   X,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
 import {
   useProgressCheckIns,
 } from "../hooks/useProgressCheckIns";
@@ -661,11 +666,11 @@ export default function WeeklyProgressCheckIn() {
     !loaded
   ) {
     return (
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+      <Card className="p-5">
         <p className="text-sm text-slate-500">
           Loading weekly check-ins...
         </p>
-      </div>
+      </Card>
     );
   }
 
@@ -677,7 +682,7 @@ export default function WeeklyProgressCheckIn() {
   return (
     <div className="space-y-4">
 
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+      <Card className="p-5">
 
         <div className="flex flex-wrap items-start justify-between gap-4">
 
@@ -699,12 +704,11 @@ export default function WeeklyProgressCheckIn() {
           </div>
 
           {!formOpen && (
-            <button
+            <Button
               type="button"
               onClick={
                 beginAdd
               }
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
             >
               <Plus
                 size={
@@ -713,7 +717,7 @@ export default function WeeklyProgressCheckIn() {
               />
 
               Add Check-In
-            </button>
+            </Button>
           )}
 
         </div>
@@ -761,11 +765,11 @@ export default function WeeklyProgressCheckIn() {
 
         </div>
 
-      </div>
+      </Card>
 
 
       {formOpen && (
-        <div className="rounded-2xl border bg-white p-5 shadow-sm">
+        <Card className="p-5">
 
           <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
             {editingId
@@ -790,7 +794,7 @@ export default function WeeklyProgressCheckIn() {
                 Date
               </span>
 
-              <input
+              <Input
                 type="date"
                 value={
                   form.date
@@ -810,7 +814,7 @@ export default function WeeklyProgressCheckIn() {
                       })
                     )
                 }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               />
             </label>
 
@@ -955,7 +959,7 @@ export default function WeeklyProgressCheckIn() {
                 Notes
               </span>
 
-              <textarea
+              <Textarea
                 value={
                   form.notes
                 }
@@ -978,7 +982,7 @@ export default function WeeklyProgressCheckIn() {
                   4
                 }
                 placeholder="Optional weekly context — training, nutrition, travel, routine changes, or anything else that helps explain the week."
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               />
             </label>
 
@@ -994,7 +998,7 @@ export default function WeeklyProgressCheckIn() {
 
             <div className="flex flex-wrap justify-end gap-3">
 
-              <button
+              <Button
                 type="button"
                 onClick={
                   cancelForm
@@ -1002,12 +1006,12 @@ export default function WeeklyProgressCheckIn() {
                 disabled={
                   saving
                 }
-                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                variant="outline"
               >
                 Cancel
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
                 onClick={
                   saveCheckIn
@@ -1015,26 +1019,25 @@ export default function WeeklyProgressCheckIn() {
                 disabled={
                   saving
                 }
-                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {saving
                   ? "Saving..."
                   : editingId
                     ? "Save Changes"
                     : "Save Check-In"}
-              </button>
+              </Button>
 
             </div>
 
           </div>
 
-        </div>
+        </Card>
       )}
 
 
       {checkInsWithMeasurements.length >
       0 ? (
-        <div className="rounded-2xl border bg-white p-5 shadow-sm">
+        <Card className="p-5">
 
           <p className="text-sm font-semibold uppercase tracking-wider text-slate-500">
             Check-In History
@@ -1139,7 +1142,7 @@ export default function WeeklyProgressCheckIn() {
 
           </div>
 
-        </div>
+        </Card>
       ) : (
         <div className="rounded-2xl border bg-white p-5 shadow-sm">
 
