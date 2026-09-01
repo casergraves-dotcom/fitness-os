@@ -454,6 +454,7 @@ export default function TodayScreen() {
           recommendation={
             recommendation
           }
+          showAction={false}
         />
 
         <TodaysTrainingCard

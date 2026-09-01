@@ -1777,11 +1777,11 @@ spacing workarounds.
   bottom safe-area inset.
 - [ ] Reorder or regroup Today so readiness, today's training, nutrition, steps,
   and important actions are immediately scannable.
-- [ ] Distinguish primary daily actions from supporting context without removing
+- [x] Distinguish primary daily actions from supporting context without removing
   existing functionality.
 - [ ] Reduce excessive Today card padding, repeated headings, and persistent
   explanatory copy.
-- [ ] Move secondary explanation behind concise Details/Why affordances where
+- [x] Move secondary explanation behind concise Details/Why affordances where
   useful.
 - [ ] Verify shared layout and Today changes on representative mobile viewport
   sizes before marking complete.
@@ -1798,6 +1798,13 @@ today's training ahead of previous-day confirmation and weekly context. A
 completed Morning Check-In collapses to a compact readiness summary with an Edit
 action, while incomplete check-ins remain open for entry. The compact summary,
 Edit flow, all 29 project tests, TypeScript, and the production build passed.
+
+**Guide density checkpoint:** Today's recommendation keeps its headline and
+summary visible while placing review and lifestyle observations behind a compact
+Supporting Details control. The duplicate workout-launch action was removed from
+Guide so Today's Training remains the single owner of the scheduled-session CTA.
+Collapsed and expanded details, the single CTA, all 29 project tests,
+TypeScript, and the production build passed.
 
 ## 7.5 Progress Navigation and Mobile Density
 
