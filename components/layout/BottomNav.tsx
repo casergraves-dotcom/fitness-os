@@ -10,37 +10,9 @@ import {
   usePathname,
 } from "next/navigation";
 
-// ============================================================
-// Navigation
-// ============================================================
-
-const items = [
-  {
-    href: "/today",
-    label: "Today",
-    icon: "🏠",
-  },
-  {
-    href: "/workout",
-    label: "Workout",
-    icon: "💪",
-  },
-  {
-    href: "/progress",
-    label: "Progress",
-    icon: "📈",
-  },
-  {
-    href: "/running",
-    label: "Running",
-    icon: "🏃",
-  },
-  {
-    href: "/history",
-    label: "History",
-    icon: "📚",
-  },
-];
+import {
+  navigation,
+} from "@/lib/constants/navigation";
 
 // ============================================================
 // Bottom Navigation
@@ -75,11 +47,14 @@ export default function BottomNav() {
           py-3
         "
       >
-        {items.map(
+        {navigation.map(
           (item) => {
             const active =
               pathname ===
               item.href;
+
+            const Icon =
+              item.icon;
 
             return (
               <Link
@@ -104,14 +79,11 @@ export default function BottomNav() {
                   }
                 `}
               >
-                <span
-                  className="text-xl leading-none"
+                <Icon
+                  className="h-5 w-5"
+                  strokeWidth={active ? 2.5 : 2}
                   aria-hidden="true"
-                >
-                  {
-                    item.icon
-                  }
-                </span>
+                />
 
                 <span>
                   {

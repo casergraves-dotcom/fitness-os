@@ -1884,6 +1884,9 @@ additional routine-level history only where useful beyond canonical completion.
 - [ ] Provide useful default routines such as Full Body Recovery, Post-Run,
   Post-Strength, and Post-Aerial.
 - [ ] Support routine duration targets such as 10, 15, and 20 minutes.
+- [ ] Add goal-oriented flexibility routines for specific outcomes such as front
+  splits, middle splits, overhead shoulder range, ankle mobility, and thoracic
+  rotation, using gradual tolerance-aware progression rather than forcing range.
 - [ ] Allow favorite and custom mobility/stretching routines.
 - [ ] Allow tight/sore-area context to influence the recommended routine without
   automatically changing the underlying training plan.
