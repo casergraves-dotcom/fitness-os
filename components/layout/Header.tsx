@@ -5,6 +5,8 @@
 import Link from "next/link";
 import Image from "next/image";
 
+import { buttonVariants } from "@/components/ui/button";
+
 // ============================================================
 // Header
 // ============================================================
@@ -83,7 +85,7 @@ export default function Header() {
 
         <Link
           href="/settings"
-          className="rounded-xl border border-slate-200 px-3 py-2 text-sm transition hover:bg-slate-100"
+          className={buttonVariants({ variant: "outline" })}
         >
           Settings
         </Link>

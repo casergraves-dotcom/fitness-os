@@ -17,7 +17,7 @@ export default function SectionCard({
 }: SectionCardProps) {
   return (
     <Card
-      className={`rounded-2xl border bg-white p-6 shadow-sm ${className}`}
+      className={`p-6 ${className}`}
     >
       {(title || subtitle) && (
         <header className="mb-6">
