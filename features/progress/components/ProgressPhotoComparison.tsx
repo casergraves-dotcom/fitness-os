@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 
+import { Select } from "@/components/ui/select";
+
 import {
   useProgressCheckIns,
 } from "../hooks/useProgressCheckIns";
@@ -201,7 +203,7 @@ export default function ProgressPhotoComparison() {
                 Earlier Check-In
               </span>
 
-              <select
+              <Select
                 value={
                   earlierId
                 }
@@ -213,7 +215,7 @@ export default function ProgressPhotoComparison() {
                       event.target.value
                     )
                 }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               >
                 <option value="">
                   Select a check-in
@@ -240,7 +242,7 @@ export default function ProgressPhotoComparison() {
                   )
                 )}
 
-              </select>
+              </Select>
 
             </label>
 
@@ -251,7 +253,7 @@ export default function ProgressPhotoComparison() {
                 Later Check-In
               </span>
 
-              <select
+              <Select
                 value={
                   laterId
                 }
@@ -263,7 +265,7 @@ export default function ProgressPhotoComparison() {
                       event.target.value
                     )
                 }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               >
                 <option value="">
                   Select a check-in
@@ -290,7 +292,7 @@ export default function ProgressPhotoComparison() {
                   )
                 )}
 
-              </select>
+              </Select>
 
             </label>
 
