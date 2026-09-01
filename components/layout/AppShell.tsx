@@ -66,7 +66,12 @@ export default function AppShell({
   // ----------------------------------------------------------
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-dvh bg-slate-50">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[env(safe-area-inset-top)] bg-white"
+      />
+
       <Header />
 
       <PageContainer>

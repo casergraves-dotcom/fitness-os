@@ -60,6 +60,8 @@ export default function BottomNav() {
         border-t
         border-slate-200
         bg-white
+        pl-[env(safe-area-inset-left)]
+        pr-[env(safe-area-inset-right)]
         pb-[env(safe-area-inset-bottom)]
       "
     >

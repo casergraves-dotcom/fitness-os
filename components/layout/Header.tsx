@@ -43,7 +43,8 @@ export default function Header() {
           max-w-5xl
           items-center
           justify-between
-          px-4
+          pl-[max(1rem,env(safe-area-inset-left))]
+          pr-[max(1rem,env(safe-area-inset-right))]
           py-4
         "
       >

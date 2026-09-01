@@ -1770,10 +1770,10 @@ Mobile refinement must preserve the current visual system and shared layout
 architecture. Fix shared layout primitives rather than adding page-specific
 spacing workarounds.
 
-- [ ] Audit iOS/PWA viewport and safe-area handling in the shared application
+- [x] Audit iOS/PWA viewport and safe-area handling in the shared application
   shell.
-- [ ] Ensure page content clears the status bar and other top safe-area insets.
-- [ ] Ensure every scrollable screen clears the persistent bottom navigation and
+- [x] Ensure page content clears the status bar and other top safe-area insets.
+- [x] Ensure every scrollable screen clears the persistent bottom navigation and
   bottom safe-area inset.
 - [ ] Reorder or regroup Today so readiness, today's training, nutrition, steps,
   and important actions are immediately scannable.
@@ -1785,6 +1785,13 @@ spacing workarounds.
   useful.
 - [ ] Verify shared layout and Today changes on representative mobile viewport
   sizes before marking complete.
+
+**Shared mobile-layout checkpoint:** The shared application shell now keeps an
+opaque safe-area backdrop fixed beneath the iOS status region while preserving
+the scrolling header, respects left/right device insets, uses dynamic viewport
+height, and gives all pages explicit clearance above the fixed bottom navigation
+and bottom safe area. Mobile top and bottom clearance, all 29 project tests,
+TypeScript, and the production build passed.
 
 ## 7.5 Progress Navigation and Mobile Density
 
