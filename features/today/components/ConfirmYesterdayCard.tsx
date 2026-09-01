@@ -7,6 +7,7 @@ import { useDailySteps } from "@/features/dailyActivity";
 import { isDailyRecordSettled } from "@/features/dailyActivity/utils/isDailyRecordSettled";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { parseDailyStepInput } from "@/features/dailyActivity/utils/parseDailyStepInput";
 
 function formatLocalDate(date: Date) {
   const year = date.getFullYear();
@@ -28,6 +29,7 @@ export default function ConfirmYesterdayCard() {
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
   const [steps, setSteps] = useState("");
+  const [stepValidationMessage, setStepValidationMessage] = useState<string | null>(null);
 
   const nutritionSettled =
     !nutritionRecord ||
@@ -43,12 +45,12 @@ export default function ConfirmYesterdayCard() {
       confirmedAt: stepRecord.confirmedAt,
       currentDate: today,
     });
+  const needsConfirmation = !nutritionSettled || !stepsSettled;
 
   if (
     !nutrition.loaded ||
     !dailySteps.loaded ||
-    (!nutritionRecord && !stepRecord) ||
-    (nutritionSettled && stepsSettled)
+    (!nutritionRecord && !stepRecord)
   ) {
     return null;
   }
@@ -57,6 +59,7 @@ export default function ConfirmYesterdayCard() {
     setCalories(nutritionRecord?.calories?.toString() ?? "");
     setProtein(nutritionRecord?.proteinGrams?.toString() ?? "");
     setSteps(stepRecord?.steps.toString() ?? "");
+    setStepValidationMessage(null);
     setEditing(true);
   }
 
@@ -86,8 +89,13 @@ export default function ConfirmYesterdayCard() {
   function saveCorrections() {
     const parsedCalories = calories === "" ? undefined : Number(calories);
     const parsedProtein = protein === "" ? undefined : Number(protein);
-    const parsedSteps = steps === "" ? undefined : Number(steps);
+    const parsedSteps = parseDailyStepInput(steps);
     const confirmedAt = new Date().toISOString();
+
+    if (parsedSteps.status === "invalid") {
+      setStepValidationMessage("Enter steps as a whole number using digits only.");
+      return;
+    }
 
     if (
       parsedCalories !== undefined ||
@@ -103,15 +111,16 @@ export default function ConfirmYesterdayCard() {
       });
     }
 
-    if (parsedSteps !== undefined && Number.isInteger(parsedSteps) && parsedSteps >= 0) {
+    if (parsedSteps.status === "valid") {
       dailySteps.saveDailySteps({
         date: yesterday,
-        steps: parsedSteps,
+        steps: parsedSteps.steps,
         notes: stepRecord?.notes,
         confirmedAt,
       });
     }
 
+    setStepValidationMessage(null);
     setEditing(false);
   }
 
@@ -119,14 +128,24 @@ export default function ConfirmYesterdayCard() {
     <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Confirm yesterday</p>
-          <h2 className="mt-1 text-lg font-semibold text-slate-950">Are these final totals?</h2>
-          <p className="mt-1 text-sm text-slate-600">Until confirmed, yesterday stays provisional in Reflect.</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+            {needsConfirmation ? "Confirm yesterday" : "Yesterday"}
+          </p>
+          <h2 className="mt-1 text-lg font-semibold text-slate-950">
+            {needsConfirmation ? "Are these final totals?" : "Yesterday's totals"}
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
+            {needsConfirmation
+              ? "Until confirmed, yesterday stays provisional in Reflect."
+              : "Review or correct the totals used throughout Fitness OS."}
+          </p>
         </div>
 
         {!editing && (
           <div className="flex gap-2">
-            <Button type="button" onClick={confirmExisting}>Confirm</Button>
+            {needsConfirmation && (
+              <Button type="button" onClick={confirmExisting}>Confirm</Button>
+            )}
             <Button type="button" variant="outline" onClick={beginEditing}>Edit</Button>
           </div>
         )}
@@ -141,10 +160,20 @@ export default function ConfirmYesterdayCard() {
             <Input type="number" min="0" value={protein} onChange={(event) => setProtein(event.target.value)} className="mt-1" />
           </label>
           <label className="text-sm font-medium text-slate-700">Steps
-            <Input type="number" min="0" step="1" value={steps} onChange={(event) => setSteps(event.target.value)} className="mt-1" />
+            <Input type="text" inputMode="numeric" pattern="[0-9]*" value={steps} onChange={(event) => setSteps(event.target.value)} className="mt-1" />
+            {parseDailyStepInput(steps).status === "valid" && (
+              <span className="mt-1 block text-xs font-normal text-slate-500">
+                Will save {Number(steps).toLocaleString()} steps
+              </span>
+            )}
           </label>
+          {stepValidationMessage && (
+            <p className="text-sm font-medium text-red-600 sm:col-span-3">{stepValidationMessage}</p>
+          )}
           <div className="flex gap-2 sm:col-span-3">
-            <Button type="button" onClick={saveCorrections}>Save & confirm</Button>
+            <Button type="button" onClick={saveCorrections}>
+              {needsConfirmation ? "Save & confirm" : "Save changes"}
+            </Button>
             <Button type="button" variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
           </div>
         </div>

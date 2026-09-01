@@ -9,6 +9,10 @@ import {
   useState,
 } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
 import {
   useDailySteps,
 } from "../hooks/useDailySteps";
@@ -17,32 +21,7 @@ import {
   useStepTargets,
 } from "../hooks/useStepTargets";
 
-
-// ============================================================
-// Helpers
-// ============================================================
-
-function parseSteps(
-  value: string
-) {
-  if (
-    value.trim() ===
-    ""
-  ) {
-    return undefined;
-  }
-
-  const parsed =
-    Number(
-      value
-    );
-
-  return Number.isFinite(
-    parsed
-  )
-    ? parsed
-    : undefined;
-}
+import { parseDailyStepInput } from "../utils/parseDailyStepInput";
 
 
 // ============================================================
@@ -159,7 +138,7 @@ export default function DailyStepsCard() {
 
   function save() {
     const parsedSteps =
-      parseSteps(
+      parseDailyStepInput(
         steps
       );
 
@@ -167,8 +146,8 @@ export default function DailyStepsCard() {
       notes.trim();
 
     if (
-      parsedSteps ===
-      undefined
+      parsedSteps.status ===
+      "empty"
     ) {
       if (
         todayRecord &&
@@ -198,23 +177,11 @@ export default function DailyStepsCard() {
     }
 
     if (
-      parsedSteps <
-      0
+      parsedSteps.status ===
+      "invalid"
     ) {
       setValidationMessage(
-        "Steps cannot be negative."
-      );
-
-      return;
-    }
-
-    if (
-      !Number.isInteger(
-        parsedSteps
-      )
-    ) {
-      setValidationMessage(
-        "Steps must be a whole number."
+        "Enter steps as a whole number using digits only."
       );
 
       return;
@@ -222,7 +189,7 @@ export default function DailyStepsCard() {
 
     saveDailySteps({
       steps:
-        parsedSteps,
+        parsedSteps.steps,
 
       notes:
         trimmedNotes ||
@@ -290,11 +257,10 @@ export default function DailyStepsCard() {
             </span>
 
             <div className="mt-2 flex items-center gap-2">
-              <input
-                type="number"
+              <Input
+                type="text"
                 inputMode="numeric"
-                min={0}
-                step="1"
+                pattern="[0-9]*"
                 value={
                   steps
                 }
@@ -307,13 +273,18 @@ export default function DailyStepsCard() {
                   )
                 }
                 placeholder="Example: 8500"
-                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base text-slate-900"
               />
 
               <span className="text-sm text-slate-500">
                 steps
               </span>
             </div>
+
+            {parseDailyStepInput(steps).status === "valid" && (
+              <span className="mt-2 block text-xs text-slate-500">
+                Will save {Number(steps).toLocaleString()} steps
+              </span>
+            )}
           </label>
 
 
@@ -322,7 +293,7 @@ export default function DailyStepsCard() {
               Notes
             </span>
 
-            <textarea
+            <Textarea
               value={
                 notes
               }
@@ -336,7 +307,7 @@ export default function DailyStepsCard() {
               }
               rows={3}
               placeholder="Optional context"
-              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base text-slate-900"
+              className="mt-2"
             />
           </label>
 
@@ -352,17 +323,16 @@ export default function DailyStepsCard() {
 
           <div className="flex flex-wrap gap-3">
 
-            <button
+            <Button
               type="button"
               onClick={
                 save
               }
-              className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
             >
               Save Steps
-            </button>
+            </Button>
 
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setValidationMessage(
@@ -373,10 +343,10 @@ export default function DailyStepsCard() {
                   false
                 );
               }}
-              className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              variant="outline"
             >
               Cancel
-            </button>
+            </Button>
 
           </div>
 
