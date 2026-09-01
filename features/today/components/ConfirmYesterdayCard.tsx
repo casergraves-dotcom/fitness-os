@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useDailyNutrition } from "@/features/nutrition";
 import { useDailySteps } from "@/features/dailyActivity";
 import { isDailyRecordSettled } from "@/features/dailyActivity/utils/isDailyRecordSettled";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function formatLocalDate(date: Date) {
   const year = date.getFullYear();
@@ -124,8 +126,8 @@ export default function ConfirmYesterdayCard() {
 
         {!editing && (
           <div className="flex gap-2">
-            <button type="button" onClick={confirmExisting} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white">Confirm</button>
-            <button type="button" onClick={beginEditing} className="rounded-xl border border-blue-300 bg-white px-4 py-2 text-sm font-semibold text-blue-700">Edit</button>
+            <Button type="button" onClick={confirmExisting}>Confirm</Button>
+            <Button type="button" variant="outline" onClick={beginEditing}>Edit</Button>
           </div>
         )}
       </div>
@@ -133,17 +135,17 @@ export default function ConfirmYesterdayCard() {
       {editing ? (
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           <label className="text-sm font-medium text-slate-700">Calories
-            <input type="number" min="0" value={calories} onChange={(event) => setCalories(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />
+            <Input type="number" min="0" value={calories} onChange={(event) => setCalories(event.target.value)} className="mt-1" />
           </label>
           <label className="text-sm font-medium text-slate-700">Protein (g)
-            <input type="number" min="0" value={protein} onChange={(event) => setProtein(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />
+            <Input type="number" min="0" value={protein} onChange={(event) => setProtein(event.target.value)} className="mt-1" />
           </label>
           <label className="text-sm font-medium text-slate-700">Steps
-            <input type="number" min="0" step="1" value={steps} onChange={(event) => setSteps(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2" />
+            <Input type="number" min="0" step="1" value={steps} onChange={(event) => setSteps(event.target.value)} className="mt-1" />
           </label>
           <div className="flex gap-2 sm:col-span-3">
-            <button type="button" onClick={saveCorrections} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white">Save & confirm</button>
-            <button type="button" onClick={() => setEditing(false)} className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700">Cancel</button>
+            <Button type="button" onClick={saveCorrections}>Save & confirm</Button>
+            <Button type="button" variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
           </div>
         </div>
       ) : (

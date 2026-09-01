@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import RatingSelector from "@/components/ui/RatingSelector";
+import { Button } from "@/components/ui/button";
 
 import {
   Card,
@@ -119,13 +120,13 @@ export default function MorningCheckIn({
               {readiness.score.toFixed(1)}
               <span className="ml-1 text-sm font-medium text-slate-500">/ 5</span>
             </p>
-            <button
+            <Button
               type="button"
               onClick={() => setDetailsOpen(true)}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700"
+              variant="outline"
             >
               Edit
-            </button>
+            </Button>
           </div>
         </div>
       </Card>
