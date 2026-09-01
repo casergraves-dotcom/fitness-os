@@ -306,22 +306,18 @@ export default function RecoveryProgress() {
           Summary
       ======================================================= */}
 
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
 
         <div>
 
-          <p className="text-sm font-semibold text-slate-500">
-            RECOVERY
-          </p>
-
-          <h2 className="mt-1 text-xl font-bold">
+          <h2 className="text-lg font-bold sm:text-xl">
             Readiness
           </h2>
 
         </div>
 
 
-        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:grid-cols-4">
 
           {/* --------------------------------------------------
               Current Readiness
@@ -453,7 +449,7 @@ export default function RecoveryProgress() {
           Readiness Trend
       ======================================================= */}
 
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
 
         <div className="flex flex-wrap items-end justify-between gap-4">
 
@@ -506,7 +502,7 @@ export default function RecoveryProgress() {
           Recent Check-Ins
       ======================================================= */}
 
-      <div className="rounded-2xl border bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
 
         <p className="text-sm font-semibold text-slate-500">
           RECENT CHECK-INS

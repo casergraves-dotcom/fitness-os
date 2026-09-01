@@ -247,7 +247,7 @@ export default function DailyActivityProgress() {
     !loaded
   ) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
         <p className="text-sm text-slate-500">
           Loading daily-activity progress...
         </p>
@@ -290,11 +290,7 @@ export default function DailyActivityProgress() {
       <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 
         <div>
-          <p className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-            Daily Activity
-          </p>
-
-          <h3 className="mt-1 text-xl font-bold text-slate-900">
+          <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
             Step Progress
           </h3>
 
@@ -304,9 +300,9 @@ export default function DailyActivityProgress() {
         </div>
 
 
-        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-3 lg:grid-cols-4">
 
-          <div className="rounded-xl bg-slate-50 p-4">
+          <div className="rounded-xl bg-slate-50 p-3 sm:p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Current Target
             </p>
@@ -319,7 +315,7 @@ export default function DailyActivityProgress() {
           </div>
 
 
-          <div className="rounded-xl bg-slate-50 p-4">
+          <div className="rounded-xl bg-slate-50 p-3 sm:p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               14-Day Average
             </p>
@@ -333,7 +329,7 @@ export default function DailyActivityProgress() {
           </div>
 
 
-          <div className="rounded-xl bg-slate-50 p-4">
+          <div className="rounded-xl bg-slate-50 p-3 sm:p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Logged Days
             </p>
@@ -349,7 +345,7 @@ export default function DailyActivityProgress() {
           </div>
 
 
-          <div className="rounded-xl bg-slate-50 p-4">
+          <div className="rounded-xl bg-slate-50 p-3 sm:p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               Days Meeting Target
             </p>
@@ -371,7 +367,7 @@ export default function DailyActivityProgress() {
       </div>
 
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
 
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider text-slate-500">

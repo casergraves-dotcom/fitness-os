@@ -396,14 +396,16 @@ export default function BodyCompositionProgress() {
           title="Body-Fat Trend"
           description="Recorded body-fat measurements over time."
         >
-          <MeasurementTrendChart
-            data={
-              bodyFatData
-            }
-            unit="%"
-            label="Body Fat"
-            emptyMessage="Add at least two body-fat measurements to begin charting your trend."
-          />
+          {bodyFatData.length === 2 ? (
+            <TwoPointObservation data={bodyFatData} unit="%" />
+          ) : (
+            <MeasurementTrendChart
+              data={bodyFatData}
+              unit="%"
+              label="Body Fat"
+              emptyMessage="Add at least two body-fat measurements to begin charting your trend."
+            />
+          )}
         </TrendCard>
 
 
@@ -411,14 +413,16 @@ export default function BodyCompositionProgress() {
           title="Lean-Mass Trend"
           description="Recorded lean-mass measurements over time."
         >
-          <MeasurementTrendChart
-            data={
-              leanMassData
-            }
-            unit="lb"
-            label="Lean Mass"
-            emptyMessage="Add at least two lean-mass measurements to begin charting your trend."
-          />
+          {leanMassData.length === 2 ? (
+            <TwoPointObservation data={leanMassData} unit="lb" />
+          ) : (
+            <MeasurementTrendChart
+              data={leanMassData}
+              unit="lb"
+              label="Lean Mass"
+              emptyMessage="Add at least two lean-mass measurements to begin charting your trend."
+            />
+          )}
         </TrendCard>
 
       </div>
@@ -435,7 +439,7 @@ export default function BodyCompositionProgress() {
             Meaningful checkpoints along the path toward your current goal.
             </p>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
 
             {milestones.map(
                 (
@@ -445,7 +449,7 @@ export default function BodyCompositionProgress() {
                     key={
                     milestone.id
                     }
-                    className="rounded-xl bg-slate-50 p-4"
+                    className="rounded-xl bg-slate-50 p-3"
                 >
 
                     <div className="flex items-start justify-between gap-3">
@@ -528,6 +532,65 @@ function TrendCard({
         {children}
       </div>
 
+    </div>
+  );
+}
+
+
+function TwoPointObservation({
+  data,
+  unit,
+}: {
+  data: Array<{
+    date: string;
+    value: number;
+  }>;
+  unit: string;
+}) {
+  const first = data[0];
+  const last = data[1];
+  const change = Math.round((last.value - first.value) * 100) / 100;
+
+  return (
+    <div className="rounded-xl bg-slate-50 p-4">
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            First recorded
+          </p>
+          <p className="mt-1 font-semibold text-slate-900">
+            {first.value} {unit}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">{first.date}</p>
+        </div>
+
+        <p className="pb-1 text-lg text-slate-400" aria-hidden="true">
+          →
+        </p>
+
+        <div className="text-right">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Latest recorded
+          </p>
+          <p className="mt-1 font-semibold text-slate-900">
+            {last.value} {unit}
+          </p>
+          <p className="mt-1 text-xs text-slate-500">{last.date}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-200 pt-3">
+        <p className="text-sm font-semibold text-slate-900">
+          {change > 0 ? "+" : ""}{change} {unit} observed change
+        </p>
+        <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-600">
+          2 points
+        </span>
+      </div>
+
+      <p className="mt-2 text-xs leading-5 text-slate-500">
+        This is an observation between two measurements, not a trend yet.
+      </p>
     </div>
   );
 }

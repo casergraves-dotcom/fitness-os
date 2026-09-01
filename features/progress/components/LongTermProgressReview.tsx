@@ -359,13 +359,19 @@ export default function LongTermProgressReview() {
 
       {review.dataLimitations.length >
         0 && (
-        <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <details className="group mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <summary className="cursor-pointer list-none text-sm font-semibold text-slate-900 marker:hidden">
+            <span className="flex items-center justify-between gap-3">
+              <span>
+                Still learning in {review.dataLimitations.length} {review.dataLimitations.length === 1 ? "area" : "areas"}
+              </span>
+              <span aria-hidden="true" className="text-slate-500 transition-transform group-open:rotate-180">
+                ⌄
+              </span>
+            </span>
+          </summary>
 
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Still Learning
-          </p>
-
-          <div className="mt-2 space-y-2">
+          <div className="mt-3 space-y-2 border-t border-slate-200 pt-3">
 
             {review.dataLimitations.map(
               (
@@ -386,7 +392,7 @@ export default function LongTermProgressReview() {
 
           </div>
 
-        </div>
+        </details>
       )}
 
 
@@ -394,7 +400,17 @@ export default function LongTermProgressReview() {
           Scope
       ==================================================== */}
 
-      <div className="mt-5 space-y-1">
+      <details className="group mt-5 border-t border-slate-200 pt-4">
+        <summary className="cursor-pointer list-none text-xs font-semibold uppercase tracking-wide text-slate-500 marker:hidden">
+          <span className="flex items-center justify-between gap-3">
+            Methodology
+            <span aria-hidden="true" className="transition-transform group-open:rotate-180">
+              ⌄
+            </span>
+          </span>
+        </summary>
+
+        <div className="mt-3 space-y-1">
 
         {review.scopeNotes.map(
           (
@@ -413,7 +429,8 @@ export default function LongTermProgressReview() {
           )
         )}
 
-      </div>
+        </div>
+      </details>
 
     </div>
   );

@@ -225,7 +225,7 @@ export default function TrainingAdherenceSummary() {
 
 
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
 
       <h3 className="text-lg font-bold text-slate-900">
         Training Adherence
@@ -236,7 +236,7 @@ export default function TrainingAdherenceSummary() {
       </p>
 
 
-      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:grid-cols-4 sm:gap-3">
 
         <Metric
           label="Adherence"

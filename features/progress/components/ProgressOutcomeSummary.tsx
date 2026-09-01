@@ -357,6 +357,20 @@ export default function ProgressOutcomeSummary() {
       ]
     );
 
+  const availableApproachSignals =
+    currentApproachReview.signals.filter(
+      (signal) =>
+        signal.status !==
+        "InsufficientData"
+    );
+
+  const unavailableApproachSignals =
+    currentApproachReview.signals.filter(
+      (signal) =>
+        signal.status ===
+        "InsufficientData"
+    );
+
 
   // ----------------------------------------------------------
   // Loading
@@ -403,11 +417,11 @@ export default function ProgressOutcomeSummary() {
       </p>
 
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {availableApproachSignals.length > 0 && (
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
         {
-          currentApproachReview
-            .signals
+          availableApproachSignals
             .map(
               (
                 signal
@@ -430,7 +444,37 @@ export default function ProgressOutcomeSummary() {
             )
         }
 
-      </div>
+        </div>
+      )}
+
+      {unavailableApproachSignals.length > 0 && (
+        <details className="group mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+          <summary className="cursor-pointer list-none text-sm font-semibold text-slate-900 marker:hidden">
+            <span className="flex items-center justify-between gap-3">
+              <span>
+                {unavailableApproachSignals.length} {unavailableApproachSignals.length === 1 ? "area needs" : "areas need"} more data
+              </span>
+              <span aria-hidden="true" className="text-slate-500 transition-transform group-open:rotate-180">
+                ⌄
+              </span>
+            </span>
+          </summary>
+
+          <div className="mt-3 divide-y divide-slate-200 border-t border-slate-200 pt-1">
+            {unavailableApproachSignals.map((signal) => (
+              <div key={signal.domain} className="py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {signal.domain === "BodyComposition" ? "Body Composition" : signal.domain}
+                  </p>
+                  <p className="text-sm font-semibold text-slate-900">{signal.label}</p>
+                </div>
+                <p className="mt-1 text-sm leading-6 text-slate-600">{signal.message}</p>
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
 
 
       {/* ====================================================
@@ -446,20 +490,25 @@ export default function ProgressOutcomeSummary() {
         {!lifestyleEvidence ||
         !lifestylePatterns ||
         !lifestylePatterns.evidenceReady ? (
-          <div className="mt-3 rounded-xl bg-slate-50 p-4">
+          <details className="group mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <summary className="cursor-pointer list-none text-sm font-semibold text-slate-900 marker:hidden">
+              <span className="flex items-center justify-between gap-3">
+                <span>Not enough multi-week evidence yet</span>
+                <span aria-hidden="true" className="text-slate-500 transition-transform group-open:rotate-180">
+                  ⌄
+                </span>
+              </span>
+            </summary>
 
-            <p className="font-semibold text-slate-900">
-              Not enough multi-week lifestyle evidence yet
-            </p>
-
-            <p className="mt-1 text-sm leading-6 text-slate-600">
-              Fitness OS needs sufficient body-composition trend history plus
-              consistent nutrition or daily-activity logging before using those
-              patterns to help explain goal progress.
-            </p>
+            <div className="mt-3 border-t border-slate-200 pt-3">
+              <p className="text-sm leading-6 text-slate-600">
+                Fitness OS needs sufficient body-composition trend history plus
+                consistent nutrition or daily-activity logging before using those
+                patterns to help explain goal progress.
+              </p>
 
 
-            {lifestyleEvidence && (
+              {lifestyleEvidence && (
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
 
                 <EvidenceCoverage
@@ -529,9 +578,9 @@ export default function ProgressOutcomeSummary() {
                 />
 
               </div>
-            )}
-
-          </div>
+              )}
+            </div>
+          </details>
         ) : (
           <div className="mt-3 space-y-3">
 

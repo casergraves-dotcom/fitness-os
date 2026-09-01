@@ -1837,26 +1837,26 @@ retaining every canonical detail workflow behind domain navigation or
 progressive disclosure. Do not duplicate calculations, hooks, or storage to
 create the overview.
 
-- [ ] Introduce architecture-preserving domain navigation or progressive
+- [x] Introduce architecture-preserving domain navigation or progressive
   disclosure for Current Approach, Body Composition, Training, Daily Activity,
   Strength, Cardio, Recovery, and Lifestyle.
-- [ ] Keep the default Progress view summary-first instead of rendering every
+- [x] Keep the default Progress view summary-first instead of rendering every
   detailed analytics and data-management surface in one scroll.
-- [ ] Compress Still Learning and other insufficient-evidence states into
+- [x] Compress Still Learning and other insufficient-evidence states into
   scannable domain rows with optional methodology details.
-- [ ] Compress unavailable Current Approach domains while preserving evidence
+- [x] Compress unavailable Current Approach domains while preserving evidence
   requirements and conservative conclusions.
-- [ ] Tighten Lifestyle Context, Training Consistency, and Daily Activity metric
+- [x] Tighten Lifestyle Context, Training Consistency, and Daily Activity metric
   layouts without weakening coverage semantics.
-- [ ] Group canonical Body Composition charts, measurements, weekly check-ins,
+- [x] Group canonical Body Composition charts, measurements, weekly check-ins,
   photos, and DEXA under a clear detail hierarchy.
-- [ ] Keep Exercise Progress and detailed recovery/running history available as
+- [x] Keep Exercise Progress and detailed recovery/running history available as
   domain details rather than permanently expanded overview sections.
-- [ ] Clarify sparse two-point body-composition charts without suppressing the
+- [x] Clarify sparse two-point body-composition charts without suppressing the
   observations.
-- [ ] Compact milestone presentation while preserving thresholds and completion
+- [x] Compact milestone presentation while preserving thresholds and completion
   state.
-- [ ] Review repeated typography, card nesting, spacing, and helper copy after
+- [x] Review repeated typography, card nesting, spacing, and helper copy after
   the information architecture is stable.
 - [ ] Perform final mobile visual QA across Today and Progress.
 
