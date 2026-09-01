@@ -2,6 +2,8 @@ import {
   PROGRESS_CHART_RANGE_OPTIONS,
 } from "../utils/progressChartRange";
 
+import { Select } from "@/components/ui/select";
+
 import type {
   ProgressChartRange,
 } from "../utils/progressChartRange";
@@ -18,7 +20,7 @@ export default function ProgressChartRangeSelect({
     <label className="text-sm font-semibold text-slate-700">
       Display Range
 
-      <select
+      <Select
         value={
           value
         }
@@ -29,7 +31,7 @@ export default function ProgressChartRangeSelect({
             event.target.value as ProgressChartRange
           )
         }
-        className="mt-2 block rounded-xl border border-slate-300 bg-white px-3 py-2"
+        className="mt-2 min-w-32"
       >
         {PROGRESS_CHART_RANGE_OPTIONS.map(
           (
@@ -47,7 +49,7 @@ export default function ProgressChartRangeSelect({
             </option>
           )
         )}
-      </select>
+      </Select>
 
     </label>
   );
