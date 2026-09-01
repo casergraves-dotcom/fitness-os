@@ -14,6 +14,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 import {
@@ -1221,49 +1222,52 @@ function DexaHistoryItem({
 
         <div className="flex flex-wrap gap-2">
 
-          <button
+          <Button
             type="button"
             onClick={
               onEdit
             }
-            className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            variant="outline"
+            size="sm"
           >
             <Pencil
               size={15}
             />
 
             Edit
-          </button>
+          </Button>
 
           {record.reportFile && (
-            <button
+            <Button
               type="button"
               onClick={
                 onOpenReport
               }
-              className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              variant="outline"
+              size="sm"
             >
               <FileText
                 size={15}
               />
 
               Open Report
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button
             type="button"
             onClick={
               onDelete
             }
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+            variant="destructive"
+            size="sm"
           >
             <Trash2
               size={15}
             />
 
             Delete
-          </button>
+          </Button>
 
         </div>
 
@@ -1367,7 +1371,7 @@ function ScanSelect({
         {label}
       </span>
 
-      <select
+      <Select
         value={
           value
         }
@@ -1378,7 +1382,7 @@ function ScanSelect({
             event.target.value
           )
         }
-        className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+        className="mt-2"
       >
         <option value="">
           Select a scan
@@ -1405,7 +1409,7 @@ function ScanSelect({
           )
         )}
 
-      </select>
+      </Select>
 
     </label>
   );
