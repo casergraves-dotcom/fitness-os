@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { Select } from "@/components/ui/select";
+
 import { useExerciseProgress } from "../hooks/useExerciseProgress";
 import {
   getProgressChartRangeStartDate,
@@ -84,11 +86,11 @@ export default function ExerciseProgress() {
         <label htmlFor="exercise-progress" className="text-sm font-semibold">
           Exercise
         </label>
-        <select
+        <Select
           id="exercise-progress"
           value={selectedExercise ?? ""}
           onChange={(event) => setSelectedExercise(event.target.value)}
-          className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+          className="mt-2"
         >
           <option value="">
             Choose exercise
@@ -99,7 +101,7 @@ export default function ExerciseProgress() {
               {exercise}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {selectedExercise ? (
