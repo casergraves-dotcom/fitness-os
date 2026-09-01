@@ -4,6 +4,8 @@ import {
   useState,
 } from "react";
 
+import { Select } from "@/components/ui/select";
+
 import {
   useLongTermProgressReview,
 } from "../hooks/useLongTermProgressReview";
@@ -233,7 +235,7 @@ export default function LongTermProgressReview() {
             Review Period
           </span>
 
-          <select
+          <Select
             value={
               range
             }
@@ -247,7 +249,7 @@ export default function LongTermProgressReview() {
                     ProgressReviewRange
                 )
             }
-            className="mt-1 rounded-xl border border-slate-300 bg-white px-3 py-2.5"
+            className="mt-1 min-w-32"
           >
 
             {REVIEW_RANGES.map(
@@ -269,7 +271,7 @@ export default function LongTermProgressReview() {
               )
             )}
 
-          </select>
+          </Select>
 
         </label>
 
