@@ -24,6 +24,7 @@ import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPrefer
 import {
   useLifestyleGoalProgressEvidence,
 } from "@/features/progress/hooks/useLifestyleGoalProgressEvidence";
+import { useBodyMeasurements } from "@/features/progress";
 
 import {
   getWeeklyProgressStatus,
@@ -94,6 +95,14 @@ import {
 // Today Screen
 // ============================================================
 
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 export default function TodayScreen() {
   const { preferences: coachingPreferences } = useCoachingPreferences();
   const [showManualCheckIn, setShowManualCheckIn] = useState(false);
@@ -102,6 +111,17 @@ export default function TodayScreen() {
   const {
     evidence: lifestyleEvidence,
   } = useLifestyleGoalProgressEvidence();
+  const {
+    loaded: bodyMeasurementsLoaded,
+    measurements: bodyMeasurements,
+    upsertMeasurementForDate,
+  } = useBodyMeasurements();
+  const todayDate = formatLocalDate(new Date());
+  const todayMeasurement = bodyMeasurements.find(
+    (measurement) =>
+      measurement.date === todayDate &&
+      measurement.source !== "DEXA"
+  );
   // ----------------------------------------------------------
   // Morning Check-In
   // ----------------------------------------------------------
@@ -452,6 +472,14 @@ export default function TodayScreen() {
             onChange={setRatings}
             loaded={morningCheckInLoaded}
             compactWhenComplete
+            weightLb={todayMeasurement?.weightLb}
+            weightLoaded={bodyMeasurementsLoaded}
+            onSaveWeight={(weightLb) => {
+              upsertMeasurementForDate({
+                date: todayDate,
+                weightLb,
+              });
+            }}
           />
         ) : (
           <Card className="p-5">

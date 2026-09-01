@@ -459,6 +459,62 @@ export function useBodyMeasurements() {
 
 
   // ----------------------------------------------------------
+  // Merge Measurement For Date
+  // ----------------------------------------------------------
+  //
+  // Manual entry points such as Morning Check-In should enrich
+  // an existing same-date measurement instead of creating a
+  // duplicate or clearing fields recorded elsewhere.
+  // DEXA remains a distinct assessment source.
+  // ----------------------------------------------------------
+
+  function upsertMeasurementForDate(
+    input:
+      BodyMeasurementInput & {
+        date: string;
+      }
+  ) {
+    const existing =
+      measurements.find(
+        (measurement) =>
+          measurement.date ===
+            input.date &&
+          measurement.source !==
+            "DEXA"
+      );
+
+    if (
+      !existing
+    ) {
+      return addMeasurement({
+        ...input,
+        source:
+          input.source ??
+          "Manual",
+      });
+    }
+
+    const {
+      id: _id,
+      createdAt: _createdAt,
+      updatedAt: _updatedAt,
+      ...existingInput
+    } = existing;
+
+    return updateMeasurement(
+      existing.id,
+      {
+        ...existingInput,
+        ...input,
+        source:
+          input.source ??
+          existing.source,
+      }
+    );
+  }
+
+
+  // ----------------------------------------------------------
   // Delete Measurement
   // ----------------------------------------------------------
 
@@ -494,6 +550,8 @@ export function useBodyMeasurements() {
     addMeasurement,
 
     updateMeasurement,
+
+    upsertMeasurementForDate,
 
     deleteMeasurement,
   };

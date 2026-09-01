@@ -8,6 +8,7 @@ import {
 
 import RatingSelector from "@/components/ui/RatingSelector";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import {
   Card,
@@ -16,6 +17,8 @@ import {
 import {
   calculateReadiness,
 } from "../utils/readiness";
+
+import { parseBodyWeightInput } from "@/features/progress/utils/parseBodyWeightInput";
 
 
 // ============================================================
@@ -44,6 +47,12 @@ interface MorningCheckInProps {
 
   loaded?: boolean;
   compactWhenComplete?: boolean;
+
+  weightLb?: number;
+
+  weightLoaded?: boolean;
+
+  onSaveWeight?: (weightLb: number) => void;
 }
 
 
@@ -56,10 +65,15 @@ export default function MorningCheckIn({
   onChange,
   loaded = true,
   compactWhenComplete = false,
+  weightLb,
+  weightLoaded = true,
+  onSaveWeight,
 }: MorningCheckInProps) {
 
   const [detailsOpen, setDetailsOpen] = useState(true);
   const initialDisplaySet = useRef(false);
+  const [weightInput, setWeightInput] = useState("");
+  const [weightMessage, setWeightMessage] = useState<string | null>(null);
 
   // ----------------------------------------------------------
   // Readiness
@@ -78,6 +92,36 @@ export default function MorningCheckIn({
     setDetailsOpen(!readiness);
     initialDisplaySet.current = true;
   }, [loaded, readiness]);
+
+  useEffect(() => {
+    if (!weightLoaded) {
+      return;
+    }
+
+    setWeightInput(weightLb === undefined ? "" : String(weightLb));
+    setWeightMessage(null);
+  }, [weightLb, weightLoaded]);
+
+  function saveWeight() {
+    const parsedWeight = parseBodyWeightInput(weightInput);
+
+    if (parsedWeight.status === "empty") {
+      setWeightMessage(
+        weightLb === undefined
+          ? "Weight is optional. Nothing was saved."
+          : "The existing weight was left unchanged."
+      );
+      return;
+    }
+
+    if (parsedWeight.status === "invalid") {
+      setWeightMessage("Enter a positive weight using digits and an optional decimal.");
+      return;
+    }
+
+    onSaveWeight?.(parsedWeight.weightLb);
+    setWeightMessage(`Saved ${parsedWeight.weightLb.toLocaleString()} lb.`);
+  }
 
 
   // ----------------------------------------------------------
@@ -364,6 +408,57 @@ export default function MorningCheckIn({
         </div>
 
       </div>
+
+
+      {/* ====================================================
+          Optional Morning Weight
+      ===================================================== */}
+
+      {onSaveWeight && (
+        <div className="mx-6 mt-6 rounded-xl bg-slate-50 p-4">
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="min-w-0 flex-1">
+              <span className="text-sm font-semibold text-slate-800">
+                Weight <span className="font-normal text-slate-500">(optional)</span>
+              </span>
+
+              <div className="mt-2 flex items-center gap-2">
+                <Input
+                  type="text"
+                  inputMode="decimal"
+                  value={weightInput}
+                  onChange={(event) => {
+                    setWeightInput(event.target.value);
+                    setWeightMessage(null);
+                  }}
+                  placeholder="Example: 196.2"
+                  aria-invalid={parseBodyWeightInput(weightInput).status === "invalid"}
+                />
+                <span className="text-sm text-slate-500">lb</span>
+              </div>
+            </label>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={saveWeight}
+              disabled={!weightLoaded || weightInput.trim() === ""}
+            >
+              Save weight
+            </Button>
+          </div>
+
+          <p className="mt-2 text-xs leading-5 text-slate-500">
+            Saves to Body Measurements for today and does not affect check-in completion.
+          </p>
+
+          {weightMessage && (
+            <p className="mt-2 text-sm font-medium text-slate-700">
+              {weightMessage}
+            </p>
+          )}
+        </div>
+      )}
 
 
       {/* ====================================================
