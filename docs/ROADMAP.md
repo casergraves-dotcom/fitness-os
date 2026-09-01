@@ -1906,7 +1906,7 @@ training-plan, goal, progress, and adherence systems.
 
 # Phase 8 — Health Data Integrations
 
-**Future**
+**Near-term data-quality priority: device step synchronization first**
 
 Health platforms are external data sources, not alternate Fitness OS data
 models. Imported data should enter the existing canonical Fitness OS domain
@@ -1916,9 +1916,26 @@ Integrations should begin as read/import-only. Bidirectional writes should be
 added only where a concrete user benefit justifies the added ownership and
 conflict complexity.
 
+Automatic steps are the first integration priority because Today, the 14-day
+activity average, adherence/coverage, Lifestyle Context, Progress, and periodic
+reviews already depend on the completeness of canonical daily-step records.
+This work should precede lower-priority visual polish and additional analytics
+that would otherwise continue interpreting sparsely sampled manual data.
+
+The current Fitness OS runtime is a Next.js web application and does not have a
+native iOS health-data bridge. Before selecting a HealthKit library, validate a
+supported production architecture (for example, an intentional native wrapper
+or companion bridge) that can obtain user authorization and securely deliver
+read-only health data to the existing application. Do not imply that ordinary
+browser APIs can read Apple Health directly.
+
 ## 8.1 Integration Foundation
 
-- [ ] Evaluate Apple Health / Health Connect integration.
+- [ ] **Near term:** Select and validate the supported runtime/bridge for Apple
+  Health step reads on iPhone; retain Health Connect as the Android path.
+- [ ] Add explicit integration states for permission not requested, permission
+  denied, health access unavailable, no data, partial history, sync in progress,
+  and sync failure.
 - [ ] Define source-of-truth/conflict rules before enabling bidirectional writes.
 - [ ] Preserve imported source/provenance metadata.
 - [ ] Define stable external-record identity so repeated imports of the same
@@ -1930,7 +1947,25 @@ conflict complexity.
 
 ## 8.2 Steps and Measurements
 
-- [ ] Import step data into the canonical Phase 5 daily-activity model.
+- [ ] **Near term:** Extend `DailyStepSource` with an explicit health-synced
+  source while preserving Manual as a fallback/correction source.
+- [ ] **Near term:** Import daily step totals into the canonical Phase 5
+  daily-activity model; do not create a parallel health-step analytics path.
+- [ ] Preserve one usable canonical daily-step total per date and define
+  deterministic Manual-versus-Health precedence/reconciliation before syncing.
+- [ ] Ensure repeated synchronization updates the applicable date rather than
+  creating duplicate daily records.
+- [ ] Surface step provenance where it helps users understand or correct a day.
+- [ ] Keep manual entry/editing available when health access is unavailable or
+  when a user needs an intentional correction.
+- [ ] Import enough history to improve existing analytics immediately: at least
+  the current 14-day activity window, with longer review-period backfill where
+  the platform makes it available and the product architecture supports it.
+- [ ] Refresh new health step data without requiring manual re-entry.
+- [ ] Verify Today, Progress, Lifestyle Context, weekly adherence/coverage, and
+  longer-term reviews consume synced records through existing canonical hooks.
+- [ ] Test permission, unavailable-data, partial-history, resync, conflict, and
+  offline/failure behavior on a physical iPhone.
 - [ ] Import weight/body-composition values into canonical Phase 4
   `BodyMeasurement` history.
 - [ ] Prevent duplicate measurements when the same external record is imported
@@ -2182,15 +2217,21 @@ significant architectural problem interrupts it.
 
 16. **Phase 6 — Reflect: Reviews and Better Progress Insights — CURRENT**
 
+## Next
+
+17. **Phase 8.1/8.2 — Apple Health Step Synchronization Foundation — NEXT**
+
 ## Later
 
-17. **Phase 7 — Personalization and Training Guidance**
-18. **Phase 8 — Health Data Integrations**
-19. **Phase 9 — Social & Challenges**
-20. **Phase 10 — Advanced Platform & Coaching Capabilities**
+18. **Phase 7 — Personalization and Training Guidance**
+19. **Remaining Phase 8 — Health Data Integrations**
+20. **Phase 9 — Social & Challenges**
+21. **Phase 10 — Advanced Platform & Coaching Capabilities**
 
-Personalization, health integrations, social features, and advanced platform work
-remain mapped for later and should not displace the core coaching loop.
+The step-sync foundation is the next data-quality priority. Broader
+personalization, remaining health integrations, social features, and advanced
+platform work remain mapped for later and should not displace the core coaching
+loop.
 
 ---
 
