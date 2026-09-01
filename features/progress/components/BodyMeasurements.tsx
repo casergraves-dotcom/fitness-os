@@ -17,6 +17,11 @@ import {
   Trash2,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
 import {
   useBodyMeasurements,
 } from "../hooks/useBodyMeasurements";
@@ -840,19 +845,18 @@ export default function BodyMeasurements() {
 
 
           {!formOpen && (
-            <button
+            <Button
               type="button"
               onClick={
                 beginAdd
               }
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
             >
               <Plus
                 size={16}
               />
 
               Add Measurement
-            </button>
+            </Button>
           )}
 
         </div>
@@ -937,7 +941,7 @@ export default function BodyMeasurements() {
                 Date
               </span>
 
-              <input
+              <Input
                 type="date"
                 value={
                   form.date
@@ -950,7 +954,7 @@ export default function BodyMeasurements() {
                     event.target.value
                   )
                 }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               />
 
             </label>
@@ -1297,7 +1301,7 @@ export default function BodyMeasurements() {
                 Notes
               </span>
 
-              <textarea
+              <Textarea
                 value={
                   form.notes
                 }
@@ -1311,7 +1315,7 @@ export default function BodyMeasurements() {
                 }
                 rows={3}
                 placeholder="Optional measurement context"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               />
 
             </label>
@@ -1332,29 +1336,28 @@ export default function BodyMeasurements() {
 
             <div className="flex flex-wrap justify-end gap-3">
 
-              <button
+              <Button
                 type="button"
                 onClick={
                   cancelForm
                 }
-                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                variant="outline"
               >
                 Cancel
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
                 onClick={
                   saveMeasurement
                 }
-                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
               >
                 {
                   editingId
                     ? "Save Changes"
                     : "Save Measurement"
                 }
-              </button>
+              </Button>
 
             </div>
 
@@ -1395,7 +1398,7 @@ export default function BodyMeasurements() {
                 Earlier Measurement
               </span>
 
-              <select
+              <Select
                 value={
                   comparisonEarlierId
                 }
@@ -1406,7 +1409,7 @@ export default function BodyMeasurements() {
                     event.target.value
                   )
                 }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               >
                 <option value="">
                   Select a date
@@ -1433,7 +1436,7 @@ export default function BodyMeasurements() {
                   )
                 )}
 
-              </select>
+              </Select>
 
             </label>
 
@@ -1444,7 +1447,7 @@ export default function BodyMeasurements() {
                 Later Measurement
               </span>
 
-              <select
+              <Select
                 value={
                   comparisonLaterId
                 }
@@ -1455,7 +1458,7 @@ export default function BodyMeasurements() {
                     event.target.value
                   )
                 }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               >
                 <option value="">
                   Select a date
@@ -1482,7 +1485,7 @@ export default function BodyMeasurements() {
                   )
                 )}
 
-              </select>
+              </Select>
 
             </label>
 
@@ -1621,7 +1624,7 @@ function NumberField({
 
       <div className="mt-2 flex items-center gap-2">
 
-        <input
+        <Input
           type="number"
           inputMode="decimal"
           min={0}
@@ -1637,7 +1640,7 @@ function NumberField({
             )
           }
           placeholder="Optional"
-          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+          className="w-full"
         />
 
         <span className="min-w-6 text-sm text-slate-500">
