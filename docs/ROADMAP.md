@@ -1858,7 +1858,13 @@ create the overview.
   state.
 - [x] Review repeated typography, card nesting, spacing, and helper copy after
   the information architecture is stable.
-- [ ] Perform final mobile visual QA across Today and Progress.
+- [x] Perform final mobile visual QA across Today and Progress.
+
+**Completed outcome:** Progress now opens on a concise cross-domain overview,
+keeps canonical detail workflows behind domain navigation, and uses compact,
+evidence-aware disclosures and responsive metric layouts. Phone-width review
+confirmed Today and Progress remain readable, horizontally navigable where
+needed, and clear of mobile safe areas.
 
 ## 7.6 Mobility & Flexibility Guidance
 
