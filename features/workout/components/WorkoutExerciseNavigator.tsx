@@ -10,7 +10,7 @@ export default function WorkoutExerciseNavigator({
   onSelect: (exerciseId: string) => void;
 }) {
   return (
-    <nav aria-label="Workout exercises" className="sticky top-2 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-md backdrop-blur">
+    <nav aria-label="Workout exercises" className="sticky top-[calc(env(safe-area-inset-top)+0.5rem)] z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-md backdrop-blur">
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         <span className="shrink-0 px-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Jump to</span>
         {exercises.map((exercise, index) => {

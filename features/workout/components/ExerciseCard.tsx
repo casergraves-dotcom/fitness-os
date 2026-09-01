@@ -880,7 +880,7 @@ export default function ExerciseCard({
             return (
               <div
                 key={set.id}
-                className={`flex w-full items-center rounded-xl border p-4 transition-all ${
+                className={`grid w-full grid-cols-[auto_1fr_auto] items-center gap-x-3 rounded-xl border p-3 transition-all sm:flex sm:p-4 ${
                   set.completed
                     ? "border-green-400 bg-green-50"
                     : "border-slate-200"
@@ -906,7 +906,7 @@ export default function ExerciseCard({
                       ? `Uncomplete set ${index + 1}`
                       : `Complete set ${index + 1}`
                   }
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition ${
+                  className={`col-start-1 row-start-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition sm:col-auto sm:row-auto ${
                     set.completed
                       ? canToggleSet
                         ? "bg-green-500 text-white"
@@ -926,7 +926,7 @@ export default function ExerciseCard({
                 {/* Set number */}
 
                 <span
-                  className={`ml-3 ${
+                  className={`col-start-2 row-start-1 sm:col-auto sm:row-auto sm:ml-3 ${
                     set.completed
                       ? "text-slate-400"
                       : ""
@@ -939,7 +939,7 @@ export default function ExerciseCard({
                     Set Input
                 =========================================== */}
 
-                <div className="ml-auto flex flex-col items-end">
+                <div className="col-span-3 row-start-2 mt-3 flex w-full flex-col items-end sm:col-auto sm:row-auto sm:ml-auto sm:mt-0 sm:w-auto">
                   {/* ----------------------------------------
                       Duration
                   ----------------------------------------- */}
@@ -1502,7 +1502,7 @@ export default function ExerciseCard({
                       )
                     }
                     aria-label={`Remove set ${index + 1}`}
-                    className="ml-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+                    className="col-start-3 row-start-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition hover:bg-red-50 hover:text-red-600 sm:col-auto sm:row-auto sm:ml-2"
                   >
                     <Trash2
                       size={16}
