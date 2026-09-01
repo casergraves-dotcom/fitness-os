@@ -814,6 +814,20 @@ export default function TodaysTrainingCard({
       trainingPlanState
     );
 
+  const isRestDay =
+    schedule.trainingDay.activities.some(
+      (activity) =>
+        activity.type ===
+        "Rest"
+    );
+
+  const presentedActivities =
+    schedule.trainingDay.activities.filter(
+      (activity) =>
+        activity.type !==
+        "Rest"
+    );
+
 
   // ----------------------------------------------------------
   // Render
@@ -892,6 +906,12 @@ export default function TodaysTrainingCard({
           {schedule.dayOfWeek}
         </p>
 
+        {isRestDay && (
+          <h3 className="mt-1 text-xl font-bold text-slate-900">
+            Rest Day
+          </h3>
+        )}
+
         <p className="mt-2 text-sm text-slate-600">
           {phase.message}
         </p>
@@ -905,7 +925,7 @@ export default function TodaysTrainingCard({
 
       <div className="mt-5 space-y-3">
 
-        {schedule.trainingDay.activities.map(
+        {presentedActivities.map(
           (
             activity
           ) => {
@@ -1328,6 +1348,19 @@ export default function TodaysTrainingCard({
               </div>
             );
           }
+        )}
+
+        {isRestDay &&
+          presentedActivities.length ===
+            0 && (
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="font-semibold text-slate-900">
+              No training scheduled
+            </p>
+            <p className="mt-1 text-sm text-slate-500">
+              Recover today and return to the next planned session.
+            </p>
+          </div>
         )}
 
       </div>

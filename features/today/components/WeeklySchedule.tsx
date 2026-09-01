@@ -717,6 +717,20 @@ export default function WeeklySchedule({
   function renderGroup(
     group: ScheduleGroup
   ) {
+    const isRestDay =
+      group.occurrences.some(
+        (occurrence) =>
+          occurrence.activity.type ===
+          "Rest"
+      );
+
+    const presentedOccurrences =
+      group.occurrences.filter(
+        (occurrence) =>
+          occurrence.activity.type !==
+          "Rest"
+      );
+
     return (
       <div
         key={
@@ -730,8 +744,14 @@ export default function WeeklySchedule({
           )}
         </p>
 
-        <div className="mt-1 divide-y divide-slate-200">
-          {group.occurrences.map(
+        {isRestDay && (
+          <p className="mt-2 font-semibold text-slate-900">
+            Rest Day
+          </p>
+        )}
+
+        <div className={isRestDay ? "mt-2 divide-y divide-slate-200" : "mt-1 divide-y divide-slate-200"}>
+          {presentedOccurrences.map(
             (
               occurrence,
               index
@@ -753,6 +773,14 @@ export default function WeeklySchedule({
                 }
               />
             )
+          )}
+
+          {isRestDay &&
+            presentedOccurrences.length ===
+              0 && (
+            <p className="py-2 text-sm text-slate-500">
+              No training scheduled
+            </p>
           )}
         </div>
       </div>
