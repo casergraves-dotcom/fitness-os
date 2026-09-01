@@ -10,6 +10,8 @@ import {
   StrengthProgressChart,
 } from "@/features/progress";
 
+import { Select } from "@/components/ui/select";
+
 import {
   useExerciseProgress,
 } from "../hooks/useExerciseProgress";
@@ -173,7 +175,7 @@ export default function StrengthRetentionSummary() {
             Exercise
           </span>
 
-          <select
+          <Select
             value={
               selectedExercise ??
               ""
@@ -186,7 +188,7 @@ export default function StrengthRetentionSummary() {
                   event.target.value
                 )
             }
-            className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5"
+            className="mt-1"
           >
 
             {exercises.map(
@@ -206,7 +208,7 @@ export default function StrengthRetentionSummary() {
               )
             )}
 
-          </select>
+          </Select>
 
         </label>
 
