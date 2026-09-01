@@ -55,7 +55,11 @@ export default function Header() {
             App Title / Greeting
         ------------------------------------------------- */}
 
-        <div className="flex min-w-0 items-center gap-3">
+        <Link
+          href="/today"
+          aria-label="Go to Today"
+          className="flex min-w-0 items-center gap-3 rounded-xl outline-none transition-opacity hover:opacity-80 focus-visible:ring-3 focus-visible:ring-blue-500/20"
+        >
           <Image
             src="/icons/crg-app-icon-master.svg"
             alt="CRG"
@@ -77,7 +81,7 @@ export default function Header() {
               {greeting}, Cody
             </h1>
           </div>
-        </div>
+        </Link>
 
         {/* ------------------------------------------------
             Settings
