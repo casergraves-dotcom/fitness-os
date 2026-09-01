@@ -88,6 +88,62 @@ function ProgressRow({
 }
 
 
+function LifestyleEvidenceSummary({
+  label,
+  daysMet,
+  daysLogged,
+  daysEligible,
+  targetLabel,
+  averageLabel,
+}: {
+  label: string;
+  daysMet: number;
+  daysLogged: number;
+  daysEligible: number;
+  targetLabel: string;
+  averageLabel: string;
+}) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-4">
+      <p className="font-semibold text-slate-900">
+        {label}
+      </p>
+
+      <dl className="mt-3 grid gap-3 sm:grid-cols-3">
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {targetLabel}
+          </dt>
+          <dd className="mt-1 font-semibold text-slate-900">
+            {daysLogged > 0
+              ? `${daysMet} of ${daysLogged} logged days`
+              : "No logged days"}
+          </dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Logged-day average
+          </dt>
+          <dd className="mt-1 font-semibold text-slate-900">
+            {averageLabel}
+          </dd>
+        </div>
+
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Logging coverage
+          </dt>
+          <dd className="mt-1 font-semibold text-slate-900">
+            {daysLogged} of {daysEligible} days
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
+
 // ============================================================
 // Status
 // ============================================================
@@ -431,116 +487,44 @@ export default function WeeklyProgress({
             Nutrition
           </p>
 
+          <p className="mt-2 text-xs leading-5 text-slate-500">
+            Protein and steps must meet the daily target; calories use the accepted target range. Coverage shows how complete this week&apos;s evidence is.
+          </p>
+
 
           <div className="mt-4 space-y-5">
 
             {nutrition.protein.daysWithTarget >
               0 && (
-              <>
-                <ProgressRow
-                  label="Protein adherence"
-                  valueLabel={
-                    nutrition.protein.daysLogged >
-                    0
-                      ? `${nutrition.protein.daysMet}/${nutrition.protein.daysLogged} days met`
-                      : "No data yet"
-                  }
-                  percent={
-                    nutrition.protein.daysMetPercent ??
-                    0
-                  }
-                />
-
-                <p className="-mt-3 text-xs text-slate-500">
-                  Protein logged on{" "}
-                  {
-                    nutrition.protein.daysLogged
-                  }
-                  /
-                  {
-                    nutrition.protein.daysWithTarget
-                  }{" "}
-                  eligible days this week.
-                </p>
-
-
-                {nutrition.protein.averageIntakePercent !==
-                  undefined && (
-                  <div className="rounded-xl bg-slate-50 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <span className="text-sm font-medium text-slate-800">
-                        Average protein intake
-                      </span>
-
-                      <span className="text-sm font-semibold text-slate-900">
-                        {
-                          nutrition.protein.averageIntakePercent
-                        }
-                        % of target
-                      </span>
-                    </div>
-
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                      Average intake is shown separately from adherence so higher-protein days do not offset days below target.
-                    </p>
-                  </div>
-                )}
-              </>
+              <LifestyleEvidenceSummary
+                label="Protein"
+                daysMet={nutrition.protein.daysMet}
+                daysLogged={nutrition.protein.daysLogged}
+                daysEligible={nutrition.protein.daysWithTarget}
+                targetLabel="Daily target met"
+                averageLabel={
+                  nutrition.protein.averageIntakePercent === undefined
+                    ? "No data yet"
+                    : `${nutrition.protein.averageIntakePercent}% of target`
+                }
+              />
             )}
 
 
             {nutrition.calories.daysWithTarget >
               0 && (
-              <>
-                <ProgressRow
-                  label="Calorie adherence"
-                  valueLabel={
-                    nutrition.calories.daysLogged >
-                    0
-                      ? `${nutrition.calories.daysOnTarget}/${nutrition.calories.daysLogged} days on target`
-                      : "No data yet"
-                  }
-                  percent={
-                    nutrition.calories.daysOnTargetPercent ??
-                    0
-                  }
-                />
-
-                <p className="-mt-3 text-xs text-slate-500">
-                  Calories logged on{" "}
-                  {
-                    nutrition.calories.daysLogged
-                  }
-                  /
-                  {
-                    nutrition.calories.daysWithTarget
-                  }{" "}
-                  eligible days this week.
-                </p>
-
-
-                {nutrition.calories.averageIntakePercent !==
-                  undefined && (
-                  <div className="rounded-xl bg-slate-50 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <span className="text-sm font-medium text-slate-800">
-                        Average calorie intake
-                      </span>
-
-                      <span className="text-sm font-semibold text-slate-900">
-                        {
-                          nutrition.calories.averageIntakePercent
-                        }
-                        % of target
-                      </span>
-                    </div>
-
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                      Average intake is shown separately from adherence so you can distinguish target consistency from how high or low intake actually ran.
-                    </p>
-                  </div>
-                )}
-              </>
+              <LifestyleEvidenceSummary
+                label="Calories"
+                daysMet={nutrition.calories.daysOnTarget}
+                daysLogged={nutrition.calories.daysLogged}
+                daysEligible={nutrition.calories.daysWithTarget}
+                targetLabel="Within calorie range"
+                averageLabel={
+                  nutrition.calories.averageIntakePercent === undefined
+                    ? "No data yet"
+                    : `${nutrition.calories.averageIntakePercent}% of target`
+                }
+              />
             )}
 
           </div>
@@ -561,55 +545,18 @@ export default function WeeklyProgress({
 
 
           <div className="mt-4 space-y-5">
-
-            <ProgressRow
-              label="Step adherence"
-              valueLabel={
-                activity.daysLogged >
-                0
-                  ? `${activity.daysMet}/${activity.daysLogged} days met`
-                  : "No data yet"
-              }
-              percent={
-                activity.daysMetPercent ??
-                0
+            <LifestyleEvidenceSummary
+              label="Steps"
+              daysMet={activity.daysMet}
+              daysLogged={activity.daysLogged}
+              daysEligible={activity.daysWithTarget}
+              targetLabel="Daily target met"
+              averageLabel={
+                activity.averageIntakePercent === undefined
+                  ? "No data yet"
+                  : `${activity.averageIntakePercent}% of target`
               }
             />
-
-            <p className="-mt-3 text-xs text-slate-500">
-              Steps logged on{" "}
-              {
-                activity.daysLogged
-              }
-              /
-              {
-                activity.daysWithTarget
-              }{" "}
-              eligible days this week.
-            </p>
-
-
-            {activity.averageIntakePercent !==
-              undefined && (
-              <div className="rounded-xl bg-slate-50 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="text-sm font-medium text-slate-800">
-                    Average step total
-                  </span>
-
-                  <span className="text-sm font-semibold text-slate-900">
-                    {
-                      activity.averageIntakePercent
-                    }
-                    % of target
-                  </span>
-                </div>
-
-                <p className="mt-1 text-xs leading-5 text-slate-500">
-                  Average steps are shown separately from adherence so high-step days do not offset days below the daily target.
-                </p>
-              </div>
-            )}
 
           </div>
 
