@@ -12,6 +12,10 @@ import {
   Trash2,
 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
 import {
   useDexaRecords,
 } from "../hooks/useDexaRecords";
@@ -640,19 +644,19 @@ export default function DexaRecords() {
 
 
           {!formOpen && (
-            <button
+            <Button
               type="button"
               onClick={
                 beginAdd
               }
-              className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+              className="gap-2"
             >
               <Plus
                 size={16}
               />
 
               Add DEXA Scan
-            </button>
+            </Button>
           )}
 
         </div>
@@ -702,7 +706,7 @@ export default function DexaRecords() {
                 Scan Date
               </span>
 
-              <input
+              <Input
                 type="date"
                 value={
                   form.scanDate
@@ -715,7 +719,7 @@ export default function DexaRecords() {
                     event.target.value
                   )
                 }
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               />
 
             </label>
@@ -848,7 +852,7 @@ export default function DexaRecords() {
                 Notes
               </span>
 
-              <textarea
+              <Textarea
                 value={
                   form.notes
                 }
@@ -862,7 +866,7 @@ export default function DexaRecords() {
                 }
                 rows={3}
                 placeholder="Optional scan context"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+                className="mt-2"
               />
 
             </label>
@@ -883,7 +887,7 @@ export default function DexaRecords() {
 
             <div className="flex flex-wrap justify-end gap-3">
 
-              <button
+              <Button
                 type="button"
                 onClick={
                   cancelForm
@@ -891,12 +895,12 @@ export default function DexaRecords() {
                 disabled={
                   saving
                 }
-                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+                variant="outline"
               >
                 Cancel
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
                 onClick={
                   saveRecord
@@ -904,14 +908,13 @@ export default function DexaRecords() {
                 disabled={
                   saving
                 }
-                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
               >
                 {saving
                   ? "Saving..."
                   : editingId
                     ? "Save Changes"
                     : "Save DEXA Scan"}
-              </button>
+              </Button>
 
             </div>
 
@@ -1119,7 +1122,7 @@ function NumberField({
 
       <div className="mt-2 flex items-center gap-2">
 
-        <input
+        <Input
           type="number"
           inputMode="decimal"
           min={0}
@@ -1135,7 +1138,7 @@ function NumberField({
             )
           }
           placeholder="Optional"
-          className="w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
+          className="w-full"
         />
 
         <span className="min-w-6 text-sm text-slate-500">
