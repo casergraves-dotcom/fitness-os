@@ -27,7 +27,8 @@ export interface StepTarget {
 // ============================================================
 
 export type DailyStepSource =
-  "Manual";
+  | "Manual"
+  | "AppleHealth";
 
 
 export interface DailyStepRecord {
@@ -38,6 +39,8 @@ export interface DailyStepRecord {
   steps: number;
 
   source: DailyStepSource;
+
+  sourceSyncedAt?: string;
 
   notes?: string;
 

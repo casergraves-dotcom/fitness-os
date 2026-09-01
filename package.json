@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs tests/progress/parseBodyWeightInput.test.mjs tests/nutrition/nutritionTargetRecommendation.test.mjs tests/dailyActivity/parseDailyStepInput.test.mjs",
+    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs tests/progress/parseBodyWeightInput.test.mjs tests/nutrition/nutritionTargetRecommendation.test.mjs tests/dailyActivity/parseDailyStepInput.test.mjs tests/dailyActivity/mergeAppleHealthStepTotals.test.mjs",
     "start": "next start",
     "lint": "eslint"
   },

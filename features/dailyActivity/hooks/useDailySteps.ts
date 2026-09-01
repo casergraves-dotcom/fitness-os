@@ -241,6 +241,14 @@ export function useDailySteps() {
         DailyStepRecord = {
         ...existing,
 
+        // An explicit in-app edit is a manual correction and must survive a
+        // later Apple Health refresh.
+        source:
+          "Manual",
+
+        sourceSyncedAt:
+          undefined,
+
         steps:
           input.steps,
 

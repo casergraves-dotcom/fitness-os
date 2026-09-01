@@ -160,8 +160,13 @@ function isDailyStepRecord(
       "string" &&
     typeof value.steps ===
       "number" &&
-    value.source ===
-      "Manual" &&
+    (value.source ===
+      "Manual" ||
+      value.source ===
+        "AppleHealth") &&
+    isOptionalString(
+      value.sourceSyncedAt
+    ) &&
     isOptionalString(
       value.notes
     ) &&

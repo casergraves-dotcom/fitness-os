@@ -1936,9 +1936,9 @@ browser APIs can read Apple Health directly.
 - [ ] Add explicit integration states for permission not requested, permission
   denied, health access unavailable, no data, partial history, sync in progress,
   and sync failure.
-- [ ] Define source-of-truth/conflict rules before enabling bidirectional writes.
-- [ ] Preserve imported source/provenance metadata.
-- [ ] Define stable external-record identity so repeated imports of the same
+- [x] Define source-of-truth/conflict rules before enabling bidirectional writes.
+- [x] Preserve imported source/provenance metadata for daily step aggregates.
+- [x] Define stable external-record identity so repeated imports of the same
   source record do not create duplicates.
 - [ ] Define source-precedence rules for analysis when multiple legitimate
   records represent the same metric near the same time.
@@ -1947,13 +1947,13 @@ browser APIs can read Apple Health directly.
 
 ## 8.2 Steps and Measurements
 
-- [ ] **Near term:** Extend `DailyStepSource` with an explicit health-synced
+- [x] **Near term:** Extend `DailyStepSource` with an explicit health-synced
   source while preserving Manual as a fallback/correction source.
 - [ ] **Near term:** Import daily step totals into the canonical Phase 5
   daily-activity model; do not create a parallel health-step analytics path.
-- [ ] Preserve one usable canonical daily-step total per date and define
+- [x] Preserve one usable canonical daily-step total per date and define
   deterministic Manual-versus-Health precedence/reconciliation before syncing.
-- [ ] Ensure repeated synchronization updates the applicable date rather than
+- [x] Ensure repeated synchronization updates the applicable date rather than
   creating duplicate daily records.
 - [ ] Surface step provenance where it helps users understand or correct a day.
 - [ ] Keep manual entry/editing available when health access is unavailable or

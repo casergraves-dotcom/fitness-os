@@ -272,3 +272,33 @@ failure-handling requirements from small structured application records.
 local-first behavior for structured data while treating file upload/download as
 a separate persistence concern. Uploaded fitness files remain private by
 default and must preserve authenticated user ownership.
+
+------------------------------------------------------------------------
+
+## D-018 --- Apple Health enters through a native read-only bridge
+
+**Status:** Accepted / Implementation foundation
+
+The browser/PWA runtime cannot read Apple Health directly. Fitness OS will use
+an intentional iOS native container with a project-owned Swift bridge to
+HealthKit. Capacitor is the selected container direction because it preserves
+the existing web application while providing a supported native plugin API.
+The iOS container and physical-device authorization flow still require
+validation on macOS with Xcode before this decision is fully implemented.
+
+The first bridge is read-only: check HealthKit availability, request step-count
+read access, report limited-history access when detectable, and return
+cumulative daily totals for a requested local-date range.
+
+Health totals enter the canonical `DailyStepRecord` collection with
+`AppleHealth` provenance. Local calendar date is the stable identity. Repeated
+sync updates a Health-owned date; an explicit in-app entry or edit becomes a
+`Manual` correction and later Health refreshes preserve it.
+
+Fitness OS must not label absent results as "permission denied." HealthKit
+intentionally makes denied read access indistinguishable from no accessible
+samples, although limited-history authorization can be identified separately.
+
+**Consequence:** Do not add browser-only Apple Health code, a parallel Health
+steps dataset, or automatic overwrite of manual corrections. Initial sync is a
+foreground import; background delivery is a later validated step.
