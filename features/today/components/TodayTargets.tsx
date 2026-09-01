@@ -140,7 +140,7 @@ export default function TodayTargets() {
   }
 
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
 
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -148,9 +148,6 @@ export default function TodayTargets() {
             Your Targets
           </p>
 
-          <p className="mt-1 text-sm text-slate-500">
-            The current goals Fitness OS uses to guide today&apos;s inputs and progress reviews.
-          </p>
         </div>
 
         <Link
@@ -162,7 +159,7 @@ export default function TodayTargets() {
       </div>
 
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-slate-200 pt-3 lg:grid-cols-4">
 
         <TargetCard
           label="Outcome"
@@ -237,16 +234,16 @@ function TargetCard({
   detail: string;
 }) {
   return (
-    <div className="rounded-xl bg-slate-50 p-4">
+    <div className="min-w-0">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
         {label}
       </p>
 
-      <p className="mt-1 font-semibold text-slate-900">
+      <p className="mt-0.5 truncate font-semibold text-slate-900">
         {value}
       </p>
 
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-0.5 truncate text-xs text-slate-500">
         {detail}
       </p>
     </div>

@@ -402,41 +402,29 @@ export default function DailyStepsCard() {
     !todayRecord
   ) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-          Daily Activity
-        </p>
-
-        <h3 className="mt-1 text-lg font-bold text-slate-900">
-          Today&apos;s Steps
-        </h3>
-
-        <p className="mt-2 text-sm leading-6 text-slate-500">
-          No step total has been logged for today.
-        </p>
-
-        {currentTarget && (
-          <p className="mt-1 text-sm leading-6 text-slate-500">
-            Current target:{" "}
-            {
-              currentTarget.dailyStepTarget
-                .toLocaleString()
-            }{" "}
-            steps.
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+            Daily Activity
           </p>
-        )}
-
+          <h3 className="mt-1 font-bold text-slate-900">
+            Steps not logged
+          </h3>
+          {currentTarget && (
+            <p className="mt-1 text-sm text-slate-500">
+              Target: {currentTarget.dailyStepTarget.toLocaleString()} steps
+            </p>
+          )}
+        </div>
         <button
           type="button"
           onClick={
             beginEditing
           }
-          className="mt-4 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+          className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
         >
           Log Steps
         </button>
-
       </div>
     );
   }

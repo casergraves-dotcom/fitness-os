@@ -1806,6 +1806,13 @@ Guide so Today's Training remains the single owner of the scheduled-session CTA.
 Collapsed and expanded details, the single CTA, all 29 project tests,
 TypeScript, and the production build passed.
 
+**Daily-status density checkpoint:** Today's Targets now presents the canonical
+outcome, calories, protein, and steps in a compact summary without nested metric
+tiles or repeated helper copy. Unlogged Nutrition and Steps states are concise
+action rows, while their full editors remain unchanged after the user chooses to
+log data. Mobile rendering, all 29 project tests, TypeScript, and the production
+build passed.
+
 ## 7.5 Progress Navigation and Mobile Density
 
 Progress should answer “How am I changing?” through a concise overview while

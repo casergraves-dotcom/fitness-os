@@ -476,30 +476,24 @@ export default function DailyNutritionCard() {
     !todayRecord
   ) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-
-        <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-          Nutrition
-        </p>
-
-        <h3 className="mt-1 text-lg font-bold text-slate-900">
-          Today&apos;s Nutrition
-        </h3>
-
-        <p className="mt-2 text-sm leading-6 text-slate-500">
-          No nutrition totals have been logged for today.
-        </p>
-
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+            Nutrition
+          </p>
+          <h3 className="mt-1 font-bold text-slate-900">
+            Calories and protein not logged
+          </h3>
+        </div>
         <button
           type="button"
           onClick={
             beginEditing
           }
-          className="mt-4 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+          className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
         >
           Log Nutrition
         </button>
-
       </div>
     );
   }
