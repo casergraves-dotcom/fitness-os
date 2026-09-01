@@ -90,6 +90,53 @@ export const mobilityRoutines: MobilityRoutine[] = [
   },
 ];
 
+const fullBodyDrills = mobilityRoutines[0].drills;
+
+function chooseDrills(ids: string[]) {
+  return ids
+    .map((id) => fullBodyDrills.find((drill) => drill.id === id))
+    .filter((drill): drill is MobilityDrill => Boolean(drill));
+}
+
+mobilityRoutines.push(
+  {
+    id: "post-run",
+    name: "Post-Run Reset",
+    description: "Easy lower-body mobility to settle calves, hips, glutes, and inner thighs after running.",
+    durationMinutes: 10,
+    drills: chooseDrills([
+      "calf-wall-stretch",
+      "half-kneeling-hip-flexor",
+      "reclined-glute-stretch",
+      "adductor-rock-back",
+    ]),
+  },
+  {
+    id: "post-strength",
+    name: "Post-Strength Reset",
+    description: "A gentle cooldown for the hips, chest, shoulders, and back after a strength session.",
+    durationMinutes: 10,
+    drills: chooseDrills([
+      "reclined-glute-stretch",
+      "adductor-rock-back",
+      "childs-pose-lat-reach",
+      "doorway-chest-stretch",
+    ]),
+  },
+  {
+    id: "post-aerial",
+    name: "Post-Aerial Reset",
+    description: "Restorative mobility for shoulders, lats, chest, hips, and glutes after aerial training.",
+    durationMinutes: 10,
+    drills: chooseDrills([
+      "doorway-chest-stretch",
+      "childs-pose-lat-reach",
+      "half-kneeling-hip-flexor",
+      "reclined-glute-stretch",
+    ]),
+  }
+);
+
 export function getMobilityRoutine(id: MobilityRoutineId) {
   return mobilityRoutines.find((routine) => routine.id === id);
 }

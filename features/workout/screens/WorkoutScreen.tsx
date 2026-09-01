@@ -25,6 +25,7 @@ import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import WorkoutWarmupCard from "../components/WorkoutWarmupCard";
 import WorkoutExerciseNavigator from "../components/WorkoutExerciseNavigator";
 import MobilityRoutineSession from "@/features/mobility/components/MobilityRoutineSession";
+import { mobilityRoutines } from "@/features/mobility/mobilityLibrary";
 
 import {
   useExerciseLibrary,
@@ -61,6 +62,7 @@ import {
 } from "../backupWorkoutModel";
 
 import type {
+  MobilityRoutineId,
   StrengthWorkoutType,
   StrengthWorkoutVariant,
 } from "../types";
@@ -204,9 +206,9 @@ export default function WorkoutScreen() {
   );
 
   const [
-    mobilityRoutineActive,
-    setMobilityRoutineActive,
-  ] = useState(false);
+    selectedMobilityRoutineId,
+    setSelectedMobilityRoutineId,
+  ] = useState<MobilityRoutineId | "choose" | null>(null);
 
   const [
     expandedExerciseIds,
@@ -1267,12 +1269,55 @@ const exerciseVolume =
   // ----------------------------------------------------------
 
   if (!session) {
-    if (mobilityRoutineActive) {
+    if (selectedMobilityRoutineId && selectedMobilityRoutineId !== "choose") {
       return (
         <AppShell>
           <MobilityRoutineSession
-            onClose={() => setMobilityRoutineActive(false)}
+            routineId={selectedMobilityRoutineId}
+            onClose={() => setSelectedMobilityRoutineId("choose")}
           />
+        </AppShell>
+      );
+    }
+
+    if (selectedMobilityRoutineId === "choose") {
+      return (
+        <AppShell>
+          <div className="mx-auto w-full max-w-3xl rounded-2xl border bg-white p-6 shadow-sm">
+            <button
+              type="button"
+              onClick={() => setSelectedMobilityRoutineId(null)}
+              className="text-sm font-medium text-slate-500 underline decoration-slate-300 underline-offset-4 transition hover:text-blue-700"
+            >
+              ← Choose a different activity
+            </button>
+            <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-blue-600">
+              Mobility & Stretching
+            </p>
+            <h1 className="mt-2 text-2xl font-bold">What would help today?</h1>
+            <p className="mt-2 text-slate-500">Choose a focused recovery routine.</p>
+            <div className="mt-6 space-y-3">
+              {mobilityRoutines.map((routine) => (
+                <button
+                  key={routine.id}
+                  type="button"
+                  onClick={() => setSelectedMobilityRoutineId(routine.id)}
+                  className="flex w-full items-center justify-between gap-4 rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold">{routine.name}</p>
+                      <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+                        {routine.durationMinutes} min
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm leading-5 text-slate-500">{routine.description}</p>
+                  </div>
+                  <span className="shrink-0 text-xl">→</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </AppShell>
       );
     }
@@ -1378,7 +1423,7 @@ const exerciseVolume =
 
               <button
                 type="button"
-                onClick={() => setMobilityRoutineActive(true)}
+                onClick={() => setSelectedMobilityRoutineId("choose")}
                 className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left transition hover:border-blue-500 hover:bg-blue-50"
               >
                 <div>

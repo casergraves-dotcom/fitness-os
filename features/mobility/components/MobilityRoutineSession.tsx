@@ -3,26 +3,18 @@
 import { useState } from "react";
 
 import { useTrainingActivityCompletions } from "@/features/workout/hooks/useTrainingActivityCompletions";
-import type { TrainingActivity } from "@/features/workout/types";
+import type { MobilityRoutineId, TrainingActivity } from "@/features/workout/types";
 
 import { getMobilityRoutine } from "../mobilityLibrary";
 
-const ANYTIME_MOBILITY_ACTIVITY: TrainingActivity = {
-  id: "anytime-full-body-recovery",
-  type: "Mobility",
-  label: "Full Body Recovery",
-  mobilityRoutineId: "full-body-recovery",
-  durationMin: 10,
-  durationMax: 10,
-  optional: true,
-};
-
 export default function MobilityRoutineSession({
+  routineId,
   onClose,
 }: {
+  routineId: MobilityRoutineId;
   onClose: () => void;
 }) {
-  const routine = getMobilityRoutine("full-body-recovery");
+  const routine = getMobilityRoutine(routineId);
   const { completeActivity } = useTrainingActivityCompletions();
   const [completedDrillIds, setCompletedDrillIds] = useState<string[]>([]);
   const [finished, setFinished] = useState(false);
@@ -31,7 +23,9 @@ export default function MobilityRoutineSession({
     return null;
   }
 
-  const allDrillsComplete = completedDrillIds.length === routine.drills.length;
+  const selectedRoutine = routine;
+
+  const allDrillsComplete = completedDrillIds.length === selectedRoutine.drills.length;
 
   function toggleDrill(drillId: string) {
     setCompletedDrillIds((current) =>
@@ -42,7 +36,17 @@ export default function MobilityRoutineSession({
   }
 
   function finishRoutine() {
-    completeActivity(ANYTIME_MOBILITY_ACTIVITY);
+    const activity: TrainingActivity = {
+      id: `anytime-${selectedRoutine.id}`,
+      type: "Mobility",
+      label: selectedRoutine.name,
+      mobilityRoutineId: selectedRoutine.id,
+      durationMin: selectedRoutine.durationMinutes,
+      durationMax: selectedRoutine.durationMinutes,
+      optional: true,
+    };
+
+    completeActivity(activity);
     setFinished(true);
   }
 

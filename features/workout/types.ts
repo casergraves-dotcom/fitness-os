@@ -599,7 +599,10 @@ export type TrainingActivityType =
   | "Rest";
 
 export type MobilityRoutineId =
-  | "full-body-recovery";
+  | "full-body-recovery"
+  | "post-run"
+  | "post-strength"
+  | "post-aerial";
 
 export type TrainingModality =
   | "Strength"
