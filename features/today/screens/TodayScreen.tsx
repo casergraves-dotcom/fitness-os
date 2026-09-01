@@ -429,14 +429,32 @@ export default function TodayScreen() {
     <AppShell>
       <div className="space-y-6">
 
+        {shouldShowMorningCheckIn ? (
+          <MorningCheckIn
+            ratings={ratings}
+            onChange={setRatings}
+            loaded={morningCheckInLoaded}
+            compactWhenComplete
+          />
+        ) : (
+          <section className="rounded-2xl border bg-white p-5 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-semibold text-slate-900">Morning Check-In</h2>
+                <p className="mt-1 text-sm text-slate-500">Open it whenever you want readiness guidance.</p>
+              </div>
+              <button type="button" onClick={() => setShowManualCheckIn(true)} className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700">
+                Open check-in
+              </button>
+            </div>
+          </section>
+        )}
+
         <CoachCard
           recommendation={
             recommendation
           }
         />
-
-        <ConfirmYesterdayCard />
-
 
         <TodaysTrainingCard
           schedule={
@@ -526,6 +544,8 @@ export default function TodayScreen() {
           }
         />
 
+        <ConfirmYesterdayCard />
+
 
         <TodayTargets />
 
@@ -533,26 +553,6 @@ export default function TodayScreen() {
         <DailyNutritionCard />
 
         <DailyStepsCard />
-
-
-        {shouldShowMorningCheckIn ? (
-          <MorningCheckIn
-            ratings={ratings}
-            onChange={setRatings}
-          />
-        ) : (
-          <section className="rounded-2xl border bg-white p-5 shadow-sm">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="font-semibold text-slate-900">Morning Check-In</h2>
-                <p className="mt-1 text-sm text-slate-500">Open it whenever you want readiness guidance.</p>
-              </div>
-              <button type="button" onClick={() => setShowManualCheckIn(true)} className="rounded-xl border border-blue-200 px-4 py-2 text-sm font-semibold text-blue-700">
-                Open check-in
-              </button>
-            </div>
-          </section>
-        )}
 
 
         <WeeklySchedule

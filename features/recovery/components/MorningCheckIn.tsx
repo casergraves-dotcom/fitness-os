@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import RatingSelector from "@/components/ui/RatingSelector";
 
 import {
@@ -34,6 +40,9 @@ interface MorningCheckInProps {
       ratings:
         MorningCheckInRatings
     ) => void;
+
+  loaded?: boolean;
+  compactWhenComplete?: boolean;
 }
 
 
@@ -44,7 +53,12 @@ interface MorningCheckInProps {
 export default function MorningCheckIn({
   ratings,
   onChange,
+  loaded = true,
+  compactWhenComplete = false,
 }: MorningCheckInProps) {
+
+  const [detailsOpen, setDetailsOpen] = useState(true);
+  const initialDisplaySet = useRef(false);
 
   // ----------------------------------------------------------
   // Readiness
@@ -54,6 +68,15 @@ export default function MorningCheckIn({
     calculateReadiness(
       ratings
     );
+
+  useEffect(() => {
+    if (!loaded || initialDisplaySet.current) {
+      return;
+    }
+
+    setDetailsOpen(!readiness);
+    initialDisplaySet.current = true;
+  }, [loaded, readiness]);
 
 
   // ----------------------------------------------------------
@@ -70,6 +93,44 @@ export default function MorningCheckIn({
           : readiness?.status === "very-low"
             ? "text-red-600"
             : "text-slate-500";
+
+  if (
+    compactWhenComplete &&
+    readiness &&
+    !detailsOpen
+  ) {
+    return (
+      <Card className="p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              Readiness
+            </p>
+            <h2 className="mt-1 text-lg font-bold text-slate-900">
+              {readiness.label}
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Morning check-in complete
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <p className="text-right text-2xl font-bold text-slate-900">
+              {readiness.score.toFixed(1)}
+              <span className="ml-1 text-sm font-medium text-slate-500">/ 5</span>
+            </p>
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700"
+            >
+              Edit
+            </button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
 
 
   return (

@@ -1793,6 +1793,12 @@ height, and gives all pages explicit clearance above the fixed bottom navigation
 and bottom safe area. Mobile top and bottom clearance, all 29 project tests,
 TypeScript, and the production build passed.
 
+**Today readiness-hierarchy checkpoint:** Today now places readiness first and
+today's training ahead of previous-day confirmation and weekly context. A
+completed Morning Check-In collapses to a compact readiness summary with an Edit
+action, while incomplete check-ins remain open for entry. The compact summary,
+Edit flow, all 29 project tests, TypeScript, and the production build passed.
+
 ## 7.5 Progress Navigation and Mobile Density
 
 Progress should answer “How am I changing?” through a concise overview while
