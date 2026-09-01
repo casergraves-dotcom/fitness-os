@@ -50,8 +50,10 @@ Prefer:
 -   Clear section titles.
 -   Minimal decorative noise.
 
-The current application uses Tailwind/shadcn-style design tokens and
-Geist typography.
+The application uses Tailwind/shadcn-style design tokens with CRG-aligned
+foundations: Space Grotesk for headings and display text, Inter for body copy,
+UI, and data, deep navy for primary text, electric blue for primary actions,
+and restrained emerald for positive/success states.
 
 ## Typography
 
