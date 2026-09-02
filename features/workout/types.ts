@@ -602,7 +602,12 @@ export type MobilityRoutineId =
   | "full-body-recovery"
   | "post-run"
   | "post-strength"
-  | "post-aerial";
+  | "post-aerial"
+  | "front-split-preparation"
+  | "middle-split-preparation"
+  | "overhead-shoulder-range"
+  | "ankle-mobility"
+  | "thoracic-rotation";
 
 export type TrainingModality =
   | "Strength"
