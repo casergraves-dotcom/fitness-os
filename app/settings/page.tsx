@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import AppShell from "@/components/layout/AppShell";
+import AppleHealthStepSettings from "@/features/integrations/appleHealth/components/AppleHealthStepSettings";
 
 // ============================================================
 // Settings Page
@@ -40,6 +41,8 @@ export default function SettingsPage() {
             Manage your goals, targets, workouts, and exercise library.
           </p>
         </div>
+
+        <AppleHealthStepSettings />
 
         {/* --------------------------------------------------
             Goals and Targets
