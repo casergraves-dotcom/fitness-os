@@ -1893,7 +1893,7 @@ additional routine-level history only where useful beyond canonical completion.
 routines can now be favorited from the guided session. Favorites use a dedicated
 cloud-synced preference record and sort to the top of the existing Mobility &
 Stretching chooser. Custom routine authoring remains open.
-- [ ] Allow tight/sore-area context to influence the recommended routine without
+- [x] Allow tight/sore-area context to influence the recommended routine without
   automatically changing the underlying training plan.
 - [ ] Route any training-plan modification caused by soreness through the
   existing recovery/Guide/adaptive-scheduling systems.

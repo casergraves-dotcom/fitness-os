@@ -9,7 +9,7 @@
     "ios:add": "cap add ios",
     "ios:sync": "npm run build:ios-web && cap sync ios",
     "ios:open": "cap open ios",
-    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs tests/progress/parseBodyWeightInput.test.mjs tests/nutrition/nutritionTargetRecommendation.test.mjs tests/dailyActivity/parseDailyStepInput.test.mjs tests/dailyActivity/mergeAppleHealthStepTotals.test.mjs tests/dailyActivity/syncAppleHealthSteps.test.mjs tests/dailyActivity/syncAndPersistAppleHealthSteps.test.mjs tests/dailyActivity/capacitorAppleHealthStepBridge.test.mjs",
+    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs tests/progress/parseBodyWeightInput.test.mjs tests/nutrition/nutritionTargetRecommendation.test.mjs tests/dailyActivity/parseDailyStepInput.test.mjs tests/dailyActivity/mergeAppleHealthStepTotals.test.mjs tests/dailyActivity/syncAppleHealthSteps.test.mjs tests/dailyActivity/syncAndPersistAppleHealthSteps.test.mjs tests/dailyActivity/capacitorAppleHealthStepBridge.test.mjs tests/mobility/getSorenessMobilityRecommendation.test.mjs",
     "start": "next start",
     "lint": "eslint"
   },

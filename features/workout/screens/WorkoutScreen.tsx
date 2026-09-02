@@ -27,6 +27,8 @@ import WorkoutExerciseNavigator from "../components/WorkoutExerciseNavigator";
 import MobilityRoutineSession from "@/features/mobility/components/MobilityRoutineSession";
 import { mobilityRoutines } from "@/features/mobility/mobilityLibrary";
 import { useMobilityPreferences } from "@/features/mobility/hooks/useMobilityPreferences";
+import { getSorenessMobilityRecommendation } from "@/features/mobility/getSorenessMobilityRecommendation";
+import { useMorningCheckIn } from "@/features/recovery";
 
 import {
   useExerciseLibrary,
@@ -200,6 +202,9 @@ function getVariantDescription(
 export default function WorkoutScreen() {
   const { state: trainingPlanState } = useTrainingPlanState();
   const { favoriteRoutineIds, toggleFavorite } = useMobilityPreferences();
+  const { ratings: morningCheckInRatings } = useMorningCheckIn();
+  const sorenessMobilityRecommendation =
+    getSorenessMobilityRecommendation(morningCheckInRatings);
   const [
     selectedWorkoutType,
     setSelectedWorkoutType,
@@ -1300,11 +1305,21 @@ const exerciseVolume =
             </p>
             <h1 className="mt-2 text-2xl font-bold">What would help today?</h1>
             <p className="mt-2 text-slate-500">Choose a focused recovery routine.</p>
+            {sorenessMobilityRecommendation && (
+              <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+                <p className="text-sm font-semibold text-blue-800">Based on today’s check-in</p>
+                <p className="mt-1 text-sm leading-6 text-slate-600">
+                  {sorenessMobilityRecommendation.message} This suggestion does not change your training plan.
+                </p>
+              </div>
+            )}
             <div className="mt-6 space-y-3">
               {mobilityRoutines
                 .slice()
                 .sort(
                   (a, b) =>
+                    Number(b.id === sorenessMobilityRecommendation?.routineId) -
+                      Number(a.id === sorenessMobilityRecommendation?.routineId) ||
                     Number(favoriteRoutineIds.includes(b.id)) -
                     Number(favoriteRoutineIds.includes(a.id))
                 )
@@ -1318,6 +1333,11 @@ const exerciseVolume =
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-semibold">{routine.name}</p>
+                      {routine.id === sorenessMobilityRecommendation?.routineId && (
+                        <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                          Suggested today
+                        </span>
+                      )}
                       {favoriteRoutineIds.includes(routine.id) && (
                         <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800">
                           Favorite
