@@ -1888,6 +1888,11 @@ additional routine-level history only where useful beyond canonical completion.
   splits, middle splits, overhead shoulder range, ankle mobility, and thoracic
   rotation, using gradual tolerance-aware progression rather than forcing range.
 - [ ] Allow favorite and custom mobility/stretching routines.
+
+**Mobility favorites checkpoint:** Built-in recovery and flexibility-goal
+routines can now be favorited from the guided session. Favorites use a dedicated
+cloud-synced preference record and sort to the top of the existing Mobility &
+Stretching chooser. Custom routine authoring remains open.
 - [ ] Allow tight/sore-area context to influence the recommended routine without
   automatically changing the underlying training plan.
 - [ ] Route any training-plan modification caused by soreness through the

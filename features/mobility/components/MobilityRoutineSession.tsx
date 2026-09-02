@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Star } from "lucide-react";
 
 import { useTrainingActivityCompletions } from "@/features/workout/hooks/useTrainingActivityCompletions";
 import type { MobilityRoutineId, TrainingActivity } from "@/features/workout/types";
@@ -13,9 +14,13 @@ import {
 export default function MobilityRoutineSession({
   routineId,
   onClose,
+  favorite,
+  onToggleFavorite,
 }: {
   routineId: MobilityRoutineId;
   onClose: () => void;
+  favorite: boolean;
+  onToggleFavorite: () => void;
 }) {
   const routine = getMobilityRoutine(routineId);
   const { completeActivity } = useTrainingActivityCompletions();
@@ -87,10 +92,27 @@ export default function MobilityRoutineSession({
         ← Choose a different activity
       </button>
 
-      <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-blue-600">
-        Mobility & Stretching
-      </p>
-      <h1 className="mt-2 text-2xl font-bold">{routine.name}</h1>
+      <div className="mt-6 flex items-start justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+            Mobility & Stretching
+          </p>
+          <h1 className="mt-2 text-2xl font-bold">{routine.name}</h1>
+        </div>
+        <button
+          type="button"
+          onClick={onToggleFavorite}
+          aria-pressed={favorite}
+          className={`flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold transition ${
+            favorite
+              ? "border-amber-300 bg-amber-50 text-amber-800"
+              : "border-slate-200 text-slate-600 hover:border-amber-300"
+          }`}
+        >
+          <Star className={`h-4 w-4 ${favorite ? "fill-current" : ""}`} />
+          {favorite ? "Favorited" : "Favorite"}
+        </button>
+      </div>
       <p className="mt-2 leading-6 text-slate-500">{routine.description}</p>
       <p className="mt-3 text-sm font-semibold text-slate-700">
         About {durationMinutes} minutes · {completedDrillIds.length}/{routine.drills.length} movements

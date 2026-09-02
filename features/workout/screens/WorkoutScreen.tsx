@@ -26,6 +26,7 @@ import WorkoutWarmupCard from "../components/WorkoutWarmupCard";
 import WorkoutExerciseNavigator from "../components/WorkoutExerciseNavigator";
 import MobilityRoutineSession from "@/features/mobility/components/MobilityRoutineSession";
 import { mobilityRoutines } from "@/features/mobility/mobilityLibrary";
+import { useMobilityPreferences } from "@/features/mobility/hooks/useMobilityPreferences";
 
 import {
   useExerciseLibrary,
@@ -198,6 +199,7 @@ function getVariantDescription(
 
 export default function WorkoutScreen() {
   const { state: trainingPlanState } = useTrainingPlanState();
+  const { favoriteRoutineIds, toggleFavorite } = useMobilityPreferences();
   const [
     selectedWorkoutType,
     setSelectedWorkoutType,
@@ -1275,6 +1277,8 @@ const exerciseVolume =
           <MobilityRoutineSession
             routineId={selectedMobilityRoutineId}
             onClose={() => setSelectedMobilityRoutineId("choose")}
+            favorite={favoriteRoutineIds.includes(selectedMobilityRoutineId)}
+            onToggleFavorite={() => toggleFavorite(selectedMobilityRoutineId)}
           />
         </AppShell>
       );
@@ -1297,7 +1301,14 @@ const exerciseVolume =
             <h1 className="mt-2 text-2xl font-bold">What would help today?</h1>
             <p className="mt-2 text-slate-500">Choose a focused recovery routine.</p>
             <div className="mt-6 space-y-3">
-              {mobilityRoutines.map((routine) => (
+              {mobilityRoutines
+                .slice()
+                .sort(
+                  (a, b) =>
+                    Number(favoriteRoutineIds.includes(b.id)) -
+                    Number(favoriteRoutineIds.includes(a.id))
+                )
+                .map((routine) => (
                 <button
                   key={routine.id}
                   type="button"
@@ -1307,6 +1318,11 @@ const exerciseVolume =
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-semibold">{routine.name}</p>
+                      {favoriteRoutineIds.includes(routine.id) && (
+                        <span className="rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-800">
+                          Favorite
+                        </span>
+                      )}
                       <span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">
                         {routine.category}
                       </span>
