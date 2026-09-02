@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:ios-web": "cross-env FITNESS_OS_BUILD_TARGET=ios next build",
     "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs tests/progress/parseBodyWeightInput.test.mjs tests/nutrition/nutritionTargetRecommendation.test.mjs tests/dailyActivity/parseDailyStepInput.test.mjs tests/dailyActivity/mergeAppleHealthStepTotals.test.mjs tests/dailyActivity/syncAppleHealthSteps.test.mjs tests/dailyActivity/syncAndPersistAppleHealthSteps.test.mjs tests/dailyActivity/capacitorAppleHealthStepBridge.test.mjs",
     "start": "next start",
     "lint": "eslint"
@@ -29,6 +30,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
     "tailwindcss": "^4",

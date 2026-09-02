@@ -2,6 +2,9 @@ import type {
   MetadataRoute,
 } from "next";
 
+export const dynamic =
+  "force-static";
+
 // ============================================================
 // Fitness OS Web App Manifest
 // ============================================================
