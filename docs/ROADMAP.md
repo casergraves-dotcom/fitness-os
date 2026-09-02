@@ -1895,13 +1895,20 @@ cloud-synced preference record and sort to the top of the existing Mobility &
 Stretching chooser. Custom routine authoring remains open.
 - [x] Allow tight/sore-area context to influence the recommended routine without
   automatically changing the underlying training plan.
-- [ ] Route any training-plan modification caused by soreness through the
+- [x] Route any training-plan modification caused by soreness through the
   existing recovery/Guide/adaptive-scheduling systems.
 - [x] Record completed prescribed mobility/stretching work through canonical
   training-activity completion.
 - [ ] Allow mobility routine selection/content to evolve with demonstrated
   tolerance, preferences, and needs without creating an independent
   training-load progression system.
+
+**Soreness boundary checkpoint:** Morning Check-In soreness can alter Guide's
+same-day recommendation and rank an optional mobility routine, but neither path
+mutates the training plan. Any schedule change remains an explicit user action
+through the canonical reschedule/adaptive-adjustment flow, preserving the
+existing recovery and conflict checks rather than introducing mobility-owned
+schedule logic.
 
 **Milestone:** Fitness OS can adapt how training is scheduled, balanced,
 explained, and executed to the user's preferences while preserving canonical
