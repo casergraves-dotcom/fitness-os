@@ -5,12 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs tests/progress/parseBodyWeightInput.test.mjs tests/nutrition/nutritionTargetRecommendation.test.mjs tests/dailyActivity/parseDailyStepInput.test.mjs tests/dailyActivity/mergeAppleHealthStepTotals.test.mjs tests/dailyActivity/syncAppleHealthSteps.test.mjs tests/dailyActivity/syncAndPersistAppleHealthSteps.test.mjs",
+    "test": "node --experimental-strip-types --test tests/workout/exerciseSubstitutions.test.mjs tests/progress/longTermProgressHighlights.test.mjs tests/progress/parseBodyWeightInput.test.mjs tests/nutrition/nutritionTargetRecommendation.test.mjs tests/dailyActivity/parseDailyStepInput.test.mjs tests/dailyActivity/mergeAppleHealthStepTotals.test.mjs tests/dailyActivity/syncAppleHealthSteps.test.mjs tests/dailyActivity/syncAndPersistAppleHealthSteps.test.mjs tests/dailyActivity/capacitorAppleHealthStepBridge.test.mjs",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@capacitor/core": "^8.1.0",
     "@supabase/supabase-js": "^2.112.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
