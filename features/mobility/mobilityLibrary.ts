@@ -16,6 +16,7 @@ export interface MobilityRoutine {
   name: string;
   description: string;
   durationMinutes: number;
+  durationOptions: number[];
   drills: MobilityDrill[];
 }
 
@@ -25,6 +26,7 @@ export const mobilityRoutines: MobilityRoutine[] = [
     name: "Full Body Recovery",
     description: "Gentle mobility for the major areas used across strength, running, and aerial training.",
     durationMinutes: 10,
+    durationOptions: [10, 15, 20],
     drills: [
       {
         id: "calf-wall-stretch",
@@ -104,6 +106,7 @@ mobilityRoutines.push(
     name: "Post-Run Reset",
     description: "Easy lower-body mobility to settle calves, hips, glutes, and inner thighs after running.",
     durationMinutes: 10,
+    durationOptions: [10, 15, 20],
     drills: chooseDrills([
       "calf-wall-stretch",
       "half-kneeling-hip-flexor",
@@ -116,6 +119,7 @@ mobilityRoutines.push(
     name: "Post-Strength Reset",
     description: "A gentle cooldown for the hips, chest, shoulders, and back after a strength session.",
     durationMinutes: 10,
+    durationOptions: [10, 15, 20],
     drills: chooseDrills([
       "reclined-glute-stretch",
       "adductor-rock-back",
@@ -128,6 +132,7 @@ mobilityRoutines.push(
     name: "Post-Aerial Reset",
     description: "Restorative mobility for shoulders, lats, chest, hips, and glutes after aerial training.",
     durationMinutes: 10,
+    durationOptions: [10, 15, 20],
     drills: chooseDrills([
       "doorway-chest-stretch",
       "childs-pose-lat-reach",
@@ -139,4 +144,14 @@ mobilityRoutines.push(
 
 export function getMobilityRoutine(id: MobilityRoutineId) {
   return mobilityRoutines.find((routine) => routine.id === id);
+}
+
+export function getMobilityDrillDurationSeconds(
+  baseDurationSeconds: number,
+  baseRoutineMinutes: number,
+  selectedDurationMinutes: number
+) {
+  return Math.round(
+    baseDurationSeconds * (selectedDurationMinutes / baseRoutineMinutes)
+  );
 }

@@ -1564,7 +1564,7 @@ matters next, and those insights improve future Guide decisions.
 
 # Phase 7 — Personalization and Training Guidance
 
-**Future — post-Core-v1**
+**Priority: CURRENT**
 
 Phase 7 adds user-specific preferences and execution guidance on top of the
 established Fitness OS coaching system.
@@ -1875,15 +1875,15 @@ Mobility routines prescribed as training-plan activities must use the canonical
 training-activity completion system. Optional standalone mobility may retain
 additional routine-level history only where useful beyond canonical completion.
 
-- [ ] Add structured mobility and stretching guidance rather than relying on
+- [x] Add structured mobility and stretching guidance rather than relying on
   open-ended recovery labels.
-- [ ] Add a small library of stretches and mobility drills with concise setup,
+- [x] Add a small library of stretches and mobility drills with concise setup,
   execution, target-area, and safety cues.
-- [ ] Support guided routines with explicit duration and per-side timing where
+- [x] Support guided routines with explicit duration and per-side timing where
   appropriate.
-- [ ] Provide useful default routines such as Full Body Recovery, Post-Run,
+- [x] Provide useful default routines such as Full Body Recovery, Post-Run,
   Post-Strength, and Post-Aerial.
-- [ ] Support routine duration targets such as 10, 15, and 20 minutes.
+- [x] Support routine duration targets such as 10, 15, and 20 minutes.
 - [ ] Add goal-oriented flexibility routines for specific outcomes such as front
   splits, middle splits, overhead shoulder range, ankle mobility, and thoracic
   rotation, using gradual tolerance-aware progression rather than forcing range.
@@ -1892,7 +1892,7 @@ additional routine-level history only where useful beyond canonical completion.
   automatically changing the underlying training plan.
 - [ ] Route any training-plan modification caused by soreness through the
   existing recovery/Guide/adaptive-scheduling systems.
-- [ ] Record completed prescribed mobility/stretching work through canonical
+- [x] Record completed prescribed mobility/stretching work through canonical
   training-activity completion.
 - [ ] Allow mobility routine selection/content to evolve with demonstrated
   tolerance, preferences, and needs without creating an independent
@@ -1906,7 +1906,8 @@ training-plan, goal, progress, and adherence systems.
 
 # Phase 8 — Health Data Integrations
 
-**Near-term data-quality priority: device step synchronization first**
+**Deferred — requires a supported native build, signing, distribution, and
+physical-device test path that is not currently available at zero cost**
 
 Health platforms are external data sources, not alternate Fitness OS data
 models. Imported data should enter the existing canonical Fitness OS domain
@@ -1916,11 +1917,13 @@ Integrations should begin as read/import-only. Bidirectional writes should be
 added only where a concrete user benefit justifies the added ownership and
 conflict complexity.
 
-Automatic steps are the first integration priority because Today, the 14-day
+Automatic steps remain the first health-integration priority because Today, the 14-day
 activity average, adherence/coverage, Lifestyle Context, Progress, and periodic
 reviews already depend on the completeness of canonical daily-step records.
-This work should precede lower-priority visual polish and additional analytics
-that would otherwise continue interpreting sparsely sampled manual data.
+When a supported no-cost delivery and on-device testing path becomes available,
+this work should precede lower-priority health integrations. Until then, manual
+daily-step entry remains the supported canonical path and native Apple Health
+work must not be described as implemented, verified, or testable.
 
 The current Fitness OS runtime is a Next.js web application and does not have a
 native iOS health-data bridge. Before selecting a HealthKit library, validate a
@@ -2219,19 +2222,20 @@ significant architectural problem interrupts it.
 
 ## Next
 
-17. **Phase 8.1/8.2 — Apple Health Step Synchronization Foundation — NEXT**
+17. **Phase 7 — Personalization and Training Guidance — NEXT**
 
 ## Later
 
-18. **Phase 7 — Personalization and Training Guidance**
-19. **Remaining Phase 8 — Health Data Integrations**
+18. **Phase 8 — Health Data Integrations — DEFERRED pending a supported no-cost
+    native build/signing/distribution and physical-device test path**
 20. **Phase 9 — Social & Challenges**
 21. **Phase 10 — Advanced Platform & Coaching Capabilities**
 
-The step-sync foundation is the next data-quality priority. Broader
-personalization, remaining health integrations, social features, and advanced
-platform work remain mapped for later and should not displace the core coaching
-loop.
+Phase 6 real-data verification continues as qualifying history accumulates.
+Phase 7 personalization is the next implementation priority. Apple Health step
+sync remains desirable, but is explicitly deferred rather than consuming more
+development time without a supported zero-cost path to build, sign, distribute,
+and verify it on a physical iPhone.
 
 ---
 

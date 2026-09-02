@@ -1308,7 +1308,7 @@ const exerciseVolume =
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-semibold">{routine.name}</p>
                       <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
-                        {routine.durationMinutes} min
+                        {routine.durationOptions.join(" / ")} min
                       </span>
                     </div>
                     <p className="mt-1 text-sm leading-5 text-slate-500">{routine.description}</p>

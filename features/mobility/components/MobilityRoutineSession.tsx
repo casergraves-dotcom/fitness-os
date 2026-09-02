@@ -5,7 +5,10 @@ import { useState } from "react";
 import { useTrainingActivityCompletions } from "@/features/workout/hooks/useTrainingActivityCompletions";
 import type { MobilityRoutineId, TrainingActivity } from "@/features/workout/types";
 
-import { getMobilityRoutine } from "../mobilityLibrary";
+import {
+  getMobilityDrillDurationSeconds,
+  getMobilityRoutine,
+} from "../mobilityLibrary";
 
 export default function MobilityRoutineSession({
   routineId,
@@ -17,6 +20,7 @@ export default function MobilityRoutineSession({
   const routine = getMobilityRoutine(routineId);
   const { completeActivity } = useTrainingActivityCompletions();
   const [completedDrillIds, setCompletedDrillIds] = useState<string[]>([]);
+  const [selectedDurationMinutes, setSelectedDurationMinutes] = useState<number | null>(null);
   const [finished, setFinished] = useState(false);
 
   if (!routine) {
@@ -24,6 +28,7 @@ export default function MobilityRoutineSession({
   }
 
   const selectedRoutine = routine;
+  const durationMinutes = selectedDurationMinutes ?? selectedRoutine.durationMinutes;
 
   const allDrillsComplete = completedDrillIds.length === selectedRoutine.drills.length;
 
@@ -41,8 +46,8 @@ export default function MobilityRoutineSession({
       type: "Mobility",
       label: selectedRoutine.name,
       mobilityRoutineId: selectedRoutine.id,
-      durationMin: selectedRoutine.durationMinutes,
-      durationMax: selectedRoutine.durationMinutes,
+      durationMin: durationMinutes,
+      durationMax: durationMinutes,
       optional: true,
     };
 
@@ -88,8 +93,35 @@ export default function MobilityRoutineSession({
       <h1 className="mt-2 text-2xl font-bold">{routine.name}</h1>
       <p className="mt-2 leading-6 text-slate-500">{routine.description}</p>
       <p className="mt-3 text-sm font-semibold text-slate-700">
-        About {routine.durationMinutes} minutes · {completedDrillIds.length}/{routine.drills.length} movements
+        About {durationMinutes} minutes · {completedDrillIds.length}/{routine.drills.length} movements
       </p>
+
+      <fieldset className="mt-5">
+        <legend className="text-sm font-semibold text-slate-800">Choose duration</legend>
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          {selectedRoutine.durationOptions.map((minutes) => (
+            <button
+              key={minutes}
+              type="button"
+              aria-pressed={durationMinutes === minutes}
+              onClick={() => {
+                setSelectedDurationMinutes(minutes);
+                setCompletedDrillIds([]);
+              }}
+              className={`rounded-xl border px-3 py-2 text-sm font-semibold transition ${
+                durationMinutes === minutes
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-blue-400"
+              }`}
+            >
+              {minutes} min
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs leading-5 text-slate-500">
+          Longer sessions use the same movements with more unhurried time in each position.
+        </p>
+      </fieldset>
 
       <div className="mt-6 space-y-3">
         {routine.drills.map((drill, index) => {
@@ -130,7 +162,11 @@ export default function MobilityRoutineSession({
                       </p>
                     </div>
                     <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">
-                      {drill.durationSeconds}s{drill.perSide ? " / side" : ""}
+                      {getMobilityDrillDurationSeconds(
+                        drill.durationSeconds,
+                        selectedRoutine.durationMinutes,
+                        durationMinutes
+                      )}s{drill.perSide ? " / side" : ""}
                     </span>
                   </div>
 
