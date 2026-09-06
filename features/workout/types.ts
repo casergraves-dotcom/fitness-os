@@ -460,6 +460,67 @@ export interface ExerciseGuidance {
 
   // Short execution cues shown while learning or reviewing the movement.
   execution: string[];
+
+  // Brief reminders that help the user self-correct during a set.
+  techniqueCues?: string[];
+
+  // Frequent errors worth recognizing before adding load or difficulty.
+  commonMistakes?: string[];
+
+  // Exercise-specific cautions beyond the application's general training advice.
+  safetyConsiderations?: string[];
+
+  // Canonical exercise IDs for easier options or preparatory drills.
+  regressionExerciseIds?: string[];
+
+  // Canonical exercise IDs for harder options. Existing nextVariationId remains
+  // the progression engine's single authoritative next step.
+  progressionExerciseIds?: string[];
+
+  // Reserved for reviewed media attached to this canonical definition.
+  demoMedia?: {
+    type: "Image" | "Video";
+    source: string;
+    description: string;
+  }[];
+}
+
+export type AerialApparatus =
+  | "Silks"
+  | "Lyra"
+  | "Trapeze"
+  | "Rope"
+  | "Sling"
+  | "Straps"
+  | "Floor";
+
+export type AerialSkillDifficulty =
+  | "Foundation"
+  | "Beginner"
+  | "Intermediate"
+  | "Advanced";
+
+export interface CircusBookSkillReference {
+  // Circus Book owns canonical aerial-skill identity and performed-skill
+  // evidence. Fitness OS stores this reference only for programming use.
+  system: "CircusBook";
+  skillId: string;
+  schemaVersion?: string;
+}
+
+export interface AerialSkillMetadata {
+  canonicalSkill: CircusBookSkillReference;
+  apparatus: AerialApparatus[];
+  difficulty: AerialSkillDifficulty;
+
+  // Skill relationships use Circus Book IDs. Conditioning and preparatory
+  // movements continue to use Fitness OS canonical exercise IDs.
+  prerequisiteSkillIds?: string[];
+  regressionSkillIds?: string[];
+  progressionSkillIds?: string[];
+  drillExerciseIds?: string[];
+  transitionSkillIds?: string[];
+  relatedSkillIds?: string[];
 }
 
 
@@ -548,6 +609,10 @@ export interface ExerciseDefinition {
   // Optional learning guidance belongs to the canonical exercise definition so
   // workout execution and the Exercise Library share one source of truth.
   guidance?: ExerciseGuidance;
+
+  // Optional aerial-specific knowledge extends this same canonical definition.
+  // It has no effect on strength programming until an aerial consumer uses it.
+  aerialSkill?: AerialSkillMetadata;
 
   // ----------------------------------------------------------
   // Exercise Progression Path

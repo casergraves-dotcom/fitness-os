@@ -47,6 +47,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the handles begin around mid-chest and your feet stay planted.",
+        "Set your shoulder blades gently against the pad and choose a load you can control.",
+      ],
+      execution: [
+        "Press the handles forward without shrugging or lifting your back from the pad.",
+        "Return slowly until you feel a comfortable chest stretch, then repeat.",
+      ],
+      techniqueCues: ["Keep wrists stacked over forearms.", "Exhale through the press and keep the ribs controlled."],
+      commonMistakes: ["Setting the seat too low and pressing toward the face.", "Letting the weight stack slam between repetitions."],
+      safetyConsiderations: ["Use a pain-free shoulder range and stop if pressing causes sharp pain."],
+      regressionExerciseIds: ["push-ups"],
+      progressionExerciseIds: ["dumbbell-chest-press", "barbell-bench-press"],
+    },
   },
   {
     id: "incline-chest-press-machine",
@@ -61,6 +76,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the handles begin near the upper chest, not above the shoulders.",
+        "Plant your feet and keep your head and upper back supported.",
+      ],
+      execution: [
+        "Press up and forward through a comfortable path while keeping the shoulders down.",
+        "Lower with control until the elbows reach a comfortable depth.",
+      ],
+      techniqueCues: ["Keep forearms aligned with the handles.", "Maintain contact with the back pad."],
+      commonMistakes: ["Shrugging toward the ears.", "Overarching the low back to finish the press."],
+      safetyConsiderations: ["Reduce the range or load if the front of the shoulder feels pinched."],
+      regressionExerciseIds: ["chest-press-machine"],
+      progressionExerciseIds: ["incline-dumbbell-press"],
+    },
   },
   {
     id: "dumbbell-chest-press",
@@ -103,6 +133,10 @@ export const exerciseLibrary: ExerciseDefinition[] = [
         "Lower your chest under control while keeping your elbows angled slightly back.",
         "Press the floor away without letting your hips sag or rise first.",
       ],
+      techniqueCues: ["Keep head, ribs, hips, and heels moving as one unit.", "Spread the floor with your hands for shoulder stability."],
+      commonMistakes: ["Flaring the elbows straight sideways.", "Losing trunk tension before the chest reaches the bottom."],
+      safetyConsiderations: ["Elevate the hands to reduce difficulty if you cannot maintain position or have wrist discomfort."],
+      progressionExerciseIds: ["feet-elevated-push-ups", "weighted-push-ups"],
     },
     nextVariationId:
       "feet-elevated-push-ups",
@@ -236,6 +270,11 @@ export const exerciseLibrary: ExerciseDefinition[] = [
         "Drive your elbows back without leaning away from the pad or rounding forward.",
         "Return the weight under control until your arms are long.",
       ],
+      techniqueCues: ["Keep the shoulders away from the ears.", "Pause briefly when the elbows reach the torso."],
+      commonMistakes: ["Using a large torso swing.", "Pulling past a comfortable shoulder position."],
+      safetyConsiderations: ["Reduce load or range if the front of the shoulder becomes irritated."],
+      regressionExerciseIds: ["band-row"],
+      progressionExerciseIds: ["one-arm-dumbbell-row", "barbell-row"],
     },
   },
   {
@@ -308,6 +347,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Secure your thighs beneath the pad and take a grip that keeps the wrists comfortable.",
+        "Sit tall with the arms long and shoulders away from the ears.",
+      ],
+      execution: [
+        "Drive the elbows down as the bar travels toward the upper chest.",
+        "Return overhead under control without losing your seated position.",
+      ],
+      techniqueCues: ["Think elbows toward your back pockets.", "Use only a small natural torso lean."],
+      commonMistakes: ["Pulling the bar behind the neck.", "Turning the repetition into a large backward swing."],
+      safetyConsiderations: ["Use a grip and range that do not cause shoulder or elbow pain."],
+      regressionExerciseIds: ["band-pulldown"],
+      progressionExerciseIds: ["assisted-pull-up"],
+    },
   },
   {
     id: "assisted-pull-up",
@@ -322,6 +376,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Assistance",
     resistanceType: "Assistance",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Select enough assistance to complete controlled repetitions and enter the platform carefully.",
+        "Set a comfortable grip and begin with the arms long and trunk braced.",
+      ],
+      execution: [
+        "Pull the elbows down until the upper chest approaches the handles.",
+        "Lower to the start under control before beginning the next repetition.",
+      ],
+      techniqueCues: ["Keep the legs quiet on the assistance pad.", "Lead with the chest rather than craning the neck."],
+      commonMistakes: ["Using momentum from the knees.", "Dropping quickly into the bottom position."],
+      safetyConsiderations: ["Enter and exit the moving assistance platform using the machine supports."],
+      regressionExerciseIds: ["lat-pulldown", "band-pulldown"],
+    },
   },
   {
     id: "band-pulldown",
@@ -372,6 +440,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the handles begin near shoulder height and your back is supported.",
+        "Choose a grip that lets your forearms remain close to vertical.",
+      ],
+      execution: [
+        "Press overhead without shrugging or flaring the ribs.",
+        "Lower slowly to a comfortable depth with the elbows beneath the hands.",
+      ],
+      techniqueCues: ["Keep the head neutral and ribs stacked.", "Finish with control rather than locking out forcefully."],
+      commonMistakes: ["Arching away from the pad.", "Lowering farther than the shoulders comfortably allow."],
+      safetyConsiderations: ["Stop or shorten the range if overhead pressing causes pinching or sharp pain."],
+      regressionExerciseIds: ["band-shoulder-press"],
+      progressionExerciseIds: ["dumbbell-shoulder-press", "overhead-press"],
+    },
   },
   {
     id: "dumbbell-shoulder-press",
@@ -414,6 +497,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the machine pivot is near shoulder height and the pads contact above the elbows.",
+        "Sit tall with your shoulders relaxed and feet planted.",
+      ],
+      execution: [
+        "Raise the arms out to the sides until roughly shoulder height or your comfortable limit.",
+        "Lower the pads slowly without letting the stack rest.",
+      ],
+      techniqueCues: ["Lead with the elbows.", "Keep the neck relaxed throughout the set."],
+      commonMistakes: ["Shrugging to lift the weight.", "Using momentum or raising well above a comfortable shoulder range."],
+      safetyConsiderations: ["Use a light, controlled load; lateral raises do not require heavy resistance."],
+      regressionExerciseIds: ["dumbbell-lateral-raise"],
+    },
   },
   {
     id: "dumbbell-lateral-raise",
@@ -620,6 +717,11 @@ export const exerciseLibrary: ExerciseDefinition[] = [
         "Lower the sled under control to your comfortable depth.",
         "Press through your whole foot without locking your knees hard at the top.",
       ],
+      techniqueCues: ["Keep knees tracking with toes.", "Maintain even pressure through heel and forefoot."],
+      commonMistakes: ["Allowing the pelvis to curl away from the pad at the bottom.", "Driving the knees inward during the press."],
+      safetyConsiderations: ["Set and understand the machine safeties before loading it heavily."],
+      regressionExerciseIds: ["goblet-squat"],
+      progressionExerciseIds: ["hack-squat-pendulum-squat", "barbell-squat"],
     },
   },
   {
@@ -635,6 +737,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Position your shoulders and back securely against the pads and place your feet where the heels stay down.",
+        "Release the safety stops only after you are braced and stable.",
+      ],
+      execution: [
+        "Bend the knees and hips together to descend through a comfortable range.",
+        "Drive through the whole foot to stand without snapping the knees straight.",
+      ],
+      techniqueCues: ["Track the knees with the toes.", "Keep your trunk supported by the machine."],
+      commonMistakes: ["Letting the heels lift.", "Descending deeper than you can control without the pelvis shifting."],
+      safetyConsiderations: ["Confirm the safety stops and practice reracking before using a challenging load."],
+      regressionExerciseIds: ["leg-press", "goblet-squat"],
+      progressionExerciseIds: ["barbell-squat"],
+    },
   },
   {
     id: "goblet-squat",
@@ -673,6 +790,10 @@ export const exerciseLibrary: ExerciseDefinition[] = [
         "Step back and lower both knees while keeping the front knee aligned with the toes.",
         "Drive through the front foot to return to standing before changing sides.",
       ],
+      techniqueCues: ["Keep most of the working pressure through the front foot.", "Use a step length that lets both knees bend comfortably."],
+      commonMistakes: ["Stepping onto a tightrope instead of maintaining hip-width balance.", "Pushing excessively from the back foot."],
+      safetyConsiderations: ["Use a stable support or reduce depth if balance limits control."],
+      progressionExerciseIds: ["goblet-squat"],
     },
   },
   {
@@ -688,6 +809,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Align your knees with the machine pivot and place the lower pad just above the heels.",
+        "Secure the thigh pad so your hips stay in the seat without uncomfortable pressure.",
+      ],
+      execution: [
+        "Curl the pad down by bending the knees while keeping your hips still.",
+        "Return slowly until the legs are nearly straight without letting the stack slam.",
+      ],
+      techniqueCues: ["Keep the toes relaxed.", "Pause briefly in the shortened position."],
+      commonMistakes: ["Lifting the hips to move more weight.", "Allowing the return phase to pull the knees abruptly straight."],
+      safetyConsiderations: ["Adjust the machine rather than training through pressure behind the knees."],
+      regressionExerciseIds: ["band-leg-curl"],
+      progressionExerciseIds: ["lying-leg-curl"],
+    },
   },
   {
     id: "lying-leg-curl",
@@ -731,6 +867,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand with the dumbbells close to your thighs, feet stable, and knees softly bent.",
+        "Brace your trunk and set your shoulders before beginning the hinge.",
+      ],
+      execution: [
+        "Push the hips backward while the dumbbells travel close to the legs.",
+        "Stop when the hamstrings limit the hinge, then drive the hips forward to stand tall.",
+      ],
+      techniqueCues: ["Keep a long neutral spine.", "Let the hips move back rather than turning the exercise into a squat."],
+      commonMistakes: ["Reaching the weights toward the floor by rounding the back.", "Letting the dumbbells drift away from the legs."],
+      safetyConsiderations: ["Use a shorter range if you cannot maintain trunk position or feel strain in the low back."],
+      regressionExerciseIds: ["band-good-morning", "glute-bridge"],
+      progressionExerciseIds: ["romanian-deadlift"],
+    },
   },
   {
     id: "glute-bridge",
@@ -940,6 +1091,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Set the cable around chest height and stand sideways with enough distance for steady tension.",
+        "Hold the handle with both hands, soften the knees, and brace your trunk.",
+      ],
+      execution: [
+        "Rotate through the upper trunk while guiding the handle across the body.",
+        "Return slowly without allowing the cable to pull you out of position.",
+      ],
+      techniqueCues: ["Move the ribcage and arms together.", "Keep the hips controlled instead of spinning on the feet."],
+      commonMistakes: ["Pulling mostly with the arms.", "Using momentum or excessive low-back rotation."],
+      safetyConsiderations: ["Use a range you can control without back discomfort and keep clear of the cable path."],
+      regressionExerciseIds: ["band-woodchop"],
+    },
   },
   {
     id: "band-woodchop",
@@ -970,6 +1136,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat and pads so the machine's pivot matches your trunk and the restraints feel secure.",
+        "Choose a load that allows a smooth curl without pulling with the arms.",
+      ],
+      execution: [
+        "Bring the ribs toward the pelvis by curling the trunk against the resistance.",
+        "Return with control until the abdominals lengthen without forcefully arching the back.",
+      ],
+      techniqueCues: ["Exhale through the curl.", "Keep the movement centered in the trunk rather than the hips."],
+      commonMistakes: ["Yanking the handles with the arms.", "Using a large hip hinge instead of controlled spinal flexion."],
+      safetyConsiderations: ["Use a comfortable range and stop if loaded flexion causes back pain."],
+      regressionExerciseIds: ["cable-crunch", "dead-bug"],
+    },
   },
 
   // ----------------------------------------------------------
@@ -1057,6 +1237,11 @@ export const exerciseLibrary: ExerciseDefinition[] = [
         "Slowly extend the opposite arm and leg without losing trunk position.",
         "Return with control, then repeat on the other side.",
       ],
+      techniqueCues: ["Exhale as the limbs move away.", "Use a smaller reach to preserve rib and pelvis position."],
+      commonMistakes: ["Arching the low back to reach farther.", "Moving quickly enough that balance replaces muscular control."],
+      safetyConsiderations: ["Shorten the lever or keep the arms still if the low back cannot remain comfortable."],
+      regressionExerciseIds: ["plank"],
+      progressionExerciseIds: ["lying-leg-raise"],
     },
   },
 

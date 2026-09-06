@@ -300,11 +300,32 @@ test("unilateral exercises explicitly record repetitions per side", () => {
 test("canonical exercise guidance has concise setup and execution steps", () => {
   const guidedExercises = exerciseLibrary.filter((exercise) => exercise.guidance);
 
-  assert.ok(guidedExercises.length >= 5);
+  assert.ok(guidedExercises.length >= 16);
   for (const exercise of guidedExercises) {
     assert.ok(exercise.guidance.setup.length > 0, `${exercise.name} needs setup guidance`);
     assert.ok(exercise.guidance.execution.length > 0, `${exercise.name} needs execution guidance`);
     assert.ok(exercise.guidance.setup.every((step) => step.trim().length > 0));
     assert.ok(exercise.guidance.execution.every((step) => step.trim().length > 0));
+
+    for (const field of [
+      "techniqueCues",
+      "commonMistakes",
+      "safetyConsiderations",
+    ]) {
+      const entries = exercise.guidance[field];
+      if (entries) {
+        assert.ok(entries.length > 0, `${exercise.name}: ${field}`);
+        assert.ok(entries.every((entry) => entry.trim().length > 0));
+      }
+    }
+
+    for (const field of ["regressionExerciseIds", "progressionExerciseIds"]) {
+      for (const linkedId of exercise.guidance[field] ?? []) {
+        assert.ok(
+          exerciseLibrary.some((candidate) => candidate.id === linkedId),
+          `${exercise.name}: ${field} references missing ${linkedId}`,
+        );
+      }
+    }
   }
 });

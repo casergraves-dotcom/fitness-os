@@ -730,6 +730,87 @@ export default function ExerciseCard({
                   ))}
                 </ol>
               </div>
+
+              {exerciseDefinition.requiredEquipment &&
+                exerciseDefinition.requiredEquipment.length > 0 && (
+                  <div className="md:col-span-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                      Equipment
+                    </p>
+                    <p className="mt-2 text-sm text-slate-700">
+                      {exerciseDefinition.requiredEquipment
+                        .map((item) => item.replace(/([a-z])([A-Z])/g, "$1 $2"))
+                        .join(" · ")}
+                    </p>
+                  </div>
+                )}
+
+              {exerciseDefinition.guidance.techniqueCues && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">Technique cues</p>
+                  <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
+                    {exerciseDefinition.guidance.techniqueCues.map((cue) => <li key={cue}>{cue}</li>)}
+                  </ul>
+                </div>
+              )}
+
+              {exerciseDefinition.guidance.commonMistakes && (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">Common mistakes</p>
+                  <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
+                    {exerciseDefinition.guidance.commonMistakes.map((mistake) => <li key={mistake}>{mistake}</li>)}
+                  </ul>
+                </div>
+              )}
+
+              {(exerciseDefinition.guidance.regressionExerciseIds ||
+                exerciseDefinition.guidance.progressionExerciseIds) && (
+                <div className="grid gap-3 md:col-span-2 md:grid-cols-2">
+                  {exerciseDefinition.guidance.regressionExerciseIds && (
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                        Easier options
+                      </p>
+                      <p className="mt-2 text-sm text-slate-700">
+                        {exerciseDefinition.guidance.regressionExerciseIds
+                          .map(
+                            (exerciseId) =>
+                              exerciseLibrary.find((item) => item.id === exerciseId)?.name,
+                          )
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    </div>
+                  )}
+
+                  {exerciseDefinition.guidance.progressionExerciseIds && (
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+                        Progressions
+                      </p>
+                      <p className="mt-2 text-sm text-slate-700">
+                        {exerciseDefinition.guidance.progressionExerciseIds
+                          .map(
+                            (exerciseId) =>
+                              exerciseLibrary.find((item) => item.id === exerciseId)?.name,
+                          )
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {exerciseDefinition.guidance.safetyConsiderations && (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 md:col-span-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-amber-800">Safety</p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-amber-950">
+                    {exerciseDefinition.guidance.safetyConsiderations.map((item) => <li key={item}>{item}</li>)}
+                  </ul>
+                </div>
+              )}
+
             </div>
           )}
         </div>

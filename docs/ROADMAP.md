@@ -1741,6 +1741,13 @@ workout execution rather than maintaining a separate exercise-guidance catalog.
   parallel exercise catalog.
 - [x] Add an optional exercise demo/details view.
 - [x] Show concise setup and execution instructions.
+- [x] Support richer optional guidance: technique cues, common mistakes,
+  exercise-specific safety, and linked regressions/progressions.
+- [ ] Finish reviewed guidance coverage for the remaining canonical strength
+  exercises, then extend the same knowledge capability to warm-up, mobility,
+  running drills, and aerial conditioning without duplicating domain records.
+- [ ] Define and version the Circus Book skill-identity import contract before
+  adding aerial apparatus skills to Fitness OS.
 - [ ] Add visual demonstrations where they materially improve exercise
   understanding.
 - [x] Surface exercise-specific guidance such as unilateral/per-side execution.
@@ -1763,6 +1770,23 @@ states, all 29 project tests, TypeScript, and the production build passed.
 prescription as per-side inside the optional How to panel and explicitly direct
 the user to complete the target on each side. Reverse Lunge rendering, all 29
 project tests, TypeScript, and the production build passed.
+
+**Movement-library expansion checkpoint:** The canonical guidance model now
+supports technique cues, common mistakes, safety considerations, linked easier
+options and progressions, and reserved reviewed demo media. Initial coverage was
+expanded from 5 to 16 commonly programmed strength exercises, and the existing
+inline How to panel renders the richer content without introducing another
+exercise catalog. Automated validation checks that guidance is populated and
+that linked exercise IDs resolve to canonical definitions.
+
+**Circus Book compatibility boundary:** Circus Book remains the canonical owner
+of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
+remains the owner of training and programming. Any future aerial-skill metadata
+in Fitness OS must include a `CircusBookSkillReference`. Relationships between
+aerial skills use Circus Book skill IDs, while local conditioning/preparatory
+drills use Fitness OS exercise IDs. No independent Fitness OS aerial identities
+or aerial skill records are being invented before the shared import contract is
+defined.
 
 ## 7.4 Shared Mobile Layout and Today Refinement — COMPLETE
 
