@@ -1786,6 +1786,13 @@ fallback movements reuse the existing How-To presentation and canonical
 progression links, bringing reviewed strength guidance coverage to 22 exercises.
 All 55 project tests, TypeScript, and the production build passed.
 
+**Primary-template coverage checkpoint:** Reverse Pec Deck, Cable Pressdown,
+Hip Abductor, and Hip Adductor now provide the same canonical setup, execution,
+technique, mistake, safety, and related-exercise guidance. Every exercise in the
+primary Gym A, Gym B, and Gym C templates now has reviewed How-To content without
+introducing a parallel instruction source. All 55 project tests, TypeScript, and
+the production build passed.
+
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
 remains the owner of training and programming. Any future aerial-skill metadata

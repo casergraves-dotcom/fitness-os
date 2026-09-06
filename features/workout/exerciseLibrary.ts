@@ -567,6 +567,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the handles are near shoulder height and support your chest against the pad.",
+        "Take the handles with soft elbows and keep the shoulders relaxed.",
+      ],
+      execution: [
+        "Open the arms until they are roughly in line with the torso or reach a comfortable limit.",
+        "Return the handles slowly without letting the weight stack rest.",
+      ],
+      techniqueCues: ["Lead with the elbows.", "Keep the chest connected to the pad."],
+      commonMistakes: ["Shrugging while opening the arms.", "Using momentum or pulling far behind the torso."],
+      safetyConsiderations: ["Use a light, controlled load and a pain-free shoulder range."],
+      regressionExerciseIds: ["cable-face-pull"],
+    },
   },
   {
     id: "cable-face-pull",
@@ -688,6 +702,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Set the cable above head height and take the attachment with elbows bent beside the torso.",
+        "Stand tall with a stable stance, neutral wrists, and shoulders down.",
+      ],
+      execution: [
+        "Straighten the elbows to press the attachment toward the thighs.",
+        "Return under control while keeping the upper arms close to the torso.",
+      ],
+      techniqueCues: ["Move only at the elbows.", "Keep the neck and shoulders relaxed."],
+      commonMistakes: ["Leaning body weight onto the attachment.", "Letting the elbows swing forward during the return."],
+      safetyConsiderations: ["Avoid snapping the elbows into lockout or using a load that pulls you off balance."],
+      regressionExerciseIds: ["band-overhead-triceps-extension"],
+      progressionExerciseIds: ["seated-dip-machine"],
+    },
   },
 
   {
@@ -1040,6 +1069,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the machine so the outside pads sit securely above the knees.",
+        "Sit with the feet supported, pelvis level, and back comfortably against the pad.",
+      ],
+      execution: [
+        "Press the knees outward through a controlled, comfortable range.",
+        "Pause briefly, then bring the legs back together slowly without letting the stack slam.",
+      ],
+      techniqueCues: ["Keep both sides moving evenly.", "Maintain a steady pelvis instead of rocking."],
+      commonMistakes: ["Using momentum to force a wider range.", "Allowing the weight to pull the knees inward quickly."],
+      safetyConsiderations: ["Reduce the range or load if the outer hip feels pinched or irritated."],
+      regressionExerciseIds: ["side-lying-hip-abduction"],
+    },
   },
   {
     id: "side-lying-hip-abduction",
@@ -1086,6 +1129,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the starting width so the inner-thigh stretch is comfortable, not forced.",
+        "Place the inside of the legs against the pads and sit with the pelvis level.",
+      ],
+      execution: [
+        "Draw the legs together smoothly while keeping the torso still.",
+        "Return to the chosen starting width under control.",
+      ],
+      techniqueCues: ["Use the same range on both sides.", "Keep the feet and knees relaxed against the pads."],
+      commonMistakes: ["Choosing an excessively wide starting position.", "Letting the stack pull the legs apart quickly."],
+      safetyConsiderations: ["Stop short of any sharp groin discomfort and avoid forcing range under load."],
+      regressionExerciseIds: ["side-lying-hip-adduction"],
+    },
   },
 
   // Not defined in the spreadsheet.
