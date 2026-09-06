@@ -333,6 +333,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "Band",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Anchor the band securely around mid-torso height and step back until it is lightly tensioned.",
+        "Stand or sit tall with the arms extended and shoulders relaxed.",
+      ],
+      execution: [
+        "Pull the elbows behind you while bringing the hands toward the lower ribs.",
+        "Pause briefly, then return until the arms are long without letting the shoulders roll forward.",
+      ],
+      techniqueCues: ["Keep the ribs stacked over the pelvis.", "Drive the elbows back instead of shrugging."],
+      commonMistakes: ["Leaning backward to finish the pull.", "Allowing the band to snap the arms forward."],
+      safetyConsiderations: ["Confirm the anchor and band are undamaged before loading them."],
+      progressionExerciseIds: ["seated-row", "cable-row"],
+    },
   },
   {
     id: "lat-pulldown",
@@ -483,6 +497,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "Band",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand on the middle of the band with even tension and bring the handles to shoulder height.",
+        "Brace your trunk with wrists stacked over the forearms.",
+      ],
+      execution: [
+        "Press overhead until the arms are long without forcing the shoulders upward.",
+        "Lower the hands to shoulder height under control.",
+      ],
+      techniqueCues: ["Keep the ribs down as the arms rise.", "Press evenly through both hands."],
+      commonMistakes: ["Arching the low back to gain range.", "Standing on the band unevenly."],
+      safetyConsiderations: ["Inspect the band and keep it clear of the face throughout the set."],
+      progressionExerciseIds: ["shoulder-press-machine", "dumbbell-shoulder-press"],
+    },
   },
   {
     id: "lateral-raise-machine",
@@ -588,6 +616,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the elbows align with the machine pivot and rest comfortably on the pad.",
+        "Take the handles with neutral wrists and keep the upper arms supported.",
+      ],
+      execution: [
+        "Curl the handles toward you without lifting the elbows from the pad.",
+        "Lower slowly until the elbows are nearly straight, then repeat.",
+      ],
+      techniqueCues: ["Keep the shoulders relaxed.", "Use the same controlled range on every repetition."],
+      commonMistakes: ["Lifting the elbows to finish the curl.", "Dropping quickly into the bottom position."],
+      safetyConsiderations: ["Avoid forcefully locking the elbows at the bottom."],
+      regressionExerciseIds: ["band-biceps-curl"],
+      progressionExerciseIds: ["dumbbell-curl", "barbell-curl"],
+    },
   },
   {
     id: "dumbbell-curl",
@@ -616,6 +659,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat and handles so your elbows stay close to your sides through the available range.",
+        "Sit tall with the shoulders down and wrists neutral.",
+      ],
+      execution: [
+        "Press the handles down by straightening the elbows without moving the upper arms.",
+        "Return under control until you feel a comfortable bend at the elbows.",
+      ],
+      techniqueCues: ["Pin the upper arms beside the torso.", "Finish by extending the elbows, not the shoulders."],
+      commonMistakes: ["Leaning body weight into the handles.", "Letting the elbows drift forward and back."],
+      safetyConsiderations: ["Use a pain-free range and avoid forcefully snapping the elbows straight."],
+      regressionExerciseIds: ["band-overhead-triceps-extension"],
+      progressionExerciseIds: ["cable-pressdown", "seated-dip-machine"],
+    },
   },
   {
     id: "cable-pressdown",
@@ -896,6 +954,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Lie on your back with knees bent, feet planted about hip width, and heels near the hips.",
+        "Brace lightly so the ribs stay settled before lifting.",
+      ],
+      execution: [
+        "Drive through the feet and squeeze the glutes to lift the hips.",
+        "Stop when the hips are extended without arching the low back, then lower with control.",
+      ],
+      techniqueCues: ["Keep the knees tracking over the feet.", "Think ribs down and belt buckle up."],
+      commonMistakes: ["Finishing by arching the low back.", "Pushing mostly through the toes."],
+      safetyConsiderations: ["Shorten the range if the movement causes low-back discomfort."],
+      progressionExerciseIds: ["hip-thrust-machine"],
+    },
   },
   {
     id: "hip-thrust-machine",
@@ -940,6 +1012,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "Band",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand securely on the band and loop it behind the upper back, not across the neck.",
+        "Set the feet about hip width with soft knees and a braced trunk.",
+      ],
+      execution: [
+        "Push the hips backward while keeping the spine long and the band secure.",
+        "Stop at a controlled hamstring stretch, then drive the hips forward to stand tall.",
+      ],
+      techniqueCues: ["Keep pressure through the whole foot.", "Move the hips back instead of squatting down."],
+      commonMistakes: ["Rounding the back to reach lower.", "Letting the band ride onto the neck."],
+      safetyConsiderations: ["Inspect the band and keep it positioned across the upper back throughout."],
+      progressionExerciseIds: ["dumbbell-rdl", "romanian-deadlift"],
+    },
   },
   {
     id: "hip-abductor",

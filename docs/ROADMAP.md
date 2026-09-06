@@ -1779,6 +1779,13 @@ inline How to panel renders the richer content without introducing another
 exercise catalog. Automated validation checks that guidance is populated and
 that linked exercise IDs resolve to canonical definitions.
 
+**Current-program guidance checkpoint:** Reviewed canonical guidance now also
+covers Band Row, Band Shoulder Press, Biceps Curl Machine, Triceps Pushdown
+Machine, Glute Bridge, and Band Good Morning. These commonly programmed gym and
+fallback movements reuse the existing How-To presentation and canonical
+progression links, bringing reviewed strength guidance coverage to 22 exercises.
+All 55 project tests, TypeScript, and the production build passed.
+
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
 remains the owner of training and programming. Any future aerial-skill metadata
