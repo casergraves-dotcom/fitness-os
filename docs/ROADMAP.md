@@ -1942,8 +1942,7 @@ training-plan, goal, progress, and adherence systems.
 
 # Phase 8 — Health Data Integrations
 
-**Deferred — requires a supported native build, signing, distribution, and
-physical-device test path that is not currently available at zero cost**
+**Deferred until the shared Apple release path for the app portfolio is ready**
 
 Health platforms are external data sources, not alternate Fitness OS data
 models. Imported data should enter the existing canonical Fitness OS domain
@@ -1961,12 +1960,21 @@ this work should precede lower-priority health integrations. Until then, manual
 daily-step entry remains the supported canonical path and native Apple Health
 work must not be described as implemented, verified, or testable.
 
-The current Fitness OS runtime is a Next.js web application and does not have a
-native iOS health-data bridge. Before selecting a HealthKit library, validate a
-supported production architecture (for example, an intentional native wrapper
-or companion bridge) that can obtain user authorization and securely deliver
-read-only health data to the existing application. Do not imply that ordinary
-browser APIs can read Apple Health directly.
+The current Fitness OS runtime is a Next.js web application with a Capacitor iOS
+container foundation, but its native build and HealthKit authorization flow
+have not been validated on a physical iPhone. Fitness OS is intended to become
+a separately packaged iOS app when the shared Apple Developer membership and
+release infrastructure being established for Camp Crew and the other apps are
+available. One portfolio membership can support the apps as distinct products;
+each still needs its own bundle identity, signing configuration, store record,
+privacy disclosures, and release validation.
+
+Apple Developer membership does not itself provide the macOS/Xcode build
+environment. Before native work resumes, choose either access to a Mac with
+Xcode or a supported hosted macOS build/signing workflow, then validate the
+Capacitor container and physical-device installation before describing Fitness
+OS as a distributable iOS app. The web/PWA remains the supported delivery path
+until that checkpoint is complete.
 
 ## 8.1 Integration Foundation
 
@@ -2262,16 +2270,17 @@ significant architectural problem interrupts it.
 
 ## Later
 
-18. **Phase 8 — Health Data Integrations — DEFERRED pending a supported no-cost
-    native build/signing/distribution and physical-device test path**
+18. **Phase 8 — Health Data Integrations — DEFERRED pending the shared Apple
+    portfolio membership plus native build/signing and physical-device test
+    path**
 20. **Phase 9 — Social & Challenges**
 21. **Phase 10 — Advanced Platform & Coaching Capabilities**
 
 Phase 6 real-data verification continues as qualifying history accumulates.
 Phase 7 personalization is the next implementation priority. Apple Health step
-sync remains desirable, but is explicitly deferred rather than consuming more
-development time without a supported zero-cost path to build, sign, distribute,
-and verify it on a physical iPhone.
+sync remains desirable, but is explicitly deferred until the Apple release
+infrastructure planned for Camp Crew and the other apps can also build, sign,
+distribute, and verify Fitness OS on a physical iPhone.
 
 ---
 

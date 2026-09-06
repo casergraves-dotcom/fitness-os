@@ -302,3 +302,28 @@ samples, although limited-history authorization can be identified separately.
 **Consequence:** Do not add browser-only Apple Health code, a parallel Health
 steps dataset, or automatic overwrite of manual corrections. Initial sync is a
 foreground import; background delivery is a later validated step.
+
+------------------------------------------------------------------------
+
+## D-019 --- Native Apple distribution is shared portfolio infrastructure
+
+**Status:** Accepted / Deferred execution
+
+Fitness OS will remain available as a web/PWA product now and is intended to be
+packaged as its own Capacitor iOS app when Apple release infrastructure is being
+established for Camp Crew and the other applications. The projects may use the
+same Apple Developer membership, build/signing pipeline, and release practices,
+but they remain separate products with separate bundle identities, store
+records, entitlements, privacy disclosures, and release verification.
+
+The Apple Developer membership is an eventual portfolio expense rather than a
+Fitness-OS-only prerequisite. Purchasing the membership does not remove the
+need for macOS/Xcode access or a supported hosted macOS build and signing path.
+Fitness OS native distribution and HealthKit work resume only when both the
+membership and a physical-device-capable build/test path exist.
+
+**Consequence:** Preserve the current Next.js application and Capacitor
+foundation; do not rewrite Fitness OS in a second mobile framework solely for
+iOS packaging. Reuse portfolio-level Apple release infrastructure where useful,
+while keeping Fitness OS code, data ownership, bundle identity, and App Store
+release independent from Camp Crew and the other apps.
