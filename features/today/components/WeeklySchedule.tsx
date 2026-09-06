@@ -243,7 +243,9 @@ function ActivityRow({
 }: ActivityRowProps) {
   const moved =
     occurrence.date !==
-    occurrence.originalDate;
+      occurrence.originalDate &&
+    occurrence.placementSource !==
+      "FixedAerialCommitment";
 
   return (
     <div className="flex items-start justify-between gap-4 py-2">
@@ -256,6 +258,12 @@ function ActivityRow({
           {occurrence.activity.optional && (
             <span className="text-xs text-slate-500">
               Optional
+            </span>
+          )}
+
+          {occurrence.placementSource === "FixedAerialCommitment" && (
+            <span className="text-xs font-medium text-blue-600">
+              Fixed commitment
             </span>
           )}
         </div>

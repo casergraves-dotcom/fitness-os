@@ -727,9 +727,9 @@ export interface TrainingSessionDurationPreference {
 export interface TrainingParticipationPreference {
   effectiveDate: string;
   enabledModalities: TrainingModality[];
-  // Soft planning signals. These do not move an existing scheduled activity;
-  // schedule construction and adaptive planning may use them when choosing
-  // among otherwise valid days.
+  // Soft planning signals used when choosing among otherwise valid days.
+  // Aerial sessions marked Fixed are the exception: schedule resolution
+  // projects an existing canonical Aerial occurrence onto that recurring day.
   preferredDaysByModality?: Partial<
     Record<TrainingModality, TrainingDayOfWeek[]>
   >;

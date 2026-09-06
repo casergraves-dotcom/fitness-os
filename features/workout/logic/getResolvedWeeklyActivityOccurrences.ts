@@ -25,6 +25,8 @@ export interface ResolvedWeeklyActivityOccurrence {
   // for adherence/progression purposes.
   originalDate: string;
 
+  placementSource?: "FixedAerialCommitment";
+
   // Destination weekday after any rescheduling.
   day: TrainingDay["day"];
 
@@ -311,11 +313,16 @@ export function getResolvedWeeklyActivityOccurrences(
         .trainingDay
         .activities
     ) {
+      const activityContext = originalSchedule.activityContexts[originalActivity.id];
+      const occurrenceOriginalDate =
+        activityContext?.originalDate ?? originalDateString;
+      const placementSource = activityContext?.placementSource;
+
       const adjustment =
         getAdjustmentForOccurrence(
           state,
           originalActivity.id,
-          originalDateString
+          occurrenceOriginalDate
         );
 
 
@@ -344,7 +351,7 @@ export function getResolvedWeeklyActivityOccurrences(
         getVariantOverrideForOccurrence(
           state,
           originalActivity.id,
-          originalDateString
+          occurrenceOriginalDate
         );
 
 
@@ -360,7 +367,7 @@ export function getResolvedWeeklyActivityOccurrences(
         getRescheduleForOccurrence(
           state,
           originalActivity.id,
-          originalDateString
+          occurrenceOriginalDate
         );
 
 
@@ -374,7 +381,9 @@ export function getResolvedWeeklyActivityOccurrences(
             originalDateString,
 
           originalDate:
-            originalDateString,
+            occurrenceOriginalDate,
+
+          placementSource,
 
           day:
             originalSchedule
@@ -407,7 +416,9 @@ export function getResolvedWeeklyActivityOccurrences(
             originalDateString,
 
           originalDate:
-            originalDateString,
+            occurrenceOriginalDate,
+
+          placementSource,
 
           day:
             originalSchedule
@@ -456,7 +467,9 @@ export function getResolvedWeeklyActivityOccurrences(
             originalDateString,
 
           originalDate:
-            originalDateString,
+            occurrenceOriginalDate,
+
+          placementSource,
 
           day:
             originalSchedule
@@ -475,7 +488,7 @@ export function getResolvedWeeklyActivityOccurrences(
           reschedule.scheduledDate,
 
         originalDate:
-          originalDateString,
+          occurrenceOriginalDate,
 
         day:
           getDayName(

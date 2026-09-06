@@ -13,6 +13,7 @@ import {
   getSessionDurationPreferenceForDate,
   getTrainingDayPreferencePenalty,
 } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
+import { getFixedAerialCommitmentPlacements } from "../../features/workout/logic/getFixedAerialCommitmentPlacements.ts";
 
 const gymContext = {
   environment: "Gym",
@@ -154,6 +155,62 @@ test("participation preferences are effective-dated and preserve earlier schedul
   assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-27", "Aerial"), 0);
   assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-29", "Aerial"), 1);
   assert.equal(getTrainingDayPreferencePenalty(history, "2026-08-28", "Aerial"), 6);
+});
+
+test("fixed aerial commitments project a canonical occurrence onto the class day", () => {
+  const aerial = {
+    id: "week-1-tuesday-aerial",
+    type: "Aerial",
+    label: "Aerial",
+    optional: true,
+  };
+  const result = getFixedAerialCommitmentPlacements(
+    [{ activity: aerial, originalDate: "2026-09-08", day: "Tuesday" }],
+    [{
+      id: "thursday-lyra",
+      day: "Thursday",
+      sessionType: "Class",
+      name: "Lyra",
+      constraint: "Fixed",
+    }],
+    "2026-09-06",
+  );
+
+  assert.equal(result?.placements.length, 1);
+  assert.equal(result?.placements[0].activity, aerial);
+  assert.equal(result?.placements[0].originalDate, "2026-09-08");
+  assert.equal(result?.placements[0].scheduledDate, "2026-09-10");
+});
+
+test("fixed aerial commitments prefer an existing same-day canonical occurrence", () => {
+  const tuesday = {
+    id: "steady-tuesday-aerial",
+    type: "Aerial",
+    label: "Aerial",
+    optional: true,
+  };
+  const thursday = {
+    id: "steady-thursday-aerial",
+    type: "Aerial",
+    label: "Aerial",
+    optional: true,
+  };
+  const result = getFixedAerialCommitmentPlacements(
+    [
+      { activity: tuesday, originalDate: "2026-09-08", day: "Tuesday" },
+      { activity: thursday, originalDate: "2026-09-10", day: "Thursday" },
+    ],
+    [{
+      id: "thursday-lyra",
+      day: "Thursday",
+      sessionType: "Class",
+      constraint: "Fixed",
+    }],
+    "2026-09-06",
+  );
+
+  assert.equal(result?.placements[0].activity, thursday);
+  assert.equal(result?.placements[0].scheduledDate, "2026-09-10");
 });
 
 test("every automatic substitution preserves a movement role and has complete metadata", () => {

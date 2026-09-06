@@ -13,9 +13,14 @@ import type {
   TrainingWeekType,
 } from "../types";
 import {
+  addTrainingWeekDays,
   getTrainingWeekStart,
 } from "@/lib/date/trainingWeek";
-import { getEnabledTrainingModalitiesForDate } from "../logic/getTrainingParticipationPreferenceForDate";
+import {
+  getAerialSessionsForDate,
+  getEnabledTrainingModalitiesForDate,
+} from "../logic/getTrainingParticipationPreferenceForDate";
+import { getFixedAerialCommitmentPlacements } from "../logic/getFixedAerialCommitmentPlacements";
 import type { TrainingModality } from "../types";
 
 
@@ -27,6 +32,8 @@ export interface TrainingScheduleActivityContext {
   // Original local calendar date on which this occurrence was
   // prescribed. This remains stable if the occurrence is moved.
   originalDate: string;
+
+  placementSource?: "FixedAerialCommitment";
 
   // Persisted strength-workout variant selected for this specific
   // occurrence, if one exists.
@@ -1203,6 +1210,104 @@ function applyActivityRescheduling(
 
 
 // ============================================================
+// Fixed Aerial Commitment Projection
+// ============================================================
+//
+// Fixed participation preferences describe where the user's real recurring
+// class occurs. They project existing canonical Aerial occurrences without
+// mutating the training-plan template. An explicit dated reschedule always
+// wins over this recurring placement.
+
+function applyFixedAerialCommitmentProjection(
+  plan: TrainingPlan,
+  state: TrainingPlanState,
+  targetDate: Date,
+  schedule: TrainingScheduleForDate,
+): TrainingScheduleForDate {
+  const weekStart = getTrainingWeekStart(targetDate);
+  const weekStartDate = formatLocalDate(weekStart);
+  const templateOccurrences = [];
+
+  for (let offset = 0; offset < 7; offset += 1) {
+    const date = addTrainingWeekDays(weekStart, offset);
+    const baseSchedule = getBaseTrainingScheduleForDate(plan, state, date);
+
+    for (const activity of baseSchedule?.trainingDay.activities ?? []) {
+      if (activity.type === "Aerial") {
+        templateOccurrences.push({
+          activity,
+          originalDate: formatLocalDate(date),
+          day: baseSchedule!.dayOfWeek,
+        });
+      }
+    }
+  }
+
+  const projection = getFixedAerialCommitmentPlacements(
+    templateOccurrences,
+    getAerialSessionsForDate(
+      state.trainingParticipationPreferences,
+      schedule.date,
+    ),
+    weekStartDate,
+  );
+
+  if (!projection) return schedule;
+
+  const explicitReschedules = state.activityReschedules ?? [];
+  const hasExplicitReschedule = (activityId: string, originalDate: string) =>
+    explicitReschedules.some(
+      (move) =>
+        move.trainingActivityId === activityId &&
+        move.originalDate === originalDate,
+    );
+
+  const projectedTemplateIds = new Set(
+    projection.templateOccurrences
+      .filter(
+        (occurrence) =>
+          !hasExplicitReschedule(occurrence.activity.id, occurrence.originalDate),
+      )
+      .map((occurrence) => occurrence.activity.id),
+  );
+
+  const activities = schedule.trainingDay.activities.filter(
+    (activity) => !projectedTemplateIds.has(activity.id),
+  );
+  const activityContexts = { ...schedule.activityContexts };
+
+  for (const activityId of projectedTemplateIds) {
+    delete activityContexts[activityId];
+  }
+
+  for (const placement of projection.placements) {
+    if (
+      placement.scheduledDate !== schedule.date ||
+      hasExplicitReschedule(placement.activity.id, placement.originalDate)
+    ) {
+      continue;
+    }
+
+    const activity = placement.session.name
+      ? { ...placement.activity, label: placement.session.name }
+      : placement.activity;
+
+    activities.push(activity);
+    activityContexts[activity.id] = {
+      ...getActivityContext(state, activity, placement.originalDate),
+      placementSource: "FixedAerialCommitment",
+    };
+  }
+
+  return {
+    ...schedule,
+    trainingDay: { ...schedule.trainingDay, activities },
+    activityContexts,
+  };
+}
+
+
+// ============================================================
 // Public Schedule Resolver
 // ============================================================
 
@@ -1222,11 +1327,18 @@ export function getTrainingScheduleForDate(
     return null;
   }
 
-  const resolvedSchedule = applyActivityRescheduling(
+  const rescheduledSchedule = applyActivityRescheduling(
     plan,
     state,
     targetDate,
     baseSchedule
+  );
+
+  const resolvedSchedule = applyFixedAerialCommitmentProjection(
+    plan,
+    state,
+    targetDate,
+    rescheduledSchedule,
   );
 
   const enabledModalities = getEnabledTrainingModalitiesForDate(
