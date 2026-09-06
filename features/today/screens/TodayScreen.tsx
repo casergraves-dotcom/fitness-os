@@ -89,6 +89,7 @@ import {
   DailyStepsCard,
   useWeeklyStepAdherence,
 } from "@/features/dailyActivity";
+import { getTrainingWeekStartDate } from "@/lib/date/trainingWeek";
 
 
 // ============================================================
@@ -410,46 +411,7 @@ export default function TodayScreen() {
   // ----------------------------------------------------------
 
   function handleStartPlan() {
-    const now =
-      new Date();
-
-    const day =
-      now.getDay();
-
-    const daysSinceMonday =
-      day === 0
-        ? 6
-        : day - 1;
-
-    const monday =
-      new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate() -
-          daysSinceMonday
-      );
-
-    const year =
-      monday.getFullYear();
-
-    const month =
-      String(
-        monday.getMonth() + 1
-      ).padStart(
-        2,
-        "0"
-      );
-
-    const date =
-      String(
-        monday.getDate()
-      ).padStart(
-        2,
-        "0"
-      );
-
-    const startDate =
-      `${year}-${month}-${date}`;
+    const startDate = getTrainingWeekStartDate(new Date());
 
     startTrainingPlan(
       fitnessOsTrainingPlan.id,

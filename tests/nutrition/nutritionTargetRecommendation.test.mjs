@@ -7,6 +7,7 @@ import { getAdaptiveNutritionTargetFeedback } from "../../features/progress/util
 import { isDailyRecordSettled } from "../../features/dailyActivity/utils/isDailyRecordSettled.ts";
 import { getRequiredAdherenceToDate } from "../../features/progress/utils/getRequiredAdherenceToDate.ts";
 import {
+  getTrainingWeekDatesThroughDate,
   getTrainingWeekStartDate,
   normalizeLegacyTrainingWeekStartDate,
 } from "../../lib/date/trainingWeek.ts";
@@ -163,6 +164,17 @@ test("canonical training weeks run Sunday through Saturday", () => {
   assert.equal(getTrainingWeekStartDate(new Date(2026, 7, 30)), "2026-08-30");
   assert.equal(getTrainingWeekStartDate(new Date(2026, 8, 5)), "2026-08-30");
   assert.equal(normalizeLegacyTrainingWeekStartDate("2026-08-31"), "2026-08-30");
+});
+
+test("current-week evidence resets on Sunday and accumulates through today", () => {
+  assert.deepEqual(
+    getTrainingWeekDatesThroughDate(new Date(2026, 8, 6)),
+    ["2026-09-06"],
+  );
+  assert.deepEqual(
+    getTrainingWeekDatesThroughDate(new Date(2026, 8, 9)),
+    ["2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09"],
+  );
 });
 
 test("week-start migration preserves finalized decisions and adds evaluation aliases", () => {

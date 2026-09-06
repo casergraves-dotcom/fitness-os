@@ -32,6 +32,22 @@ export function getTrainingWeekStartDate(date: Date) {
   return formatLocalCalendarDate(getTrainingWeekStart(date));
 }
 
+export function getTrainingWeekDatesThroughDate(date: Date) {
+  const currentDate = startOfLocalDay(date);
+  const weekStart = getTrainingWeekStart(currentDate);
+  const dates: string[] = [];
+
+  for (
+    let day = weekStart;
+    day.getTime() <= currentDate.getTime();
+    day = addTrainingWeekDays(day, 1)
+  ) {
+    dates.push(formatLocalCalendarDate(day));
+  }
+
+  return dates;
+}
+
 export function getTrainingWeekStartOnOrAfter(date: Date) {
   const result = startOfLocalDay(date);
   const daysUntilSunday = (7 - result.getDay()) % 7;
