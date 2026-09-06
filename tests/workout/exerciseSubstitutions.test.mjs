@@ -14,6 +14,7 @@ import {
   getTrainingDayPreferencePenalty,
 } from "../../features/workout/logic/getTrainingParticipationPreferenceForDate.ts";
 import { getFixedAerialCommitmentPlacements } from "../../features/workout/logic/getFixedAerialCommitmentPlacements.ts";
+import { applyTrainingActivityReschedule } from "../../features/workout/logic/applyTrainingActivityReschedule.ts";
 
 const gymContext = {
   environment: "Gym",
@@ -211,6 +212,30 @@ test("fixed aerial commitments prefer an existing same-day canonical occurrence"
 
   assert.equal(result?.placements[0].activity, thursday);
   assert.equal(result?.placements[0].scheduledDate, "2026-09-10");
+});
+
+test("a dated override can keep a fixed commitment on its template date", () => {
+  const state = {
+    trainingPlanId: "fitness-os-default",
+    startDate: "2026-09-06",
+    activityReschedules: [],
+  };
+  const nextState = applyTrainingActivityReschedule({
+    state,
+    trainingActivityId: "week-1-tuesday-aerial",
+    originalDate: "2026-09-08",
+    scheduledDate: "2026-09-08",
+    rescheduledAt: "2026-09-06T12:00:00.000Z",
+    overrideRecurringPlacement: true,
+  });
+
+  assert.deepEqual(nextState.activityReschedules, [{
+    trainingActivityId: "week-1-tuesday-aerial",
+    originalDate: "2026-09-08",
+    scheduledDate: "2026-09-08",
+    rescheduledAt: "2026-09-06T12:00:00.000Z",
+    overrideRecurringPlacement: true,
+  }]);
 });
 
 test("every automatic substitution preserves a movement role and has complete metadata", () => {

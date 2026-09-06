@@ -598,12 +598,14 @@ export default function TodayScreen() {
             (
               trainingActivityId,
               originalDate,
-              scheduledDate
+              scheduledDate,
+              overrideRecurringPlacement,
             ) => {
               rescheduleTrainingActivity(
                 trainingActivityId,
                 originalDate,
-                scheduledDate
+                scheduledDate,
+                overrideRecurringPlacement,
               );
             }
           }

@@ -497,7 +497,8 @@ export function useTrainingPlanState() {
   function rescheduleTrainingActivity(
     trainingActivityId: string,
     originalDate: string,
-    scheduledDate: string
+    scheduledDate: string,
+    overrideRecurringPlacement = false,
   ) {
     if (!state) {
       return;
@@ -515,6 +516,8 @@ export function useTrainingPlanState() {
 
         rescheduledAt:
           new Date().toISOString(),
+
+        overrideRecurringPlacement,
       });
 
     if (
@@ -541,6 +544,7 @@ export function useTrainingPlanState() {
       trainingActivityId: string;
       originalDate: string;
       scheduledDate: string;
+      overrideRecurringPlacement?: boolean;
     }[]
   ) {
     if (
@@ -575,6 +579,9 @@ export function useTrainingPlanState() {
             move.scheduledDate,
 
           rescheduledAt,
+
+          overrideRecurringPlacement:
+            move.overrideRecurringPlacement,
         });
     }
 

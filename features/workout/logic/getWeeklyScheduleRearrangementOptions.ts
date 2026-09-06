@@ -24,6 +24,9 @@ export interface GetWeeklyScheduleRearrangementOptionsInput {
 
   unavailableDates:
     string[];
+
+  includeReviewActivities?:
+    boolean;
 }
 
 
@@ -163,6 +166,7 @@ export function getWeeklyScheduleRearrangementOptions({
   state,
   weekStartDate,
   unavailableDates,
+  includeReviewActivities = false,
 }: GetWeeklyScheduleRearrangementOptionsInput):
   RearrangementActivityOptions[] {
 
@@ -210,12 +214,14 @@ export function getWeeklyScheduleRearrangementOptions({
       (occurrence) =>
         unavailableSet.has(
           occurrence.date
-        )
+        ) &&
+        occurrence.placementSource !==
+          "FixedAerialCommitment"
     );
 
 
   // ----------------------------------------------------------
-  // Supporting Strength Activities
+  // Supporting / Review Activities
   // ----------------------------------------------------------
   //
   // Other strength sessions in the week are allowed to
@@ -223,8 +229,9 @@ export function getWeeklyScheduleRearrangementOptions({
   // may require another strength session to shift in order to
   // preserve appropriate recovery spacing.
   //
-  // We intentionally do NOT include every optional activity
-  // here.
+  // A current-schedule review has no unavailable-day moves to
+  // seed the search, so include movable strength, running, and
+  // optional sessions. Fixed aerial commitments remain locked.
   //
   // rankWeeklyScheduleRearrangements currently evaluates the
   // Cartesian product of every participant and every candidate
@@ -247,10 +254,30 @@ export function getWeeklyScheduleRearrangementOptions({
     );
 
 
+  const reviewOccurrences =
+    includeReviewActivities
+      ? occurrences.filter(
+          (occurrence) =>
+            occurrence.placementSource !==
+              "FixedAerialCommitment" &&
+            (occurrence.activity.type ===
+              "Strength" ||
+              occurrence.activity.type ===
+                "Run" ||
+              (occurrence.activity.optional ===
+                true &&
+                occurrence.activity.type !==
+                  "Rest"))
+        )
+      : [];
+
+
   const participatingOccurrences =
     [
       ...requiredOccurrences,
-      ...supportingStrengthOccurrences,
+      ...(includeReviewActivities
+        ? reviewOccurrences
+        : supportingStrengthOccurrences),
     ];
 
 

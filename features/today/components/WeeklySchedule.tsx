@@ -22,6 +22,7 @@ import type {
 import {
   evaluateProposedActivityReschedule,
 } from "@/features/workout/logic/evaluateProposedActivityReschedule";
+import { evaluateWeeklyScheduleRearrangement } from "@/features/workout/logic/evaluateWeeklyScheduleRearrangement";
 
 import {
   getAdaptiveWeeklyScheduleRecommendation,
@@ -55,7 +56,8 @@ interface WeeklyScheduleProps {
   onRescheduleActivity: (
     trainingActivityId: string,
     originalDate: string,
-    scheduledDate: string
+    scheduledDate: string,
+    overrideRecurringPlacement?: boolean,
   ) => void;
 
   onRescheduleActivities: (
@@ -63,6 +65,7 @@ interface WeeklyScheduleProps {
       trainingActivityId: string;
       originalDate: string;
       scheduledDate: string;
+      overrideRecurringPlacement?: boolean;
     }[]
   ) => void;
 
@@ -337,6 +340,8 @@ export default function WeeklySchedule({
   ] =
     useState("");
 
+  const [swapWithTargetDay, setSwapWithTargetDay] = useState(false);
+
   const [
     adjustingWeek,
     setAdjustingWeek,
@@ -358,6 +363,9 @@ export default function WeeklySchedule({
     useState<
       AdaptiveWeeklyScheduleRecommendation | null
     >(null);
+
+  const [reviewMessage, setReviewMessage] =
+    useState<string | null>(null);
   // ----------------------------------------------------------
   // Loading
   // ----------------------------------------------------------
@@ -489,6 +497,7 @@ export default function WeeklySchedule({
     setMoveDate(
       occurrence.date
     );
+    setSwapWithTargetDay(false);
   }
 
 
@@ -498,6 +507,7 @@ export default function WeeklySchedule({
     );
 
     setMoveDate("");
+    setSwapWithTargetDay(false);
   }
 
 
@@ -509,11 +519,17 @@ export default function WeeklySchedule({
       return;
     }
 
-    onRescheduleActivity(
-      movingOccurrence.activity.id,
-      movingOccurrence.originalDate,
-      moveDate
-    );
+    if (swapWithTargetDay && swapMoves.length > 1) {
+      onRescheduleActivities(swapMoves);
+    } else {
+      onRescheduleActivity(
+        movingOccurrence.activity.id,
+        movingOccurrence.originalDate,
+        moveDate,
+        movingOccurrence.placementSource === "FixedAerialCommitment" &&
+          moveDate === movingOccurrence.originalDate,
+      );
+    }
 
     closeMoveDialog();
   }
@@ -524,11 +540,52 @@ export default function WeeklySchedule({
     moveDate !== "" &&
     moveDate !== movingOccurrence.date;
 
+  const swapTargetOccurrences =
+    movingOccurrence && moveDateChanged
+      ? occurrences.filter(
+          (occurrence) =>
+            occurrence.date === moveDate &&
+            occurrence.activity.type !== "Rest" &&
+            !isCompleted(occurrence) &&
+            !(
+              occurrence.activity.id === movingOccurrence.activity.id &&
+              occurrence.originalDate === movingOccurrence.originalDate
+            ),
+        )
+      : [];
+
+  const swapMoves = movingOccurrence
+    ? [
+        {
+          trainingActivityId: movingOccurrence.activity.id,
+          originalDate: movingOccurrence.originalDate,
+          scheduledDate: moveDate,
+          overrideRecurringPlacement:
+            movingOccurrence.placementSource === "FixedAerialCommitment" &&
+            moveDate === movingOccurrence.originalDate,
+        },
+        ...swapTargetOccurrences.map((occurrence) => ({
+          trainingActivityId: occurrence.activity.id,
+          originalDate: occurrence.originalDate,
+          scheduledDate: movingOccurrence.date,
+          overrideRecurringPlacement:
+            occurrence.placementSource === "FixedAerialCommitment" &&
+            movingOccurrence.date === occurrence.originalDate,
+        })),
+      ]
+    : [];
+
 
   const proposedMoveEvaluation =
     movingOccurrence &&
     moveDateChanged
-      ? evaluateProposedActivityReschedule({
+      ? swapWithTargetDay && swapMoves.length > 1
+        ? evaluateWeeklyScheduleRearrangement({
+            state,
+            weekStartDate,
+            moves: swapMoves,
+          })
+        : evaluateProposedActivityReschedule({
           state,
 
           trainingActivityId:
@@ -539,7 +596,7 @@ export default function WeeklySchedule({
 
           scheduledDate:
             moveDate,
-        })
+          })
       : null;
 
 
@@ -600,6 +657,8 @@ export default function WeeklySchedule({
     setRecommendation(
       null
     );
+
+    setReviewMessage(null);
   }
 
 
@@ -615,24 +674,31 @@ export default function WeeklySchedule({
     setRecommendation(
       null
     );
+
+    setReviewMessage(null);
   }
 
 
   function findRecommendation() {
-    if (
-      unavailableDates.length ===
-        0 ||
-      !state
-    ) {
+    if (!state) {
       return;
     }
 
-    setRecommendation(
+    const nextRecommendation =
       getAdaptiveWeeklyScheduleRecommendation({
         state,
         weekStartDate,
         unavailableDates,
-      })
+      });
+
+    setRecommendation(nextRecommendation);
+
+    setReviewMessage(
+      nextRecommendation
+        ? null
+        : unavailableDates.length > 0
+          ? "Fitness OS did not find a safer arrangement that satisfies those unavailable days. Nothing changed."
+          : "Fitness OS reviewed the full week and did not find a safer arrangement than the current schedule. Nothing changed."
     );
   }
 
@@ -858,13 +924,13 @@ export default function WeeklySchedule({
             </p>
 
             <h2 className="mt-2 text-xl font-semibold text-slate-900">
-              Which days are unavailable?
+              Review or adjust this week
             </h2>
 
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Select the days when you cannot train. Fitness OS
-              will look for a safer way to rearrange the current
-              week without changing anything until you approve it.
+              Review the current schedule around fixed commitments, or select
+              days when you cannot train. Fitness OS will look for a safer
+              arrangement without changing anything until you approve it.
             </p>
 
             <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
@@ -938,17 +1004,23 @@ export default function WeeklySchedule({
 
                 <button
                   type="button"
-                  disabled={
-                    unavailableDates.length ===
-                    0
-                  }
                   onClick={
                     findRecommendation
                   }
                   className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
                 >
-                  Find a Better Schedule
+                  {unavailableDates.length > 0
+                    ? "Find a Better Schedule"
+                    : "Review Current Schedule"}
                 </button>
+              </div>
+            )}
+
+            {reviewMessage && !recommendation && (
+              <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-sm leading-6 text-slate-700">
+                  {reviewMessage}
+                </p>
               </div>
             )}
 
@@ -1110,7 +1182,8 @@ export default function WeeklySchedule({
             {unavailableDates.length >
               0 &&
               recommendation ===
-                null && (
+                null &&
+              reviewMessage === null && (
                 <p className="mt-4 text-xs text-slate-500">
                   Nothing will change until you apply a
                   recommendation.
@@ -1153,13 +1226,46 @@ export default function WeeklySchedule({
                   moveDate
                 }
                 onChange={(event) =>
-                  setMoveDate(
-                    event.target.value
-                  )
+                  {
+                    setMoveDate(event.target.value);
+                    setSwapWithTargetDay(false);
+                  }
                 }
                 className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-blue-500"
               />
             </label>
+
+            {moveDateChanged && (
+              <div className="mt-4 rounded-xl border border-slate-200 p-4">
+                <p className="text-sm font-semibold text-slate-900">
+                  Change type
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSwapWithTargetDay(false)}
+                    className={swapWithTargetDay ? "rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700" : "rounded-lg border border-blue-600 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-800"}
+                  >
+                    Move only
+                  </button>
+                  <button
+                    type="button"
+                    disabled={swapTargetOccurrences.length === 0}
+                    onClick={() => setSwapWithTargetDay(true)}
+                    className={swapWithTargetDay ? "rounded-lg border border-blue-600 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-800" : "rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 disabled:cursor-not-allowed disabled:text-slate-400"}
+                  >
+                    Swap with day
+                  </button>
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-600">
+                  {swapTargetOccurrences.length > 0
+                    ? swapWithTargetDay
+                      ? `Move ${movingOccurrence.activity.label} to ${formatDisplayDate(moveDate)} and move ${swapTargetOccurrences.map((occurrence) => occurrence.activity.label).join(" and ")} back to ${formatDisplayDate(movingOccurrence.date)}.`
+                      : `${formatDisplayDate(moveDate)} has ${swapTargetOccurrences.map((occurrence) => occurrence.activity.label).join(" and ")}. Choose Swap with day to exchange them as one change.`
+                    : `${formatDisplayDate(moveDate)} has no other planned activities to swap.`}
+                </p>
+              </div>
+            )}
 
             {moveDate &&
               proposedMoveEvaluation && (
@@ -1256,8 +1362,12 @@ export default function WeeklySchedule({
                 className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
               >
                 {hasHighMoveConflict
-                  ? "Move Anyway"
-                  : "Move Activity"}
+                  ? swapWithTargetDay
+                    ? "Swap Anyway"
+                    : "Move Anyway"
+                  : swapWithTargetDay
+                    ? "Swap Days"
+                    : "Move Activity"}
               </button>
             </div>
           </div>

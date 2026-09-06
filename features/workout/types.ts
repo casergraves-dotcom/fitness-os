@@ -1121,6 +1121,11 @@ export interface TrainingActivityReschedule {
   // New local calendar date on which it should be prescribed.
   scheduledDate: string;
 
+  // Keeps an intentional dated placement when scheduledDate equals the
+  // template date but a recurring preference would otherwise project the
+  // occurrence elsewhere.
+  overrideRecurringPlacement?: boolean;
+
   // Exact timestamp recording when the move was made.
   rescheduledAt: string;
 }

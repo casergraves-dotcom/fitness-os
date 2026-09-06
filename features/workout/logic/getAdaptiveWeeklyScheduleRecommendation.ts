@@ -627,6 +627,8 @@ export function getAdaptiveWeeklyScheduleRecommendation({
       weekStartDate,
       unavailableDates:
         effectiveUnavailableDates,
+      includeReviewActivities:
+        effectiveUnavailableDates.length === 0,
     });
 
 
@@ -652,7 +654,9 @@ export function getAdaptiveWeeklyScheduleRecommendation({
         5,
 
       maxEvaluations:
-        120,
+        effectiveUnavailableDates.length === 0
+          ? 180
+          : 120,
 
       maxResults:
         5,

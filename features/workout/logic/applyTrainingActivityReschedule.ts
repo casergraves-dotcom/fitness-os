@@ -18,6 +18,8 @@ export interface ApplyTrainingActivityRescheduleInput {
 
   rescheduledAt:
     string;
+
+  overrideRecurringPlacement?: boolean;
 }
 
 
@@ -27,6 +29,7 @@ export function applyTrainingActivityReschedule({
   originalDate,
   scheduledDate,
   rescheduledAt,
+  overrideRecurringPlacement = false,
 }: ApplyTrainingActivityRescheduleInput):
   TrainingPlanState {
 
@@ -44,7 +47,8 @@ export function applyTrainingActivityReschedule({
 
   if (
     scheduledDate ===
-    originalDate
+      originalDate &&
+    !overrideRecurringPlacement
   ) {
     const nextReschedules =
       existing.filter(
@@ -88,6 +92,9 @@ export function applyTrainingActivityReschedule({
     originalDate,
     scheduledDate,
     rescheduledAt,
+    ...(overrideRecurringPlacement
+      ? { overrideRecurringPlacement: true }
+      : {}),
   };
 
 
