@@ -15,6 +15,7 @@ import {
 
 import AppShell from "@/components/layout/AppShell";
 import AppleHealthStepSettings from "@/features/integrations/appleHealth/components/AppleHealthStepSettings";
+import { AccountSettings } from "@/features/auth";
 
 // ============================================================
 // Settings Page
@@ -43,6 +44,8 @@ export default function SettingsPage() {
         </div>
 
         <AppleHealthStepSettings />
+
+        <AccountSettings />
 
         {/* --------------------------------------------------
             Goals and Targets

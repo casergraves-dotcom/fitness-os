@@ -14,6 +14,9 @@ import {
 // ============================================================
 
 export default function SignInScreen() {
+  const [mode, setMode] =
+    useState<"sign-in" | "create-account">("sign-in");
+
   const [
     email,
     setEmail,
@@ -37,6 +40,9 @@ export default function SignInScreen() {
       null
     );
 
+  const [message, setMessage] =
+    useState<string | null>(null);
+
   // ----------------------------------------------------------
   // Sign In
   // ----------------------------------------------------------
@@ -51,9 +57,36 @@ export default function SignInScreen() {
       true
     );
 
-    setError(
-      null
-    );
+    setError(null);
+    setMessage(null);
+
+    if (mode === "create-account") {
+      const {
+        data,
+        error: signUpError,
+      } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (signUpError) {
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (data.session) {
+        window.location.replace("/");
+        return;
+      }
+
+      setMessage(
+        "Account created. Check your email to confirm it, then sign in.",
+      );
+      setMode("sign-in");
+      setLoading(false);
+      return;
+    }
 
     const {
       error:
@@ -77,9 +110,7 @@ export default function SignInScreen() {
       return;
     }
 
-    setLoading(
-      false
-    );
+    window.location.replace("/");
   }
 
   // ----------------------------------------------------------
@@ -95,11 +126,13 @@ export default function SignInScreen() {
           </p>
 
           <h1 className="mt-2 text-3xl font-bold text-slate-900">
-            Welcome Back
+            {mode === "sign-in" ? "Welcome Back" : "Create Account"}
           </h1>
 
           <p className="mt-2 text-sm text-slate-500">
-            Sign in to sync your Fitness OS data.
+            {mode === "sign-in"
+              ? "Sign in to sync your Fitness OS data."
+              : "Create a separate private Fitness OS account."}
           </p>
         </div>
 
@@ -167,6 +200,12 @@ export default function SignInScreen() {
             </p>
           )}
 
+          {message && (
+            <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-700">
+              {message}
+            </p>
+          )}
+
           <button
             type="submit"
             disabled={
@@ -175,8 +214,29 @@ export default function SignInScreen() {
             className="w-full rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading
-              ? "Signing In..."
-              : "Sign In"}
+              ? mode === "sign-in"
+                ? "Signing In..."
+                : "Creating Account..."
+              : mode === "sign-in"
+                ? "Sign In"
+                : "Create Account"}
+          </button>
+
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => {
+              setMode((current) =>
+                current === "sign-in" ? "create-account" : "sign-in"
+              );
+              setError(null);
+              setMessage(null);
+            }}
+            className="w-full px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 disabled:opacity-60"
+          >
+            {mode === "sign-in"
+              ? "Create a separate account"
+              : "Already have an account? Sign in"}
           </button>
         </form>
       </div>

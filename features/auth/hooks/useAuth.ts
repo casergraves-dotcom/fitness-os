@@ -14,6 +14,10 @@ import {
   supabase,
 } from "@/lib/supabase/client";
 
+import {
+  clearLocalFitnessOsData,
+} from "@/lib/storage/clearLocalFitnessOsData";
+
 // ============================================================
 // Types
 // ============================================================
@@ -91,11 +95,15 @@ export function useAuth():
       supabase.auth
         .onAuthStateChange(
           (
-            _event,
+            event,
             nextSession
           ) => {
             if (!mounted) {
               return;
+            }
+
+            if (event === "SIGNED_OUT") {
+              clearLocalFitnessOsData();
             }
 
             setSession(
