@@ -35,6 +35,10 @@ import {
   getTrainingWeekStart,
 } from "@/lib/date/trainingWeek";
 
+import {
+  isPresentedRestDay,
+} from "../utils/isPresentedRestDay";
+
 
 // ============================================================
 // Props
@@ -791,12 +795,11 @@ export default function WeeklySchedule({
   function renderGroup(
     group: ScheduleGroup
   ) {
-    const isRestDay =
-      group.occurrences.some(
-        (occurrence) =>
-          occurrence.activity.type ===
-          "Rest"
-      );
+    const isRestDay = isPresentedRestDay(
+      group.occurrences.map(
+        (occurrence) => occurrence.activity,
+      ),
+    );
 
     const presentedOccurrences =
       group.occurrences.filter(

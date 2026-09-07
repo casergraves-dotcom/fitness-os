@@ -33,6 +33,10 @@ import type {
 
 import MobilityRoutinePreview from "@/features/mobility/components/MobilityRoutinePreview";
 
+import {
+  isPresentedRestDay,
+} from "../utils/isPresentedRestDay";
+
 
 // ============================================================
 // Props
@@ -814,12 +818,9 @@ export default function TodaysTrainingCard({
       trainingPlanState
     );
 
-  const isRestDay =
-    schedule.trainingDay.activities.some(
-      (activity) =>
-        activity.type ===
-        "Rest"
-    );
+  const isRestDay = isPresentedRestDay(
+    schedule.trainingDay.activities,
+  );
 
   const presentedActivities =
     schedule.trainingDay.activities.filter(
