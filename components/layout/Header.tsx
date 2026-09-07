@@ -1,3 +1,5 @@
+"use client";
+
 // ============================================================
 // Imports
 // ============================================================
@@ -6,12 +8,15 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { buttonVariants } from "@/components/ui/button";
+import { getAuthUserDisplayName, useAuth } from "@/features/auth";
 
 // ============================================================
 // Header
 // ============================================================
 
 export default function Header() {
+  const { user } = useAuth();
+
   // ----------------------------------------------------------
   // Greeting
   // ----------------------------------------------------------
@@ -25,6 +30,8 @@ export default function Header() {
       : hour < 17
         ? "Good Afternoon"
         : "Good Evening";
+
+  const displayName = getAuthUserDisplayName(user);
 
   // ----------------------------------------------------------
   // Render
@@ -78,7 +85,7 @@ export default function Header() {
             </p>
 
             <h1 className="mt-0.5 truncate text-xl font-bold text-slate-900 sm:text-2xl">
-              {greeting}, Cody
+              {displayName ? `${greeting}, ${displayName}` : greeting}
             </h1>
           </div>
         </Link>

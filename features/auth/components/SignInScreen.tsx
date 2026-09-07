@@ -22,6 +22,9 @@ export default function SignInScreen() {
     setEmail,
   ] = useState("");
 
+  const [displayName, setDisplayName] =
+    useState("");
+
   const [
     password,
     setPassword,
@@ -61,12 +64,23 @@ export default function SignInScreen() {
     setMessage(null);
 
     if (mode === "create-account") {
+      if (displayName.trim() === "") {
+        setError("Enter the name this account should display.");
+        setLoading(false);
+        return;
+      }
+
       const {
         data,
         error: signUpError,
       } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            display_name: displayName.trim(),
+          },
+        },
       });
 
       if (signUpError) {
@@ -142,6 +156,27 @@ export default function SignInScreen() {
           }
           className="space-y-4"
         >
+          {mode === "create-account" && (
+            <div>
+              <label
+                htmlFor="display-name"
+                className="mb-1 block text-sm font-medium text-slate-700"
+              >
+                Name
+              </label>
+
+              <input
+                id="display-name"
+                type="text"
+                autoComplete="name"
+                required
+                value={displayName}
+                onChange={(event) => setDisplayName(event.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              />
+            </div>
+          )}
+
           <div>
             <label
               htmlFor="email"

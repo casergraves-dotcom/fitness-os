@@ -9,3 +9,7 @@ export {
 export {
   default as AccountSettings,
 } from "./components/AccountSettings";
+
+export {
+  getAuthUserDisplayName,
+} from "./utils/getAuthUserDisplayName";
