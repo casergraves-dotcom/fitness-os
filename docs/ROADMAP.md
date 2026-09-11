@@ -631,6 +631,15 @@ target. Full top-of-range performance can increase load, high RPE can hold the
 target, below-range performance can reduce load, and incomplete exercises retain
 the current target.
 
+**Mixed-load history checkpoint:** Exercise progression no longer assumes the
+first completed set is the working-load baseline. It carries forward the load
+used across the most completed working sets, with the latest completed load as a
+tie-breaker, while separate ramp-up sets remain excluded. Older mixed histories
+such as 115×12 / 145×10 / 145×10 now produce an explained 145 lb build-reps
+target without rewriting the historical sets. Same-load, mixed-load,
+top-of-range, incomplete, and ramp-up cases passed automated verification and
+the Chest Press case passed workout QA.
+
 ## 3.2 Weekly Training Decisions — COMPLETE
 
 - [x] Use required adherence and minimum strength-session counts to advance,
@@ -780,6 +789,9 @@ the canonical training-plan or progression systems.
 - [x] Keep warm-up and ramp-up sets distinct from working sets so they do not
   affect prescribed working-set completion, training volume, PR detection, or
   progression decisions.
+- [x] Add an in-workout bidirectional kg/lb converter that changes a working-set
+  load only after an explicit Apply action and never rounds silently to an
+  equipment increment.
 
 **Session warm-up checkpoint:** Active strength workouts now show a concrete
 three-step preparation card before exercise working sets: easy cardio, one
@@ -798,6 +810,13 @@ the workout header remained at 0/19 working sets. Ramp-up records persist with
 the canonical workout session but are not read by working-set completion,
 volume, progression, or PR logic. A deliberately extreme ramp-up regression
 confirmed PR isolation; all tests, TypeScript, and the production build passed.
+
+**Weight-converter checkpoint:** Editable weighted sets now expose a compact
+mobile sheet for kg-to-lb and lb-to-kg conversion using the canonical conversion
+factors. Decimal entry works in either direction, dismissal leaves the workout
+unchanged, and applying a result updates only the selected unfinished set while
+canonical workout storage remains pound-based. Conversion, application, mobile
+input, TypeScript, automated tests, and the production build passed.
 - [x] Define one canonical RPE scale and explanation for Fitness OS.
 - [x] Add a lightweight reusable RPE legend/help component anywhere RPE is
   entered or interpreted, including strength workouts and running. Prefer a
@@ -1139,6 +1158,15 @@ no parallel daily dataset was introduced. Reflect excludes unresolved yesterday
 records, while the grace rule leaves older and legacy history usable. The
 provisional/confirmed/grace regression, TypeScript, production build, populated
 Today state, Confirm action, and persistence after refresh passed.
+
+**Daily-outcome history checkpoint:** History now reconstructs each date's
+calorie-range, protein-minimum, and step-minimum outcomes from the canonical
+daily records and the targets effective on that date. Today continues to expose
+the previous-day card even when no exact-date record exists, allowing missing
+totals to be entered directly into the canonical dated records. The inclusive
+90–110% calorie range, partial records, and weekend boundaries passed automated
+verification; TypeScript and the production build passed. Final mobile QA of
+the empty-yesterday entry state remains a follow-up.
 
 ## 5.2 Steps / General Activity — COMPLETE
 

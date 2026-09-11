@@ -6,7 +6,7 @@ import type {
 import {
   isValidRpe,
   RPE_HIGH_EFFORT_MIN,
-} from "./rpe";
+} from "./rpe.ts";
 
 // ============================================================
 // Types
@@ -55,6 +55,41 @@ function getCompletedSets(
   return exercise.sets.filter(
     (set) => set.completed
   );
+}
+
+// ------------------------------------------------------------
+// Representative Working Load
+// ------------------------------------------------------------
+//
+// Modern ramp-up sets live outside `exercise.sets`, but older
+// history may contain a lighter first set in the working-set
+// array. Carry forward the load used for the most completed sets
+// instead of assuming set 1 is authoritative. When every load is
+// used equally, the latest completed set reflects the final load
+// selected during that exercise.
+
+function getRepresentativeWorkingWeight(
+  completedSets: Exercise["sets"]
+) {
+  const frequencies = new Map<number, number>();
+
+  completedSets.forEach((set) => {
+    frequencies.set(set.weight, (frequencies.get(set.weight) ?? 0) + 1);
+  });
+
+  let representativeWeight = completedSets[0].weight;
+  let representativeFrequency = 0;
+
+  completedSets.forEach((set) => {
+    const frequency = frequencies.get(set.weight) ?? 0;
+
+    if (frequency >= representativeFrequency) {
+      representativeWeight = set.weight;
+      representativeFrequency = frequency;
+    }
+  });
+
+  return representativeWeight;
 }
 
 // ------------------------------------------------------------
@@ -222,7 +257,14 @@ export function getExerciseTarget(
   }
 
   const previousWeight =
-    completedSets[0].weight;
+    getRepresentativeWorkingWeight(completedSets);
+
+  const usedMixedWorkingLoads =
+    completedSets.some((set) => set.weight !== previousWeight);
+
+  const carryForwardMessage = usedMixedWorkingLoads
+    ? `The previous exercise used mixed loads; ${previousWeight} lb was the repeated or most recent working load. Continue building toward ${repMax} reps at that load.`
+    : `Keep the same load and continue building toward ${repMax} reps on every working set.`;
 
   // ==========================================================
   // Incomplete Exercise
@@ -546,7 +588,7 @@ export function getExerciseTarget(
         `${previousWeight} lb × ${repMin}–${repMax}`,
 
       message:
-        `Keep the same load and continue building toward ${repMax} reps on every working set.`,
+        carryForwardMessage,
 
       targetWeight:
         previousWeight,

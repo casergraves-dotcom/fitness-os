@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import AppShell from "@/components/layout/AppShell";
+import DailyOutcomeHistory from "@/features/history/components/DailyOutcomeHistory";
 
 import {
   useWorkoutHistory,
@@ -323,33 +324,6 @@ export default function WorkoutHistoryScreen() {
   // Empty State
   // ==========================================================
 
-  if (
-    activities.length === 0
-  ) {
-    return (
-      <AppShell>
-
-        <div className="rounded-2xl border bg-white p-6 text-center shadow-sm">
-
-          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-            History
-          </p>
-
-          <h1 className="mt-2 text-2xl font-bold">
-            No Activities Yet
-          </h1>
-
-          <p className="mt-2 text-slate-500">
-            Completed workouts and runs will appear here.
-          </p>
-
-        </div>
-
-      </AppShell>
-    );
-  }
-
-
   // ==========================================================
   // History
   // ==========================================================
@@ -370,24 +344,36 @@ export default function WorkoutHistoryScreen() {
           </p>
 
           <h1 className="mt-1 text-2xl font-bold">
-            Activity History
+            History
           </h1>
 
           <p className="mt-1 text-sm text-slate-500">
-            {activities.length} completed{" "}
-            {activities.length === 1
-              ? "activity"
-              : "activities"}
+            Review daily outcomes and completed training.
           </p>
 
         </div>
 
 
+        <DailyOutcomeHistory />
+
         {/* ====================================================
             Activities
         ===================================================== */}
 
-        <div className="space-y-3">
+        <section className="space-y-3">
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              Completed training
+            </p>
+            <h2 className="mt-1 text-xl font-bold">Workouts and runs</h2>
+          </div>
+
+          {activities.length === 0 && (
+            <div className="rounded-2xl border bg-white p-6 text-center shadow-sm">
+              <p className="text-slate-500">Completed workouts and runs will appear here.</p>
+            </div>
+          )}
 
           {activities.map(
             (activity) => {
@@ -987,7 +973,7 @@ export default function WorkoutHistoryScreen() {
             }
           )}
 
-        </div>
+        </section>
 
       </div>
 

@@ -23,6 +23,7 @@ import {
 import { Card } from "@/components/ui";
 
 import RpeLegend from "./RpeLegend";
+import WeightConverter from "./WeightConverter";
 
 import {
   RPE_SCALE,
@@ -1431,6 +1432,17 @@ export default function ExerciseCard({
                           {repsUnitLabel}
                         </span>
                       </div>
+                    </div>
+                  )}
+
+                  {(usesTraditionalInputs || isAssistance || isWeightDuration) && !set.completed && (
+                    <div className="mt-2">
+                      <WeightConverter
+                        initialPounds={set.weight}
+                        onApplyPounds={(pounds) =>
+                          onUpdateSet(exercise.id, set.id, "weight", pounds)
+                        }
+                      />
                     </div>
                   )}
 

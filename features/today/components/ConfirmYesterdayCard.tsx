@@ -4,53 +4,41 @@ import { useState } from "react";
 
 import { useDailyNutrition } from "@/features/nutrition";
 import { useDailySteps } from "@/features/dailyActivity";
-import { isDailyRecordSettled } from "@/features/dailyActivity/utils/isDailyRecordSettled";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { parseDailyStepInput } from "@/features/dailyActivity/utils/parseDailyStepInput";
-
-function formatLocalDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+import {
+  formatLocalCalendarDate,
+  getPreviousLocalCalendarDate,
+  shouldShowYesterdayConfirmation,
+} from "../utils/getYesterdayConfirmationState";
 
 export default function ConfirmYesterdayCard() {
   const nutrition = useDailyNutrition();
   const dailySteps = useDailySteps();
-  const today = formatLocalDate(new Date());
-  const yesterdayDate = new Date();
-  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-  const yesterday = formatLocalDate(yesterdayDate);
+  const now = new Date();
+  const today = formatLocalCalendarDate(now);
+  const yesterday = getPreviousLocalCalendarDate(now);
   const nutritionRecord = nutrition.getRecordForDate(yesterday);
   const stepRecord = dailySteps.getRecordForDate(yesterday);
+  const hasYesterdayData = Boolean(nutritionRecord || stepRecord);
   const [editing, setEditing] = useState(false);
   const [calories, setCalories] = useState("");
   const [protein, setProtein] = useState("");
   const [steps, setSteps] = useState("");
   const [stepValidationMessage, setStepValidationMessage] = useState<string | null>(null);
 
-  const nutritionSettled =
-    !nutritionRecord ||
-    isDailyRecordSettled({
-      recordDate: nutritionRecord.date,
-      confirmedAt: nutritionRecord.confirmedAt,
+  const needsConfirmation =
+    !hasYesterdayData ||
+    shouldShowYesterdayConfirmation({
       currentDate: today,
+      nutritionRecord,
+      stepRecord,
     });
-  const stepsSettled =
-    !stepRecord ||
-    isDailyRecordSettled({
-      recordDate: stepRecord.date,
-      confirmedAt: stepRecord.confirmedAt,
-      currentDate: today,
-    });
-  const needsConfirmation = !nutritionSettled || !stepsSettled;
 
   if (
     !nutrition.loaded ||
-    !dailySteps.loaded ||
-    (!nutritionRecord && !stepRecord)
+    !dailySteps.loaded
   ) {
     return null;
   }
@@ -66,7 +54,7 @@ export default function ConfirmYesterdayCard() {
   function confirmExisting() {
     const confirmedAt = new Date().toISOString();
 
-    if (nutritionRecord && !nutritionSettled) {
+    if (nutritionRecord && !nutritionRecord.confirmedAt) {
       nutrition.saveDailyNutrition({
         date: yesterday,
         calories: nutritionRecord.calories,
@@ -76,7 +64,7 @@ export default function ConfirmYesterdayCard() {
       });
     }
 
-    if (stepRecord && !stepsSettled) {
+    if (stepRecord && !stepRecord.confirmedAt) {
       dailySteps.saveDailySteps({
         date: yesterday,
         steps: stepRecord.steps,
@@ -144,9 +132,15 @@ export default function ConfirmYesterdayCard() {
         {!editing && (
           <div className="flex gap-2">
             {needsConfirmation && (
-              <Button type="button" onClick={confirmExisting}>Confirm</Button>
+              hasYesterdayData ? (
+                <Button type="button" onClick={confirmExisting}>Confirm</Button>
+              ) : (
+                <Button type="button" onClick={beginEditing}>Enter totals</Button>
+              )
             )}
-            <Button type="button" variant="outline" onClick={beginEditing}>Edit</Button>
+            {hasYesterdayData && (
+              <Button type="button" variant="outline" onClick={beginEditing}>Edit</Button>
+            )}
           </div>
         )}
       </div>
