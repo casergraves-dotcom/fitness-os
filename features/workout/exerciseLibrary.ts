@@ -257,6 +257,19 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the handles or arm pads are near chest height, then sit with the back supported and feet planted.",
+        "Start with the arms open only as far as the shoulders can comfortably control.",
+      ],
+      execution: [
+        "Bring the handles or pads together in front of the chest without jerking the torso forward.",
+        "Return slowly to a comfortable open position while keeping tension on the chest.",
+      ],
+      techniqueCues: ["Keep the shoulders settled and elbows softly bent.", "Use a smooth arc rather than slamming the stack."],
+      commonMistakes: ["Setting the seat too low or high for a comfortable shoulder path.", "Letting the arms travel too far behind the torso."],
+      safetyConsiderations: ["Use a load and range that do not cause shoulder pain; adjust the machine before starting."],
+    },
   },
   {
     id: "cable-fly",
@@ -271,6 +284,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Set both cable handles at matching heights, take a balanced stance between the pulleys, and start with arms comfortably open.",
+        "Keep a soft bend in the elbows and brace the trunk before moving.",
+      ],
+      execution: [
+        "Bring the hands toward each other in front of the chest along a controlled arc.",
+        "Open the arms slowly until the chest feels a comfortable stretch, without letting the cables pull you backward.",
+      ],
+      techniqueCues: ["Keep the elbow angle mostly steady.", "Move evenly through both sides."],
+      commonMistakes: ["Turning the fly into a press by repeatedly bending and straightening the elbows.", "Using momentum or stretching beyond shoulder control."],
+      safetyConsiderations: ["Check that both handles are secure and use a lighter load if the stance or shoulder position becomes unstable."],
+      regressionExerciseIds: ["chest-fly"],
+    },
   },
   {
     id: "dumbbell-fly",
@@ -285,6 +312,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Lie on a stable flat bench with feet planted and the dumbbells above the chest, palms facing each other.",
+        "Keep the wrists straight and a small, steady bend in both elbows.",
+      ],
+      execution: [
+        "Lower the arms outward in a wide arc to a comfortable chest and shoulder stretch.",
+        "Bring the dumbbells back above the chest along the same arc without clanging them together.",
+      ],
+      techniqueCues: ["Let the upper arms move while the elbow bend stays mostly unchanged.", "Keep the head and hips supported on the bench."],
+      commonMistakes: ["Lowering the weights too deep or too quickly.", "Using a pressing motion to lift more weight."],
+      safetyConsiderations: ["Start light and avoid a deep range that strains the shoulders; use help positioning heavier dumbbells."],
+      regressionExerciseIds: ["chest-fly"],
+    },
   },
 
   // ==========================================================
