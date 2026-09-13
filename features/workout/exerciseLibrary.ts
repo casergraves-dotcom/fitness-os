@@ -966,6 +966,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Set and understand the machine safeties before loading it heavily."],
       regressionExerciseIds: ["goblet-squat"],
       progressionExerciseIds: ["hack-squat-pendulum-squat", "barbell-squat"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/leg-press-example.jpg",
+        description: "Example plate-loaded leg press machine with a padded seat and angled foot platform",
+        width: 500,
+        height: 667,
+        attribution: {
+          creator: "Teemeah / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Leg_press_machine.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "Resized from the original photo",
+        },
+      }],
     },
   },
   {

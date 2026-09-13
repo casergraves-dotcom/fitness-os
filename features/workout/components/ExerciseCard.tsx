@@ -710,12 +710,19 @@ export default function ExerciseCard({
                   <Image
                     src={media.source}
                     alt={media.description}
-                    width={720}
-                    height={480}
-                    className="max-h-80 w-full rounded-lg border border-blue-100 bg-white object-contain"
+                    width={media.width}
+                    height={media.height}
+                    className="mx-auto h-auto max-h-80 w-auto max-w-full rounded-lg border border-blue-100 bg-white object-contain"
                   />
                   <figcaption className="mt-2 text-xs text-slate-600">
                     Example equipment; your gym&apos;s model may differ.
+                    {media.attribution && (
+                      <span className="mt-1 block">
+                        Photo: <a href={media.attribution.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline">{media.attribution.creator}</a>
+                        {" · "}<a href={media.attribution.licenseUrl} target="_blank" rel="noopener noreferrer" className="underline">{media.attribution.license}</a>
+                        {" · "}{media.attribution.changes}
+                      </span>
+                    )}
                   </figcaption>
                 </figure>
               ))}

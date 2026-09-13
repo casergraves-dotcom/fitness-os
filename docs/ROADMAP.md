@@ -1857,8 +1857,14 @@ in-app review and remaining exercise coverage stay open.
 now display described, bundled image assets from canonical `demoMedia` metadata
 with a representative-equipment caption. External sources, undescribed images,
 and videos remain hidden pending separate review. The focused media test and
-production build passed. No exercise photos are attached yet, so the visual-
-demonstration roadmap item and in-app image review remain open.
+production build passed. At this checkpoint no exercise photos were attached;
+the visual-demonstration roadmap item and in-app image review remained open.
+
+**First machine-photo checkpoint:** The Leg Press How-To now includes a bundled,
+reviewed photo of an example plate-loaded machine with visible creator, license,
+and resize attribution. Its dimensions and credit metadata are checked before
+display. The focused media test and production build passed; in-app mobile
+review and broader machine-photo coverage remain open.
 
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS

@@ -482,6 +482,15 @@ export interface ExerciseGuidance {
     type: "Image" | "Video";
     source: string;
     description: string;
+    width?: number;
+    height?: number;
+    attribution?: {
+      creator: string;
+      sourceUrl: string;
+      license: string;
+      licenseUrl: string;
+      changes: string;
+    };
   }[];
 }
 
