@@ -1777,7 +1777,13 @@ workout execution rather than maintaining a separate exercise-guidance catalog.
 - [ ] Define and version the Circus Book skill-identity import contract before
   adding aerial apparatus skills to Fitness OS.
 - [ ] Add visual demonstrations where they materially improve exercise
-  understanding.
+  understanding. Prioritize representative, reviewed machine photos for
+  exercises where identifying the equipment or adjustment points is difficult
+  from text alone. Display them through the existing canonical `demoMedia`
+  metadata in the optional How-To panel, with descriptive alt text and clear
+  "example machine; your gym's model may differ" labeling. Verify usage rights,
+  source, and mobile/offline behavior before shipping assets; do not substitute
+  generated equipment images for an accurate machine reference.
 - [x] Surface exercise-specific guidance such as unilateral/per-side execution.
 - [x] Keep guidance unobtrusive during normal workout logging.
 
