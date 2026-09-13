@@ -1827,6 +1827,11 @@ safety, and related-exercise guidance in the existing canonical library. The
 guidance regression tests and production build passed. In-app panel review is
 still pending, and remaining strength-exercise coverage stays open.
 
+**Row, press, and calf guidance checkpoint:** Cable Row, Dumbbell Shoulder
+Press, and bodyweight Standing Calf Raise now have the same canonical How-To
+fields. Their focused guidance test and production build passed; in-app review
+and the remaining strength-exercise coverage are still open.
+
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
 remains the owner of training and programming. Any future aerial-skill metadata

@@ -423,3 +423,15 @@ test("common dumbbell substitutions expose full canonical How-To guidance", () =
     assert.ok(guidance.safetyConsiderations?.length);
   }
 });
+
+test("row, shoulder press, and calf raise alternatives expose full How-To guidance", () => {
+  for (const id of ["cable-row", "dumbbell-shoulder-press", "calf-raise"]) {
+    const guidance = exerciseLibrary.find((exercise) => exercise.id === id)?.guidance;
+    assert.ok(guidance, `${id} needs How-To guidance`);
+    assert.ok(guidance.setup.length >= 2);
+    assert.ok(guidance.execution.length >= 2);
+    assert.ok(guidance.techniqueCues?.length);
+    assert.ok(guidance.commonMistakes?.length);
+    assert.ok(guidance.safetyConsiderations?.length);
+  }
+});

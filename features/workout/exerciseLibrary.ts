@@ -305,6 +305,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Sit at the cable row with feet supported, knees slightly bent, and the handle within reach.",
+        "Sit tall with a lightly braced trunk and shoulders relaxed before the first pull.",
+      ],
+      execution: [
+        "Pull the handle toward the lower chest or upper abdomen while guiding the elbows back near the torso.",
+        "Pause briefly, then extend the arms under control without letting the stack drop.",
+      ],
+      techniqueCues: ["Keep wrists in line with forearms.", "Let the arms move without turning the rep into a torso swing."],
+      commonMistakes: ["Leaning far backward to move a heavier load.", "Rounding forward or shrugging during the return."],
+      safetyConsiderations: ["Choose a load that lets you keep a stable seated position and controlled spine."],
+      regressionExerciseIds: ["band-row", "seated-row"],
+      progressionExerciseIds: ["one-arm-dumbbell-row"],
+    },
   },
   {
     id: "one-arm-dumbbell-row",
@@ -513,6 +528,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand with feet about hip-width apart and hold the dumbbells near shoulder height.",
+        "Keep wrists straight, elbows beneath the weights, and ribs stacked over the pelvis.",
+      ],
+      execution: [
+        "Press the weights upward through a comfortable path without leaning the torso backward.",
+        "Lower slowly to shoulder height while maintaining control of both weights.",
+      ],
+      techniqueCues: ["Keep the trunk steady as the arms move.", "Use a range that feels comfortable at the shoulders."],
+      commonMistakes: ["Arching the low back to finish the press.", "Letting the weights drift far behind the head or dropping them quickly."],
+      safetyConsiderations: ["Use a lighter load or supported alternative if you cannot press overhead without shoulder discomfort or trunk compensation."],
+      regressionExerciseIds: ["shoulder-press-machine", "band-shoulder-press"],
+      progressionExerciseIds: ["overhead-press"],
+    },
   },
   {
     id: "band-shoulder-press",
@@ -1232,6 +1262,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand upright with feet about hip-width apart and use a wall or stable support for balance if needed.",
+        "Keep the feet pointed comfortably forward and distribute weight evenly across the forefeet.",
+      ],
+      execution: [
+        "Rise onto the balls of the feet without bouncing or shifting the ankles outward.",
+        "Pause briefly at the top, then lower the heels slowly to the floor.",
+      ],
+      techniqueCues: ["Keep the movement at the ankles rather than bending the knees to bounce.", "Use the same controlled range on each rep."],
+      commonMistakes: ["Rushing the lowering phase.", "Rolling onto the outer edges of the feet."],
+      safetyConsiderations: ["Use a stable support if balance is uncertain; stay on level ground rather than an unstable edge."],
+      progressionExerciseIds: ["standing-calf-raise-machine"],
+    },
   },
   {
     id: "standing-calf-raise-machine",
