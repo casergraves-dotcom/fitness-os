@@ -4,7 +4,7 @@ import type {
 
 import {
   classifyScheduleActivityLoad,
-} from "./classifyScheduleActivityLoad";
+} from "./classifyScheduleActivityLoad.ts";
 
 
 // ============================================================
@@ -19,6 +19,7 @@ export type ScheduleConflictSeverity =
 
 export type ScheduleConflictKind =
   | "SameDayHardStack"
+  | "SameDayRunLongWalk"
   | "ConsecutiveStrength"
   | "StrengthAerialAdjacency"
   | "StrengthHardRunAdjacency";
@@ -186,6 +187,11 @@ function isAerial(
 }
 
 
+function isLongWalk(occurrence: ScheduledActivityOccurrence) {
+  return occurrence.activity.type === "Walk" &&
+    (occurrence.activity.durationMax ?? occurrence.activity.durationMin ?? 0) >= 45;
+}
+
 function isHardRun(
   occurrence:
     ScheduledActivityOccurrence
@@ -246,6 +252,22 @@ function evaluatePair(
 
   const conflicts:
     ScheduleConflict[] = [];
+
+  // Individually moderate/easy sessions can still overlap in lower-body
+  // volume when a run and a long walk or hike land on the same day.
+  if (
+    distance === 0 &&
+    ((first.activity.type === "Run" && isLongWalk(second)) ||
+      (second.activity.type === "Run" && isLongWalk(first)))
+  ) {
+    conflicts.push({
+      kind: "SameDayRunLongWalk",
+      severity: "Caution",
+      first,
+      second,
+      reason: `${first.activity.label} and ${second.activity.label} both add endurance and lower-body volume on the same day.`,
+    });
+  }
 
 
   // ----------------------------------------------------------

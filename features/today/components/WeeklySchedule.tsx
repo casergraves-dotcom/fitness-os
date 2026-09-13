@@ -22,6 +22,7 @@ import type {
 import {
   evaluateProposedActivityReschedule,
 } from "@/features/workout/logic/evaluateProposedActivityReschedule";
+import { evaluateScheduleConflicts } from "@/features/workout/logic/evaluateScheduleConflicts";
 import { evaluateWeeklyScheduleRearrangement } from "@/features/workout/logic/evaluateWeeklyScheduleRearrangement";
 
 import {
@@ -638,6 +639,41 @@ export default function WeeklySchedule({
         )
     );
 
+  const destinationSuggestions = movingOccurrence
+    ? weekDates
+        .filter((date) => date !== movingOccurrence.date && date >= formatLocalDate(currentDate))
+        .map((date) => {
+          const evaluation = evaluateProposedActivityReschedule({
+            state,
+            trainingActivityId: movingOccurrence.activity.id,
+            originalDate: movingOccurrence.originalDate,
+            scheduledDate: date,
+          });
+          const otherActivities = inWeekOccurrences.filter(
+            (occurrence) => occurrence.date === date && occurrence.activity.type !== "Rest" &&
+              !(occurrence.activity.id === movingOccurrence.activity.id && occurrence.originalDate === movingOccurrence.originalDate)
+          );
+          const level = evaluation?.hasHighConflict ||
+            evaluation?.conflicts.some((conflict) => conflict.kind === "SameDayRunLongWalk")
+            ? 3
+            : evaluation?.hasAnyConflict
+              ? 2
+              : otherActivities.some((occurrence) =>
+                  !["Recovery", "Mobility"].includes(occurrence.activity.type) &&
+                  !(occurrence.activity.type === "Walk" &&
+                    (occurrence.activity.durationMax ?? occurrence.activity.durationMin ?? 0) <= 30)
+                )
+                ? 1
+                : 0;
+          return { date, level, otherActivities };
+        })
+        .sort((first, second) =>
+          first.level - second.level ||
+          first.otherActivities.length - second.otherActivities.length ||
+          first.date.localeCompare(second.date)
+        )
+    : [];
+
 
   function toggleUnavailableDate(
     date: string
@@ -688,11 +724,22 @@ export default function WeeklySchedule({
       return;
     }
 
+    const existingTrainingOverlap = evaluateScheduleConflicts(
+      inWeekOccurrences
+        .filter((occurrence) => occurrence.activity.type !== "Rest")
+        .map((occurrence) => ({
+          date: occurrence.date,
+          activity: occurrence.activity,
+        })),
+    ).conflicts[0];
+
     const nextRecommendation =
       getAdaptiveWeeklyScheduleRecommendation({
         state,
         weekStartDate,
         unavailableDates,
+        reviewDate: formatLocalDate(currentDate),
+        completions,
       });
 
     setRecommendation(nextRecommendation);
@@ -702,7 +749,9 @@ export default function WeeklySchedule({
         ? null
         : unavailableDates.length > 0
           ? "Fitness OS did not find a safer arrangement that satisfies those unavailable days. Nothing changed."
-          : "Fitness OS reviewed the full week and did not find a safer arrangement than the current schedule. Nothing changed."
+          : existingTrainingOverlap
+            ? `No safer remaining-day move was found. ${existingTrainingOverlap.reason} Completed activities and fixed commitments were kept in place. Nothing changed.`
+            : "Fitness OS reviewed the full week and did not find a safer arrangement than the current schedule. Nothing changed."
     );
   }
 
@@ -808,6 +857,29 @@ export default function WeeklySchedule({
           "Rest"
       );
 
+    const sameDayOverlap = evaluateScheduleConflicts(
+      presentedOccurrences.map((occurrence) => ({
+        date: group.date,
+        activity: occurrence.activity,
+      })),
+    ).conflicts.find((conflict) =>
+      conflict.kind === "SameDayHardStack" || conflict.kind === "SameDayRunLongWalk"
+    );
+
+    const completedOverlapCount = sameDayOverlap
+      ? presentedOccurrences.filter((occurrence) =>
+          (occurrence.activity.id === sameDayOverlap.first.activity.id ||
+            occurrence.activity.id === sameDayOverlap.second.activity.id) &&
+          isCompleted(occurrence)
+        ).length
+      : 0;
+
+    const overlapAction = completedOverlapCount === 2
+      ? "Both sessions are complete; this is a training-load note for your review."
+      : completedOverlapCount === 1
+        ? "One session is complete. Consider rescheduling the remaining session if needed."
+        : "Consider another date or a swap if one is available.";
+
     return (
       <div
         key={
@@ -860,6 +932,13 @@ export default function WeeklySchedule({
             </p>
           )}
         </div>
+
+        {sameDayOverlap && (
+          <p className={`mt-3 rounded-lg border px-3 py-2 text-sm ${sameDayOverlap.severity === "High" ? "border-rose-200 bg-rose-50 text-rose-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
+            <span className="font-semibold">Training-load {sameDayOverlap.severity === "High" ? "warning" : "caution"}: </span>
+            {sameDayOverlap.reason} {overlapAction}
+          </p>
+        )}
       </div>
     );
   }
@@ -1217,6 +1296,31 @@ export default function WeeklySchedule({
               activity. Its training prescription and
               activity identity will be preserved.
             </p>
+
+            {destinationSuggestions.length > 0 && (
+              <div className="mt-4">
+                <p className="text-sm font-semibold text-slate-900">This week&apos;s options</p>
+                <div className="mt-2 grid max-h-40 grid-cols-2 gap-2 overflow-y-auto">
+                  {destinationSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion.date}
+                      type="button"
+                      onClick={() => {
+                        setMoveDate(suggestion.date);
+                        setSwapWithTargetDay(false);
+                      }}
+                      className={`rounded-lg border p-2 text-left text-xs ${moveDate === suggestion.date ? "border-blue-600 bg-blue-50" : "border-slate-200 bg-white"}`}
+                    >
+                      <span className="block font-semibold text-slate-900">{formatDisplayDate(suggestion.date)}</span>
+                      <span className={suggestion.level === 0 ? "text-emerald-700" : suggestion.level === 1 ? "text-slate-600" : suggestion.level === 2 ? "text-amber-700" : "text-red-700"}>
+                        {suggestion.level === 0 ? "Recommended" : suggestion.level === 1 ? "Okay" : suggestion.level === 2 ? "Caution" : "Not recommended"}
+                      </span>
+                      <span className="block text-slate-500">{suggestion.otherActivities.length ? suggestion.otherActivities.map((item) => item.activity.label).join(", ") : "No other training"}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <label className="mt-5 block">
               <span className="text-sm font-medium text-slate-700">

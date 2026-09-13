@@ -1,6 +1,7 @@
 import type {
   StrengthWorkoutType,
   TrainingActivityType,
+  TrainingActivityCompletion,
   TrainingPlanState,
   WorkoutEquipment,
   WorkoutSetupCapability,
@@ -17,6 +18,10 @@ import {
 import {
   searchAdaptiveWeeklyRearrangements,
 } from "./searchAdaptiveWeeklyRearrangements";
+import { evaluateScheduleConflicts } from "./evaluateScheduleConflicts";
+import { evaluateWeeklyScheduleRearrangement } from "./evaluateWeeklyScheduleRearrangement";
+import { getReviewMoveCandidates } from "./getReviewMoveCandidates";
+import { compareReviewMoveCandidates } from "./compareReviewMoveCandidates";
 
 import type {
   WeeklyScheduleRearrangementEvaluation,
@@ -192,6 +197,11 @@ export interface GetAdaptiveWeeklyScheduleRecommendationInput {
 
   availableCapabilities?:
     WorkoutSetupCapability[];
+
+  // Local YYYY-MM-DD; review must not suggest moving work into the past.
+  reviewDate?: string;
+
+  completions?: TrainingActivityCompletion[];
 }
 
 
@@ -265,6 +275,89 @@ function getDayLabel(
   ][
     date.getDay()
   ];
+}
+
+function formatLocalDate(date: Date): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+function getConflictLoad(state: TrainingPlanState, weekStartDate: string): number {
+  const occurrences = getResolvedWeeklyActivityOccurrences(state, weekStartDate) ?? [];
+  return evaluateScheduleConflicts(
+    occurrences
+      .filter((occurrence) => occurrence.activity.type !== "Rest")
+      .map((occurrence) => ({ date: occurrence.date, activity: occurrence.activity })),
+  ).conflicts.reduce(
+    (total, conflict) => total + (conflict.severity === "High" ? 100 : conflict.severity === "Caution" ? 25 : 5),
+    0,
+  );
+}
+
+function reviewExistingOverlap(
+  state: TrainingPlanState,
+  weekStartDate: string,
+  reviewDate: string,
+  completions: TrainingActivityCompletion[],
+): AdaptiveWeeklyScheduleRecommendation | null {
+  const weekStart = parseLocalDate(weekStartDate);
+  const occurrences = getResolvedWeeklyActivityOccurrences(state, weekStartDate);
+  if (!weekStart || !parseLocalDate(reviewDate) || !occurrences) return null;
+
+  const conflicts = evaluateScheduleConflicts(
+    occurrences.map((occurrence) => ({ date: occurrence.date, activity: occurrence.activity })),
+  ).conflicts;
+  if (conflicts.length === 0) return null;
+
+  const baselineLoad = getConflictLoad(state, weekStartDate);
+  const weekDates = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart);
+    date.setDate(date.getDate() + index);
+    return formatLocalDate(date);
+  });
+
+  const candidates = getReviewMoveCandidates(
+    conflicts, occurrences, completions, weekDates, reviewDate,
+  ).flatMap(({ occurrence, date }) => {
+        const evaluation = evaluateWeeklyScheduleRearrangement({
+          state,
+          weekStartDate,
+          moves: [{
+            trainingActivityId: occurrence.activity.id,
+            originalDate: occurrence.originalDate,
+            scheduledDate: date,
+          }],
+        });
+        if (!evaluation || evaluation.hasHighConflict || evaluation.unavailableViolations.length > 0) return [];
+        const remainingLoad = getConflictLoad(evaluation.proposedState, weekStartDate);
+        if (remainingLoad >= baselineLoad) return [];
+        return [{ occurrence, date, evaluation, remainingLoad,
+          preferencePenalty: evaluation.preferencePenalty }];
+  }).sort(compareReviewMoveCandidates);
+
+  const best = candidates[0];
+  if (!best) return null;
+  const { occurrence, date, evaluation } = best;
+  return {
+    status: evaluation.status,
+    summary: `Move ${occurrence.activity.label} to ${getDayLabel(date)} to reduce the training overlap.`,
+    explanation: `This keeps completed activities and fixed commitments in place, and reduces the week's detected training-load overlap. Review the proposed move before applying it.`,
+    moves: [{
+      trainingActivityId: occurrence.activity.id,
+      label: occurrence.activity.label,
+      type: occurrence.activity.type,
+      originalDate: occurrence.originalDate,
+      scheduledDate: date,
+      originalDayLabel: getDayLabel(occurrence.date),
+      scheduledDayLabel: getDayLabel(date),
+    }],
+    optionalAdjustments: [],
+    variantRecommendations: [],
+    evaluation,
+  };
 }
 
 
@@ -365,6 +458,8 @@ export function getAdaptiveWeeklyScheduleRecommendation({
   constraints = [],
   availableEquipment = [],
   availableCapabilities = [],
+  reviewDate,
+  completions = [],
 }: GetAdaptiveWeeklyScheduleRecommendationInput):
   AdaptiveWeeklyScheduleRecommendation | null {
 
@@ -385,7 +480,9 @@ export function getAdaptiveWeeklyScheduleRecommendation({
     normalizedConstraints.length ===
     0
   ) {
-    return null;
+    return reviewDate
+      ? reviewExistingOverlap(state, weekStartDate, reviewDate, completions)
+      : null;
   }
 
 
