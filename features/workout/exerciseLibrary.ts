@@ -201,6 +201,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Center a stable bench under the racked bar, set the rack and safety catches appropriately, and plant both feet.",
+        "Grip the bar a little wider than shoulder-width with wrists straight and upper back supported on the bench.",
+      ],
+      execution: [
+        "Unrack with control and lower the bar toward the chest through a comfortable shoulder range.",
+        "Press upward steadily, keeping the feet grounded and the bar balanced over both hands.",
+      ],
+      techniqueCues: ["Keep shoulders stable against the bench.", "Lower the bar under control rather than bouncing it off the chest."],
+      commonMistakes: ["Using a load that makes the bar path uneven.", "Flaring the elbows excessively or lifting the hips to finish a rep."],
+      safetyConsiderations: ["Use a spotter or correctly set rack safeties for challenging sets, and secure the plates before lifting."],
+      regressionExerciseIds: ["dumbbell-chest-press", "chest-press-machine"],
+    },
   },
   {
     id: "incline-dumbbell-press",
@@ -1234,6 +1248,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Set the rack hooks and safety bars for your height, secure the plates, and position the bar across the upper back rather than the neck.",
+        "Stand up to unrack, take a short step back, then settle into a stance you can balance comfortably.",
+      ],
+      execution: [
+        "Brace and bend at the hips and knees together, keeping the bar balanced over the middle of the feet.",
+        "Descend only as far as you can control, then press through the feet to stand before stepping forward to rerack.",
+      ],
+      techniqueCues: ["Keep knees tracking with the toes.", "Maintain a steady trunk and full-foot contact."],
+      commonMistakes: ["Letting the knees collapse inward or heels lift.", "Rushing out of the bottom or losing trunk position to reach a deeper squat."],
+      safetyConsiderations: ["Practice unracking and reracking with a light load, and use correctly positioned rack safeties for challenging sets."],
+      regressionExerciseIds: ["goblet-squat", "leg-press"],
+    },
   },
   {
     id: "romanian-deadlift",
@@ -1248,6 +1276,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand with feet about hip-width apart, hold the bar against the thighs, and keep a slight bend in the knees.",
+        "Brace the trunk and set the shoulders before beginning the hinge.",
+      ],
+      execution: [
+        "Push the hips back while keeping the bar close to the legs and the knees softly bent.",
+        "Lower only as far as you can maintain a controlled trunk position, then drive the hips forward to stand tall.",
+      ],
+      techniqueCues: ["Think hips back rather than knees forward.", "Keep the bar close and the movement smooth."],
+      commonMistakes: ["Turning the hinge into a squat with excessive knee bend.", "Rounding the back or forcing the bar toward the floor."],
+      safetyConsiderations: ["Use a lighter load if you cannot keep the trunk controlled, and do not force a deeper range of motion."],
+      regressionExerciseIds: ["dumbbell-rdl"],
+    },
   },
   {
     id: "calf-raise",

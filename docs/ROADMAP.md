@@ -1832,6 +1832,11 @@ Press, and bodyweight Standing Calf Raise now have the same canonical How-To
 fields. Their focused guidance test and production build passed; in-app review
 and the remaining strength-exercise coverage are still open.
 
+**Barbell guidance checkpoint:** Barbell Bench Press, Barbell Squat, and Barbell
+Romanian Deadlift now have canonical setup, execution, technique, mistake,
+safety, and regression guidance. Their focused guidance test and production
+build passed; in-app review and remaining exercise coverage stay open.
+
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
 remains the owner of training and programming. Any future aerial-skill metadata
