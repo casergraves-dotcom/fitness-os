@@ -1863,8 +1863,9 @@ the visual-demonstration roadmap item and in-app image review remained open.
 **First machine-photo checkpoint:** The Leg Press How-To now includes a bundled,
 reviewed photo of an example plate-loaded machine with visible creator, license,
 and resize attribution. Its dimensions and credit metadata are checked before
-display. The focused media test and production build passed; in-app mobile
-review and broader machine-photo coverage remain open.
+display. The focused media test and production build passed. User-confirmed
+in-app review shows the image, attribution, and guidance layout correctly;
+broader machine-photo coverage remains open.
 
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
