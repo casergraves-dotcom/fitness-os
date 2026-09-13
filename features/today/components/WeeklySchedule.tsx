@@ -8,6 +8,7 @@ import {
 
 import type {
   TrainingActivityCompletion,
+  TrainingModality,
   TrainingPlanState,
 } from "@/features/workout/types";
 
@@ -25,6 +26,8 @@ import {
 import { evaluateScheduleConflicts } from "@/features/workout/logic/evaluateScheduleConflicts";
 import { evaluateWeeklyScheduleRearrangement } from "@/features/workout/logic/evaluateWeeklyScheduleRearrangement";
 import { getDaySwapTargets } from "@/features/workout/logic/getDaySwapTargets";
+import { compareMoveDestinationSuggestions } from "@/features/workout/logic/compareMoveDestinationSuggestions";
+import { getTrainingDayPreferencePenalty } from "@/features/workout/logic/getTrainingParticipationPreferenceForDate";
 
 import {
   getAdaptiveWeeklyScheduleRecommendation,
@@ -658,13 +661,18 @@ export default function WeeklySchedule({
                 )
                 ? 1
                 : 0;
-          return { date, level, otherActivities };
+          const modality = movingOccurrence.activity.type;
+          const preferencePenalty = modality === "Strength" || modality === "Run" || modality === "Aerial"
+            ? getTrainingDayPreferencePenalty(
+                state?.trainingParticipationPreferences,
+                date,
+                modality as TrainingModality,
+              )
+            : 0;
+          return { date, level, otherActivities, preferencePenalty,
+            otherActivityCount: otherActivities.length };
         })
-        .sort((first, second) =>
-          first.level - second.level ||
-          first.otherActivities.length - second.otherActivities.length ||
-          first.date.localeCompare(second.date)
-        )
+        .sort(compareMoveDestinationSuggestions)
     : [];
 
 
