@@ -19,6 +19,7 @@ import {
   Trash2,
   TrendingUp,
 } from "lucide-react";
+import Image from "next/image";
 
 import { Card } from "@/components/ui";
 
@@ -44,6 +45,7 @@ import {
 import {
   getExerciseSubstitutions,
 } from "../exerciseSubstitutions";
+import { getReviewedGuidanceImages } from "../guidanceMedia";
 
 import type {
   ExerciseSubstitutionEnvironment,
@@ -703,6 +705,20 @@ export default function ExerciseCard({
 
           {guidanceOpen && (
             <div className="mt-3 grid gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4 md:grid-cols-2">
+              {getReviewedGuidanceImages(exerciseDefinition.guidance.demoMedia).map((media) => (
+                <figure key={media.source} className="md:col-span-2">
+                  <Image
+                    src={media.source}
+                    alt={media.description}
+                    width={720}
+                    height={480}
+                    className="max-h-80 w-full rounded-lg border border-blue-100 bg-white object-contain"
+                  />
+                  <figcaption className="mt-2 text-xs text-slate-600">
+                    Example equipment; your gym&apos;s model may differ.
+                  </figcaption>
+                </figure>
+              ))}
               {isPerSide && (
                 <div className="rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm text-blue-800 md:col-span-2">
                   <span className="font-semibold">Per-side exercise:</span>{" "}

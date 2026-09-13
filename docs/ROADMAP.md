@@ -1853,6 +1853,13 @@ Dumbbell Fly now provide canonical setup, execution, technique, mistake, and
 safety guidance. Their focused guidance test and production build passed;
 in-app review and remaining exercise coverage stay open.
 
+**Visual-guidance display checkpoint:** The optional workout How-To panel can
+now display described, bundled image assets from canonical `demoMedia` metadata
+with a representative-equipment caption. External sources, undescribed images,
+and videos remain hidden pending separate review. The focused media test and
+production build passed. No exercise photos are attached yet, so the visual-
+demonstration roadmap item and in-app image review remain open.
+
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
 remains the owner of training and programming. Any future aerial-skill metadata
