@@ -24,6 +24,7 @@ import {
 } from "@/features/workout/logic/evaluateProposedActivityReschedule";
 import { evaluateScheduleConflicts } from "@/features/workout/logic/evaluateScheduleConflicts";
 import { evaluateWeeklyScheduleRearrangement } from "@/features/workout/logic/evaluateWeeklyScheduleRearrangement";
+import { getDaySwapTargets } from "@/features/workout/logic/getDaySwapTargets";
 
 import {
   getAdaptiveWeeklyScheduleRecommendation,
@@ -545,19 +546,11 @@ export default function WeeklySchedule({
     moveDate !== "" &&
     moveDate !== movingOccurrence.date;
 
-  const swapTargetOccurrences =
-    movingOccurrence && moveDateChanged
-      ? occurrences.filter(
-          (occurrence) =>
-            occurrence.date === moveDate &&
-            occurrence.activity.type !== "Rest" &&
-            !isCompleted(occurrence) &&
-            !(
-              occurrence.activity.id === movingOccurrence.activity.id &&
-              occurrence.originalDate === movingOccurrence.originalDate
-            ),
-        )
-      : [];
+  const daySwapTargets = movingOccurrence && moveDateChanged
+    ? getDaySwapTargets(occurrences, moveDate, movingOccurrence, completions)
+    : { targets: [], blockedBy: null };
+
+  const swapTargetOccurrences = daySwapTargets.targets;
 
   const swapMoves = movingOccurrence
     ? [
@@ -1365,7 +1358,11 @@ export default function WeeklySchedule({
                   </button>
                 </div>
                 <p className="mt-3 text-xs leading-5 text-slate-600">
-                  {swapTargetOccurrences.length > 0
+                  {daySwapTargets.blockedBy === "Completed"
+                    ? "Swap with day is unavailable because an activity there is already completed. Move only, or move a flexible activity separately."
+                    : daySwapTargets.blockedBy === "FixedCommitment"
+                      ? "Swap with day is unavailable because it contains a fixed commitment. Move only, or move a flexible activity separately."
+                    : swapTargetOccurrences.length > 0
                     ? swapWithTargetDay
                       ? `Move ${movingOccurrence.activity.label} to ${formatDisplayDate(moveDate)} and move ${swapTargetOccurrences.map((occurrence) => occurrence.activity.label).join(" and ")} back to ${formatDisplayDate(movingOccurrence.date)}.`
                       : `${formatDisplayDate(moveDate)} has ${swapTargetOccurrences.map((occurrence) => occurrence.activity.label).join(" and ")}. Choose Swap with day to exchange them as one change.`
