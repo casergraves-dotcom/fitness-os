@@ -448,3 +448,16 @@ test("barbell bench, squat, and RDL expose full How-To guidance", () => {
     assert.ok(guidance.regressionExerciseIds?.length);
   }
 });
+
+test("incline press, lateral raise, and face pull expose full How-To guidance", () => {
+  for (const id of ["incline-dumbbell-press", "dumbbell-lateral-raise", "cable-face-pull"]) {
+    const guidance = exerciseLibrary.find((exercise) => exercise.id === id)?.guidance;
+    assert.ok(guidance, `${id} needs How-To guidance`);
+    assert.ok(guidance.setup.length >= 2);
+    assert.ok(guidance.execution.length >= 2);
+    assert.ok(guidance.techniqueCues?.length);
+    assert.ok(guidance.commonMistakes?.length);
+    assert.ok(guidance.safetyConsiderations?.length);
+    assert.ok(guidance.regressionExerciseIds?.length);
+  }
+});

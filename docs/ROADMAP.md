@@ -1837,6 +1837,11 @@ Romanian Deadlift now have canonical setup, execution, technique, mistake,
 safety, and regression guidance. Their focused guidance test and production
 build passed; in-app review and remaining exercise coverage stay open.
 
+**Upper-body accessory guidance checkpoint:** Incline Dumbbell Press, Dumbbell
+Lateral Raise, and Cable Face Pull now have complete canonical How-To guidance.
+Their focused guidance test and production build passed; in-app review and the
+remaining exercise coverage stay open.
+
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
 remains the owner of training and programming. Any future aerial-skill metadata

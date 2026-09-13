@@ -229,6 +229,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Set an incline bench to a comfortable angle, sit back with feet planted, and bring the dumbbells beside the upper chest.",
+        "Keep the head, upper back, and hips supported by the bench with wrists aligned over the forearms.",
+      ],
+      execution: [
+        "Press both dumbbells upward in a controlled path without letting them collide at the top.",
+        "Lower toward the upper chest as far as the shoulders can comfortably control, then repeat.",
+      ],
+      techniqueCues: ["Keep the shoulders stable against the bench.", "Move both arms evenly without bouncing at the bottom."],
+      commonMistakes: ["Arching the lower back to turn the press into a flatter angle.", "Letting the elbows drift too far behind the torso."],
+      safetyConsiderations: ["Choose a load you can position and lower safely; ask for a spot when needed."],
+      regressionExerciseIds: ["incline-chest-press-machine", "dumbbell-chest-press"],
+    },
   },
   {
     id: "chest-fly",
@@ -627,6 +641,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand tall with a light dumbbell in each hand, arms by the sides, and knees softly bent.",
+        "Brace the trunk and let the shoulders settle away from the ears.",
+      ],
+      execution: [
+        "Raise the arms out to the sides with soft elbows until about shoulder height or a comfortable limit.",
+        "Lower the dumbbells slowly without swinging the torso.",
+      ],
+      techniqueCues: ["Lead the movement with the upper arms rather than the wrists.", "Keep the neck relaxed."],
+      commonMistakes: ["Shrugging the shoulders or swinging heavier weights upward.", "Raising past a comfortable shoulder range."],
+      safetyConsiderations: ["Start light and shorten the range if the movement causes shoulder discomfort."],
+      regressionExerciseIds: ["lateral-raise-machine"],
+    },
   },
   {
     id: "reverse-pec-deck",
@@ -669,6 +697,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Attach a rope around face height, hold one end in each hand, and step back until the cable is taut.",
+        "Stand balanced with soft knees and a braced trunk.",
+      ],
+      execution: [
+        "Pull the rope toward the face while the elbows travel outward and the shoulder blades move together.",
+        "Return the arms forward slowly without letting the weight pull the torso toward the machine.",
+      ],
+      techniqueCues: ["Keep the shoulders away from the ears.", "Use a load that allows a smooth pull and return."],
+      commonMistakes: ["Leaning backward to move excessive weight.", "Turning the movement into a low row."],
+      safetyConsiderations: ["Keep the cable and rope clear of the face and stay within a comfortable shoulder range."],
+      regressionExerciseIds: ["reverse-pec-deck"],
+    },
   },
 
   // Not defined in the spreadsheet.
