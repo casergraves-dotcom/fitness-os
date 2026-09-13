@@ -1821,6 +1821,12 @@ primary Gym A, Gym B, and Gym C templates now has reviewed How-To content withou
 introducing a parallel instruction source. All 55 project tests, TypeScript, and
 the production build passed.
 
+**Common substitution guidance checkpoint:** Dumbbell Chest Press, One-Arm
+Dumbbell Row, and Goblet Squat now have setup, execution, technique, mistake,
+safety, and related-exercise guidance in the existing canonical library. The
+guidance regression tests and production build passed. In-app panel review is
+still pending, and remaining strength-exercise coverage stays open.
+
 **Circus Book compatibility boundary:** Circus Book remains the canonical owner
 of aerial skill identity, performed-skill evidence, and sequences; Fitness OS
 remains the owner of training and programming. Any future aerial-skill metadata

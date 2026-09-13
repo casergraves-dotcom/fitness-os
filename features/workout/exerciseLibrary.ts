@@ -105,6 +105,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Sit with a dumbbell on each thigh, then lie back on a stable bench with feet planted.",
+        "Bring the weights beside the chest with wrists straight and shoulders supported by the bench.",
+      ],
+      execution: [
+        "Press both weights upward in a controlled path without lifting your hips or back from the bench.",
+        "Lower slowly to a comfortable depth beside the chest, then repeat.",
+      ],
+      techniqueCues: ["Keep wrists aligned with forearms.", "Keep feet grounded and shoulders supported."],
+      commonMistakes: ["Letting the wrists fold backward.", "Bouncing at the bottom or using an exaggerated back arch."],
+      safetyConsiderations: ["Choose a load you can position and lower safely; ask for a spotter or use a lighter variation when needed."],
+      regressionExerciseIds: ["chest-press-machine"],
+      progressionExerciseIds: ["barbell-bench-press"],
+    },
   },
 
   // ----------------------------------------------------------
@@ -305,6 +320,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     resistanceType: "Weight",
     performanceType: "Reps",
     repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Support one hand and the same-side knee on a stable bench; hold the dumbbell in the opposite hand.",
+        "Brace the trunk, keep the back comfortably flat, and let the working arm hang toward the floor.",
+      ],
+      execution: [
+        "Pull the elbow toward the hip without twisting the torso to lift the weight.",
+        "Lower the dumbbell under control, complete the prescribed reps, then switch sides.",
+      ],
+      techniqueCues: ["Keep the supporting shoulder steady.", "Lead the pull with the elbow, not a torso swing."],
+      commonMistakes: ["Rotating the trunk to lift a heavier weight.", "Shrugging or jerking at the top."],
+      safetyConsiderations: ["Use a stable bench and a load that lets you keep the spine controlled on both sides."],
+      regressionExerciseIds: ["seated-row", "band-row"],
+      progressionExerciseIds: ["barbell-row"],
+    },
   },
   {
     id: "backpack-row",
@@ -853,6 +883,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Hold one dumbbell securely at chest height with both hands and stand about shoulder-width apart.",
+        "Brace the trunk and keep the weight close to the chest as you prepare to squat.",
+      ],
+      execution: [
+        "Bend the hips and knees together, lowering as far as you can while keeping the feet grounded and trunk controlled.",
+        "Press through the feet to stand, keeping the dumbbell close throughout the repetition.",
+      ],
+      techniqueCues: ["Let knees track in line with toes.", "Use a depth you can control without rounding the low back."],
+      commonMistakes: ["Letting the knees collapse inward.", "Dropping quickly or letting the weight drift away from the chest."],
+      safetyConsiderations: ["Start with a manageable load and shorten the range if you cannot keep your balance or trunk position."],
+      regressionExerciseIds: ["leg-press"],
+      progressionExerciseIds: ["barbell-squat"],
+    },
   },
   {
     id: "reverse-lunge",

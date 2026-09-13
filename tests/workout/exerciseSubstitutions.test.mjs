@@ -411,3 +411,15 @@ test("canonical exercise guidance has concise setup and execution steps", () => 
     }
   }
 });
+
+test("common dumbbell substitutions expose full canonical How-To guidance", () => {
+  for (const id of ["dumbbell-chest-press", "one-arm-dumbbell-row", "goblet-squat"]) {
+    const guidance = exerciseLibrary.find((exercise) => exercise.id === id)?.guidance;
+    assert.ok(guidance, `${id} needs How-To guidance`);
+    assert.ok(guidance.setup.length >= 2);
+    assert.ok(guidance.execution.length >= 2);
+    assert.ok(guidance.techniqueCues?.length);
+    assert.ok(guidance.commonMistakes?.length);
+    assert.ok(guidance.safetyConsiderations?.length);
+  }
+});
