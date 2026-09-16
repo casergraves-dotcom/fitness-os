@@ -1937,6 +1937,14 @@ View Progress opens the unchanged training, nutrition, and activity adherence
 detail, while Hide Weekly Progress restores the dashboard state. Both states,
 status text, all 29 project tests, TypeScript, and the production build passed.
 
+**Mobile modal reachability correction:** Activity-move dialogs now use a shared
+mobile-safe shell with a fixed header and action footer, an independently
+scrollable content region, dynamic viewport and safe-area constraints, and
+background scroll locking. The shell stays above the fixed bottom navigation,
+so long recommendation/conflict content cannot make Move or Swap actions
+unreachable. The production build passed, and the corrected Move Activity flow
+was verified on an iPhone.
+
 **Completed outcome:** Shared safe-area handling protects content around mobile
 system UI, and Today now prioritizes readiness, Guide, today's training, and
 daily actions while progressively disclosing weekly schedule, adherence, and
