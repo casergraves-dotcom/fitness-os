@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ModalBody, ModalFooter, ModalHeader, ModalShell } from "@/components/ui/ModalShell";
 
 import {
   useState,
@@ -541,27 +542,12 @@ export default function TodaysTrainingCard({
 
   const rescheduleConfirmation =
     reschedulingActivity ? (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4"
-        role="presentation"
-        onMouseDown={
-          (event) => {
-            if (
-              event.target ===
-              event.currentTarget
-            ) {
-              cancelReschedule();
-            }
-          }
-        }
+      <ModalShell
+        labelledBy="reschedule-activity-title"
+        describedBy="reschedule-activity-description"
+        onBackdropPress={cancelReschedule}
       >
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="reschedule-activity-title"
-          aria-describedby="reschedule-activity-description"
-          className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
-        >
+        <ModalHeader>
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
             Move Activity
           </p>
@@ -579,7 +565,9 @@ export default function TodaysTrainingCard({
           >
             Choose another date for this scheduled activity. Its training prescription and activity identity will be preserved.
           </p>
+        </ModalHeader>
 
+        <ModalBody>
           <label className="mt-5 block text-sm font-semibold text-slate-700">
             New date
             <input
@@ -671,8 +659,9 @@ export default function TodaysTrainingCard({
                 )}
               </div>
             )}
+        </ModalBody>
 
-          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <ModalFooter className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={
@@ -697,9 +686,8 @@ export default function TodaysTrainingCard({
                 ? "Move Anyway"
                 : "Move Activity"}
             </button>
-          </div>
-        </div>
-      </div>
+        </ModalFooter>
+      </ModalShell>
     ) : null;
 
 

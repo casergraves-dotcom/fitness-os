@@ -19,6 +19,8 @@ export {
 
 export { Input } from "./input";
 
+export { ModalBody, ModalFooter, ModalHeader, ModalShell } from "./ModalShell";
+
 export { default as RatingSelector } from "./RatingSelector";
 
 export { Separator } from "./separator";

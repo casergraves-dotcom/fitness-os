@@ -5,6 +5,7 @@ import {
 import {
   Card,
 } from "@/components/ui/card";
+import { ModalBody, ModalFooter, ModalHeader, ModalShell } from "@/components/ui/ModalShell";
 
 import type {
   TrainingActivityCompletion,
@@ -1277,13 +1278,17 @@ export default function WeeklySchedule({
       )}
 
     {movingOccurrence && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+        <ModalShell
+          labelledBy="move-activity-title"
+          describedBy="move-activity-description"
+          onBackdropPress={closeMoveDialog}
+        >
+          <ModalHeader>
             <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               Move Activity
             </p>
 
-            <h2 className="mt-2 text-xl font-semibold text-slate-900">
+            <h2 id="move-activity-title" className="mt-2 text-xl font-semibold text-slate-900">
               Move{" "}
               {
                 movingOccurrence
@@ -1292,11 +1297,14 @@ export default function WeeklySchedule({
               }
             </h2>
 
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p id="move-activity-description" className="mt-2 text-sm leading-6 text-slate-600">
               Choose another date for this scheduled
               activity. Its training prescription and
               activity identity will be preserved.
             </p>
+          </ModalHeader>
+
+          <ModalBody>
 
             {destinationSuggestions.length > 0 && (
               <div className="mt-4">
@@ -1451,7 +1459,9 @@ export default function WeeklySchedule({
                 </div>
               )}
 
-            <div className="mt-6 flex justify-end gap-3">
+          </ModalBody>
+
+          <ModalFooter className="flex flex-row justify-end gap-3">
               <button
                 type="button"
                 onClick={
@@ -1481,9 +1491,8 @@ export default function WeeklySchedule({
                     ? "Swap Days"
                     : "Move Activity"}
               </button>
-            </div>
-          </div>
-        </div>
+          </ModalFooter>
+        </ModalShell>
       )}
     </Card>
   );
