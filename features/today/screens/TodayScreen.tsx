@@ -594,6 +594,12 @@ export default function TodayScreen() {
             new Date()
           }
 
+          onCompleteActivity={(activity, date) => {
+            completeActivity(activity, {
+              date: new Date(`${date}T12:00:00`),
+            });
+          }}
+
           onRescheduleActivity={
             (
               trainingActivityId,

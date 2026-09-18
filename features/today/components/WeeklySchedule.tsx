@@ -9,6 +9,7 @@ import { ModalBody, ModalFooter, ModalHeader, ModalShell } from "@/components/ui
 
 import type {
   TrainingActivityCompletion,
+  TrainingActivity,
   TrainingModality,
   TrainingPlanState,
 } from "@/features/workout/types";
@@ -62,6 +63,8 @@ interface WeeklyScheduleProps {
 
   currentDate:
     Date;
+
+  onCompleteActivity: (activity: TrainingActivity, date: string) => void;
 
   onRescheduleActivity: (
     trainingActivityId: string,
@@ -242,6 +245,11 @@ interface ActivityRowProps {
   completed:
     boolean;
 
+  canMarkComplete: boolean;
+  canMove: boolean;
+
+  onMarkComplete: (occurrence: ResolvedWeeklyActivityOccurrence) => void;
+
   onMove: (
     occurrence:
       ResolvedWeeklyActivityOccurrence
@@ -252,6 +260,9 @@ interface ActivityRowProps {
 function ActivityRow({
   occurrence,
   completed,
+  canMarkComplete,
+  canMove,
+  onMarkComplete,
   onMove,
 }: ActivityRowProps) {
   const moved =
@@ -304,7 +315,17 @@ function ActivityRow({
             : "Planned"}
         </span>
 
-        {!completed && (
+        {canMarkComplete && (
+          <button
+            type="button"
+            onClick={() => onMarkComplete(occurrence)}
+            className="text-sm font-medium text-blue-600 underline underline-offset-2"
+          >
+            Mark Complete
+          </button>
+        )}
+
+        {!completed && canMove && (
           <button
             type="button"
             onClick={() =>
@@ -332,6 +353,7 @@ export default function WeeklySchedule({
   completions,
   loaded,
   currentDate,
+  onCompleteActivity,
   onRescheduleActivity,
   onRescheduleActivities,
   onApplyAdaptiveScheduleRecommendation,
@@ -376,6 +398,9 @@ export default function WeeklySchedule({
 
   const [reviewMessage, setReviewMessage] =
     useState<string | null>(null);
+  const [showPreviousWeek, setShowPreviousWeek] = useState(false);
+  const [confirmingCompletion, setConfirmingCompletion] =
+    useState<ResolvedWeeklyActivityOccurrence | null>(null);
   // ----------------------------------------------------------
   // Loading
   // ----------------------------------------------------------
@@ -428,6 +453,18 @@ export default function WeeklySchedule({
     formatLocalDate(
       weekEnd
     );
+
+  const todayDate = formatLocalDate(currentDate);
+  const previousWeekStartDate = formatLocalDate(addCalendarDays(weekStart, -7));
+  const previousWeekEndDate = formatLocalDate(addCalendarDays(weekStart, -1));
+  const previousWeekOccurrences = showPreviousWeek
+    ? getResolvedWeeklyActivityOccurrences(state, previousWeekStartDate) ?? []
+    : [];
+  const previousWeekGroups = groupOccurrencesByDate(
+    previousWeekOccurrences.filter(
+      (occurrence) => occurrence.date >= previousWeekStartDate && occurrence.date <= previousWeekEndDate,
+    ),
+  );
 
   const occurrences =
     getResolvedWeeklyActivityOccurrences(
@@ -844,7 +881,8 @@ export default function WeeklySchedule({
   // ----------------------------------------------------------
 
   function renderGroup(
-    group: ScheduleGroup
+    group: ScheduleGroup,
+    historical = false,
   ) {
     const isRestDay = isPresentedRestDay(
       group.occurrences.map(
@@ -919,6 +957,15 @@ export default function WeeklySchedule({
                     occurrence
                   )
                 }
+                canMarkComplete={
+                  occurrence.date < todayDate &&
+                  !isCompleted(occurrence) &&
+                  occurrence.activity.type !== "Strength" &&
+                  occurrence.activity.type !== "Run" &&
+                  occurrence.activity.type !== "Rest"
+                }
+                canMove={!historical && !isCompleted(occurrence)}
+                onMarkComplete={setConfirmingCompletion}
                 onMove={
                     openMoveDialog
                 }
@@ -976,9 +1023,7 @@ export default function WeeklySchedule({
 
       {inWeekGroups.length > 0 ? (
         <div className="mt-5 space-y-3">
-          {inWeekGroups.map(
-            renderGroup
-          )}
+          {inWeekGroups.map((group) => renderGroup(group))}
         </div>
       ) : (
         <p className="mt-5 text-sm text-slate-500">
@@ -993,11 +1038,60 @@ export default function WeeklySchedule({
           </p>
 
           <div className="mt-3 space-y-3">
-            {outsideWeekGroups.map(
-              renderGroup
-            )}
+            {outsideWeekGroups.map((group) => renderGroup(group))}
           </div>
         </div>
+      )}
+
+      <div className="mt-6 border-t border-slate-200 pt-5">
+        <button
+          type="button"
+          onClick={() => setShowPreviousWeek((visible) => !visible)}
+          className="text-sm font-medium text-blue-600 underline underline-offset-2"
+        >
+          {showPreviousWeek ? "Hide previous week" : "View previous week"}
+        </button>
+        {showPreviousWeek && (
+          <div className="mt-3 space-y-3">
+            {previousWeekGroups.length > 0
+              ? previousWeekGroups.map((group) => renderGroup(group, true))
+              : <p className="text-sm text-slate-500">No activities scheduled last week.</p>}
+          </div>
+        )}
+      </div>
+
+      {confirmingCompletion && (
+        <ModalShell
+          labelledBy="retroactive-completion-title"
+          onBackdropPress={() => setConfirmingCompletion(null)}
+        >
+          <ModalHeader>
+            <h2 id="retroactive-completion-title" className="text-xl font-semibold text-slate-900">
+              Mark {confirmingCompletion.activity.label} complete?
+            </h2>
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-sm leading-6 text-slate-600">
+              This will count the activity on {formatDisplayDate(confirmingCompletion.date)},
+              even though you are recording it now.
+            </p>
+          </ModalBody>
+          <ModalFooter className="flex justify-end gap-3">
+            <button type="button" onClick={() => setConfirmingCompletion(null)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold">
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onCompleteActivity(confirmingCompletion.activity, confirmingCompletion.date);
+                setConfirmingCompletion(null);
+              }}
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Confirm completion
+            </button>
+          </ModalFooter>
+        </ModalShell>
       )}
 
       {adjustingWeek && (
