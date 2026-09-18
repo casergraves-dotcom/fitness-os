@@ -162,6 +162,8 @@ export default function TodayScreen() {
 
     addAdHocActivity,
 
+    removeAdHocActivity,
+
     applyAdaptiveScheduleRecommendation,
   } = useTrainingPlanState();
 
@@ -606,6 +608,12 @@ export default function TodayScreen() {
             const activity = addAdHocActivity(date, type, label);
             if (activity && completed) {
               completeActivity(activity, { date: new Date(`${date}T12:00:00`) });
+            }
+          }}
+
+          onRemoveAdHocActivity={(activityId, date) => {
+            if (removeAdHocActivity(activityId)) {
+              removeActivityCompletion(activityId, date);
             }
           }}
 

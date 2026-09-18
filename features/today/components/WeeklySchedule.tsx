@@ -74,6 +74,8 @@ interface WeeklyScheduleProps {
     completed: boolean,
   ) => void;
 
+  onRemoveAdHocActivity: (activityId: string, date: string) => void;
+
   onRescheduleActivity: (
     trainingActivityId: string,
     originalDate: string,
@@ -257,6 +259,7 @@ interface ActivityRowProps {
   canMove: boolean;
 
   onMarkComplete: (occurrence: ResolvedWeeklyActivityOccurrence) => void;
+  onRemoveAdHoc: (occurrence: ResolvedWeeklyActivityOccurrence) => void;
 
   onMove: (
     occurrence:
@@ -271,6 +274,7 @@ function ActivityRow({
   canMarkComplete,
   canMove,
   onMarkComplete,
+  onRemoveAdHoc,
   onMove,
 }: ActivityRowProps) {
   const moved =
@@ -314,7 +318,7 @@ function ActivityRow({
         )}
       </div>
 
-      <div className="flex shrink-0 items-center gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-right">
         <span
           className={
             completed
@@ -350,6 +354,16 @@ function ActivityRow({
             Move
           </button>
         )}
+
+        {occurrence.placementSource === "AdHoc" && (
+          <button
+            type="button"
+            onClick={() => onRemoveAdHoc(occurrence)}
+            className="text-sm font-medium text-rose-700 underline underline-offset-2"
+          >
+            Remove
+          </button>
+        )}
       </div>
     </div>
   );
@@ -367,6 +381,7 @@ export default function WeeklySchedule({
   currentDate,
   onCompleteActivity,
   onAddAdHocActivity,
+  onRemoveAdHocActivity,
   onRescheduleActivity,
   onRescheduleActivities,
   onApplyAdaptiveScheduleRecommendation,
@@ -413,6 +428,8 @@ export default function WeeklySchedule({
     useState<string | null>(null);
   const [showPreviousWeek, setShowPreviousWeek] = useState(false);
   const [confirmingCompletion, setConfirmingCompletion] =
+    useState<ResolvedWeeklyActivityOccurrence | null>(null);
+  const [confirmingRemoval, setConfirmingRemoval] =
     useState<ResolvedWeeklyActivityOccurrence | null>(null);
   const [addingDate, setAddingDate] = useState<string | null>(null);
   const [addingWeekRange, setAddingWeekRange] = useState<{ start: string; end: string } | null>(null);
@@ -1025,6 +1042,7 @@ export default function WeeklySchedule({
                 }
                 canMove={!historical && !isCompleted(occurrence) && occurrence.placementSource !== "AdHoc"}
                 onMarkComplete={setConfirmingCompletion}
+                onRemoveAdHoc={setConfirmingRemoval}
                 onMove={
                     openMoveDialog
                 }
@@ -1165,6 +1183,36 @@ export default function WeeklySchedule({
               className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
             >
               Confirm completion
+            </button>
+          </ModalFooter>
+        </ModalShell>
+      )}
+
+      {confirmingRemoval && (
+        <ModalShell labelledBy="remove-ad-hoc-title" onBackdropPress={() => setConfirmingRemoval(null)}>
+          <ModalHeader>
+            <h2 id="remove-ad-hoc-title" className="text-xl font-semibold text-slate-900">
+              Remove {confirmingRemoval.activity.label}?
+            </h2>
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-sm leading-6 text-slate-600">
+              This removes only the one-time activity on {formatDisplayDate(confirmingRemoval.date)}.
+              {isCompleted(confirmingRemoval) && " Its completion will also be removed from History and weekly progress."}
+              {" "}Your recurring training plan will not change.
+            </p>
+          </ModalBody>
+          <ModalFooter className="flex justify-end gap-3">
+            <button type="button" onClick={() => setConfirmingRemoval(null)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold">Cancel</button>
+            <button
+              type="button"
+              onClick={() => {
+                onRemoveAdHocActivity(confirmingRemoval.activity.id, confirmingRemoval.date);
+                setConfirmingRemoval(null);
+              }}
+              className="rounded-xl bg-rose-700 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Remove activity
             </button>
           </ModalFooter>
         </ModalShell>

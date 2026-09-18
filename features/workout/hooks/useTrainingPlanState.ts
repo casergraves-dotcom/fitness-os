@@ -16,6 +16,7 @@ import {
 import {
   applyTrainingActivityReschedule,
 } from "../logic/applyTrainingActivityReschedule";
+import { removeAdHocTrainingActivity } from "../logic/removeAdHocTrainingActivity";
 
 import {
   applyAdaptiveScheduleRecommendation as applyAdaptiveScheduleRecommendationTransition,
@@ -550,6 +551,14 @@ export function useTrainingPlanState() {
     return activity;
   }
 
+  function removeAdHocActivity(activityId: string) {
+    if (!state) return false;
+    const nextState = removeAdHocTrainingActivity(state, activityId);
+    if (nextState === state) return false;
+    saveState(nextState);
+    return true;
+  }
+
 
   // ----------------------------------------------------------
   // Reschedule Multiple Training Activities
@@ -759,6 +768,8 @@ export function useTrainingPlanState() {
     rescheduleTrainingActivity,
 
     addAdHocActivity,
+
+    removeAdHocActivity,
 
     rescheduleTrainingActivities,
 

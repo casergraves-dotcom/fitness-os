@@ -778,10 +778,14 @@ preserving canonical training-plan identity.
 - [x] Let a past scheduled binary activity be confirmed on its scheduled date,
   including the previous week, without fabricating a strength or run session.
   Verified in the weekly schedule on mobile, Sep 18, 2026.
-- [ ] Verify adding a one-time planned or completed activity to a chosen date
-  without changing the recurring training template.
-- [ ] Evaluate one-time additions through the existing schedule conflict rules
-  and explain any training-load warning before saving.
+- [x] Add a one-time planned or completed activity to a chosen date without
+  changing the recurring training template. A saved addition persisted after
+  reopening the mobile app, Sep 18, 2026.
+- [x] Evaluate one-time additions through the existing schedule conflict rules
+  and explain any training-load warning before saving. The Gym B + aerial
+  overlap displayed a warning, with an explicit override, Sep 18, 2026.
+- [ ] Verify removing an accidental one-time activity also removes its
+  completion, when present, without changing the recurring plan.
 
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
