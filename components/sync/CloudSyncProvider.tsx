@@ -19,6 +19,7 @@ import { supabase } from "@/lib/supabase/client";
 import {
   downloadAllCloudData,
 } from "@/lib/storage/cloudSync";
+import { ensureLocalFitnessOsCacheOwner } from "@/lib/storage/clearLocalFitnessOsData";
 
 // ============================================================
 // Types
@@ -62,6 +63,7 @@ export default function CloudSyncProvider({
         // ----------------------------------------------------
 
         if (session) {
+          ensureLocalFitnessOsCacheOwner(session.user.id);
           await downloadAllCloudData();
         }
 

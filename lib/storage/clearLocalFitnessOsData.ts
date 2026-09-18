@@ -16,6 +16,13 @@ export interface LocalStorageLike {
   removeItem(key: string): void;
 }
 
+export const FITNESS_OS_CACHE_USER_KEY = "fitness-os-cache-user-id";
+
+interface CacheStorageLike extends LocalStorageLike {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+}
+
 
 export function clearLocalFitnessOsData(
   storage: LocalStorageLike = localStorage,
@@ -41,4 +48,20 @@ export function clearLocalFitnessOsData(
   for (const key of keysToRemove) {
     storage.removeItem(key);
   }
+}
+
+// An untagged cache may contain unsynced records from an older app version, so
+// bind it on first use rather than deleting it. Once tagged, account changes
+// must clear every Fitness OS key before another user's cloud data is loaded.
+export function ensureLocalFitnessOsCacheOwner(
+  userId: string,
+  storage: CacheStorageLike = localStorage,
+): void {
+  const priorUserId = storage.getItem(FITNESS_OS_CACHE_USER_KEY);
+
+  if (priorUserId && priorUserId !== userId) {
+    clearLocalFitnessOsData(storage);
+  }
+
+  storage.setItem(FITNESS_OS_CACHE_USER_KEY, userId);
 }

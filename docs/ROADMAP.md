@@ -2341,6 +2341,14 @@ account-creation path on a second device, but does not yet establish whether
 the empty account is free of another user's records or whether private photos
 and DEXA files are inaccessible across accounts; those checks remain open.
 
+**Local cache ownership checkpoint:** Startup hydration now binds the device's
+Fitness OS cache to the authenticated account. A later sign-in with a different
+account ID clears cached records and active sessions before cloud hydration;
+the normal sign-out clear also removes the owner tag. Untagged legacy caches
+are preserved on first use to avoid deleting potentially unsynced records.
+Focused cache tests and the production build passed. Live account-switching
+and private-file isolation checks remain open.
+
 ---
 
 # Near-Term Execution Order
