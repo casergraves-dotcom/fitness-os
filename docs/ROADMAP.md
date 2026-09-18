@@ -2335,6 +2335,12 @@ user once rather than repeating an auth lookup for every data key. The local
 cache-clearing test and production build passed. Live two-account switching,
 empty-account behavior, and private-file isolation remain to be verified.
 
+**Second-account creation checkpoint:** A separate user successfully created
+and accessed a new Fitness OS account on her own phone. This verifies the
+account-creation path on a second device, but does not yet establish whether
+the empty account is free of another user's records or whether private photos
+and DEXA files are inaccessible across accounts; those checks remain open.
+
 ---
 
 # Near-Term Execution Order
