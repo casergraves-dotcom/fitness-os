@@ -2328,6 +2328,13 @@ personalization.
 - [ ] Ensure sensitive body-composition files and progress photos remain private
   by default.
 
+**Account-scoped cloud-read checkpoint:** Structured cloud downloads and the
+diagnostic snapshot now explicitly filter by the authenticated user ID in
+addition to existing database row-level security. Batch hydration resolves the
+user once rather than repeating an auth lookup for every data key. The local
+cache-clearing test and production build passed. Live two-account switching,
+empty-account behavior, and private-file isolation remain to be verified.
+
 ---
 
 # Near-Term Execution Order

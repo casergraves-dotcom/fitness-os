@@ -32,6 +32,20 @@ function isSyncKey(
   );
 }
 
+async function getAuthenticatedUserId(): Promise<string> {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error) throw error;
+  if (!user) {
+    throw new Error("Cannot read Fitness OS cloud data without an authenticated user.");
+  }
+
+  return user.id;
+}
+
 // ============================================================
 // Upload One Local Storage Value
 // ============================================================
@@ -135,11 +149,20 @@ export async function deleteCloudStorageKey(
 export async function downloadStorageKey(
   key: FitnessOsSyncKey,
 ): Promise<boolean> {
+  const userId = await getAuthenticatedUserId();
+  return downloadStorageKeyForUser(key, userId);
+}
+
+async function downloadStorageKeyForUser(
+  key: FitnessOsSyncKey,
+  userId: string,
+): Promise<boolean> {
   const { data, error } = await supabase
     .from("fitness_os_data")
     .select(
       "data_key,data,client_updated_at,server_updated_at",
     )
+    .eq("user_id", userId)
     .eq("data_key", key)
     .maybeSingle<CloudStorageRow>();
 
@@ -174,8 +197,9 @@ export async function uploadAllLocalData(): Promise<void> {
 // ============================================================
 
 export async function downloadAllCloudData(): Promise<void> {
+  const userId = await getAuthenticatedUserId();
   for (const key of FITNESS_OS_SYNC_KEYS) {
-    await downloadStorageKey(key);
+    await downloadStorageKeyForUser(key, userId);
   }
 }
 
@@ -186,11 +210,13 @@ export async function downloadAllCloudData(): Promise<void> {
 export async function getCloudSnapshot(): Promise<
   CloudStorageRow[]
 > {
+  const userId = await getAuthenticatedUserId();
   const { data, error } = await supabase
     .from("fitness_os_data")
     .select(
       "data_key,data,client_updated_at,server_updated_at",
-    );
+    )
+    .eq("user_id", userId);
 
   if (error) {
     throw error;
