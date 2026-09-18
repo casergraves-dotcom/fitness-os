@@ -33,7 +33,7 @@ export interface TrainingScheduleActivityContext {
   // prescribed. This remains stable if the occurrence is moved.
   originalDate: string;
 
-  placementSource?: "FixedAerialCommitment";
+  placementSource?: "FixedAerialCommitment" | "AdHoc";
 
   // Persisted strength-workout variant selected for this specific
   // occurrence, if one exists.
@@ -1351,15 +1351,27 @@ export function getTrainingScheduleForDate(
     "Aerial",
   ];
 
+  const date = formatLocalDate(targetDate);
+  const adHocActivities = (state.adHocActivities ?? [])
+    .filter((entry) => entry.date === date)
+    .map((entry) => entry.activity);
+
   return {
     ...resolvedSchedule,
     trainingDay: {
       ...resolvedSchedule.trainingDay,
-      activities: resolvedSchedule.trainingDay.activities.filter(
+      activities: [...resolvedSchedule.trainingDay.activities.filter(
         (activity) =>
           !participationModalities.includes(activity.type as TrainingModality) ||
           enabledModalities.includes(activity.type as TrainingModality)
-      ),
+      ), ...adHocActivities],
+    },
+    activityContexts: {
+      ...resolvedSchedule.activityContexts,
+      ...Object.fromEntries(adHocActivities.map((activity) => [
+        activity.id,
+        { originalDate: date, placementSource: "AdHoc" as const },
+      ])),
     },
   };
 }

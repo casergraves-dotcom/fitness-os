@@ -160,6 +160,8 @@ export default function TodayScreen() {
 
     rescheduleTrainingActivities,
 
+    addAdHocActivity,
+
     applyAdaptiveScheduleRecommendation,
   } = useTrainingPlanState();
 
@@ -598,6 +600,13 @@ export default function TodayScreen() {
             completeActivity(activity, {
               date: new Date(`${date}T12:00:00`),
             });
+          }}
+
+          onAddAdHocActivity={(date, type, label, completed) => {
+            const activity = addAdHocActivity(date, type, label);
+            if (activity && completed) {
+              completeActivity(activity, { date: new Date(`${date}T12:00:00`) });
+            }
           }}
 
           onRescheduleActivity={

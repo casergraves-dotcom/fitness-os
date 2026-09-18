@@ -29,6 +29,7 @@ import {
 } from "../logic/normalizeTrainingPlanWeekStarts";
 import {
   normalizeLegacyTrainingWeekStartDate,
+  parseLocalCalendarDate,
 } from "@/lib/date/trainingWeek";
 
 import type {
@@ -42,6 +43,7 @@ import type {
   TrainingInterruptionReason,
   TrainingModality,
   TrainingPlanState,
+  TrainingActivity,
   TrainingParticipationPreference,
   TrainingWeek,
   WorkoutEnvironment,
@@ -531,6 +533,23 @@ export function useTrainingPlanState() {
     );
   }
 
+  function addAdHocActivity(date: string, type: TrainingActivity["type"], label: string) {
+    if (!state || !parseLocalCalendarDate(date) || date < state.startDate || !label.trim()) return null;
+    // Structured strength and running sessions need their own workout records.
+    if (type === "Strength" || type === "Run" || type === "Rest") return null;
+
+    const id = `ad-hoc-${crypto.randomUUID()}`;
+    const activity: TrainingActivity = { id, type, label: label.trim(), optional: true };
+    saveState({
+      ...state,
+      adHocActivities: [
+        ...(state.adHocActivities ?? []),
+        { date, activity, createdAt: new Date().toISOString() },
+      ],
+    });
+    return activity;
+  }
+
 
   // ----------------------------------------------------------
   // Reschedule Multiple Training Activities
@@ -738,6 +757,8 @@ export function useTrainingPlanState() {
     applyTrainingInterruptionDecision,
 
     rescheduleTrainingActivity,
+
+    addAdHocActivity,
 
     rescheduleTrainingActivities,
 

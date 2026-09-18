@@ -773,6 +773,16 @@ training structure while preserving historical progression state.
 constraints into explicit, user-reviewed schedule recommendations while
 preserving canonical training-plan identity.
 
+### Editable Week Follow-up
+
+- [x] Let a past scheduled binary activity be confirmed on its scheduled date,
+  including the previous week, without fabricating a strength or run session.
+  Verified in the weekly schedule on mobile, Sep 18, 2026.
+- [ ] Verify adding a one-time planned or completed activity to a chosen date
+  without changing the recurring training template.
+- [ ] Evaluate one-time additions through the existing schedule conflict rules
+  and explain any training-load warning before saving.
+
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
 calendar.

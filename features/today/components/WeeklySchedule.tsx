@@ -66,6 +66,13 @@ interface WeeklyScheduleProps {
 
   onCompleteActivity: (activity: TrainingActivity, date: string) => void;
 
+  onAddAdHocActivity: (
+    date: string,
+    type: "Aerial" | "Walk" | "Mobility" | "Recovery",
+    label: string,
+    completed: boolean,
+  ) => void;
+
   onRescheduleActivity: (
     trainingActivityId: string,
     originalDate: string,
@@ -290,6 +297,10 @@ function ActivityRow({
               Fixed commitment
             </span>
           )}
+
+          {occurrence.placementSource === "AdHoc" && (
+            <span className="text-xs font-medium text-blue-600">Added by you</span>
+          )}
         </div>
 
         {moved && (
@@ -354,6 +365,7 @@ export default function WeeklySchedule({
   loaded,
   currentDate,
   onCompleteActivity,
+  onAddAdHocActivity,
   onRescheduleActivity,
   onRescheduleActivities,
   onApplyAdaptiveScheduleRecommendation,
@@ -401,6 +413,11 @@ export default function WeeklySchedule({
   const [showPreviousWeek, setShowPreviousWeek] = useState(false);
   const [confirmingCompletion, setConfirmingCompletion] =
     useState<ResolvedWeeklyActivityOccurrence | null>(null);
+  const [addingDate, setAddingDate] = useState<string | null>(null);
+  const [addingWeekRange, setAddingWeekRange] = useState<{ start: string; end: string } | null>(null);
+  const [newActivityType, setNewActivityType] = useState<"Aerial" | "Walk" | "Mobility" | "Recovery">("Aerial");
+  const [newActivityLabel, setNewActivityLabel] = useState("");
+  const [newActivityCompleted, setNewActivityCompleted] = useState(false);
   // ----------------------------------------------------------
   // Loading
   // ----------------------------------------------------------
@@ -964,7 +981,7 @@ export default function WeeklySchedule({
                   occurrence.activity.type !== "Run" &&
                   occurrence.activity.type !== "Rest"
                 }
-                canMove={!historical && !isCompleted(occurrence)}
+                canMove={!historical && !isCompleted(occurrence) && occurrence.placementSource !== "AdHoc"}
                 onMarkComplete={setConfirmingCompletion}
                 onMove={
                     openMoveDialog
@@ -981,6 +998,22 @@ export default function WeeklySchedule({
             </p>
           )}
         </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setAddingDate(group.date);
+            setAddingWeekRange(historical
+              ? { start: previousWeekStartDate, end: previousWeekEndDate }
+              : { start: weekStartDate, end: weekEndDate });
+            setNewActivityType("Aerial");
+            setNewActivityLabel("");
+            setNewActivityCompleted(false);
+          }}
+          className="mt-2 text-sm font-medium text-blue-600 underline underline-offset-2"
+        >
+          + Add Activity
+        </button>
 
         {sameDayOverlap && (
           <p className={`mt-3 rounded-lg border px-3 py-2 text-sm ${sameDayOverlap.severity === "High" ? "border-rose-200 bg-rose-50 text-rose-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
@@ -1089,6 +1122,55 @@ export default function WeeklySchedule({
               className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
             >
               Confirm completion
+            </button>
+          </ModalFooter>
+        </ModalShell>
+      )}
+
+      {addingDate && (
+        <ModalShell labelledBy="add-activity-title" onBackdropPress={() => setAddingDate(null)}>
+          <ModalHeader>
+            <h2 id="add-activity-title" className="text-xl font-semibold text-slate-900">Add one-time activity</h2>
+            <p className="mt-2 text-sm text-slate-600">This changes only the selected date, not your recurring training plan.</p>
+          </ModalHeader>
+          <ModalBody className="space-y-4">
+            <label className="block text-sm font-medium text-slate-700">
+              Date
+              <input type="date" min={addingWeekRange && addingWeekRange.start > state.startDate ? addingWeekRange.start : state.startDate} max={addingWeekRange?.end} value={addingDate} onChange={(event) => {
+                setAddingDate(event.target.value);
+                if (event.target.value > todayDate) setNewActivityCompleted(false);
+              }} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2" />
+            </label>
+            <label className="block text-sm font-medium text-slate-700">
+              Activity type
+              <select value={newActivityType} onChange={(event) => setNewActivityType(event.target.value as typeof newActivityType)} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2">
+                <option value="Aerial">Aerial</option>
+                <option value="Walk">Walk</option>
+                <option value="Mobility">Mobility</option>
+                <option value="Recovery">Recovery</option>
+              </select>
+            </label>
+            <label className="block text-sm font-medium text-slate-700">
+              Name
+              <input type="text" value={newActivityLabel} onChange={(event) => setNewActivityLabel(event.target.value)} placeholder={newActivityType === "Aerial" ? "e.g. Aerial Open Studio" : `e.g. ${newActivityType}`} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2" />
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input type="checkbox" checked={newActivityCompleted} disabled={addingDate > todayDate} onChange={(event) => setNewActivityCompleted(event.target.checked)} />
+              Already completed
+            </label>
+          </ModalBody>
+          <ModalFooter className="flex justify-end gap-3">
+            <button type="button" onClick={() => setAddingDate(null)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold">Cancel</button>
+            <button
+              type="button"
+              disabled={!newActivityLabel.trim() || addingDate < state.startDate || !addingWeekRange || addingDate < addingWeekRange.start || addingDate > addingWeekRange.end}
+              onClick={() => {
+                onAddAdHocActivity(addingDate, newActivityType, newActivityLabel, newActivityCompleted);
+                setAddingDate(null);
+              }}
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              Add Activity
             </button>
           </ModalFooter>
         </ModalShell>

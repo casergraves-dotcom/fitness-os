@@ -25,7 +25,7 @@ export interface ResolvedWeeklyActivityOccurrence {
   // for adherence/progression purposes.
   originalDate: string;
 
-  placementSource?: "FixedAerialCommitment";
+  placementSource?: "FixedAerialCommitment" | "AdHoc";
 
   // Destination weekday after any rescheduling.
   day: TrainingDay["day"];
@@ -276,6 +276,8 @@ export function getResolvedWeeklyActivityOccurrences(
 
       activityVariantOverrides:
         [],
+
+      adHocActivities: [],
     };
 
 
@@ -503,6 +505,23 @@ export function getResolvedWeeklyActivityOccurrences(
     }
   }
 
+
+  for (const entry of state.adHocActivities ?? []) {
+    if (entry.date < weekStartDate || entry.date > formatLocalDate(addCalendarDays(weekStart, 6))) {
+      continue;
+    }
+
+    const date = parseLocalDate(entry.date);
+    if (!date) continue;
+
+    occurrences.push({
+      date: entry.date,
+      originalDate: entry.date,
+      placementSource: "AdHoc",
+      day: getDayName(date),
+      activity: entry.activity,
+    });
+  }
 
   return occurrences;
 }

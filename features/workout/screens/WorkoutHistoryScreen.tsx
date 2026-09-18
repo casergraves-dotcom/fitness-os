@@ -16,6 +16,7 @@ import {
 
 import AppShell from "@/components/layout/AppShell";
 import DailyOutcomeHistory from "@/features/history/components/DailyOutcomeHistory";
+import { useTrainingActivityCompletions } from "../hooks/useTrainingActivityCompletions";
 
 import {
   useWorkoutHistory,
@@ -240,6 +241,11 @@ export default function WorkoutHistoryScreen() {
     deleteRun,
   } = useRunSession();
 
+  const { completions, loaded: completionsLoaded } = useTrainingActivityCompletions();
+  const completedAdHocActivities = completions
+    .filter((completion) => completion.trainingActivityId.startsWith("ad-hoc-"))
+    .sort((a, b) => b.date.localeCompare(a.date));
+
 
   // ----------------------------------------------------------
   // Loading
@@ -247,7 +253,8 @@ export default function WorkoutHistoryScreen() {
 
   const loaded =
     workoutsLoaded &&
-    runsLoaded;
+    runsLoaded &&
+    completionsLoaded;
 
 
   // ----------------------------------------------------------
@@ -355,6 +362,21 @@ export default function WorkoutHistoryScreen() {
 
 
         <DailyOutcomeHistory />
+
+        {completedAdHocActivities.length > 0 && (
+          <section className="rounded-2xl border bg-white p-5 shadow-sm">
+            <h2 className="text-xl font-bold text-slate-900">Other completed activities</h2>
+            <p className="mt-1 text-sm text-slate-500">One-time activities you added to your schedule.</p>
+            <div className="mt-4 divide-y divide-slate-200">
+              {completedAdHocActivities.map((completion) => (
+                <div key={completion.id} className="flex justify-between gap-3 py-3 text-sm">
+                  <span className="font-medium text-slate-900">{completion.label}</span>
+                  <span className="shrink-0 text-slate-500">{formatActivityDate(`${completion.date}T12:00:00`)}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ====================================================
             Activities

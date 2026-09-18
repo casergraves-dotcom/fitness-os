@@ -891,6 +891,13 @@ export interface TrainingActivity {
   note?: string;
 }
 
+// A single dated schedule instance, never a recurring plan prescription.
+export interface AdHocTrainingActivity {
+  date: string;
+  activity: TrainingActivity;
+  createdAt: string;
+}
+
 
 // ============================================================
 // Training Day
@@ -1313,6 +1320,9 @@ export interface TrainingPlanState {
   // state saved before activity rescheduling existed.
   activityReschedules?:
     TrainingActivityReschedule[];
+
+  // User-added, one-off schedule entries. Kept separate from the plan template.
+  adHocActivities?: AdHocTrainingActivity[];
 
   // User-approved Skip/Substitute decisions for individual
   // scheduled activity occurrences.
