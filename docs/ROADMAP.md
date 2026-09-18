@@ -784,8 +784,10 @@ preserving canonical training-plan identity.
 - [x] Evaluate one-time additions through the existing schedule conflict rules
   and explain any training-load warning before saving. The Gym B + aerial
   overlap displayed a warning, with an explicit override, Sep 18, 2026.
-- [ ] Verify removing an accidental one-time activity also removes its
-  completion, when present, without changing the recurring plan.
+- [x] Verify removing an accidental planned one-time activity leaves the
+  recurring plan intact. Confirmed on mobile, Sep 18, 2026.
+- [ ] Verify removing an already-completed one-time activity also removes its
+  canonical completion from History and weekly progress.
 
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
