@@ -663,7 +663,7 @@ export default function WeeklySchedule({
     moveDate !== "" &&
     moveDate !== movingOccurrence.date;
 
-  const daySwapTargets = movingOccurrence && moveDateChanged
+  const daySwapTargets = movingOccurrence && moveDateChanged && movingOccurrence.placementSource !== "AdHoc"
     ? getDaySwapTargets(occurrences, moveDate, movingOccurrence, completions)
     : { targets: [], blockedBy: null };
 
@@ -1040,7 +1040,7 @@ export default function WeeklySchedule({
                   occurrence.activity.type !== "Run" &&
                   occurrence.activity.type !== "Rest"
                 }
-                canMove={!historical && !isCompleted(occurrence) && occurrence.placementSource !== "AdHoc"}
+                canMove={!historical && !isCompleted(occurrence)}
                 onMarkComplete={setConfirmingCompletion}
                 onRemoveAdHoc={setConfirmingRemoval}
                 onMove={
@@ -1589,9 +1589,9 @@ export default function WeeklySchedule({
             </h2>
 
             <p id="move-activity-description" className="mt-2 text-sm leading-6 text-slate-600">
-              Choose another date for this scheduled
-              activity. Its training prescription and
-              activity identity will be preserved.
+              {movingOccurrence.placementSource === "AdHoc"
+                ? "Choose another date for this one-time activity. Its identity will be preserved, and it will not become part of your recurring plan."
+                : "Choose another date for this scheduled activity. Its training prescription and activity identity will be preserved."}
             </p>
           </ModalHeader>
 
@@ -1642,7 +1642,7 @@ export default function WeeklySchedule({
               />
             </label>
 
-            {moveDateChanged && (
+            {moveDateChanged && movingOccurrence.placementSource !== "AdHoc" && (
               <div className="mt-4 rounded-xl border border-slate-200 p-4">
                 <p className="text-sm font-semibold text-slate-900">
                   Change type

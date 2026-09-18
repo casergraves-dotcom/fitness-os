@@ -1,6 +1,7 @@
 import type {
   TrainingPlanState,
 } from "../types";
+import { parseLocalCalendarDate } from "../../../lib/date/trainingWeek.ts";
 
 
 export interface ApplyTrainingActivityRescheduleInput {
@@ -32,6 +33,29 @@ export function applyTrainingActivityReschedule({
   overrideRecurringPlacement = false,
 }: ApplyTrainingActivityRescheduleInput):
   TrainingPlanState {
+
+  // A user-added activity is already a dated schedule instance. Move that
+  // instance directly; it has no recurring-plan occurrence to overlay.
+  const adHocEntry = (state.adHocActivities ?? []).find(
+    (entry) => entry.activity.id === trainingActivityId,
+  );
+  if (adHocEntry) {
+    if (
+      adHocEntry.date !== originalDate ||
+      !parseLocalCalendarDate(scheduledDate) ||
+      scheduledDate < state.startDate ||
+      scheduledDate === adHocEntry.date
+    ) return state;
+
+    return {
+      ...state,
+      adHocActivities: (state.adHocActivities ?? []).map((entry) =>
+        entry.activity.id === trainingActivityId
+          ? { ...entry, date: scheduledDate }
+          : entry,
+      ),
+    };
+  }
 
   const existing =
     state.activityReschedules ??

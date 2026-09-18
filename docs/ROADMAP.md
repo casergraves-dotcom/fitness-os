@@ -786,8 +786,11 @@ preserving canonical training-plan identity.
   overlap displayed a warning, with an explicit override, Sep 18, 2026.
 - [x] Verify removing an accidental planned one-time activity leaves the
   recurring plan intact. Confirmed on mobile, Sep 18, 2026.
-- [ ] Verify removing an already-completed one-time activity also removes its
-  canonical completion from History and weekly progress.
+- [x] Verify removing an already-completed one-time activity also removes its
+  canonical completion from History and weekly progress. Confirmed on mobile,
+  Sep 18, 2026.
+- [ ] Verify moving an unfinished one-time activity to another date preserves
+  its identity, keeps the recurring plan unchanged, and re-evaluates conflicts.
 
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
