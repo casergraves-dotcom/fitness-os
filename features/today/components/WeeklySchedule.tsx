@@ -40,6 +40,7 @@ import type {
 } from "@/features/workout/logic/getAdaptiveWeeklyScheduleRecommendation";
 import {
   getTrainingWeekStart,
+  parseLocalCalendarDate,
 } from "@/lib/date/trainingWeek";
 
 import {
@@ -418,6 +419,7 @@ export default function WeeklySchedule({
   const [newActivityType, setNewActivityType] = useState<"Aerial" | "Walk" | "Mobility" | "Recovery">("Aerial");
   const [newActivityLabel, setNewActivityLabel] = useState("");
   const [newActivityCompleted, setNewActivityCompleted] = useState(false);
+  const [addConflictAcknowledged, setAddConflictAcknowledged] = useState(false);
   // ----------------------------------------------------------
   // Loading
   // ----------------------------------------------------------
@@ -526,6 +528,46 @@ export default function WeeklySchedule({
     groupOccurrencesByDate(
       outsideWeekOccurrences
     );
+
+  // Preview the same conflict rules used by Move. Include neighbouring weeks
+  // so adjacency warnings still work at a Sunday/Saturday boundary.
+  const addCandidateId = "pending-ad-hoc-activity";
+  const addDate = addingDate ? parseLocalCalendarDate(addingDate) : null;
+  const addWeekStart = addDate ? getTrainingWeekStart(addDate) : null;
+  const nearbyOccurrences = addWeekStart
+    ? [-7, 0, 7].flatMap((offset) =>
+        getResolvedWeeklyActivityOccurrences(
+          state,
+          formatLocalDate(addCalendarDays(addWeekStart, offset)),
+        ) ?? [],
+      )
+    : [];
+  const uniqueNearbyOccurrences = Array.from(
+    new Map(nearbyOccurrences.map((item) => [
+      `${item.activity.id}|${item.originalDate}|${item.date}`,
+      item,
+    ])).values(),
+  );
+  const addConflicts = addingDate && addDate
+    ? evaluateScheduleConflicts([
+        ...uniqueNearbyOccurrences.map((item) => ({ date: item.date, activity: item.activity })),
+        {
+          date: addingDate,
+          activity: {
+            id: addCandidateId,
+            type: newActivityType,
+            label: newActivityLabel.trim() || newActivityType,
+            optional: true,
+          },
+        },
+      ]).conflicts.filter((conflict) =>
+        conflict.first.activity.id === addCandidateId ||
+        conflict.second.activity.id === addCandidateId,
+      )
+    : [];
+  const otherActivitiesOnAddDate = uniqueNearbyOccurrences
+    .filter((item) => item.date === addingDate && item.activity.type !== "Rest")
+    .map((item) => item.activity.label);
 
 
   // ----------------------------------------------------------
@@ -1009,6 +1051,7 @@ export default function WeeklySchedule({
             setNewActivityType("Aerial");
             setNewActivityLabel("");
             setNewActivityCompleted(false);
+            setAddConflictAcknowledged(false);
           }}
           className="mt-2 text-sm font-medium text-blue-600 underline underline-offset-2"
         >
@@ -1138,12 +1181,16 @@ export default function WeeklySchedule({
               Date
               <input type="date" min={addingWeekRange && addingWeekRange.start > state.startDate ? addingWeekRange.start : state.startDate} max={addingWeekRange?.end} value={addingDate} onChange={(event) => {
                 setAddingDate(event.target.value);
+                setAddConflictAcknowledged(false);
                 if (event.target.value > todayDate) setNewActivityCompleted(false);
               }} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2" />
             </label>
             <label className="block text-sm font-medium text-slate-700">
               Activity type
-              <select value={newActivityType} onChange={(event) => setNewActivityType(event.target.value as typeof newActivityType)} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2">
+              <select value={newActivityType} onChange={(event) => {
+                setNewActivityType(event.target.value as typeof newActivityType);
+                setAddConflictAcknowledged(false);
+              }} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2">
                 <option value="Aerial">Aerial</option>
                 <option value="Walk">Walk</option>
                 <option value="Mobility">Mobility</option>
@@ -1152,8 +1199,28 @@ export default function WeeklySchedule({
             </label>
             <label className="block text-sm font-medium text-slate-700">
               Name
-              <input type="text" value={newActivityLabel} onChange={(event) => setNewActivityLabel(event.target.value)} placeholder={newActivityType === "Aerial" ? "e.g. Aerial Open Studio" : `e.g. ${newActivityType}`} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2" />
+              <input type="text" value={newActivityLabel} onChange={(event) => {
+                setNewActivityLabel(event.target.value);
+                setAddConflictAcknowledged(false);
+              }} placeholder={newActivityType === "Aerial" ? "e.g. Aerial Open Studio" : `e.g. ${newActivityType}`} className="mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2" />
             </label>
+            {otherActivitiesOnAddDate.length > 0 && (
+              <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+                Also scheduled: {otherActivitiesOnAddDate.join(", ")}.
+              </p>
+            )}
+            {addConflicts.length > 0 && (
+              <div className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-3 text-sm text-amber-900">
+                <p className="font-semibold">Training-load {addConflicts.some((conflict) => conflict.severity === "High") ? "warning" : "caution"}</p>
+                <ul className="mt-1 list-disc space-y-1 pl-5">
+                  {addConflicts.map((conflict, index) => <li key={`${conflict.kind}-${index}`}>{conflict.reason}</li>)}
+                </ul>
+                <label className="mt-3 flex items-start gap-2">
+                  <input type="checkbox" checked={addConflictAcknowledged} onChange={(event) => setAddConflictAcknowledged(event.target.checked)} />
+                  Add anyway
+                </label>
+              </div>
+            )}
             <label className="flex items-center gap-2 text-sm text-slate-700">
               <input type="checkbox" checked={newActivityCompleted} disabled={addingDate > todayDate} onChange={(event) => setNewActivityCompleted(event.target.checked)} />
               Already completed
@@ -1163,7 +1230,7 @@ export default function WeeklySchedule({
             <button type="button" onClick={() => setAddingDate(null)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold">Cancel</button>
             <button
               type="button"
-              disabled={!newActivityLabel.trim() || addingDate < state.startDate || !addingWeekRange || addingDate < addingWeekRange.start || addingDate > addingWeekRange.end}
+              disabled={!newActivityLabel.trim() || !addDate || addingDate < state.startDate || !addingWeekRange || addingDate < addingWeekRange.start || addingDate > addingWeekRange.end || (addConflicts.length > 0 && !addConflictAcknowledged)}
               onClick={() => {
                 onAddAdHocActivity(addingDate, newActivityType, newActivityLabel, newActivityCompleted);
                 setAddingDate(null);

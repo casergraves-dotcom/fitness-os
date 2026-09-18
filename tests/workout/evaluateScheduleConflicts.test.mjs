@@ -43,3 +43,25 @@ test("two hard sessions on one day create a high training-load warning", () => {
     conflict.kind === "SameDayHardStack" && conflict.severity === "High"
   ), true);
 });
+
+test("a one-time aerial session uses the same gym overlap rule", () => {
+  const candidate = occurrence("2026-09-19", "Aerial", "Aerial Open Studio");
+  const result = evaluateScheduleConflicts([
+    occurrence("2026-09-19", "Strength", "Gym B"),
+    occurrence("2026-09-19", "Walk", "Long Walk / Hike", 60),
+    candidate,
+  ]);
+  assert.equal(result.conflicts.some((conflict) =>
+    conflict.kind === "SameDayHardStack" && conflict.second === candidate
+  ), true);
+});
+
+test("a one-time aerial session checks adjacent-day strength load", () => {
+  const result = evaluateScheduleConflicts([
+    occurrence("2026-09-18", "Strength", "Gym B"),
+    occurrence("2026-09-19", "Aerial", "Aerial Open Studio"),
+  ]);
+  assert.equal(result.conflicts.some((conflict) =>
+    conflict.kind === "StrengthAerialAdjacency"
+  ), true);
+});
