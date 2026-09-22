@@ -5,6 +5,12 @@ export type CoachingFocus =
   | "Recovery"
   | "Enjoyment";
 
+export type CoachingTrainingEmphasis =
+  | "Balanced"
+  | "Strength"
+  | "Running"
+  | "Aerial";
+
 export type CoachingBalanceLevel =
   | "Lower"
   | "Standard"
@@ -22,6 +28,7 @@ export type CoachingCheckInPrompt =
 
 export interface CoachingPreferences {
   focus: CoachingFocus;
+  trainingEmphasis: CoachingTrainingEmphasis;
   adjustmentStyle: CoachingAdjustmentStyle;
   checkInPrompt: CoachingCheckInPrompt;
   modalityBalance: {
@@ -34,6 +41,7 @@ export interface CoachingPreferences {
 
 export const DEFAULT_COACHING_PREFERENCES: CoachingPreferences = {
   focus: "Balanced",
+  trainingEmphasis: "Balanced",
   adjustmentStyle: "Balanced",
   checkInPrompt: "Daily",
   modalityBalance: {
@@ -50,6 +58,7 @@ export function normalizeCoachingPreferences(value: unknown): CoachingPreference
   }
   const candidate = value as Partial<CoachingPreferences>;
   const focuses: CoachingFocus[] = ["Balanced", "Performance", "Consistency", "Recovery", "Enjoyment"];
+  const trainingEmphases: CoachingTrainingEmphasis[] = ["Balanced", "Strength", "Running", "Aerial"];
   const levels: CoachingBalanceLevel[] = ["Lower", "Standard", "Higher"];
   const adjustmentStyles: CoachingAdjustmentStyle[] = ["Conservative", "Balanced", "Assertive"];
   const checkInPrompts: CoachingCheckInPrompt[] = ["Daily", "TrainingDays", "Manual"];
@@ -57,6 +66,9 @@ export function normalizeCoachingPreferences(value: unknown): CoachingPreference
   return {
     focus: focuses.includes(candidate.focus as CoachingFocus)
       ? candidate.focus as CoachingFocus
+      : "Balanced",
+    trainingEmphasis: trainingEmphases.includes(candidate.trainingEmphasis as CoachingTrainingEmphasis)
+      ? candidate.trainingEmphasis as CoachingTrainingEmphasis
       : "Balanced",
     adjustmentStyle: adjustmentStyles.includes(candidate.adjustmentStyle as CoachingAdjustmentStyle)
       ? candidate.adjustmentStyle as CoachingAdjustmentStyle
@@ -106,5 +118,14 @@ export function getCoachingPreferencePriority(
           ? 1
           : 0;
 
-  return balance + focusBonus;
+  const emphasisBonus =
+    preferences.trainingEmphasis === "Strength" && area === "strength"
+      ? 2
+      : preferences.trainingEmphasis === "Running" && area === "running"
+        ? 2
+        : preferences.trainingEmphasis === "Aerial" && area === "activeHobbies"
+          ? 2
+          : 0;
+
+  return balance + focusBonus + emphasisBonus;
 }

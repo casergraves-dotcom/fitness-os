@@ -9,6 +9,7 @@ import type {
   CoachingCheckInPrompt,
   CoachingFocus,
   CoachingPreferences,
+  CoachingTrainingEmphasis,
 } from "../coachingPreferences";
 
 const FOCUS_OPTIONS: Array<{ value: CoachingFocus; label: string; description: string }> = [
@@ -17,6 +18,17 @@ const FOCUS_OPTIONS: Array<{ value: CoachingFocus; label: string; description: s
   { value: "Consistency", label: "Consistency", description: "Favor choices that are easiest to repeat reliably." },
   { value: "Recovery", label: "Recovery", description: "Favor the more conservative safe option when discretion is available." },
   { value: "Enjoyment", label: "Enjoyment", description: "Favor preferred activities when they fit the plan safely." },
+];
+
+const TRAINING_EMPHASIS_OPTIONS: Array<{
+  value: CoachingTrainingEmphasis;
+  label: string;
+  description: string;
+}> = [
+  { value: "Balanced", label: "Balanced", description: "Keep strength, running, and aerial participation balanced." },
+  { value: "Strength", label: "Strength", description: "Prefer strength when several equally safe choices are available." },
+  { value: "Running", label: "Running", description: "Prefer running development when several equally safe choices are available." },
+  { value: "Aerial", label: "Aerial", description: "Organize flexible training around aerial practice when choices are otherwise equally safe." },
 ];
 
 const BALANCE_OPTIONS: Array<{ value: CoachingBalanceLevel; label: string }> = [
@@ -50,6 +62,9 @@ export default function CoachingPreferencesForm() {
   const [draft, setDraft] = useState<CoachingPreferences>(preferences);
   const [saved, setSaved] = useState(false);
 
+  // The persisted preference hook hydrates asynchronously; refresh the edit
+  // draft when that external storage snapshot changes.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setDraft(preferences), [preferences]);
 
   if (!loaded) {
@@ -87,6 +102,26 @@ export default function CoachingPreferencesForm() {
             </span>
           </label>
         ))}
+      </div>
+
+      <div className="mt-6 border-t border-slate-200 pt-5">
+        <h3 className="font-semibold text-slate-900">Training emphasis</h3>
+        <p className="mt-1 text-sm text-slate-500">
+          This helps Guide rank equally safe training choices. It does not override recovery, fixed commitments, or your active body-composition goal.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {TRAINING_EMPHASIS_OPTIONS.map((option) => (
+            <label key={option.value} className={`cursor-pointer rounded-xl border p-4 ${draft.trainingEmphasis === option.value ? "border-blue-600 bg-blue-50" : "border-slate-200"}`}>
+              <span className="flex items-start gap-3">
+                <input type="radio" name="training-emphasis" value={option.value} checked={draft.trainingEmphasis === option.value} onChange={() => { setSaved(false); setDraft((current) => ({ ...current, trainingEmphasis: option.value })); }} className="mt-1 h-4 w-4" />
+                <span>
+                  <span className="block font-semibold text-slate-900">{option.label}</span>
+                  <span className="mt-1 block text-sm text-slate-500">{option.description}</span>
+                </span>
+              </span>
+            </label>
+          ))}
+        </div>
       </div>
 
       <div className="mt-6 border-t border-slate-200 pt-5">
@@ -149,7 +184,7 @@ export default function CoachingPreferencesForm() {
       </div>
 
       <div className="mt-6 flex items-center gap-3">
-        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, adjustmentStyle: draft.adjustmentStyle, checkInPrompt: draft.checkInPrompt, modalityBalance: draft.modalityBalance }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
+        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, trainingEmphasis: draft.trainingEmphasis, adjustmentStyle: draft.adjustmentStyle, checkInPrompt: draft.checkInPrompt, modalityBalance: draft.modalityBalance }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved</span>}
       </div>
     </section>

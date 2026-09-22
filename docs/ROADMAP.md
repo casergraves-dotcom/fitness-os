@@ -1778,6 +1778,17 @@ safe recommendation. Equal preference scores preserve the existing behavior.
 Focused preference-ranking coverage, all 27 project tests, TypeScript, and the
 production build passed.
 
+**Explicit training-emphasis checkpoint:** Coaching Preferences now separates
+Balanced, Strength, Running, and Aerial emphasis from the broader coaching
+style and modality-balance controls. Existing records migrate safely to
+Balanced. The emphasis adds weight only when Guide ranks otherwise-safe optional
+activities; it cannot override required training, fixed commitments, recovery,
+progression, or the active body-composition goal. When it changes a
+recommendation, Guide explains which emphasis influenced the choice rather than
+silently changing the ranking. Focused lint and the production build passed;
+live preference persistence and an emphasis-influenced recommendation remain to
+be verified in the UI.
+
 **Adjustment-style checkpoint:** Coaching Preferences now offers Conservative,
 Balanced, and Assertive adjustment styles for choosing how strongly Guide acts
 within an already-safe range. Existing records migrate to Balanced, and the UI

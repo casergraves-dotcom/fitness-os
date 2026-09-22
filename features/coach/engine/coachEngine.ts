@@ -38,16 +38,37 @@ function getPreferenceRankedOptionalActivities(
   preferences?: CoachPreferenceContext
 ) {
   if (!preferences || activities.length === 0 || activities.some((activity) => !activity.optional)) {
-    return activities;
+    return { activities, preferenceInfluenced: false };
   }
   const scored = activities.map((activity) => ({
     activity,
     score: getCoachingPreferencePriority(preferences, getPreferenceArea(activity)),
   }));
   const scores = scored.map((item) => item.score);
-  if (Math.max(...scores) === Math.min(...scores)) return activities;
+  if (Math.max(...scores) === Math.min(...scores)) {
+    return { activities, preferenceInfluenced: false };
+  }
   const best = Math.max(...scores);
-  return scored.filter((item) => item.score === best).map((item) => item.activity);
+  return {
+    activities: scored.filter((item) => item.score === best).map((item) => item.activity),
+    preferenceInfluenced: true,
+  };
+}
+
+function getPreferenceInfluenceMessage(preferences: CoachPreferenceContext) {
+  if (preferences.trainingEmphasis === "Aerial") {
+    return "Your Aerial emphasis prioritized this option among today's otherwise-safe optional activities.";
+  }
+
+  if (preferences.trainingEmphasis === "Strength") {
+    return "Your Strength emphasis prioritized this option among today's otherwise-safe optional activities.";
+  }
+
+  if (preferences.trainingEmphasis === "Running") {
+    return "Your Running emphasis prioritized this option among today's otherwise-safe optional activities.";
+  }
+
+  return "Your coaching preferences prioritized this option among today's otherwise-safe optional activities.";
 }
 
 
@@ -1100,6 +1121,10 @@ export function getCoachRecommendation(
       trainingContext
         .scheduledActionableCount;
 
+  const preferenceRanking = preferenceContext
+    ? getPreferenceRankedOptionalActivities(activities, preferenceContext)
+    : { activities, preferenceInfluenced: false };
+
   const recommendation:
     CoachRecommendation =
     allScheduledTrainingComplete
@@ -1112,15 +1137,23 @@ export function getCoachRecommendation(
         }
       : getDailyCoachRecommendation(
           ratings,
-          getPreferenceRankedOptionalActivities(activities, preferenceContext)
+          preferenceRanking.activities
         );
 
+  const explainedRecommendation =
+    preferenceContext && preferenceRanking.preferenceInfluenced
+      ? {
+          ...recommendation,
+          message: `${recommendation.message} ${getPreferenceInfluenceMessage(preferenceContext)}`,
+        }
+      : recommendation;
+
   if (!reviewContext && !patternContext && !lifestyleContext) {
-    return recommendation;
+    return explainedRecommendation;
   }
 
   return {
-    ...recommendation,
+    ...explainedRecommendation,
 
     observations: [
       ...(reviewContext
