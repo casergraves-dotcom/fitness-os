@@ -1786,8 +1786,10 @@ activities; it cannot override required training, fixed commitments, recovery,
 progression, or the active body-composition goal. When it changes a
 recommendation, Guide explains which emphasis influenced the choice rather than
 silently changing the ranking. Focused lint and the production build passed;
-live preference persistence and an emphasis-influenced recommendation remain to
-be verified in the UI.
+legacy-default and Aerial-ranking behavior passed focused regression coverage.
+The Aerial selection and persistence were verified in the UI; an
+emphasis-influenced Guide recommendation remains to be observed when the
+schedule presents multiple otherwise-safe optional choices.
 
 **Adjustment-style checkpoint:** Coaching Preferences now offers Conservative,
 Balanced, and Assertive adjustment styles for choosing how strongly Guide acts
