@@ -1838,7 +1838,7 @@ weekly fixed commitments. This must extend canonical workout templates and
 progression evidence rather than generating an opaque workout independently on
 each visit.
 
-- [ ] Define the canonical inputs and deterministic rules for building a stable,
+- [x] Define the canonical inputs and deterministic rules for building a stable,
   versioned training block.
 - [ ] Define reviewed volume and exercise-allocation differences for Balanced,
   Strength, Running, and Aerial emphasis.
@@ -1847,6 +1847,16 @@ each visit.
 - [ ] Require user review before applying a material template change.
 - [ ] Test recovery, missed-session, equipment, shortened-workout, and fixed-
   commitment interactions before enabling automatic recommendations.
+
+**Programming-profile contract checkpoint:** A pure, versioned programming
+profile now combines the canonical active body-composition goal with the saved
+training emphasis. It produces an explicit volume bias, protected movement
+roles, fatigue constraints, and human-readable rationale. The initial rules are
+deliberately conservative: fat loss protects strength while controlling volume,
+and running or aerial emphasis cannot blindly turn a performance goal into more
+strength volume. The profile does not yet rewrite or persist templates; that
+requires the reviewed allocation rules and user-approval workflow below. All
+108 project tests and the production build passed.
 
 ## 7.3 Exercise Guidance
 
