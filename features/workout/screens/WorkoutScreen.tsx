@@ -29,6 +29,7 @@ import { mobilityRoutines } from "@/features/mobility/mobilityLibrary";
 import { useMobilityPreferences } from "@/features/mobility/hooks/useMobilityPreferences";
 import { getSorenessMobilityRecommendation } from "@/features/mobility/getSorenessMobilityRecommendation";
 import { useMorningCheckIn } from "@/features/recovery";
+import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPreferences";
 
 import {
   useExerciseLibrary,
@@ -140,6 +141,24 @@ function formatNumber(
   );
 }
 
+function getTrainingEmphasisNote(
+  trainingEmphasis: "Balanced" | "Strength" | "Running" | "Aerial"
+) {
+  if (trainingEmphasis === "Strength") {
+    return "Strength emphasis currently helps Guide prioritize optional strength work. Goal-aware strength templates are a later programming step.";
+  }
+
+  if (trainingEmphasis === "Running") {
+    return "Running emphasis currently helps Guide organize optional training around your runs. Goal-aware strength templates are a later programming step.";
+  }
+
+  if (trainingEmphasis === "Aerial") {
+    return "Aerial emphasis currently helps Guide organize optional training and recovery around aerial practice. Goal-aware strength templates are a later programming step.";
+  }
+
+  return "Balanced emphasis currently keeps strength, running, aerial practice, and recovery in view when Guide ranks optional choices.";
+}
+
 // ============================================================
 // Workout Variant Helpers
 // ============================================================
@@ -201,6 +220,10 @@ function getVariantDescription(
 
 export default function WorkoutScreen() {
   const { state: trainingPlanState } = useTrainingPlanState();
+  const {
+    preferences: coachingPreferences,
+    loaded: coachingPreferencesLoaded,
+  } = useCoachingPreferences();
   const { favoriteRoutineIds, toggleFavorite } = useMobilityPreferences();
   const { ratings: morningCheckInRatings } = useMorningCheckIn();
   const sorenessMobilityRecommendation =
@@ -1431,6 +1454,17 @@ const exerciseVolume =
                 ? "Choose the version that fits today's situation."
                 : "Choose today's workout."}
             </p>
+
+            {!selectedWorkoutType && coachingPreferencesLoaded ? (
+              <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-sm leading-6 text-blue-900">
+                <span className="font-semibold">
+                  {coachingPreferences.trainingEmphasis} emphasis:
+                </span>{" "}
+                {getTrainingEmphasisNote(
+                  coachingPreferences.trainingEmphasis
+                )}
+              </p>
+            ) : null}
           </div>
 
           {!selectedWorkoutType ? (

@@ -1824,6 +1824,30 @@ discretionary focus, modality balance, adjustment style, and in-app check-in
 presentation without taking ownership from active goals, nutrition/activity
 targets, required training, progression rules, or recovery safeguards.
 
+**Workout-selection transparency checkpoint:** The Workout chooser now states
+how the saved training emphasis currently affects Guide and explicitly identifies
+goal-aware strength templates as a later programming step. This avoids implying
+that the present Gym A/B/C templates are already rebuilt from the selected
+emphasis. The production build passed.
+
+## 7.2A Goal-Aware Strength Programming — NEXT
+
+Guide should eventually adapt stable strength-program blocks to the user's
+active goal, training emphasis, equipment, performance history, recovery, and
+weekly fixed commitments. This must extend canonical workout templates and
+progression evidence rather than generating an opaque workout independently on
+each visit.
+
+- [ ] Define the canonical inputs and deterministic rules for building a stable,
+  versioned training block.
+- [ ] Define reviewed volume and exercise-allocation differences for Balanced,
+  Strength, Running, and Aerial emphasis.
+- [ ] Preserve exercise history and progression continuity when a block changes.
+- [ ] Explain what changed, why it changed, and when the next reassessment occurs.
+- [ ] Require user review before applying a material template change.
+- [ ] Test recovery, missed-session, equipment, shortened-workout, and fixed-
+  commitment interactions before enabling automatic recommendations.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by
