@@ -819,8 +819,10 @@ flow so unexpected or ad-hoc training can lead to a user-reviewed adjustment of
 the remaining week. Fully completed overlaps remain historical notes, and
 previous-week warnings cannot modify the current week. Focused lint and the
 production build passed. The fixed Lyra commitment was verified without an
-overflow/Move action on mobile; opening week review from an active overlap
-warning remains to be verified.
+overflow/Move action on mobile. A same-day Gym B plus ad-hoc Aerial warning was
+then verified to open week review, preserve the completed and fixed activities,
+and propose moving the flexible ad-hoc session to Wednesday to reduce the
+overlap.
 
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
