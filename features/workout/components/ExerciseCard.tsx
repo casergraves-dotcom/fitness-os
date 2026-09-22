@@ -83,6 +83,11 @@ interface ExerciseCardProps {
   // Undefined means the exercise has never been logged before.
   previousExercise?: Exercise;
 
+  // Most recent complete normal-volume performance. Reduced sessions can use
+  // this as supporting progression evidence without treating omitted sets as
+  // failures.
+  recentFullExercise?: Exercise;
+
   expanded: boolean;
 
   onToggleExpanded: () => void;
@@ -163,6 +168,7 @@ export default function ExerciseCard({
   availableEquipment,
   availableCapabilities,
   previousExercise,
+  recentFullExercise,
   expanded,
   onToggleExpanded,
   onToggleSet,
@@ -386,11 +392,13 @@ export default function ExerciseCard({
       () =>
         getExerciseTarget(
           exerciseDefinition,
-          previousExercise
+          previousExercise,
+          { recentFullExercise }
         ),
       [
         exerciseDefinition,
         previousExercise,
+        recentFullExercise,
       ]
     );
 
@@ -462,6 +470,9 @@ export default function ExerciseCard({
 
       case "repeat":
         return "Repeat target";
+
+      case "confirm-full-session":
+        return "Hold for full session";
 
       case "review-load":
         return "Review load";

@@ -19,6 +19,7 @@ export type ExerciseTargetAction =
   | "reduce-assistance"
   | "increase-assistance"
   | "build-duration"
+  | "confirm-full-session"
   | "next-variation"
   | "repeat"
   | "review-load"
@@ -43,6 +44,13 @@ export interface ExerciseTarget {
   // Permanent Exercise Library ID of the harder
   // variation recommended after mastery.
   nextVariationId?: string;
+}
+
+export interface ExerciseProgressionEvidence {
+  // Most recent earlier performance completed with the exercise's normal
+  // working-set prescription. This lets a reduced session add evidence without
+  // erasing an already demonstrated full-session result.
+  recentFullExercise?: Exercise;
 }
 
 // ============================================================
@@ -129,7 +137,8 @@ function isConsistentlyBelowRange(
 
 export function getExerciseTarget(
   definition: ExerciseDefinition | undefined,
-  previousExercise: Exercise | undefined
+  previousExercise: Exercise | undefined,
+  evidence?: ExerciseProgressionEvidence
 ): ExerciseTarget {
   // ----------------------------------------------------------
   // Missing Programming
@@ -373,6 +382,85 @@ export function getExerciseTarget(
     highestReportedRpe !== undefined &&
     highestReportedRpe >=
       RPE_HIGH_EFFORT_MIN;
+
+  // A reduced prescription can be completed exactly as assigned without
+  // proving that the normal working-set prescription is ready to progress.
+  // Keep workout completion and progression evidence separate: omitted sets
+  // are neither failures nor zero-rep sets, but top-of-range performance must
+  // be confirmed across the exercise's normal set count before difficulty is
+  // increased. Older sessions remain compatible because the exercise-library
+  // set count is the canonical full-session fallback.
+  const normalSetCount = Math.max(
+    1,
+    definition.sets ?? prescribedSetCount
+  );
+
+  const usedReducedSetPrescription =
+    prescribedSetCount < normalSetCount;
+
+  const recentFullCompletedSets = evidence?.recentFullExercise
+    ? getCompletedSets(evidence.recentFullExercise)
+    : [];
+
+  const recentFullWeight = recentFullCompletedSets.length > 0
+    ? getRepresentativeWorkingWeight(recentFullCompletedSets)
+    : undefined;
+
+  const recentFullHighestRpe = recentFullCompletedSets.reduce<number | undefined>(
+    (highest, set) => {
+      if (!isValidRpe(set.rpe)) {
+        return highest;
+      }
+
+      return highest === undefined
+        ? set.rpe
+        : Math.max(highest, set.rpe);
+    },
+    undefined
+  );
+
+  const recentFullSessionSupportsProgression =
+    recentFullCompletedSets.length >= normalSetCount &&
+    recentFullCompletedSets.every((set) => set.reps >= repMax) &&
+    recentFullWeight === previousWeight &&
+    !(
+      recentFullHighestRpe !== undefined &&
+      recentFullHighestRpe >= RPE_HIGH_EFFORT_MIN
+    );
+
+  if (
+    reachedTopOfRange &&
+    usedReducedSetPrescription &&
+    !reachedTopWithHighEffort &&
+    !recentFullSessionSupportsProgression
+  ) {
+    let label = getBaseTargetLabel();
+
+    if (usesWeight && usesDuration) {
+      label = `${previousWeight} lb × ${repMin}–${repMax} sec`;
+    } else if (usesWeight && usesReps) {
+      label = `${previousWeight} lb × ${repMin}–${repMax}`;
+    } else if (usesBand && usesReps) {
+      label = previousWeight > 0
+        ? `${previousWeight} lb band × ${repMin}–${repMax}`
+        : `${repMin}–${repMax} reps`;
+    } else if (usesAssistance && usesReps) {
+      label = `${previousWeight} lb assist × ${repMin}–${repMax}`;
+    }
+
+    return {
+      action: "confirm-full-session",
+      label,
+      message:
+        `Strong reduced session: all ${prescribedSetCount} prescribed working sets reached the top of the range. Hold the current target and confirm it across the normal ${normalSetCount}-set prescription before increasing difficulty.`,
+      targetWeight:
+        usesWeight || usesBand || usesAssistance
+          ? previousWeight
+          : undefined,
+      repMin,
+      repMax,
+    };
+  }
 
   const belowTarget =
     isConsistentlyBelowRange(

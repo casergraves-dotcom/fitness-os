@@ -164,7 +164,8 @@ function findExerciseDefinition(
 
 function getStartingWeight(
   definition: ExerciseDefinition | undefined,
-  previousExercise: Exercise | undefined
+  previousExercise: Exercise | undefined,
+  recentFullExercise?: Exercise
 ) {
   // No previous workout means we don't have a load
   // recommendation yet.
@@ -177,7 +178,8 @@ function getStartingWeight(
   const target =
     getExerciseTarget(
       definition,
-      previousExercise
+      previousExercise,
+      { recentFullExercise }
     );
 
   // Load and assistance progression both return the
@@ -581,6 +583,47 @@ export function useWorkoutSession() {
     return undefined;
   }
 
+  function getRecentFullExercise(
+    exerciseDefinitionId: string | undefined,
+    exerciseName: string,
+    normalSetCount: number | undefined
+  ): Exercise | undefined {
+    if (normalSetCount === undefined) {
+      return undefined;
+    }
+
+    for (const workout of workoutHistory) {
+      const exercise = workout.exercises.find((item) => {
+        if (exerciseDefinitionId && item.exerciseDefinitionId) {
+          return item.exerciseDefinitionId === exerciseDefinitionId;
+        }
+
+        return item.name.toLowerCase() === exerciseName.toLowerCase();
+      });
+
+      if (!exercise) {
+        continue;
+      }
+
+      const prescribedSetCount = Math.max(
+        1,
+        exercise.prescribedSetCount ?? exercise.sets.length
+      );
+      const completedSetCount = exercise.sets.filter(
+        (set) => set.completed
+      ).length;
+
+      if (
+        prescribedSetCount >= normalSetCount &&
+        completedSetCount >= prescribedSetCount
+      ) {
+        return exercise;
+      }
+    }
+
+    return undefined;
+  }
+
   // ----------------------------------------------------------
   // Workout Lifecycle - Start Workout
   // ----------------------------------------------------------
@@ -768,7 +811,12 @@ export function useWorkoutSession() {
           const startingWeight =
             getStartingWeight(
               definition,
-              previousExercise
+              previousExercise,
+              getRecentFullExercise(
+                exercise.exerciseDefinitionId,
+                exercise.name,
+                definition?.sets
+              )
             );
 
           const normalSetCount =
@@ -1434,7 +1482,12 @@ function updateSet(
         const startingWeight =
           getStartingWeight(
             definition,
-            previousExercise
+            previousExercise,
+            getRecentFullExercise(
+              exerciseDefinitionId,
+              exerciseName,
+              definition?.sets
+            )
           );
 
         // ----------------------------------------------
@@ -1620,7 +1673,12 @@ function updateSet(
       const startingWeight =
         getStartingWeight(
           replacementDefinition,
-          previousExercise
+          previousExercise,
+          getRecentFullExercise(
+            replacementDefinition.id,
+            replacementDefinition.name,
+            replacementDefinition.sets
+          )
         );
 
       const sourceExercise =
@@ -2176,5 +2234,6 @@ function dismissFinishedWorkout() {
     removedExercise,
 
     getPreviousExercise,
+    getRecentFullExercise,
   };
 }

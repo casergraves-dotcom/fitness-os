@@ -264,6 +264,7 @@ export default function WorkoutScreen() {
     removedExercise,
 
     getPreviousExercise,
+    getRecentFullExercise,
   } = useWorkoutSession();
 
   const equipmentPreferenceDate =
@@ -632,7 +633,14 @@ startWorkout(
           const target =
             getExerciseTarget(
               definition,
-              exercise
+              exercise,
+              {
+                recentFullExercise: getRecentFullExercise(
+                  exercise.exerciseDefinitionId,
+                  exercise.name,
+                  definition?.sets
+                ),
+              }
             );
 
           return {
@@ -1714,6 +1722,16 @@ const exerciseVolume =
               previousExercise={getPreviousExercise(
                 exercise.exerciseDefinitionId,
                 exercise.name
+              )}
+              recentFullExercise={getRecentFullExercise(
+                exercise.exerciseDefinitionId,
+                exercise.name,
+                exerciseLibrary.find(
+                  (definition) =>
+                    definition.id === exercise.exerciseDefinitionId ||
+                    (!exercise.exerciseDefinitionId &&
+                      definition.name.toLowerCase() === exercise.name.toLowerCase())
+                )?.sets
               )}
               expanded={
                 expandedExerciseIds.includes(

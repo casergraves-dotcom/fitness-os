@@ -57,6 +57,55 @@ test("top-of-range working sets increase the representative load", () => {
   assert.equal(target.targetWeight, 150);
 });
 
+test("top-of-range reduced prescription holds until a full session confirms progression", () => {
+  const exercise = previousExercise([[145, 12], [145, 12]]);
+  exercise.prescribedSetCount = 2;
+
+  const target = getExerciseTarget(definition, exercise);
+
+  assert.equal(target.action, "confirm-full-session");
+  assert.equal(target.targetWeight, 145);
+  assert.equal(target.label, "145 lb × 8–12");
+  assert.match(target.message, /Strong reduced session/i);
+  assert.match(target.message, /normal 3-set prescription/i);
+});
+
+test("reduced prescription remains complete evidence for building reps at the same load", () => {
+  const exercise = previousExercise([[145, 12], [145, 10]]);
+  exercise.prescribedSetCount = 2;
+
+  const target = getExerciseTarget(definition, exercise);
+
+  assert.equal(target.action, "build-reps");
+  assert.equal(target.targetWeight, 145);
+});
+
+test("reduced top-range session can progress when a recent full session proved the same target", () => {
+  const reducedExercise = previousExercise([[145, 12], [145, 12]]);
+  reducedExercise.prescribedSetCount = 2;
+  const recentFullExercise = previousExercise([[145, 12], [145, 12], [145, 12]]);
+
+  const target = getExerciseTarget(definition, reducedExercise, {
+    recentFullExercise,
+  });
+
+  assert.equal(target.action, "increase-load");
+  assert.equal(target.targetWeight, 150);
+});
+
+test("full-session evidence at a different load does not progress a reduced session", () => {
+  const reducedExercise = previousExercise([[150, 12], [150, 12]]);
+  reducedExercise.prescribedSetCount = 2;
+  const recentFullExercise = previousExercise([[145, 12], [145, 12], [145, 12]]);
+
+  const target = getExerciseTarget(definition, reducedExercise, {
+    recentFullExercise,
+  });
+
+  assert.equal(target.action, "confirm-full-session");
+  assert.equal(target.targetWeight, 150);
+});
+
 test("incomplete exercises retain the representative completed load", () => {
   const target = getExerciseTarget(definition, previousExercise([[115, 12], [145, 10], [145, 0, false]]));
   assert.equal(target.action, "insufficient-data");

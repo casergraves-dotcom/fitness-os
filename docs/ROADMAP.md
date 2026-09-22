@@ -640,6 +640,16 @@ target without rewriting the historical sets. Same-load, mixed-load,
 top-of-range, incomplete, and ramp-up cases passed automated verification and
 the Chest Press case passed workout QA.
 
+**Reduced-session evidence checkpoint:** Workout completion and progression
+evidence are now evaluated separately. Completing every prescribed set in a
+shortened/reduced session still counts as complete, while reaching the top of
+the range across fewer than the exercise's normal working sets holds the
+current target with an explicit "Hold for full session" explanation. A recent
+full session can still support progression when it proved the same load across
+the normal set count; evidence at another load does not. Full-session,
+reduced-session, incomplete, high-effort, mixed-load, and ramp-up behavior is
+covered by focused automated tests, and the production build passed.
+
 ## 3.2 Weekly Training Decisions — COMPLETE
 
 - [x] Use required adherence and minimum strength-session counts to advance,
