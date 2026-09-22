@@ -1969,6 +1969,15 @@ canonical schedule with all move and adjustment controls intact, and Hide Full
 Week returns to the compact dashboard state. Both states, schedule interactions,
 all 29 project tests, TypeScript, and the production build passed.
 
+**Weekly-schedule action-density checkpoint:** Expanded week rows now keep date,
+activity, and status prominent while placing Mark Complete, Move, and Remove in
+one accessible activity overflow menu. The repeated Add Activity link moved to a
+compact day-header control without changing the canonical one-time activity or
+conflict-review flow. Identical add-activity conflict explanations are
+deduplicated so the coach does not repeat the same warning. The production build
+passed, and the compact controls, menu, add flow, and deduplicated warning were
+verified in the responsive schedule UI.
+
 **Weekly-progress disclosure checkpoint:** Today now derives a compact This Week
 summary from the same canonical weekly-status logic used by the detailed card.
 View Progress opens the unchanged training, nutrition, and activity adherence

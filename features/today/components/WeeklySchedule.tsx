@@ -5,7 +5,14 @@ import {
 import {
   Card,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ModalBody, ModalFooter, ModalHeader, ModalShell } from "@/components/ui/ModalShell";
+import { MoreHorizontal } from "lucide-react";
 
 import type {
   TrainingActivityCompletion,
@@ -283,6 +290,11 @@ function ActivityRow({
     occurrence.placementSource !==
       "FixedAerialCommitment";
 
+  const hasSecondaryActions =
+    canMarkComplete ||
+    (!completed && canMove) ||
+    occurrence.placementSource === "AdHoc";
+
   return (
     <div className="flex items-start justify-between gap-4 py-2">
       <div className="min-w-0">
@@ -318,7 +330,7 @@ function ActivityRow({
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-right">
+      <div className="flex shrink-0 items-center justify-end gap-2 text-right">
         <span
           className={
             completed
@@ -331,38 +343,35 @@ function ActivityRow({
             : "Planned"}
         </span>
 
-        {canMarkComplete && (
-          <button
-            type="button"
-            onClick={() => onMarkComplete(occurrence)}
-            className="text-sm font-medium text-blue-600 underline underline-offset-2"
-          >
-            Mark Complete
-          </button>
-        )}
-
-        {!completed && canMove && (
-          <button
-            type="button"
-            onClick={() =>
-              onMove(
-                occurrence
-              )
-            }
-            className="text-sm font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700"
-          >
-            Move
-          </button>
-        )}
-
-        {occurrence.placementSource === "AdHoc" && (
-          <button
-            type="button"
-            onClick={() => onRemoveAdHoc(occurrence)}
-            className="text-sm font-medium text-rose-700 underline underline-offset-2"
-          >
-            Remove
-          </button>
+        {hasSecondaryActions && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label={`Actions for ${occurrence.activity.label}`}
+              className="flex size-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            >
+              <MoreHorizontal aria-hidden="true" size={20} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              {canMarkComplete && (
+                <DropdownMenuItem onClick={() => onMarkComplete(occurrence)}>
+                  Mark complete
+                </DropdownMenuItem>
+              )}
+              {!completed && canMove && (
+                <DropdownMenuItem onClick={() => onMove(occurrence)}>
+                  Move activity
+                </DropdownMenuItem>
+              )}
+              {occurrence.placementSource === "AdHoc" && (
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => onRemoveAdHoc(occurrence)}
+                >
+                  Remove activity
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
       </div>
     </div>
@@ -565,7 +574,7 @@ export default function WeeklySchedule({
       item,
     ])).values(),
   );
-  const addConflicts = addingDate && addDate
+  const rawAddConflicts = addingDate && addDate
     ? evaluateScheduleConflicts([
         ...uniqueNearbyOccurrences.map((item) => ({ date: item.date, activity: item.activity })),
         {
@@ -582,6 +591,14 @@ export default function WeeklySchedule({
         conflict.second.activity.id === addCandidateId,
       )
     : [];
+  const addConflicts = Array.from(
+    new Map(
+      rawAddConflicts.map((conflict) => [
+        `${conflict.kind}|${conflict.severity}|${conflict.reason}`,
+        conflict,
+      ]),
+    ).values(),
+  );
   const otherActivitiesOnAddDate = uniqueNearbyOccurrences
     .filter((item) => item.date === addingDate && item.activity.type !== "Rest")
     .map((item) => item.activity.label);
@@ -1003,11 +1020,31 @@ export default function WeeklySchedule({
         }
         className="rounded-xl bg-slate-50 px-4 py-3"
       >
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-          {formatDisplayDate(
-            group.date
-          )}
-        </p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            {formatDisplayDate(
+              group.date
+            )}
+          </p>
+
+          <button
+            type="button"
+            onClick={() => {
+              setAddingDate(group.date);
+              setAddingWeekRange(historical
+                ? { start: previousWeekStartDate, end: previousWeekEndDate }
+                : { start: weekStartDate, end: weekEndDate });
+              setNewActivityType("Aerial");
+              setNewActivityLabel("");
+              setNewActivityCompleted(false);
+              setAddConflictAcknowledged(false);
+            }}
+            aria-label={`Add activity on ${formatDisplayDate(group.date)}`}
+            className="-mr-2 flex h-9 items-center rounded-lg px-2 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+          >
+            + Add
+          </button>
+        </div>
 
         {isRestDay && (
           <p className="mt-2 font-semibold text-slate-900">
@@ -1058,23 +1095,6 @@ export default function WeeklySchedule({
             </p>
           )}
         </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setAddingDate(group.date);
-            setAddingWeekRange(historical
-              ? { start: previousWeekStartDate, end: previousWeekEndDate }
-              : { start: weekStartDate, end: weekEndDate });
-            setNewActivityType("Aerial");
-            setNewActivityLabel("");
-            setNewActivityCompleted(false);
-            setAddConflictAcknowledged(false);
-          }}
-          className="mt-2 text-sm font-medium text-blue-600 underline underline-offset-2"
-        >
-          + Add Activity
-        </button>
 
         {sameDayOverlap && (
           <p className={`mt-3 rounded-lg border px-3 py-2 text-sm ${sameDayOverlap.severity === "High" ? "border-rose-200 bg-rose-50 text-rose-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
