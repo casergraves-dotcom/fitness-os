@@ -1840,7 +1840,7 @@ each visit.
 
 - [x] Define the canonical inputs and deterministic rules for building a stable,
   versioned training block.
-- [ ] Define reviewed volume and exercise-allocation differences for Balanced,
+- [x] Define reviewed volume and exercise-allocation differences for Balanced,
   Strength, Running, and Aerial emphasis.
 - [ ] Preserve exercise history and progression continuity when a block changes.
 - [ ] Explain what changed, why it changed, and when the next reassessment occurs.
@@ -1854,9 +1854,18 @@ training emphasis. It produces an explicit volume bias, protected movement
 roles, fatigue constraints, and human-readable rationale. The initial rules are
 deliberately conservative: fat loss protects strength while controlling volume,
 and running or aerial emphasis cannot blindly turn a performance goal into more
-strength volume. The profile does not yet rewrite or persist templates; that
-requires the reviewed allocation rules and user-approval workflow below. All
-108 project tests and the production build passed.
+strength volume. The profile does not rewrite or persist templates. All 108
+project tests and the production build passed.
+
+**Programming-allocation rules checkpoint:** The versioned profile now defines
+explicit priority movement roles, roles whose volume increases require extra
+care, and strict per-exercise set-change limits. Fat-loss conservation can
+reduce at most one set from an eligible exercise; only a Build profile can add
+one set. Running constrains added squat/hinge volume, while Aerial identifies
+pulling, rear-shoulder, and core support without permitting added pulling or
+shoulder volume to ignore aerial fatigue. These are preview inputs only and do
+not yet mutate a saved template. All 108 project tests and the production build
+passed.
 
 ## 7.3 Exercise Guidance
 

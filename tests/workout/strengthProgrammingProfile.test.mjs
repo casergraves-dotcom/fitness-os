@@ -14,6 +14,8 @@ test("fat-loss programming conserves recoverable strength volume", () => {
 
   assert.equal(profile.version, STRENGTH_PROGRAMMING_PROFILE_VERSION);
   assert.equal(profile.volumeBias, "Conserve");
+  assert.equal(profile.maximumSetIncreasePerExercise, 0);
+  assert.equal(profile.maximumSetReductionPerExercise, 1);
   assert.ok(profile.protectedMovementRoles.includes("Squat"));
   assert.ok(profile.protectedMovementRoles.includes("HorizontalPull"));
 });
@@ -25,6 +27,7 @@ test("strength emphasis can restore standard volume during fat loss without forc
   });
 
   assert.equal(profile.volumeBias, "Standard");
+  assert.equal(profile.maximumSetIncreasePerExercise, 0);
 });
 
 test("aerial emphasis constrains pulling fatigue even for a performance goal", () => {
@@ -34,6 +37,8 @@ test("aerial emphasis constrains pulling fatigue even for a performance goal", (
   });
 
   assert.equal(profile.volumeBias, "Standard");
+  assert.ok(profile.priorityMovementRoles.includes("CoreHipFlexion"));
+  assert.ok(profile.constrainedIncreaseRoles.includes("VerticalPull"));
   assert.ok(
     profile.fatigueConstraints.some((constraint) =>
       constraint.includes("pulling, grip, or shoulder")
@@ -48,6 +53,8 @@ test("running emphasis prevents performance goals from blindly increasing streng
   });
 
   assert.equal(profile.volumeBias, "Standard");
+  assert.ok(profile.priorityMovementRoles.includes("CoreStability"));
+  assert.ok(profile.constrainedIncreaseRoles.includes("Squat"));
   assert.ok(
     profile.fatigueConstraints.some((constraint) =>
       constraint.includes("key running sessions")
@@ -62,4 +69,7 @@ test("performance plus strength emphasis produces a build bias", () => {
   });
 
   assert.equal(profile.volumeBias, "Build");
+  assert.equal(profile.maximumSetIncreasePerExercise, 1);
+  assert.equal(profile.maximumSetReductionPerExercise, 0);
+  assert.ok(profile.priorityMovementRoles.includes("HipHinge"));
 });
