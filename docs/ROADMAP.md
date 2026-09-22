@@ -811,6 +811,15 @@ preserving canonical training-plan identity.
 - [ ] Verify moving an unfinished one-time activity to another date preserves
   its identity, keeps the recurring plan unchanged, and re-evaluates conflicts.
 
+**Fixed-anchor and week-review checkpoint:** Fixed aerial commitments are now
+protected consistently in both automatic scheduling and the expanded-week UI;
+the ordinary Move action is no longer offered for those occurrences. Active
+same-day overlap warnings link directly to the canonical adaptive week-review
+flow so unexpected or ad-hoc training can lead to a user-reviewed adjustment of
+the remaining week. Fully completed overlaps remain historical notes, and
+previous-week warnings cannot modify the current week. Focused lint and the
+production build passed; mobile interaction verification remains open.
+
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
 calendar.

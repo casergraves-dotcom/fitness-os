@@ -850,6 +850,13 @@ export default function WeeklySchedule({
     setReviewMessage(null);
   }
 
+  function openWeekAdjustment() {
+    setAdjustingWeek(true);
+    setUnavailableDates([]);
+    setRecommendation(null);
+    setReviewMessage(null);
+  }
+
 
   function findRecommendation() {
     if (!state) {
@@ -1077,7 +1084,11 @@ export default function WeeklySchedule({
                   occurrence.activity.type !== "Run" &&
                   occurrence.activity.type !== "Rest"
                 }
-                canMove={!historical && !isCompleted(occurrence)}
+                canMove={
+                  !historical &&
+                  !isCompleted(occurrence) &&
+                  occurrence.placementSource !== "FixedAerialCommitment"
+                }
                 onMarkComplete={setConfirmingCompletion}
                 onRemoveAdHoc={setConfirmingRemoval}
                 onMove={
@@ -1097,10 +1108,21 @@ export default function WeeklySchedule({
         </div>
 
         {sameDayOverlap && (
-          <p className={`mt-3 rounded-lg border px-3 py-2 text-sm ${sameDayOverlap.severity === "High" ? "border-rose-200 bg-rose-50 text-rose-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
-            <span className="font-semibold">Training-load {sameDayOverlap.severity === "High" ? "warning" : "caution"}: </span>
-            {sameDayOverlap.reason} {overlapAction}
-          </p>
+          <div className={`mt-3 rounded-lg border px-3 py-2 text-sm ${sameDayOverlap.severity === "High" ? "border-rose-200 bg-rose-50 text-rose-900" : "border-amber-200 bg-amber-50 text-amber-900"}`}>
+            <p>
+              <span className="font-semibold">Training-load {sameDayOverlap.severity === "High" ? "warning" : "caution"}: </span>
+              {sameDayOverlap.reason} {overlapAction}
+            </p>
+            {!historical && completedOverlapCount < 2 && (
+              <button
+                type="button"
+                onClick={openWeekAdjustment}
+                className="mt-2 font-semibold underline underline-offset-2"
+              >
+                Review the rest of this week
+              </button>
+            )}
+          </div>
         )}
       </div>
     );
@@ -1120,15 +1142,7 @@ export default function WeeklySchedule({
 
         <button
           type="button"
-          onClick={() => {
-            setAdjustingWeek(
-              true
-            );
-
-            setRecommendation(
-              null
-            );
-          }}
+          onClick={openWeekAdjustment}
           className="text-sm font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700"
         >
           Adjust week
