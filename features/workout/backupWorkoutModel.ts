@@ -164,33 +164,38 @@ StrengthWorkoutVariant[] = [
       {
         exerciseDefinitionId: "leg-press",
         movementRole: "Squat",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "chest-press-machine",
         movementRole: "HorizontalPush",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "seated-row",
         movementRole: "HorizontalPull",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "leg-curl",
         movementRole: "KneeFlexion",
         sets: 2,
+        priority: "Secondary",
       },
       {
         exerciseDefinitionId: "cable-woodchop",
         movementRole: "CoreRotation",
         sets: 2,
+        priority: "Secondary",
       },
     ],
     durationMin: 25,
     durationMax: 35,
     note:
-      "Reduced-volume Gym A that keeps every required movement role.",
+      "Time-constrained Gym A that preserves full working sets for primary movements, reduces secondary required work, and omits accessories.",
   },
 
   // ----------------------------------------------------------
@@ -279,28 +284,32 @@ StrengthWorkoutVariant[] = [
       {
         exerciseDefinitionId: "hack-squat-pendulum-squat",
         movementRole: "Squat",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "lat-pulldown",
         movementRole: "VerticalPull",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "incline-chest-press-machine",
         movementRole: "HorizontalPush",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "leg-curl",
         movementRole: "KneeFlexion",
         sets: 2,
+        priority: "Secondary",
       },
     ],
     durationMin: 25,
     durationMax: 35,
     note:
-      "Reduced-volume Gym B that prioritizes all four required movement roles.",
+      "Time-constrained Gym B that preserves full working sets for primary movements, reduces secondary hamstring work, and omits accessories.",
   },
 
   // ----------------------------------------------------------
@@ -395,35 +404,40 @@ StrengthWorkoutVariant[] = [
       {
         exerciseDefinitionId: "leg-press",
         movementRole: "SquatGlute",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
         note:
           "Use the programmed high-foot setup for additional glute/posterior-chain emphasis.",
       },
       {
         exerciseDefinitionId: "dumbbell-rdl",
         movementRole: "HipHinge",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "assisted-pull-up",
         movementRole: "VerticalPull",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "chest-press-machine",
         movementRole: "HorizontalPush",
-        sets: 2,
+        sets: 3,
+        priority: "Primary",
       },
       {
         exerciseDefinitionId: "ab-crunch-machine",
         movementRole: "CoreFlexion",
         sets: 2,
+        priority: "Secondary",
       },
     ],
     durationMin: 25,
     durationMax: 35,
     note:
-      "Reduced-volume Gym C that keeps every required movement role.",
+      "Time-constrained Gym C that preserves full working sets for primary movements, reduces secondary core work, and omits accessories.",
   },
 
   // ----------------------------------------------------------

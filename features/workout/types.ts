@@ -177,6 +177,9 @@ export interface StrengthWorkoutVariantExercise {
 
   sets: number;
 
+  // Explicit shortening priority; exercise order is not treated as priority.
+  priority?: "Primary" | "Secondary" | "Accessory";
+
   optional?: boolean;
 
   note?: string;

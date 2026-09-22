@@ -311,8 +311,17 @@ should not automatically mean missing training.
 
 **Completed outcome:** Gym A, Gym B, and Gym C now each have structured Full
 Gym, Short Gym, and Home pathways. Short Gym variants preserve required movement
-roles with reduced volume, while Home variants use bands/bodyweight/mat work and
-explicitly account for setup requirements such as a high anchor.
+roles while omitting accessory work first, preserving full working sets for
+explicit primary movements, and reducing only secondary required work. Home
+variants use bands/bodyweight/mat work and explicitly account for setup
+requirements such as a high anchor.
+
+**Time-constrained prioritization checkpoint:** Short Gym prescriptions now use
+explicit Primary and Secondary exercise priorities instead of assuming exercise
+order communicates importance. Primary squat/push/pull/hinge patterns retain
+their normal three working sets, secondary required core or knee-flexion work is
+reduced to two sets, and accessories remain omitted. Focused prescription tests
+and the production build passed.
 
 ## 2.2 Today Substitution Flow — COMPLETE
 
