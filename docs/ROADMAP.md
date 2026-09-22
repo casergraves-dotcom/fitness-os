@@ -818,7 +818,9 @@ same-day overlap warnings link directly to the canonical adaptive week-review
 flow so unexpected or ad-hoc training can lead to a user-reviewed adjustment of
 the remaining week. Fully completed overlaps remain historical notes, and
 previous-week warnings cannot modify the current week. Focused lint and the
-production build passed; mobile interaction verification remains open.
+production build passed. The fixed Lyra commitment was verified without an
+overflow/Move action on mobile; opening week review from an active overlap
+warning remains to be verified.
 
 **Milestone: COMPLETE:** Fitness OS adapts training load, running progression,
 recovery, and weekly scheduling rather than merely moving through a fixed
