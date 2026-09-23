@@ -1890,8 +1890,9 @@ movement priorities, and fatigue safeguards. It explicitly states that Gym
 A/B/C remain unchanged and that future proposals require review. Accounts
 without an active goal receive a direct setup explanation rather than an
 invented programming profile.
-Focused lint and the production build passed; mobile presentation remains to be
-verified.
+Focused lint and the production build passed. The rendered settings view was
+verified with Fat Loss + Aerial: the volume direction, aerial-support priorities,
+fatigue safeguard, and unchanged-template boundary all displayed correctly.
 
 ## 7.3 Exercise Guidance
 
