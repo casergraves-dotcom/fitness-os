@@ -1903,6 +1903,14 @@ assessment returns Ready, No Change, or Insufficient Evidence with an
 explanation. The evaluator remains disconnected from template saving until its
 review UI is complete. All 119 project tests and the production build passed.
 
+**Read-only template assessment checkpoint:** Edit Workouts now evaluates the
+selected Gym A/B/C template against the active programming profile and canonical
+completed full-session history. It shows No Change, Collecting Evidence, or
+Ready for Review with the reason and evidence count. Any ready change is shown
+as a before/after set preview, but applying it remains disabled until the final
+approval and persistence flow is implemented. Focused lint and the production
+build passed; tab-specific rendering remains to be verified in the UI.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by

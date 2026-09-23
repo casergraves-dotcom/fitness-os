@@ -23,7 +23,9 @@ import AddExercise from "../components/AddExercise";
 import {
   useWorkoutTemplates,
 } from "../hooks/useWorkoutTemplates";
+import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
 import { getStrengthProgrammingProfile } from "../strengthProgrammingProfile";
+import { getStrengthProgrammingRecommendation } from "../logic/getStrengthProgrammingRecommendation";
 
 import type {
     StrengthWorkoutType,
@@ -58,6 +60,10 @@ export default function WorkoutTemplatesScreen() {
     currentGoal,
     loaded: goalsLoaded,
   } = useBodyCompositionGoals();
+  const {
+    history: workoutHistory,
+    loaded: workoutHistoryLoaded,
+  } = useWorkoutHistory();
   // ----------------------------------------------------------
   // Template Data
   // ----------------------------------------------------------
@@ -91,6 +97,26 @@ export default function WorkoutTemplatesScreen() {
     ? getStrengthProgrammingProfile({
         primaryGoal: currentGoal.primaryGoal,
         trainingEmphasis: coachingPreferences.trainingEmphasis,
+      })
+    : null;
+
+  const completedFullSessionsForWorkout = workoutHistory.filter(
+    (session) =>
+      session.workoutType === selectedWorkout &&
+      Boolean(session.completedAt) &&
+      (session.variantType === undefined || session.variantType === "FullGym")
+  ).length;
+
+  const programmingAssessment = programmingProfile
+    ? getStrengthProgrammingRecommendation({
+        workoutType: selectedWorkout,
+        template: exercises,
+        profile: programmingProfile,
+        completedFullSessionsForWorkout,
+        recoverySupportsBuild: false,
+        recoveryCallsForReduction: false,
+        recommendationId: `preview-${selectedWorkout.toLowerCase().replace(" ", "-")}`,
+        createdAt: "preview",
       })
     : null;
 
@@ -135,7 +161,7 @@ export default function WorkoutTemplatesScreen() {
           </p>
         </div>
 
-        {coachingPreferencesLoaded && goalsLoaded ? (
+        {coachingPreferencesLoaded && goalsLoaded && workoutHistoryLoaded ? (
           <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-700">
               Goal-aware programming
@@ -174,6 +200,44 @@ export default function WorkoutTemplatesScreen() {
                 <p className="border-t border-blue-200 pt-3 text-slate-600">
                   Your saved Gym A, B, and C templates have not changed. Fitness OS will show each proposed change and require your approval before applying it.
                 </p>
+
+                {programmingAssessment ? (
+                  <div className="rounded-xl border border-blue-200 bg-white/70 p-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="font-semibold text-slate-900">
+                        {selectedWorkout} assessment
+                      </p>
+                      <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700">
+                        {programmingAssessment.status === "Ready"
+                          ? "Ready for review"
+                          : programmingAssessment.status === "InsufficientEvidence"
+                            ? "Collecting evidence"
+                            : "No change"}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-slate-700">
+                      {programmingAssessment.explanation}
+                    </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      {completedFullSessionsForWorkout} completed full {selectedWorkout} {completedFullSessionsForWorkout === 1 ? "session" : "sessions"} recorded.
+                    </p>
+                    {programmingAssessment.recommendation ? (
+                      <div className="mt-3 border-t border-blue-100 pt-3">
+                        <p className="font-semibold text-slate-900">
+                          {programmingAssessment.recommendation.summary}
+                        </p>
+                        {programmingAssessment.recommendation.changes.map((change) => (
+                          <p key={change.exerciseId} className="mt-1">
+                            {change.exerciseName}: {change.currentSetCount} → {change.proposedSetCount} sets. {change.reason}
+                          </p>
+                        ))}
+                        <p className="mt-2 text-xs font-medium text-slate-600">
+                          Preview only—applying recommendations is not enabled yet.
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
             ) : (
               <p className="mt-2 text-sm text-slate-700">
