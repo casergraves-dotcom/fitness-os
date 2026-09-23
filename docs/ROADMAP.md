@@ -1842,7 +1842,7 @@ each visit.
   versioned training block.
 - [x] Define reviewed volume and exercise-allocation differences for Balanced,
   Strength, Running, and Aerial emphasis.
-- [ ] Preserve exercise history and progression continuity when a block changes.
+- [x] Preserve exercise history and progression continuity when a block changes.
 - [ ] Explain what changed, why it changed, and when the next reassessment occurs.
 - [ ] Require user review before applying a material template change.
 - [ ] Test recovery, missed-session, equipment, shortened-workout, and fixed-
@@ -1866,6 +1866,14 @@ pulling, rear-shoulder, and core support without permitting added pulling or
 shoulder volume to ignore aerial fatigue. These are preview inputs only and do
 not yet mutate a saved template. All 108 project tests and the production build
 passed.
+
+**Template-change continuity checkpoint:** A canonical set-change utility now
+applies only incremental one-set changes to a template copy. It preserves the
+exercise ID, exercise-definition ID, every retained working-set ID, and ramp-up
+sets; a newly added set starts blank and cannot masquerade as historical
+performance. Completed workout history remains untouched because block changes
+operate only on the proposed template. The utility is not yet connected to a
+save action. All 111 project tests and the production build passed.
 
 ## 7.3 Exercise Guidance
 
