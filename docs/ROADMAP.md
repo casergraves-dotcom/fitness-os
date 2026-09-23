@@ -1884,6 +1884,15 @@ contract, but the roadmap items remain open until the preview and approval flow
 are visible in the product. All 115 project tests and the production build
 passed.
 
+**Programming-profile visibility checkpoint:** Edit Workouts now shows the
+canonical active goal, saved training emphasis, resulting volume direction,
+movement priorities, and fatigue safeguards. It explicitly states that Gym
+A/B/C remain unchanged and that future proposals require review. Accounts
+without an active goal receive a direct setup explanation rather than an
+invented programming profile.
+Focused lint and the production build passed; mobile presentation remains to be
+verified.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by

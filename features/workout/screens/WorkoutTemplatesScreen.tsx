@@ -15,22 +15,49 @@ import {
 } from "lucide-react";
 
 import AppShell from "@/components/layout/AppShell";
+import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPreferences";
+import { useBodyCompositionGoals } from "@/features/progress/hooks/useBodyCompositionGoals";
 
 import AddExercise from "../components/AddExercise";
 
 import {
   useWorkoutTemplates,
 } from "../hooks/useWorkoutTemplates";
+import { getStrengthProgrammingProfile } from "../strengthProgrammingProfile";
 
 import type {
     StrengthWorkoutType,
 } from "../types";
+
+function formatGoal(goal: string) {
+  if (goal === "FatLoss") return "Fat Loss";
+  if (goal === "BodyComposition") return "Body Composition";
+  return goal;
+}
+
+function formatMovementRole(role: string) {
+  return role.replace(/([a-z])([A-Z])/g, "$1 $2");
+}
+
+function formatVolumeBias(bias: "Conserve" | "Standard" | "Build") {
+  if (bias === "Conserve") return "Conserve recoverable volume";
+  if (bias === "Build") return "Build gradually when evidence supports it";
+  return "Maintain standard volume";
+}
 
 // ============================================================
 // Workout Template Screen
 // ============================================================
 
 export default function WorkoutTemplatesScreen() {
+  const {
+    preferences: coachingPreferences,
+    loaded: coachingPreferencesLoaded,
+  } = useCoachingPreferences();
+  const {
+    currentGoal,
+    loaded: goalsLoaded,
+  } = useBodyCompositionGoals();
   // ----------------------------------------------------------
   // Template Data
   // ----------------------------------------------------------
@@ -59,6 +86,13 @@ export default function WorkoutTemplatesScreen() {
 
   const exercises =
     templates[selectedWorkout];
+
+  const programmingProfile = currentGoal
+    ? getStrengthProgrammingProfile({
+        primaryGoal: currentGoal.primaryGoal,
+        trainingEmphasis: coachingPreferences.trainingEmphasis,
+      })
+    : null;
 
   // ----------------------------------------------------------
   // Loading
@@ -100,6 +134,54 @@ export default function WorkoutTemplatesScreen() {
             Customize your workout templates.
           </p>
         </div>
+
+        {coachingPreferencesLoaded && goalsLoaded ? (
+          <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
+            <p className="text-sm font-semibold uppercase tracking-wider text-blue-700">
+              Goal-aware programming
+            </p>
+
+            {programmingProfile ? (
+              <div className="mt-3 space-y-3 text-sm text-slate-700">
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Active goal</p>
+                    <p className="mt-1 font-semibold text-slate-900">{formatGoal(programmingProfile.primaryGoal)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Training emphasis</p>
+                    <p className="mt-1 font-semibold text-slate-900">{programmingProfile.trainingEmphasis}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Volume direction</p>
+                    <p className="mt-1 font-semibold text-slate-900">{formatVolumeBias(programmingProfile.volumeBias)}</p>
+                  </div>
+                </div>
+
+                {programmingProfile.priorityMovementRoles.length > 0 ? (
+                  <p>
+                    <span className="font-semibold text-slate-900">Programming priorities:</span>{" "}
+                    {programmingProfile.priorityMovementRoles.map(formatMovementRole).join(", ")}.
+                  </p>
+                ) : null}
+
+                {programmingProfile.fatigueConstraints.map((constraint) => (
+                  <p key={constraint} className="text-amber-900">
+                    <span className="font-semibold">Safeguard:</span> {constraint}
+                  </p>
+                ))}
+
+                <p className="border-t border-blue-200 pt-3 text-slate-600">
+                  Your saved Gym A, B, and C templates have not changed. Fitness OS will show each proposed change and require your approval before applying it.
+                </p>
+              </div>
+            ) : (
+              <p className="mt-2 text-sm text-slate-700">
+                Set an active goal in Goals &amp; Targets to create a programming profile. Your workout templates remain unchanged.
+              </p>
+            )}
+          </section>
+        ) : null}
 
         {/* --------------------------------------------------
             Workout Selector
