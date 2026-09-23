@@ -1938,6 +1938,14 @@ full-session baseline. Subsequent evidence counts begin after that baseline so
 the same sessions cannot trigger another immediate increase. Focused lint and
 the production build passed.
 
+**Programming evidence-boundary checkpoint:** Reassessment now uses one tested
+canonical evidence counter. It counts only completed full sessions for the
+selected Gym A/B/C template, retains legacy full-session records, and excludes
+incomplete, shortened, home, and other-template sessions. The counter resumes
+from the most recent applied decision for that template and safely clamps at
+zero if older workout history is later cleaned up. All 122 project tests,
+focused lint, and the production build passed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by

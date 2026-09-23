@@ -30,6 +30,7 @@ import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
 import { useStrengthProgrammingDecisions } from "../hooks/useStrengthProgrammingDecisions";
 import { getStrengthProgrammingProfile } from "../strengthProgrammingProfile";
 import { getStrengthProgrammingRecommendation } from "../logic/getStrengthProgrammingRecommendation";
+import { getStrengthProgrammingEvidence } from "../logic/getStrengthProgrammingEvidence";
 import { evaluateWeeklyRecovery } from "../logic/evaluateWeeklyRecovery";
 import { applyStrengthProgrammingRecommendation } from "../logic/strengthProgrammingRecommendation";
 
@@ -118,21 +119,14 @@ export default function WorkoutTemplatesScreen() {
       })
     : null;
 
-  const completedFullSessionsForWorkout = workoutHistory.filter(
-    (session) =>
-      session.workoutType === selectedWorkout &&
-      Boolean(session.completedAt) &&
-      (session.variantType === undefined || session.variantType === "FullGym")
-  ).length;
-
-  const latestProgrammingDecision = [...programmingDecisions]
-    .reverse()
-    .find((decision) => decision.workoutType === selectedWorkout);
-
-  const completedFullSessionsSinceDecision = Math.max(
-    0,
-    completedFullSessionsForWorkout -
-      (latestProgrammingDecision?.completedFullSessionsAtApplication ?? 0)
+  const {
+    completedFullSessionsTotal: completedFullSessionsForWorkout,
+    completedFullSessionsSinceDecision,
+    latestDecision: latestProgrammingDecision,
+  } = getStrengthProgrammingEvidence(
+    selectedWorkout,
+    workoutHistory,
+    programmingDecisions
   );
 
   const weeklyRecovery = evaluateWeeklyRecovery(
