@@ -17,6 +17,8 @@ import {
 import AppShell from "@/components/layout/AppShell";
 import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPreferences";
 import { useBodyCompositionGoals } from "@/features/progress/hooks/useBodyCompositionGoals";
+import { useMorningCheckIn } from "@/features/recovery";
+import { getTrainingWeekStartDate } from "@/lib/date/trainingWeek";
 
 import AddExercise from "../components/AddExercise";
 
@@ -26,6 +28,7 @@ import {
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
 import { getStrengthProgrammingProfile } from "../strengthProgrammingProfile";
 import { getStrengthProgrammingRecommendation } from "../logic/getStrengthProgrammingRecommendation";
+import { evaluateWeeklyRecovery } from "../logic/evaluateWeeklyRecovery";
 
 import type {
     StrengthWorkoutType,
@@ -64,6 +67,10 @@ export default function WorkoutTemplatesScreen() {
     history: workoutHistory,
     loaded: workoutHistoryLoaded,
   } = useWorkoutHistory();
+  const {
+    history: morningCheckInHistory,
+    loaded: morningCheckInsLoaded,
+  } = useMorningCheckIn();
   // ----------------------------------------------------------
   // Template Data
   // ----------------------------------------------------------
@@ -107,14 +114,19 @@ export default function WorkoutTemplatesScreen() {
       (session.variantType === undefined || session.variantType === "FullGym")
   ).length;
 
+  const weeklyRecovery = evaluateWeeklyRecovery(
+    getTrainingWeekStartDate(new Date()),
+    morningCheckInHistory
+  );
+
   const programmingAssessment = programmingProfile
     ? getStrengthProgrammingRecommendation({
         workoutType: selectedWorkout,
         template: exercises,
         profile: programmingProfile,
         completedFullSessionsForWorkout,
-        recoverySupportsBuild: false,
-        recoveryCallsForReduction: false,
+        recoverySupportsBuild: weeklyRecovery.status === "Supported",
+        recoveryCallsForReduction: weeklyRecovery.status === "Poor",
         recommendationId: `preview-${selectedWorkout.toLowerCase().replace(" ", "-")}`,
         createdAt: "preview",
       })
@@ -161,7 +173,7 @@ export default function WorkoutTemplatesScreen() {
           </p>
         </div>
 
-        {coachingPreferencesLoaded && goalsLoaded && workoutHistoryLoaded ? (
+        {coachingPreferencesLoaded && goalsLoaded && workoutHistoryLoaded && morningCheckInsLoaded ? (
           <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-700">
               Goal-aware programming
@@ -221,6 +233,15 @@ export default function WorkoutTemplatesScreen() {
                     <p className="mt-2 text-xs text-slate-500">
                       {completedFullSessionsForWorkout} completed full {selectedWorkout} {completedFullSessionsForWorkout === 1 ? "session" : "sessions"} recorded.
                     </p>
+                    {weeklyRecovery.factor ? (
+                      <p className="mt-1 text-xs text-slate-500">
+                        {weeklyRecovery.factor}
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-xs text-slate-500">
+                        No complete recovery check-in is available for this training week.
+                      </p>
+                    )}
                     {programmingAssessment.recommendation ? (
                       <div className="mt-3 border-t border-blue-100 pt-3">
                         <p className="font-semibold text-slate-900">

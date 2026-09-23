@@ -1909,7 +1909,16 @@ completed full-session history. It shows No Change, Collecting Evidence, or
 Ready for Review with the reason and evidence count. Any ready change is shown
 as a before/after set preview, but applying it remains disabled until the final
 approval and persistence flow is implemented. Focused lint and the production
-build passed; tab-specific rendering remains to be verified in the UI.
+build passed. Gym A, B, and C were verified in the UI with their respective
+canonical full-session counts of 1, 2, and 0 and the correct selected template.
+
+**Canonical recovery-evidence checkpoint:** The template assessment now reuses
+the existing weekly recovery evaluator and current Sunday-through-Saturday
+training-week boundary. Supported recovery can satisfy the Build safeguard;
+Poor recovery can open a conservative reduction review; Limited or missing
+recovery evidence cannot change the template. The assessment shows the recovery
+evidence explanation alongside the full-session count.
+Focused lint and the production build passed.
 
 ## 7.3 Exercise Guidance
 
