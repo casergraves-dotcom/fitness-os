@@ -1,6 +1,12 @@
 import { exerciseLibrary } from "../exerciseLibrary.ts";
 import { strengthWorkoutIntents } from "../backupWorkoutModel.ts";
-import type { Exercise, StrengthMovementRole, StrengthWorkoutType, WorkoutEquipment } from "../types";
+import type {
+  Exercise,
+  StrengthMovementRole,
+  StrengthWorkoutType,
+  WeeklyProgressionDecisionRecord,
+  WorkoutEquipment,
+} from "../types";
 import type { StrengthProgrammingProfile } from "../strengthProgrammingProfile.ts";
 import type { StrengthProgrammingRecommendation } from "./strengthProgrammingRecommendation.ts";
 
@@ -20,6 +26,7 @@ export interface StrengthProgrammingRecommendationInput {
   recoveryCallsForReduction: boolean;
   availableEquipment: WorkoutEquipment[];
   fixedCommitmentConstrainedRoles: StrengthMovementRole[];
+  recentRequiredTrainingMissed: boolean;
   recommendationId: string;
   createdAt: string;
 }
@@ -28,6 +35,22 @@ export interface StrengthProgrammingRecommendationAssessment {
   status: StrengthProgrammingAssessmentStatus;
   explanation: string;
   recommendation: StrengthProgrammingRecommendation | null;
+}
+
+export function hasRecentMissedTrainingHold(
+  decisions: WeeklyProgressionDecisionRecord[]
+) {
+  const latestDecision = [...decisions].sort((a, b) =>
+    b.weekStartDate.localeCompare(a.weekStartDate)
+  )[0];
+  if (latestDecision?.automaticStatus !== "Hold") return false;
+  return (
+    latestDecision.automaticReason ===
+      "Weekly adherence was too low to progress safely." ||
+    latestDecision.automaticReason ===
+      "The required strength session was not completed." ||
+    latestDecision.automaticReason.startsWith("Only ")
+  );
 }
 
 function getExerciseRoles(exercise: Exercise): StrengthMovementRole[] {
@@ -62,6 +85,15 @@ export function getStrengthProgrammingRecommendation(
   input: StrengthProgrammingRecommendationInput
 ): StrengthProgrammingRecommendationAssessment {
   if (input.profile.volumeBias === "Build") {
+    if (input.recentRequiredTrainingMissed) {
+      return {
+        status: "InsufficientEvidence",
+        explanation:
+          "Keep the current template because the latest weekly review held progression after required training was missed. Rebuild consistency before adding volume.",
+        recommendation: null,
+      };
+    }
+
     if (
       input.completedFullSessionsForWorkout < MINIMUM_FULL_SESSIONS_FOR_BUILD ||
       !input.recoverySupportsBuild

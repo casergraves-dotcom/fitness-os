@@ -34,7 +34,10 @@ import {
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
 import { useStrengthProgrammingDecisions } from "../hooks/useStrengthProgrammingDecisions";
 import { getStrengthProgrammingProfile } from "../strengthProgrammingProfile";
-import { getStrengthProgrammingRecommendation } from "../logic/getStrengthProgrammingRecommendation";
+import {
+  getStrengthProgrammingRecommendation,
+  hasRecentMissedTrainingHold,
+} from "../logic/getStrengthProgrammingRecommendation";
 import { getStrengthProgrammingEvidence } from "../logic/getStrengthProgrammingEvidence";
 import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import { getEquipmentProfileForDate } from "../logic/getTrainingParticipationPreferenceForDate";
@@ -187,6 +190,9 @@ export default function WorkoutTemplatesScreen() {
         recoveryCallsForReduction: weeklyRecovery.status === "Poor",
         availableEquipment: gymEquipmentProfile.equipment,
         fixedCommitmentConstrainedRoles,
+        recentRequiredTrainingMissed: hasRecentMissedTrainingHold(
+          trainingPlanState?.weeklyProgressionDecisions ?? []
+        ),
         recommendationId: `goal-aware-${selectedWorkout.toLowerCase().replace(" ", "-")}-${completedFullSessionsForWorkout}`,
         createdAt: new Date().toISOString(),
       })

@@ -1845,7 +1845,7 @@ each visit.
 - [x] Preserve exercise history and progression continuity when a block changes.
 - [x] Explain what changed, why it changed, and when the next reassessment occurs.
 - [x] Require user review before applying a material template change.
-- [ ] Test recovery, missed-session, equipment, shortened-workout, and fixed-
+- [x] Test recovery, missed-session, equipment, shortened-workout, and fixed-
   commitment interactions before enabling automatic recommendations.
 
 **Programming-profile contract checkpoint:** A pure, versioned programming
@@ -1960,6 +1960,23 @@ or adjacent day as fixed aerial, added pulling, vertical pressing, rear-shoulder
 and elbow-flexion volume is excluded. A safe non-overlapping priority movement
 may still be proposed; otherwise the template remains unchanged. All 126
 project tests, focused lint, and the production build passed.
+
+**Missed-session programming checkpoint:** Build-biased programming now reads
+the latest canonical automatic weekly-progression result. A recent Hold blocks
+added template volume even when six older full sessions exist, while a later
+Advance or Advance With Warning supersedes an older hold. This keeps manual
+weekly overrides auditable without letting them erase the missed-training
+signal used by programming safeguards. With recovery, shortened-workout,
+equipment, and fixed-commitment tests already in place, the interaction gate is
+covered; template changes remain explicit user-reviewed recommendations rather
+than automatic mutations. All 129 project tests, focused lint, and the
+production build passed.
+
+**Completed outcome:** Goal-aware strength programming now produces stable,
+versioned, evidence-gated Gym A/B/C adjustments from the active goal and
+training emphasis. Recommendations preserve progression history, respect
+recovery, adherence, equipment, shortened sessions, and fixed commitments, and
+require an explained user-reviewed approval before changing a saved template.
 
 ## 7.3 Exercise Guidance
 
