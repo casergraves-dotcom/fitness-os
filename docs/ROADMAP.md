@@ -1946,6 +1946,13 @@ from the most recent applied decision for that template and safely clamps at
 zero if older workout history is later cleaned up. All 122 project tests,
 focused lint, and the production build passed.
 
+**Programming equipment-safety checkpoint:** Build recommendations now reuse
+the effective-dated canonical Gym equipment profile. An exercise can receive
+an added set only when every item in its canonical equipment requirements is
+currently available; otherwise the review reports that no eligible executable
+priority movement exists and leaves the template unchanged. All 123 project
+tests, focused lint, and the production build passed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by

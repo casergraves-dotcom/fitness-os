@@ -1,6 +1,6 @@
 import { exerciseLibrary } from "../exerciseLibrary.ts";
 import { strengthWorkoutIntents } from "../backupWorkoutModel.ts";
-import type { Exercise, StrengthMovementRole, StrengthWorkoutType } from "../types";
+import type { Exercise, StrengthMovementRole, StrengthWorkoutType, WorkoutEquipment } from "../types";
 import type { StrengthProgrammingProfile } from "../strengthProgrammingProfile.ts";
 import type { StrengthProgrammingRecommendation } from "./strengthProgrammingRecommendation.ts";
 
@@ -18,6 +18,7 @@ export interface StrengthProgrammingRecommendationInput {
   completedFullSessionsForWorkout: number;
   recoverySupportsBuild: boolean;
   recoveryCallsForReduction: boolean;
+  availableEquipment: WorkoutEquipment[];
   recommendationId: string;
   createdAt: string;
 }
@@ -42,6 +43,20 @@ function hasAnyRole(exercise: Exercise, roles: StrengthMovementRole[]) {
   return getExerciseRoles(exercise).some((role) => roles.includes(role));
 }
 
+function hasRequiredEquipment(
+  exercise: Exercise,
+  availableEquipment: WorkoutEquipment[]
+) {
+  if (!exercise.exerciseDefinitionId) return false;
+  const definition = exerciseLibrary.find(
+    (item) => item.id === exercise.exerciseDefinitionId
+  );
+  if (!definition) return false;
+  return (definition.requiredEquipment ?? []).every((item) =>
+    availableEquipment.includes(item)
+  );
+}
+
 export function getStrengthProgrammingRecommendation(
   input: StrengthProgrammingRecommendationInput
 ): StrengthProgrammingRecommendationAssessment {
@@ -61,14 +76,15 @@ export function getStrengthProgrammingRecommendation(
       (exercise) =>
         exercise.sets.length < 4 &&
         hasAnyRole(exercise, input.profile.priorityMovementRoles) &&
-        !hasAnyRole(exercise, input.profile.constrainedIncreaseRoles)
+        !hasAnyRole(exercise, input.profile.constrainedIncreaseRoles) &&
+        hasRequiredEquipment(exercise, input.availableEquipment)
     );
 
     if (!candidate) {
       return {
         status: "NoChange",
         explanation:
-          "The current template has no eligible priority exercise for a safe one-set increase.",
+          "The current template has no eligible priority exercise that can safely increase with the available gym equipment.",
         recommendation: null,
       };
     }

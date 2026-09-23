@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { workoutTemplates } from "../../features/workout/data.ts";
+import { currentGymWorkoutEquipment } from "../../features/workout/backupWorkoutModel.ts";
 import { getStrengthProgrammingProfile } from "../../features/workout/strengthProgrammingProfile.ts";
 import { getStrengthProgrammingRecommendation } from "../../features/workout/logic/getStrengthProgrammingRecommendation.ts";
 
@@ -16,6 +17,7 @@ function input(overrides = {}) {
     completedFullSessionsForWorkout: 6,
     recoverySupportsBuild: true,
     recoveryCallsForReduction: false,
+    availableEquipment: currentGymWorkoutEquipment,
     recommendationId: "recommendation-1",
     createdAt: "2026-09-22T12:00:00.000Z",
     ...overrides,
@@ -45,6 +47,16 @@ test("eligible build profiles propose only one set on one priority exercise", ()
       assessment.recommendation.changes[0].currentSetCount,
     1
   );
+});
+
+test("build recommendations never add sets to unavailable equipment", () => {
+  const assessment = getStrengthProgrammingRecommendation(
+    input({ availableEquipment: ["Bodyweight"] })
+  );
+
+  assert.equal(assessment.status, "NoChange");
+  assert.equal(assessment.recommendation, null);
+  assert.match(assessment.explanation, /available gym equipment/);
 });
 
 test("fat-loss plus aerial does not remove work when recovery is stable", () => {

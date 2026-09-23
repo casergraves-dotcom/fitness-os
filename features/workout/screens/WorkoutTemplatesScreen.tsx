@@ -20,6 +20,7 @@ import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPrefer
 import { useBodyCompositionGoals } from "@/features/progress/hooks/useBodyCompositionGoals";
 import { useMorningCheckIn } from "@/features/recovery";
 import { getTrainingWeekStartDate } from "@/lib/date/trainingWeek";
+import { formatLocalCalendarDate } from "@/lib/date/trainingWeek";
 
 import AddExercise from "../components/AddExercise";
 
@@ -31,6 +32,12 @@ import { useStrengthProgrammingDecisions } from "../hooks/useStrengthProgramming
 import { getStrengthProgrammingProfile } from "../strengthProgrammingProfile";
 import { getStrengthProgrammingRecommendation } from "../logic/getStrengthProgrammingRecommendation";
 import { getStrengthProgrammingEvidence } from "../logic/getStrengthProgrammingEvidence";
+import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
+import { getEquipmentProfileForDate } from "../logic/getTrainingParticipationPreferenceForDate";
+import {
+  currentGymWorkoutCapabilities,
+  currentGymWorkoutEquipment,
+} from "../backupWorkoutModel";
 import { evaluateWeeklyRecovery } from "../logic/evaluateWeeklyRecovery";
 import { applyStrengthProgrammingRecommendation } from "../logic/strengthProgrammingRecommendation";
 
@@ -80,6 +87,10 @@ export default function WorkoutTemplatesScreen() {
     loaded: programmingDecisionsLoaded,
     recordDecision,
   } = useStrengthProgrammingDecisions();
+  const {
+    trainingPreferences,
+    loaded: trainingPreferencesLoaded,
+  } = useTrainingPlanState();
   // ----------------------------------------------------------
   // Template Data
   // ----------------------------------------------------------
@@ -133,6 +144,15 @@ export default function WorkoutTemplatesScreen() {
     getTrainingWeekStartDate(new Date()),
     morningCheckInHistory
   );
+  const gymEquipmentProfile = getEquipmentProfileForDate(
+    trainingPreferences,
+    formatLocalCalendarDate(new Date()),
+    "Gym",
+    {
+      equipment: currentGymWorkoutEquipment,
+      capabilities: currentGymWorkoutCapabilities,
+    }
+  );
 
   const programmingAssessment = programmingProfile
     ? getStrengthProgrammingRecommendation({
@@ -142,6 +162,7 @@ export default function WorkoutTemplatesScreen() {
         completedFullSessionsForWorkout: completedFullSessionsSinceDecision,
         recoverySupportsBuild: weeklyRecovery.status === "Supported",
         recoveryCallsForReduction: weeklyRecovery.status === "Poor",
+        availableEquipment: gymEquipmentProfile.equipment,
         recommendationId: `goal-aware-${selectedWorkout.toLowerCase().replace(" ", "-")}-${completedFullSessionsForWorkout}`,
         createdAt: new Date().toISOString(),
       })
@@ -188,7 +209,7 @@ export default function WorkoutTemplatesScreen() {
           </p>
         </div>
 
-        {coachingPreferencesLoaded && goalsLoaded && workoutHistoryLoaded && morningCheckInsLoaded && programmingDecisionsLoaded ? (
+        {coachingPreferencesLoaded && goalsLoaded && workoutHistoryLoaded && morningCheckInsLoaded && programmingDecisionsLoaded && trainingPreferencesLoaded ? (
           <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-700">
               Goal-aware programming
