@@ -1875,6 +1875,15 @@ performance. Completed workout history remains untouched because block changes
 operate only on the proposed template. The utility is not yet connected to a
 save action. All 111 project tests and the production build passed.
 
+**Recommendation-review contract checkpoint:** Goal-aware programming
+recommendations now have a canonical review shape containing a summary, each
+exercise's before/after set count and reason, and a completed-strength-session
+reassessment point. The application boundary rejects unapproved, unexplained,
+expired/stale, or open-ended recommendations. This establishes the safety
+contract, but the roadmap items remain open until the preview and approval flow
+are visible in the product. All 115 project tests and the production build
+passed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by
