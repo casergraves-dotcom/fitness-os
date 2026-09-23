@@ -1894,6 +1894,15 @@ Focused lint and the production build passed. The rendered settings view was
 verified with Fat Loss + Aerial: the volume direction, aerial-support priorities,
 fatigue safeguard, and unchanged-template boundary all displayed correctly.
 
+**Evidence-gated proposal checkpoint:** The first recommendation evaluator now
+requires six completed full sessions plus supportive recovery evidence before a
+Build profile can propose one additional set. A Conserve profile avoids new
+volume but does not automatically remove useful work; reduction requires
+explicit recovery evidence and can target only a non-required movement. Each
+assessment returns Ready, No Change, or Insufficient Evidence with an
+explanation. The evaluator remains disconnected from template saving until its
+review UI is complete. All 119 project tests and the production build passed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by
