@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import AppShell from "@/components/layout/AppShell";
+import { ModalBody, ModalFooter, ModalHeader, ModalShell } from "@/components/ui/ModalShell";
 import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPreferences";
 import { useBodyCompositionGoals } from "@/features/progress/hooks/useBodyCompositionGoals";
 import { useMorningCheckIn } from "@/features/recovery";
@@ -26,9 +27,11 @@ import {
   useWorkoutTemplates,
 } from "../hooks/useWorkoutTemplates";
 import { useWorkoutHistory } from "../hooks/useWorkoutHistory";
+import { useStrengthProgrammingDecisions } from "../hooks/useStrengthProgrammingDecisions";
 import { getStrengthProgrammingProfile } from "../strengthProgrammingProfile";
 import { getStrengthProgrammingRecommendation } from "../logic/getStrengthProgrammingRecommendation";
 import { evaluateWeeklyRecovery } from "../logic/evaluateWeeklyRecovery";
+import { applyStrengthProgrammingRecommendation } from "../logic/strengthProgrammingRecommendation";
 
 import type {
     StrengthWorkoutType,
@@ -71,6 +74,11 @@ export default function WorkoutTemplatesScreen() {
     history: morningCheckInHistory,
     loaded: morningCheckInsLoaded,
   } = useMorningCheckIn();
+  const {
+    decisions: programmingDecisions,
+    loaded: programmingDecisionsLoaded,
+    recordDecision,
+  } = useStrengthProgrammingDecisions();
   // ----------------------------------------------------------
   // Template Data
   // ----------------------------------------------------------
@@ -82,6 +90,7 @@ export default function WorkoutTemplatesScreen() {
     removeExercise,
     moveExercise,
     updateExerciseSetCount,
+    saveTemplates,
   } = useWorkoutTemplates();
 
   // ----------------------------------------------------------
@@ -92,6 +101,8 @@ export default function WorkoutTemplatesScreen() {
     selectedWorkout,
     setSelectedWorkout,
   ] = useState<StrengthWorkoutType>("Gym A");
+  const [reviewingRecommendation, setReviewingRecommendation] = useState(false);
+  const [appliedMessage, setAppliedMessage] = useState<string | null>(null);
 
   // ----------------------------------------------------------
   // Selected Workout Exercises
@@ -114,6 +125,16 @@ export default function WorkoutTemplatesScreen() {
       (session.variantType === undefined || session.variantType === "FullGym")
   ).length;
 
+  const latestProgrammingDecision = [...programmingDecisions]
+    .reverse()
+    .find((decision) => decision.workoutType === selectedWorkout);
+
+  const completedFullSessionsSinceDecision = Math.max(
+    0,
+    completedFullSessionsForWorkout -
+      (latestProgrammingDecision?.completedFullSessionsAtApplication ?? 0)
+  );
+
   const weeklyRecovery = evaluateWeeklyRecovery(
     getTrainingWeekStartDate(new Date()),
     morningCheckInHistory
@@ -124,11 +145,11 @@ export default function WorkoutTemplatesScreen() {
         workoutType: selectedWorkout,
         template: exercises,
         profile: programmingProfile,
-        completedFullSessionsForWorkout,
+        completedFullSessionsForWorkout: completedFullSessionsSinceDecision,
         recoverySupportsBuild: weeklyRecovery.status === "Supported",
         recoveryCallsForReduction: weeklyRecovery.status === "Poor",
-        recommendationId: `preview-${selectedWorkout.toLowerCase().replace(" ", "-")}`,
-        createdAt: "preview",
+        recommendationId: `goal-aware-${selectedWorkout.toLowerCase().replace(" ", "-")}-${completedFullSessionsForWorkout}`,
+        createdAt: new Date().toISOString(),
       })
     : null;
 
@@ -173,7 +194,7 @@ export default function WorkoutTemplatesScreen() {
           </p>
         </div>
 
-        {coachingPreferencesLoaded && goalsLoaded && workoutHistoryLoaded && morningCheckInsLoaded ? (
+        {coachingPreferencesLoaded && goalsLoaded && workoutHistoryLoaded && morningCheckInsLoaded && programmingDecisionsLoaded ? (
           <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5">
             <p className="text-sm font-semibold uppercase tracking-wider text-blue-700">
               Goal-aware programming
@@ -231,7 +252,8 @@ export default function WorkoutTemplatesScreen() {
                       {programmingAssessment.explanation}
                     </p>
                     <p className="mt-2 text-xs text-slate-500">
-                      {completedFullSessionsForWorkout} completed full {selectedWorkout} {completedFullSessionsForWorkout === 1 ? "session" : "sessions"} recorded.
+                      {completedFullSessionsSinceDecision} completed full {selectedWorkout} {completedFullSessionsSinceDecision === 1 ? "session" : "sessions"} available for this review
+                      {latestProgrammingDecision ? ` since the last applied change (${completedFullSessionsForWorkout} total)` : ""}.
                     </p>
                     {weeklyRecovery.factor ? (
                       <p className="mt-1 text-xs text-slate-500">
@@ -253,9 +275,21 @@ export default function WorkoutTemplatesScreen() {
                           </p>
                         ))}
                         <p className="mt-2 text-xs font-medium text-slate-600">
-                          Preview only—applying recommendations is not enabled yet.
+                          Reassess after {programmingAssessment.recommendation.reassessAfterCompletedStrengthSessions} completed strength sessions.
                         </p>
+                        <button
+                          type="button"
+                          onClick={() => setReviewingRecommendation(true)}
+                          className="mt-3 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+                        >
+                          Review Recommendation
+                        </button>
                       </div>
+                    ) : null}
+                    {appliedMessage ? (
+                      <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-800">
+                        {appliedMessage}
+                      </p>
                     ) : null}
                   </div>
                 ) : null}
@@ -288,11 +322,11 @@ export default function WorkoutTemplatesScreen() {
               <button
                 key={workoutType}
                 type="button"
-                onClick={() =>
-                  setSelectedWorkout(
-                    workoutType
-                  )
-                }
+                onClick={() => {
+                  setSelectedWorkout(workoutType);
+                  setReviewingRecommendation(false);
+                  setAppliedMessage(null);
+                }}
                 className={`rounded-xl px-3 py-3 text-sm font-semibold transition ${
                   selected
                     ? "bg-blue-600 text-white"
@@ -526,6 +560,94 @@ export default function WorkoutTemplatesScreen() {
             />
           </div>
         </div>
+
+        {reviewingRecommendation && programmingAssessment?.recommendation ? (
+          <ModalShell
+            labelledBy="programming-review-title"
+            describedBy="programming-review-description"
+            onBackdropPress={() => setReviewingRecommendation(false)}
+          >
+            <ModalHeader>
+              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+                Goal-aware programming
+              </p>
+              <h2 id="programming-review-title" className="mt-1 text-xl font-bold">
+                Review {selectedWorkout} Change
+              </h2>
+              <p id="programming-review-description" className="mt-2 text-sm text-slate-600">
+                {programmingAssessment.recommendation.summary}
+              </p>
+            </ModalHeader>
+
+            <ModalBody>
+              <div className="space-y-3">
+                {programmingAssessment.recommendation.changes.map((change) => (
+                  <div key={change.exerciseId} className="rounded-xl border border-slate-200 p-4">
+                    <p className="font-semibold text-slate-900">{change.exerciseName}</p>
+                    <p className="mt-1 text-lg font-bold text-blue-700">
+                      {change.currentSetCount} → {change.proposedSetCount} sets
+                    </p>
+                    <p className="mt-2 text-sm text-slate-600">{change.reason}</p>
+                  </div>
+                ))}
+                <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
+                  <p className="font-semibold text-slate-900">What happens next</p>
+                  <p className="mt-1">
+                    This updates only the reviewed {selectedWorkout} template. Completed workout history and progression evidence remain unchanged.
+                  </p>
+                  <p className="mt-2">
+                    Fitness OS will wait for {programmingAssessment.recommendation.reassessAfterCompletedStrengthSessions} more completed strength sessions before reassessing this decision.
+                  </p>
+                </div>
+              </div>
+            </ModalBody>
+
+            <ModalFooter className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setReviewingRecommendation(false)}
+                className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700"
+              >
+                Keep Current Template
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const recommendation = programmingAssessment.recommendation;
+                  if (!recommendation) return;
+
+                  const appliedAt = new Date().toISOString();
+                  const updatedExercises = applyStrengthProgrammingRecommendation(
+                    exercises,
+                    recommendation,
+                    {
+                      approved: true,
+                      createSetId: (exerciseId, setIndex) =>
+                        `${exerciseId}-program-${Date.now()}-${setIndex}`,
+                    }
+                  );
+
+                  saveTemplates({
+                    ...templates,
+                    [selectedWorkout]: updatedExercises,
+                  });
+                  recordDecision({
+                    id: `${recommendation.id}-${Date.now()}`,
+                    workoutType: selectedWorkout,
+                    recommendation,
+                    completedFullSessionsAtApplication: completedFullSessionsForWorkout,
+                    appliedAt,
+                  });
+                  setReviewingRecommendation(false);
+                  setAppliedMessage(`${recommendation.summary} Applied to ${selectedWorkout}.`);
+                }}
+                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white"
+              >
+                Apply Change
+              </button>
+            </ModalFooter>
+          </ModalShell>
+        ) : null}
       </div>
     </AppShell>
   );

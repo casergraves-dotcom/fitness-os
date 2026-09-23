@@ -1843,8 +1843,8 @@ each visit.
 - [x] Define reviewed volume and exercise-allocation differences for Balanced,
   Strength, Running, and Aerial emphasis.
 - [x] Preserve exercise history and progression continuity when a block changes.
-- [ ] Explain what changed, why it changed, and when the next reassessment occurs.
-- [ ] Require user review before applying a material template change.
+- [x] Explain what changed, why it changed, and when the next reassessment occurs.
+- [x] Require user review before applying a material template change.
 - [ ] Test recovery, missed-session, equipment, shortened-workout, and fixed-
   commitment interactions before enabling automatic recommendations.
 
@@ -1928,6 +1928,15 @@ workout history so future reassessment cannot reuse the same evidence or rewrite
 historical sessions. No decision is written until the approval UI applies a
 recommendation. All 119 project tests, focused lint, and the production build
 passed.
+
+**Programming review-and-apply checkpoint:** A Ready recommendation now opens
+the shared mobile-safe modal with the exact exercise, before/after set count,
+reason, history/progression boundary, and reassessment interval. Keeping the
+current template closes the review without writing. Apply Change updates only
+the selected canonical template, then records the synchronized decision and its
+full-session baseline. Subsequent evidence counts begin after that baseline so
+the same sessions cannot trigger another immediate increase. Focused lint and
+the production build passed.
 
 ## 7.3 Exercise Guidance
 
