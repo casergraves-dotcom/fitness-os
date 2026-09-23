@@ -19,6 +19,7 @@ export interface StrengthProgrammingRecommendationInput {
   recoverySupportsBuild: boolean;
   recoveryCallsForReduction: boolean;
   availableEquipment: WorkoutEquipment[];
+  fixedCommitmentConstrainedRoles: StrengthMovementRole[];
   recommendationId: string;
   createdAt: string;
 }
@@ -77,6 +78,7 @@ export function getStrengthProgrammingRecommendation(
         exercise.sets.length < 4 &&
         hasAnyRole(exercise, input.profile.priorityMovementRoles) &&
         !hasAnyRole(exercise, input.profile.constrainedIncreaseRoles) &&
+        !hasAnyRole(exercise, input.fixedCommitmentConstrainedRoles) &&
         hasRequiredEquipment(exercise, input.availableEquipment)
     );
 
@@ -84,7 +86,7 @@ export function getStrengthProgrammingRecommendation(
       return {
         status: "NoChange",
         explanation:
-          "The current template has no eligible priority exercise that can safely increase with the available gym equipment.",
+          "The current template has no eligible priority exercise that can safely increase around fixed commitments and the available gym equipment.",
         recommendation: null,
       };
     }
@@ -105,7 +107,9 @@ export function getStrengthProgrammingRecommendation(
             currentSetCount: candidate.sets.length,
             proposedSetCount: candidate.sets.length + 1,
             reason:
-              "This priority movement has enough full-session evidence for one incremental set increase.",
+              input.fixedCommitmentConstrainedRoles.length > 0
+                ? "This priority movement has enough full-session evidence and does not add overlapping fatigue next to a fixed commitment."
+                : "This priority movement has enough full-session evidence for one incremental set increase.",
           },
         ],
       },

@@ -18,6 +18,7 @@ function input(overrides = {}) {
     recoverySupportsBuild: true,
     recoveryCallsForReduction: false,
     availableEquipment: currentGymWorkoutEquipment,
+    fixedCommitmentConstrainedRoles: [],
     recommendationId: "recommendation-1",
     createdAt: "2026-09-22T12:00:00.000Z",
     ...overrides,
@@ -57,6 +58,22 @@ test("build recommendations never add sets to unavailable equipment", () => {
   assert.equal(assessment.status, "NoChange");
   assert.equal(assessment.recommendation, null);
   assert.match(assessment.explanation, /available gym equipment/);
+});
+
+test("fixed-commitment fatigue rules exclude an otherwise eligible movement", () => {
+  const verticalPullOnly = workoutTemplates["Gym B"].filter(
+    (exercise) => exercise.exerciseDefinitionId === "lat-pulldown"
+  );
+  const assessment = getStrengthProgrammingRecommendation(
+    input({
+      template: verticalPullOnly,
+      fixedCommitmentConstrainedRoles: ["VerticalPull"],
+    })
+  );
+
+  assert.equal(assessment.status, "NoChange");
+  assert.equal(assessment.recommendation, null);
+  assert.match(assessment.explanation, /fixed commitments/);
 });
 
 test("fat-loss plus aerial does not remove work when recovery is stable", () => {

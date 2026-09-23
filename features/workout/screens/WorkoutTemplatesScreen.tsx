@@ -19,8 +19,12 @@ import { ModalBody, ModalFooter, ModalHeader, ModalShell } from "@/components/ui
 import { useCoachingPreferences } from "@/features/coach/hooks/useCoachingPreferences";
 import { useBodyCompositionGoals } from "@/features/progress/hooks/useBodyCompositionGoals";
 import { useMorningCheckIn } from "@/features/recovery";
-import { getTrainingWeekStartDate } from "@/lib/date/trainingWeek";
-import { formatLocalCalendarDate } from "@/lib/date/trainingWeek";
+import {
+  addTrainingWeekDays,
+  formatLocalCalendarDate,
+  getTrainingWeekStart,
+  getTrainingWeekStartDate,
+} from "@/lib/date/trainingWeek";
 
 import AddExercise from "../components/AddExercise";
 
@@ -34,6 +38,9 @@ import { getStrengthProgrammingRecommendation } from "../logic/getStrengthProgra
 import { getStrengthProgrammingEvidence } from "../logic/getStrengthProgrammingEvidence";
 import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import { getEquipmentProfileForDate } from "../logic/getTrainingParticipationPreferenceForDate";
+import { getFixedCommitmentProgrammingConstraints } from "../logic/getFixedCommitmentProgrammingConstraints";
+import { getTrainingScheduleForDate } from "../utils/getTrainingScheduleForDate";
+import { fitnessOsTrainingPlan } from "../trainingPlan";
 import {
   currentGymWorkoutCapabilities,
   currentGymWorkoutEquipment,
@@ -88,6 +95,7 @@ export default function WorkoutTemplatesScreen() {
     recordDecision,
   } = useStrengthProgrammingDecisions();
   const {
+    state: trainingPlanState,
     trainingPreferences,
     loaded: trainingPreferencesLoaded,
   } = useTrainingPlanState();
@@ -153,6 +161,21 @@ export default function WorkoutTemplatesScreen() {
       capabilities: currentGymWorkoutCapabilities,
     }
   );
+  const currentWeekStart = getTrainingWeekStart(new Date());
+  const currentWeekSchedules = trainingPlanState
+    ? Array.from({ length: 7 }, (_, index) =>
+        getTrainingScheduleForDate(
+          fitnessOsTrainingPlan,
+          trainingPlanState,
+          addTrainingWeekDays(currentWeekStart, index)
+        )
+      ).filter((schedule) => schedule !== null)
+    : [];
+  const fixedCommitmentConstrainedRoles =
+    getFixedCommitmentProgrammingConstraints(
+      selectedWorkout,
+      currentWeekSchedules
+    );
 
   const programmingAssessment = programmingProfile
     ? getStrengthProgrammingRecommendation({
@@ -163,6 +186,7 @@ export default function WorkoutTemplatesScreen() {
         recoverySupportsBuild: weeklyRecovery.status === "Supported",
         recoveryCallsForReduction: weeklyRecovery.status === "Poor",
         availableEquipment: gymEquipmentProfile.equipment,
+        fixedCommitmentConstrainedRoles,
         recommendationId: `goal-aware-${selectedWorkout.toLowerCase().replace(" ", "-")}-${completedFullSessionsForWorkout}`,
         createdAt: new Date().toISOString(),
       })

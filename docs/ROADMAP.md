@@ -1953,6 +1953,14 @@ currently available; otherwise the review reports that no eligible executable
 priority movement exists and leaves the template unchanged. All 123 project
 tests, focused lint, and the production build passed.
 
+**Fixed-commitment programming checkpoint:** The assessment now resolves the
+current canonical week, including projected fixed aerial commitments and moved
+strength occurrences. When the selected Gym template is scheduled on the same
+or adjacent day as fixed aerial, added pulling, vertical pressing, rear-shoulder,
+and elbow-flexion volume is excluded. A safe non-overlapping priority movement
+may still be proposed; otherwise the template remains unchanged. All 126
+project tests, focused lint, and the production build passed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by
