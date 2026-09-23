@@ -1920,6 +1920,15 @@ recovery evidence cannot change the template. The assessment shows the recovery
 evidence explanation alongside the full-session count.
 Focused lint and the production build passed.
 
+**Programming-decision persistence checkpoint:** Applied goal-aware programming
+decisions now have a dedicated cloud-synchronized audit record containing the
+workout identity, reviewed recommendation, profile version, application time,
+and completed-full-session baseline. This record is separate from templates and
+workout history so future reassessment cannot reuse the same evidence or rewrite
+historical sessions. No decision is written until the approval UI applies a
+recommendation. All 119 project tests, focused lint, and the production build
+passed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by

@@ -16,6 +16,9 @@ export const FITNESS_OS_STORAGE_KEYS = {
   workoutTemplates:
     "fitness-os-workout-templates",
 
+  strengthProgrammingDecisions:
+    "fitness-os-strength-programming-decisions",
+
   trainingPlanState:
     "fitness-os-training-plan-state",
 
@@ -104,6 +107,7 @@ export const FITNESS_OS_STORAGE_KEYS = {
 export const FITNESS_OS_SYNC_KEYS = [
   FITNESS_OS_STORAGE_KEYS.customExercises,
   FITNESS_OS_STORAGE_KEYS.workoutTemplates,
+  FITNESS_OS_STORAGE_KEYS.strengthProgrammingDecisions,
   FITNESS_OS_STORAGE_KEYS.trainingPlanState,
   FITNESS_OS_STORAGE_KEYS.trainingPreferences,
   FITNESS_OS_STORAGE_KEYS.coachingPreferences,

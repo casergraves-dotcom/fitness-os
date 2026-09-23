@@ -30,6 +30,9 @@ export const STORAGE_KEYS = {
   workoutTemplates:
     "fitness-os-workout-templates",
 
+  strengthProgrammingDecisions:
+    "fitness-os-strength-programming-decisions",
+
   activeWorkout:
     "fitness-os-active-workout",
 
@@ -83,6 +86,7 @@ export const CLOUD_SYNC_STORAGE_KEYS = [
   STORAGE_KEYS.mobilityPreferences,
   STORAGE_KEYS.customExercises,
   STORAGE_KEYS.workoutTemplates,
+  STORAGE_KEYS.strengthProgrammingDecisions,
   STORAGE_KEYS.workoutHistory,
   STORAGE_KEYS.trainingActivityCompletions,
 

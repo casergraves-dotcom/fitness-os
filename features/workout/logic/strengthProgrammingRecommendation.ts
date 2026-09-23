@@ -1,4 +1,4 @@
-import type { Exercise } from "../types";
+import type { Exercise, StrengthWorkoutType } from "../types";
 import {
   applyStrengthTemplateSetChanges,
   type ApplyStrengthTemplateSetChangesOptions,
@@ -19,6 +19,14 @@ export interface StrengthProgrammingRecommendation {
   summary: string;
   changes: StrengthProgrammingSetRecommendation[];
   reassessAfterCompletedStrengthSessions: number;
+}
+
+export interface AppliedStrengthProgrammingDecision {
+  id: string;
+  workoutType: StrengthWorkoutType;
+  recommendation: StrengthProgrammingRecommendation;
+  completedFullSessionsAtApplication: number;
+  appliedAt: string;
 }
 
 export interface ApplyStrengthProgrammingRecommendationOptions
