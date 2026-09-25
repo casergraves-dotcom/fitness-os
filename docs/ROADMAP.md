@@ -2101,6 +2101,13 @@ range, offers shorter-lever or floor-based regressions, and protects shoulder,
 grip, and low-back control. The focused guidance test, lint, and production
 build passed.
 
+**Advanced core guidance checkpoint:** Long-Lever Plank, Weighted Plank, and
+Cable Crunch now provide canonical setup, execution, technique, mistake,
+safety, and regression guidance. The weighted variation explicitly requires
+assisted plate placement and removal, while both advanced plank and cable work
+retain controlled bracing and pain-free range as the progression boundary. The
+focused guidance test, lint, and production build passed.
+
 **Visual-guidance display checkpoint:** The optional workout How-To panel can
 now display described, bundled image assets from canonical `demoMedia` metadata
 with a representative-equipment caption. External sources, undescribed images,

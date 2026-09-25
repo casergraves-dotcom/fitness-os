@@ -1660,6 +1660,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     performanceType: "Duration",
     nextVariationId:
       "weighted-plank",
+    guidance: {
+      setup: [
+        "Begin in a forearm plank, then walk the elbows several inches forward of the shoulders to lengthen the lever.",
+        "Brace the trunk and squeeze the glutes before lifting into one straight line from head to heels.",
+      ],
+      execution: [
+        "Hold the longer-lever position while breathing steadily and keeping the ribs stacked over the pelvis.",
+        "End the set or bring the elbows back under the shoulders as soon as trunk position begins to change.",
+      ],
+      techniqueCues: ["Reach long through the heels while pulling the elbows gently toward the toes.", "Use only enough elbow reach to maintain a strong brace."],
+      commonMistakes: ["Moving the elbows so far forward that the low back arches.", "Holding the breath or shifting most of the pressure into the shoulders."],
+      safetyConsiderations: ["Return to a standard Plank if the longer lever causes shoulder or low-back discomfort."],
+      regressionExerciseIds: ["plank"],
+      progressionExerciseIds: ["weighted-plank"],
+    },
   },
   {
     id: "weighted-plank",
@@ -1682,6 +1697,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
 
     resistanceType: "Weight",
     performanceType: "Duration",
+    guidance: {
+      setup: [
+        "Have a partner place a light plate across the upper back while you hold a stable forearm plank, avoiding the neck and low back.",
+        "Set the elbows under the shoulders and establish a strong rib-to-pelvis brace before accepting the load.",
+      ],
+      execution: [
+        "Hold the same straight plank position without letting the plate shift or the hips sag.",
+        "Signal your partner to remove the plate before ending the set or changing position.",
+      ],
+      techniqueCues: ["Treat the load as resistance to your brace, not a reason to shorten your breathing.", "Keep even pressure through both forearms and feet."],
+      commonMistakes: ["Placing the plate on the low back.", "Adding load before a full-duration bodyweight Plank is controlled."],
+      safetyConsiderations: ["Use a partner for plate placement and removal; do not twist to load or unload the plate yourself."],
+      regressionExerciseIds: ["plank", "long-lever-plank"],
+    },
   },
 
   {
@@ -1729,6 +1758,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Attach a rope to a high cable, kneel far enough away to keep steady tension, and hold the rope beside the head.",
+        "Set the hips over the knees and brace before beginning the curl.",
+      ],
+      execution: [
+        "Curl the ribs toward the pelvis while keeping the hips mostly still.",
+        "Return under control until the abdominals lengthen without letting the weight stack pull you upright abruptly.",
+      ],
+      techniqueCues: ["Exhale through the curl.", "Let the trunk flex instead of pulling the rope down with the arms."],
+      commonMistakes: ["Turning the repetition into a large hip hinge.", "Using the arms and bodyweight to jerk the cable."],
+      safetyConsiderations: ["Choose a load and range that do not cause back or neck pain, and keep the cable path clear of the head."],
+      regressionExerciseIds: ["ab-crunch-machine"],
+    },
   },
 
   {

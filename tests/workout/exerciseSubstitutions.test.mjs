@@ -517,3 +517,17 @@ test("plank and leg-raise core exercises expose full How-To guidance", () => {
     assert.ok(guidance.regressionExerciseIds?.length, `${exerciseId} regression`);
   }
 });
+
+test("advanced plank and cable-crunch exercises expose full How-To guidance", () => {
+  for (const exerciseId of ["long-lever-plank", "weighted-plank", "cable-crunch"]) {
+    const guidance = exerciseLibrary.find((exercise) => exercise.id === exerciseId)?.guidance;
+
+    assert.ok(guidance, `${exerciseId} needs How-To guidance`);
+    assert.ok(guidance.setup.length >= 2, `${exerciseId} setup`);
+    assert.ok(guidance.execution.length >= 2, `${exerciseId} execution`);
+    assert.ok(guidance.techniqueCues?.length, `${exerciseId} technique cues`);
+    assert.ok(guidance.commonMistakes?.length, `${exerciseId} common mistakes`);
+    assert.ok(guidance.safetyConsiderations?.length, `${exerciseId} safety`);
+    assert.ok(guidance.regressionExerciseIds?.length, `${exerciseId} regression`);
+  }
+});
