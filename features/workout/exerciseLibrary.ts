@@ -919,6 +919,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the seat so the handles begin near the lower chest and your feet stay planted.",
+        "Sit tall against the pad, take a comfortable neutral grip, and keep the shoulders down away from the ears.",
+      ],
+      execution: [
+        "Press the handles down until the elbows are nearly straight without forcefully locking them.",
+        "Return the handles under control until you feel a comfortable stretch through the triceps and chest.",
+      ],
+      techniqueCues: ["Keep the wrists stacked and the shoulders quiet.", "Let the elbows bend naturally rather than flaring them aggressively."],
+      commonMistakes: ["Shrugging or leaning forward to move the handles.", "Letting the weight stack drop between repetitions."],
+      safetyConsiderations: ["Use a pain-free shoulder range and reduce the load if the bottom position pulls the shoulders forward."],
+      regressionExerciseIds: ["cable-pressdown"],
+    },
   },
   {
     id: "barbell-curl",
@@ -1472,6 +1486,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Position the shoulders securely under the pads and place the balls of the feet on the platform with the heels free to move.",
+        "Stand tall with soft knees and use the machine handles for balance rather than pulling with the arms.",
+      ],
+      execution: [
+        "Lower the heels under control to a comfortable stretch without losing foot contact.",
+        "Press through the balls of the feet to rise as high as you can, pause briefly, then lower slowly.",
+      ],
+      techniqueCues: ["Move through the ankles while keeping the knees quiet.", "Keep pressure even across the big-toe and little-toe sides of each forefoot."],
+      commonMistakes: ["Bouncing out of the bottom position.", "Rolling the ankles outward or shortening the range as fatigue builds."],
+      safetyConsiderations: ["Set and understand the machine's release and safety mechanism before loading it heavily."],
+      regressionExerciseIds: ["calf-raise"],
+    },
   },
   {
     id: "seated-calf-raise-machine",
@@ -1486,6 +1514,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the thigh pad so it rests securely above the knees while both forefeet sit firmly on the platform.",
+        "Keep the knees aligned with the feet and use the handles only to stay settled in the seat.",
+      ],
+      execution: [
+        "Raise the heels to take the load, release the machine stop, and lower into a comfortable ankle stretch.",
+        "Press through the forefeet to lift the heels, pause at the top, and return slowly before the next repetition.",
+      ],
+      techniqueCues: ["Keep the thighs in contact with the pad.", "Use a smooth full ankle motion instead of bouncing."],
+      commonMistakes: ["Allowing the feet to slide or the knees to drift sideways.", "Dropping the heels quickly into the bottom position."],
+      safetyConsiderations: ["Re-engage the machine stop while the heels are raised and confirm it is secure before leaving the seat."],
+      regressionExerciseIds: ["calf-raise"],
+    },
   },
 
   // ==========================================================

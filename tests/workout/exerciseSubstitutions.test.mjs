@@ -486,3 +486,20 @@ test("leg curl, hip thrust, and kickback machines expose full How-To guidance", 
     assert.ok(guidance.regressionExerciseIds?.length);
   }
 });
+
+test("dip and calf machines expose full How-To guidance", () => {
+  for (const exerciseId of [
+    "seated-dip-machine",
+    "standing-calf-raise-machine",
+    "seated-calf-raise-machine",
+  ]) {
+    const exercise = exerciseLibrary.find((candidate) => candidate.id === exerciseId);
+
+    assert.ok(exercise?.guidance, `${exerciseId} should have guidance`);
+    assert.ok(exercise.guidance.setup.length >= 2, `${exerciseId} setup`);
+    assert.ok(exercise.guidance.execution.length >= 2, `${exerciseId} execution`);
+    assert.ok(exercise.guidance.techniqueCues?.length, `${exerciseId} technique cues`);
+    assert.ok(exercise.guidance.commonMistakes?.length, `${exerciseId} common mistakes`);
+    assert.ok(exercise.guidance.safetyConsiderations?.length, `${exerciseId} safety`);
+  }
+});
