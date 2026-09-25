@@ -1178,6 +1178,10 @@ export type TrainingActivityAdjustmentAction =
   | "Skip"
   | "Substitute";
 
+export type TrainingActivitySkipReason =
+  | "CannotAttend"
+  | "ClassCanceled";
+
 
 export interface TrainingActivityAdjustment {
   // Stable TrainingActivity ID from the underlying plan.
@@ -1197,6 +1201,10 @@ export interface TrainingActivityAdjustment {
   // The resolver does not create a duplicate replacement
   // occurrence; it suppresses only the substituted-away activity.
   substituteTrainingActivityId?: string;
+
+  // Optional user-selected reason for suppressing one optional occurrence.
+  // This does not alter the recurring training preference.
+  skipReason?: TrainingActivitySkipReason;
 
   // Exact timestamp recording when the adjustment was made.
   adjustedAt: string;

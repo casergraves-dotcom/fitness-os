@@ -810,6 +810,15 @@ preserving canonical training-plan identity.
   Sep 18, 2026.
 - [ ] Verify moving an unfinished one-time activity to another date preserves
   its identity, keeps the recurring plan unchanged, and re-evaluates conflicts.
+- [x] Let a fixed optional class be skipped for one week as either unavailable
+  or class canceled without changing the recurring commitment.
+
+**One-week fixed-class exception checkpoint:** A fixed optional aerial class now
+offers a deliberate one-occurrence skip flow with distinct `Can't attend` and
+`Class was canceled` reasons. The selected occurrence is suppressed through the
+existing canonical activity-adjustment overlay, its reason remains auditable,
+future recurring classes remain scheduled, and the absent class no longer
+contributes schedule or goal-aware programming constraints for that week.
 
 **Fixed-anchor and week-review checkpoint:** Fixed aerial commitments are now
 protected consistently in both automatic scheduling and the expanded-week UI;

@@ -17,6 +17,7 @@ import { MoreHorizontal } from "lucide-react";
 import type {
   TrainingActivityCompletion,
   TrainingActivity,
+  TrainingActivitySkipReason,
   TrainingModality,
   TrainingPlanState,
 } from "@/features/workout/types";
@@ -82,6 +83,12 @@ interface WeeklyScheduleProps {
   ) => void;
 
   onRemoveAdHocActivity: (activityId: string, date: string) => void;
+
+  onSkipFixedCommitment: (
+    trainingActivityId: string,
+    originalDate: string,
+    reason: TrainingActivitySkipReason,
+  ) => void;
 
   onRescheduleActivity: (
     trainingActivityId: string,
@@ -267,6 +274,7 @@ interface ActivityRowProps {
 
   onMarkComplete: (occurrence: ResolvedWeeklyActivityOccurrence) => void;
   onRemoveAdHoc: (occurrence: ResolvedWeeklyActivityOccurrence) => void;
+  onSkipFixedCommitment: (occurrence: ResolvedWeeklyActivityOccurrence) => void;
 
   onMove: (
     occurrence:
@@ -282,6 +290,7 @@ function ActivityRow({
   canMove,
   onMarkComplete,
   onRemoveAdHoc,
+  onSkipFixedCommitment,
   onMove,
 }: ActivityRowProps) {
   const moved =
@@ -293,6 +302,7 @@ function ActivityRow({
   const hasSecondaryActions =
     canMarkComplete ||
     (!completed && canMove) ||
+    (!completed && occurrence.placementSource === "FixedAerialCommitment") ||
     occurrence.placementSource === "AdHoc";
 
   return (
@@ -362,6 +372,11 @@ function ActivityRow({
                   Move activity
                 </DropdownMenuItem>
               )}
+              {!completed && occurrence.placementSource === "FixedAerialCommitment" && (
+                <DropdownMenuItem onClick={() => onSkipFixedCommitment(occurrence)}>
+                  Can&apos;t attend this week
+                </DropdownMenuItem>
+              )}
               {occurrence.placementSource === "AdHoc" && (
                 <DropdownMenuItem
                   variant="destructive"
@@ -391,6 +406,7 @@ export default function WeeklySchedule({
   onCompleteActivity,
   onAddAdHocActivity,
   onRemoveAdHocActivity,
+  onSkipFixedCommitment,
   onRescheduleActivity,
   onRescheduleActivities,
   onApplyAdaptiveScheduleRecommendation,
@@ -440,6 +456,10 @@ export default function WeeklySchedule({
     useState<ResolvedWeeklyActivityOccurrence | null>(null);
   const [confirmingRemoval, setConfirmingRemoval] =
     useState<ResolvedWeeklyActivityOccurrence | null>(null);
+  const [skippingFixedCommitment, setSkippingFixedCommitment] =
+    useState<ResolvedWeeklyActivityOccurrence | null>(null);
+  const [fixedCommitmentSkipReason, setFixedCommitmentSkipReason] =
+    useState<TrainingActivitySkipReason>("CannotAttend");
   const [addingDate, setAddingDate] = useState<string | null>(null);
   const [addingWeekRange, setAddingWeekRange] = useState<{ start: string; end: string } | null>(null);
   const [newActivityType, setNewActivityType] = useState<"Aerial" | "Walk" | "Mobility" | "Recovery">("Aerial");
@@ -1091,6 +1111,10 @@ export default function WeeklySchedule({
                 }
                 onMarkComplete={setConfirmingCompletion}
                 onRemoveAdHoc={setConfirmingRemoval}
+                onSkipFixedCommitment={(occurrence) => {
+                  setFixedCommitmentSkipReason("CannotAttend");
+                  setSkippingFixedCommitment(occurrence);
+                }}
                 onMove={
                     openMoveDialog
                 }
@@ -1247,6 +1271,76 @@ export default function WeeklySchedule({
               className="rounded-xl bg-rose-700 px-4 py-2 text-sm font-semibold text-white"
             >
               Remove activity
+            </button>
+          </ModalFooter>
+        </ModalShell>
+      )}
+
+      {skippingFixedCommitment && (
+        <ModalShell
+          labelledBy="skip-fixed-commitment-title"
+          onBackdropPress={() => setSkippingFixedCommitment(null)}
+        >
+          <ModalHeader>
+            <h2 id="skip-fixed-commitment-title" className="text-xl font-semibold text-slate-900">
+              Skip {skippingFixedCommitment.activity.label} this week?
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              This removes only the occurrence on {formatDisplayDate(skippingFixedCommitment.date)}. Your recurring fixed commitment will stay in the plan.
+            </p>
+          </ModalHeader>
+          <ModalBody>
+            <fieldset>
+              <legend className="text-sm font-semibold text-slate-900">What happened?</legend>
+              <div className="mt-3 space-y-2">
+                <label className="flex items-start gap-3 rounded-xl border border-slate-200 p-3">
+                  <input
+                    type="radio"
+                    name="fixed-commitment-skip-reason"
+                    value="CannotAttend"
+                    checked={fixedCommitmentSkipReason === "CannotAttend"}
+                    onChange={() => setFixedCommitmentSkipReason("CannotAttend")}
+                    className="mt-1"
+                  />
+                  <span>
+                    <span className="block text-sm font-semibold text-slate-900">I can&apos;t attend</span>
+                    <span className="block text-xs leading-5 text-slate-600">Your availability changed for this occurrence.</span>
+                  </span>
+                </label>
+                <label className="flex items-start gap-3 rounded-xl border border-slate-200 p-3">
+                  <input
+                    type="radio"
+                    name="fixed-commitment-skip-reason"
+                    value="ClassCanceled"
+                    checked={fixedCommitmentSkipReason === "ClassCanceled"}
+                    onChange={() => setFixedCommitmentSkipReason("ClassCanceled")}
+                    className="mt-1"
+                  />
+                  <span>
+                    <span className="block text-sm font-semibold text-slate-900">Class was canceled</span>
+                    <span className="block text-xs leading-5 text-slate-600">The scheduled class did not take place.</span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+          </ModalBody>
+          <ModalFooter className="flex justify-end gap-3">
+            <button type="button" onClick={() => setSkippingFixedCommitment(null)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold">
+              Keep class
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onSkipFixedCommitment(
+                  skippingFixedCommitment.activity.id,
+                  skippingFixedCommitment.originalDate,
+                  fixedCommitmentSkipReason,
+                );
+                setSkippingFixedCommitment(null);
+              }}
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Skip this occurrence
             </button>
           </ModalFooter>
         </ModalShell>

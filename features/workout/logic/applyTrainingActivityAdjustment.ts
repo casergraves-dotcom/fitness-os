@@ -1,5 +1,6 @@
 import type {
   TrainingActivityAdjustmentAction,
+  TrainingActivitySkipReason,
   TrainingPlanState,
 } from "../types";
 
@@ -23,6 +24,9 @@ export interface ApplyTrainingActivityAdjustmentInput {
 
   substituteTrainingActivityId?:
     string;
+
+  skipReason?:
+    TrainingActivitySkipReason;
 
   adjustedAt:
     string;
@@ -50,6 +54,7 @@ export function applyTrainingActivityAdjustment({
   originalDate,
   action,
   substituteTrainingActivityId,
+  skipReason,
   adjustedAt,
 }: ApplyTrainingActivityAdjustmentInput):
   TrainingPlanState {
@@ -79,6 +84,11 @@ export function applyTrainingActivityAdjustment({
       action ===
       "Substitute"
         ? substituteTrainingActivityId
+        : undefined,
+
+    skipReason:
+      action === "Skip"
+        ? skipReason
         : undefined,
 
     adjustedAt,
@@ -122,7 +132,9 @@ export function applyTrainingActivityAdjustment({
     existingAdjustment
       .substituteTrainingActivityId ===
       nextAdjustment
-        .substituteTrainingActivityId
+        .substituteTrainingActivityId &&
+    existingAdjustment.skipReason ===
+      nextAdjustment.skipReason
   ) {
     return state;
   }

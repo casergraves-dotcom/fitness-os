@@ -16,6 +16,7 @@ import {
 import {
   applyTrainingActivityReschedule,
 } from "../logic/applyTrainingActivityReschedule";
+import { applyTrainingActivityAdjustment } from "../logic/applyTrainingActivityAdjustment";
 import { removeAdHocTrainingActivity } from "../logic/removeAdHocTrainingActivity";
 
 import {
@@ -45,6 +46,7 @@ import type {
   TrainingModality,
   TrainingPlanState,
   TrainingActivity,
+  TrainingActivitySkipReason,
   TrainingParticipationPreference,
   TrainingWeek,
   WorkoutEnvironment,
@@ -221,6 +223,30 @@ export function useTrainingPlanState() {
       STORAGE_KEY,
       JSON.stringify(nextState)
     );
+  }
+
+
+  // ----------------------------------------------------------
+  // Skip One Optional Occurrence
+  // ----------------------------------------------------------
+
+  function skipOptionalTrainingActivity(
+    trainingActivityId: string,
+    originalDate: string,
+    skipReason: TrainingActivitySkipReason
+  ) {
+    if (!state) return;
+
+    const nextState = applyTrainingActivityAdjustment({
+      state,
+      trainingActivityId,
+      originalDate,
+      action: "Skip",
+      skipReason,
+      adjustedAt: new Date().toISOString(),
+    });
+
+    if (nextState !== state) saveState(nextState);
   }
 
 
@@ -774,6 +800,8 @@ export function useTrainingPlanState() {
     rescheduleTrainingActivities,
 
     applyAdaptiveScheduleRecommendation,
+
+    skipOptionalTrainingActivity,
 
     setTrainingParticipationPreferences,
 

@@ -165,6 +165,8 @@ export default function TodayScreen() {
     removeAdHocActivity,
 
     applyAdaptiveScheduleRecommendation,
+
+    skipOptionalTrainingActivity,
   } = useTrainingPlanState();
 
   const {
@@ -616,6 +618,8 @@ export default function TodayScreen() {
               removeActivityCompletion(activityId, date);
             }
           }}
+
+          onSkipFixedCommitment={skipOptionalTrainingActivity}
 
           onRescheduleActivity={
             (
