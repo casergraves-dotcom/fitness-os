@@ -2071,6 +2071,13 @@ Dumbbell Fly now provide canonical setup, execution, technique, mistake, and
 safety guidance. Their focused guidance test and production build passed;
 in-app review and remaining exercise coverage stay open.
 
+**Posterior-chain machine guidance checkpoint:** Lying Leg Curl, Hip Thrust
+Machine, and Glute Kickback Machine now provide canonical setup, execution,
+technique, mistake, safety, and regression guidance. The unilateral kickback
+continues to use the existing per-side prescription, and the guidance links to
+canonical easier options rather than creating duplicate exercise records. All
+130 project tests, focused lint, and the production build passed.
+
 **Visual-guidance display checkpoint:** The optional workout How-To panel can
 now display described, bundled image assets from canonical `demoMedia` metadata
 with a representative-equipment caption. External sources, undescribed images,

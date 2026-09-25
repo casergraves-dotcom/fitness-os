@@ -1111,6 +1111,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Adjust the machine so your knees line up with its pivot and the roller rests just above the heels.",
+        "Lie face down with your hips centered on the pad and hold the handles without lifting your chest.",
+      ],
+      execution: [
+        "Curl the roller toward your glutes by bending the knees while keeping the hips against the pad.",
+        "Lower with control until the legs are nearly straight without letting the weight stack slam.",
+      ],
+      techniqueCues: ["Keep the pelvis heavy on the pad.", "Pause briefly at the top without forcing the heels farther than you can control."],
+      commonMistakes: ["Arching the low back and lifting the hips to finish the curl.", "Using momentum or dropping the return phase."],
+      safetyConsiderations: ["Reposition the roller or shorten the range if you feel pressure behind the knees."],
+      regressionExerciseIds: ["leg-curl", "band-leg-curl"],
+    },
   },
   {
     id: "band-leg-curl",
@@ -1197,6 +1211,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Position the machine belt or pad across the hip crease and plant both feet where your shins can finish near vertical.",
+        "Set your upper back securely against the support and brace before releasing the machine safety.",
+      ],
+      execution: [
+        "Drive through the whole foot and squeeze the glutes to raise the hips.",
+        "Stop at a level torso without arching the low back, then lower under control.",
+      ],
+      techniqueCues: ["Keep the ribs down as the hips rise.", "Let the knees track in line with the feet."],
+      commonMistakes: ["Finishing the repetition by overextending the low back.", "Placing the feet so far away that the movement becomes mostly hamstrings."],
+      safetyConsiderations: ["Confirm the belt or pad and safety catches are secure before using a challenging load."],
+      regressionExerciseIds: ["glute-bridge"],
+    },
   },
   {
     id: "glute-kickback-machine",
@@ -1212,6 +1240,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     resistanceType: "Weight",
     performanceType: "Reps",
     repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Adjust the torso support and working pad so you can move one hip without twisting your pelvis.",
+        "Brace against the handles or pad and place the working leg securely in the machine contact point.",
+      ],
+      execution: [
+        "Drive the working leg backward from the hip while keeping the trunk and pelvis still.",
+        "Return slowly to the start without letting the weight stack pull you out of position, then complete the other side.",
+      ],
+      techniqueCues: ["Keep the working knee softly bent.", "Use a controlled hip range rather than chasing a higher foot position."],
+      commonMistakes: ["Rotating the pelvis open to move the pad farther.", "Arching the low back instead of extending the hip."],
+      safetyConsiderations: ["Use the machine only when its pad and supports can be adjusted securely to your body."],
+      regressionExerciseIds: ["glute-bridge"],
+      progressionExerciseIds: ["hip-thrust-machine"],
+    },
   },
   {
     id: "band-good-morning",
