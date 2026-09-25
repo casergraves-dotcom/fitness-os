@@ -2094,6 +2094,13 @@ cover machine adjustment, controlled range, safe release/stop handling, and
 appropriate easier options without creating duplicate exercise records. The
 focused guidance test, lint, and production build passed.
 
+**Core stability and leg-raise guidance checkpoint:** Plank, Hanging Leg Raise,
+and Lying Leg Raise now provide canonical setup, execution, technique, mistake,
+safety, and regression guidance. The guidance distinguishes bracing from forced
+range, offers shorter-lever or floor-based regressions, and protects shoulder,
+grip, and low-back control. The focused guidance test, lint, and production
+build passed.
+
 **Visual-guidance display checkpoint:** The optional workout How-To panel can
 now display described, bundled image assets from canonical `demoMedia` metadata
 with a representative-equipment caption. External sources, undescribed images,

@@ -1628,6 +1628,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     performanceType: "Duration",
     nextVariationId:
       "long-lever-plank",
+    guidance: {
+      setup: [
+        "Place the forearms on the floor with elbows under the shoulders and extend both legs behind you.",
+        "Brace the trunk and squeeze the glutes so the head, ribs, hips, and heels form one long line.",
+      ],
+      execution: [
+        "Hold the position while breathing steadily and maintaining even pressure through both forearms and toes.",
+        "End the set when the hips sag, the low back arches, or you can no longer keep a controlled brace.",
+      ],
+      techniqueCues: ["Gently pull the elbows toward the toes without moving them.", "Keep the ribs stacked over the pelvis."],
+      commonMistakes: ["Holding the breath for the entire set.", "Letting the hips drop or lifting them high to avoid the brace."],
+      safetyConsiderations: ["Use a shorter hold or elevate the forearms if the floor position causes shoulder or low-back discomfort."],
+      regressionExerciseIds: ["dead-bug"],
+      progressionExerciseIds: ["long-lever-plank"],
+    },
   },
   {
     id: "long-lever-plank",
@@ -1730,6 +1745,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Take a secure shoulder-width grip on the pull-up bar and begin in a controlled hang with room below the feet.",
+        "Set the shoulders gently away from the ears and brace before moving the legs.",
+      ],
+      execution: [
+        "Curl the pelvis and raise the knees or straight legs without using a large body swing.",
+        "Lower under control to a quiet hang before beginning the next repetition.",
+      ],
+      techniqueCues: ["Think about bringing the pelvis toward the ribs.", "Use bent knees if straight legs make the trunk swing."],
+      commonMistakes: ["Kicking the legs to create momentum.", "Losing the shoulder position or dropping rapidly from the top."],
+      safetyConsiderations: ["Use a stable bar and stop before grip or shoulder control fails; choose the floor variation if hanging is uncomfortable."],
+      regressionExerciseIds: ["lying-leg-raise", "dead-bug"],
+    },
   },
   {
     id: "lying-leg-raise",
@@ -1745,6 +1774,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Lie on your back with the legs extended and place the arms beside you or hands under the pelvis for light support.",
+        "Brace so the ribs stay down and begin with the low back comfortably supported by the floor.",
+      ],
+      execution: [
+        "Raise the legs under control while keeping the pelvis and trunk quiet.",
+        "Lower only as far as you can without the low back arching, then return to the top.",
+      ],
+      techniqueCues: ["Bend the knees to shorten the lever when needed.", "Exhale as the legs move away from the torso."],
+      commonMistakes: ["Lowering the legs farther than trunk control allows.", "Using a fast swing instead of controlled hip motion."],
+      safetyConsiderations: ["Reduce the range or switch to Dead Bug if you feel strain in the low back."],
+      regressionExerciseIds: ["dead-bug"],
+      progressionExerciseIds: ["hanging-leg-raise"],
+    },
   },
 ];
 
