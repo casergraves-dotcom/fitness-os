@@ -2108,6 +2108,13 @@ assisted plate placement and removal, while both advanced plank and cable work
 retain controlled bracing and pain-free range as the progression boundary. The
 focused guidance test, lint, and production build passed.
 
+**Remaining barbell guidance checkpoint:** Barbell Row, Barbell Overhead Press,
+and Barbell Curl now provide canonical setup, execution, technique, mistake,
+safety, and regression guidance. The guidance emphasizes a stable hinge and
+trunk, rack-safe overhead pressing, controlled loading, and wrist-friendly
+alternatives without introducing separate exercise identities. The focused
+guidance test, lint, and production build passed.
+
 **Visual-guidance display checkpoint:** The optional workout How-To panel can
 now display described, bundled image assets from canonical `demoMedia` metadata
 with a representative-equipment caption. External sources, undescribed images,

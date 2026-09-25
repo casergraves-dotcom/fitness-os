@@ -549,6 +549,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand with the bar over the mid-foot, take a grip just outside the legs, and hinge until the torso is stable and inclined forward.",
+        "Brace the trunk, keep the neck neutral, and let the arms hang straight before beginning the pull.",
+      ],
+      execution: [
+        "Pull the bar toward the lower ribs while keeping the torso angle nearly unchanged.",
+        "Lower the bar under control until the elbows are straight without losing the brace or hinge position.",
+      ],
+      techniqueCues: ["Drive the elbows behind you.", "Keep the bar close and the feet heavy on the floor."],
+      commonMistakes: ["Standing up during each pull to create momentum.", "Rounding the back or shrugging the shoulders toward the ears."],
+      safetyConsiderations: ["Reduce the load or use a supported row if you cannot hold a comfortable, stable hinge."],
+      regressionExerciseIds: ["seated-row", "one-arm-dumbbell-row"],
+    },
   },
 
   // ==========================================================
@@ -768,6 +782,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Set the bar in a rack near upper-chest height and take a grip that keeps the forearms close to vertical.",
+        "Unrack with the bar on the upper chest, feet planted, glutes engaged, and ribs stacked over the pelvis.",
+      ],
+      execution: [
+        "Move the head slightly back, press the bar upward in a close path, then bring the head through as the bar clears it.",
+        "Lower the bar under control to the upper chest while keeping the trunk position steady.",
+      ],
+      techniqueCues: ["Press the body away from the bar while keeping the legs quiet.", "Finish with the bar balanced over the middle of the foot."],
+      commonMistakes: ["Leaning far backward and turning the press into an incline press.", "Pressing around the face in a large forward arc."],
+      safetyConsiderations: ["Use a rack at an appropriate height and a load you can return to the hooks without straining the back or shoulders."],
+      regressionExerciseIds: ["dumbbell-shoulder-press", "shoulder-press-machine"],
+    },
   },
 
   // ==========================================================
@@ -947,6 +975,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand tall with the bar held at arm's length, hands about shoulder-width apart, and wrists in a comfortable position.",
+        "Brace lightly and keep the upper arms close to the sides before beginning the curl.",
+      ],
+      execution: [
+        "Bend the elbows to raise the bar without driving the hips or shoulders forward.",
+        "Lower the bar slowly until the elbows are straight while keeping the trunk quiet.",
+      ],
+      techniqueCues: ["Keep the elbows near the ribs.", "Use a grip width that does not force the wrists into discomfort."],
+      commonMistakes: ["Swinging the torso to start each repetition.", "Letting the elbows travel far forward at the top."],
+      safetyConsiderations: ["Use dumbbells or a machine if a straight bar causes wrist or elbow pain."],
+      regressionExerciseIds: ["dumbbell-curl", "biceps-curl-machine"],
+    },
   },
 
   // ==========================================================
