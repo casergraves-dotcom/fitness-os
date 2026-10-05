@@ -903,6 +903,11 @@ input, TypeScript, automated tests, and the production build passed.
 - [x] Evaluate a compact sticky exercise navigator or exercise-list sheet after
   collapsible cards are implemented; add it only if jumping between distant
   exercises still requires excessive scrolling.
+- [x] Use progressive density for mobile working-set logging: collapse completed
+  sets into tappable summaries while keeping active inputs comfortable and
+  completed values quickly editable.
+- [x] Reduce persistent secondary set-row height and tighten the Jump To
+  navigator without shrinking primary tap targets below a comfortable size.
 
 **Exercise navigator checkpoint:** Long active workouts now include a compact
 sticky horizontal navigator with workout-order numbering and live completed/
@@ -911,6 +916,15 @@ scrolls directly to its card; completed exercises receive a distinct success
 state without changing the existing free-order completion model. Jumping from
 Leg Press to Shoulder Press, sticky behavior, the fixed bottom navigation, and
 the production build passed in the browser.
+
+**Progressive set-density checkpoint:** Completed working sets now collapse to
+one-line read-only summaries containing their recorded performance and optional
+RPE. Tapping a summary restores the full editor for quick correction without
+changing the sequential completion rules. Active and upcoming sets retain
+iPhone-safe inputs, while RPE, prior performance, conversion, and edit controls
+share a compact wrapping utility line. The sticky Jump To navigator now uses a
+single-line exercise/progress treatment with 44-pixel targets. Lint, TypeScript,
+and the production build passed; final phone-width visual review remains open.
 
 ---
 

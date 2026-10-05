@@ -202,6 +202,11 @@ export default function ExerciseCard({
   ] = useState(false);
 
   const [
+    editingCompletedSetIds,
+    setEditingCompletedSetIds,
+  ] = useState<string[]>([]);
+
+  const [
     substitutionFeedback,
     setSubstitutionFeedback,
   ] = useState<string | null>(
@@ -993,6 +998,48 @@ export default function ExerciseCard({
                 ? !hasCompletedSetAfter
                 : previousSetsComplete;
 
+            const editingCompletedSet =
+              set.completed &&
+              editingCompletedSetIds.includes(set.id);
+
+            if (set.completed && !editingCompletedSet) {
+              const completedPerformance = isWeightDuration
+                ? `${set.weight} lb × ${set.reps} sec`
+                : isDuration
+                  ? `${set.reps} sec`
+                  : isBand && isReps
+                    ? `${set.weight} lb band × ${set.reps} ${repsUnitLabel}`
+                    : isAssistance
+                      ? `${set.weight} lb assist × ${set.reps} ${repsUnitLabel}`
+                      : isReps && !isBand
+                        ? `${set.reps} ${repsUnitLabel}`
+                        : `${set.weight} lb × ${set.reps} ${repsUnitLabel}`;
+
+              return (
+                <button
+                  key={set.id}
+                  type="button"
+                  onClick={() =>
+                    setEditingCompletedSetIds((current) =>
+                      current.includes(set.id) ? current : [...current, set.id]
+                    )
+                  }
+                  aria-label={`Edit completed set ${index + 1}`}
+                  className="flex min-h-11 w-full items-center gap-3 rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2 text-left transition hover:border-emerald-400 hover:bg-emerald-100"
+                >
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                    <Check size={16} />
+                  </span>
+                  <span className="shrink-0 text-sm font-semibold text-slate-700">Set {index + 1}</span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-slate-700">
+                    {completedPerformance}
+                    {set.rpe ? ` · RPE ${set.rpe}` : ""}
+                  </span>
+                  <span className="text-xs font-semibold text-blue-700">Edit</span>
+                </button>
+              );
+            }
+
             return (
               <div
                 key={set.id}
@@ -1011,12 +1058,18 @@ export default function ExerciseCard({
                   disabled={
                     !canToggleSet
                   }
-                  onClick={() =>
+                  onClick={() => {
+                    if (set.completed) {
+                      setEditingCompletedSetIds((current) =>
+                        current.filter((setId) => setId !== set.id)
+                      );
+                    }
+
                     onToggleSet(
                       exercise.id,
                       set.id
-                    )
-                  }
+                    );
+                  }}
                   aria-label={
                     set.completed
                       ? `Uncomplete set ${index + 1}`
@@ -1048,7 +1101,7 @@ export default function ExerciseCard({
                       : ""
                   }`}
                 >
-                  Set {index + 1}
+                  Set {index + 1}{editingCompletedSet ? " · editing" : ""}
                 </span>
 
                 {/* ==========================================
@@ -1072,9 +1125,6 @@ export default function ExerciseCard({
                               set.reps
                             )
                           }
-                        disabled={
-                          set.completed
-                        }
                         onChange={(
                           event
                         ) =>
@@ -1108,9 +1158,6 @@ export default function ExerciseCard({
                             getNumericInputValue(
                               set.weight
                             )
-                          }
-                          disabled={
-                            set.completed
                           }
                           aria-label={`Band resistance for set ${index + 1}`}
                           onChange={(
@@ -1167,9 +1214,6 @@ export default function ExerciseCard({
                               set.reps
                             )
                           }
-                          disabled={
-                            set.completed
-                          }
                           onChange={(
                             event
                           ) =>
@@ -1208,9 +1252,6 @@ export default function ExerciseCard({
                               set.reps
                             )
                           }
-                        disabled={
-                          set.completed
-                        }
                         onChange={(
                           event
                         ) =>
@@ -1248,9 +1289,6 @@ export default function ExerciseCard({
                               set.weight
                             )
                           }
-                          disabled={
-                            set.completed
-                          }
                           onChange={(
                             event
                           ) =>
@@ -1285,9 +1323,6 @@ export default function ExerciseCard({
                             getNumericInputValue(
                               set.reps
                             )
-                          }
-                          disabled={
-                            set.completed
                           }
                           onChange={(
                             event
@@ -1329,7 +1364,6 @@ export default function ExerciseCard({
                               set.weight
                             )
                           }
-                          disabled={set.completed}
                           onChange={(event) =>
                             onUpdateSet(
                               exercise.id,
@@ -1365,7 +1399,6 @@ export default function ExerciseCard({
                               set.reps
                             )
                           }
-                          disabled={set.completed}
                           onChange={(event) =>
                             onUpdateSet(
                               exercise.id,
@@ -1404,9 +1437,6 @@ export default function ExerciseCard({
                               set.weight
                             )
                           }
-                          disabled={
-                            set.completed
-                          }
                           onChange={(
                             event
                           ) =>
@@ -1444,9 +1474,6 @@ export default function ExerciseCard({
                               set.reps
                             )
                           }
-                          disabled={
-                            set.completed
-                          }
                           onChange={(
                             event
                           ) =>
@@ -1469,8 +1496,9 @@ export default function ExerciseCard({
                     </div>
                   )}
 
-                  {(usesTraditionalInputs || isAssistance || isWeightDuration) && !set.completed && (
-                    <div className="mt-2">
+                  <div className="mt-2 flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+                  {(usesTraditionalInputs || isAssistance || isWeightDuration) && (
+                    <div>
                       <WeightConverter
                         initialPounds={set.weight}
                         onApplyPounds={(pounds) =>
@@ -1484,7 +1512,7 @@ export default function ExerciseCard({
                       Optional Set RPE
                   ----------------------------------------- */}
 
-                  <label className="mt-2 flex items-center gap-2 text-xs text-slate-500">
+                  <label className="flex min-h-9 items-center gap-2 text-xs text-slate-500">
                     <span>RPE</span>
 
                     <select
@@ -1498,7 +1526,7 @@ export default function ExerciseCard({
                           Number(event.target.value)
                         )
                       }
-                      className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-base sm:text-xs"
+                      className="min-h-9 rounded-lg border border-slate-300 bg-white px-2 py-1 text-base sm:text-xs"
                     >
                       <option value="">Optional</option>
                       {RPE_SCALE.map(
@@ -1527,7 +1555,7 @@ export default function ExerciseCard({
                   =========================================== */}
 
                   {previousSet && (
-                    <div className="mt-1 text-xs text-slate-500">
+                    <div className="text-xs text-slate-500">
                       {/* Weight × Duration */}
 
                       {isWeightDuration && (
@@ -1612,6 +1640,21 @@ export default function ExerciseCard({
                       )}
                     </div>
                   )}
+
+                  {editingCompletedSet && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setEditingCompletedSetIds((current) =>
+                          current.filter((setId) => setId !== set.id)
+                        )
+                      }
+                      className="min-h-9 text-xs font-semibold text-blue-700"
+                    >
+                      Done editing
+                    </button>
+                  )}
+                  </div>
                 </div>
 
                 {/* ------------------------------------------
