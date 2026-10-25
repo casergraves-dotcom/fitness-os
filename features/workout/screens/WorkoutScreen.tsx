@@ -250,6 +250,9 @@ export default function WorkoutScreen() {
       null
     );
 
+  const completedExerciseIdsRef =
+    useRef<string[]>([]);
+
   // ----------------------------------------------------------
   // Workout Session
   // ----------------------------------------------------------
@@ -327,15 +330,10 @@ export default function WorkoutScreen() {
         setExpandedExerciseIds(
           []
         );
+
+        completedExerciseIdsRef.current = [];
       }
 
-      return;
-    }
-
-    if (
-      expansionSessionId.current ===
-        session.id
-    ) {
       return;
     }
 
@@ -352,12 +350,56 @@ export default function WorkoutScreen() {
           )
       );
 
+    const completedExerciseIds =
+      session.exercises
+        .filter(
+          (exercise) =>
+            exercise.sets.length > 0 &&
+            exercise.sets.every((set) => set.completed)
+        )
+        .map((exercise) => exercise.id);
+
+    if (
+      expansionSessionId.current ===
+        session.id
+    ) {
+      const newlyCompletedExerciseIds =
+        completedExerciseIds.filter(
+          (exerciseId) =>
+            !completedExerciseIdsRef.current.includes(exerciseId)
+        );
+
+      completedExerciseIdsRef.current = completedExerciseIds;
+
+      if (newlyCompletedExerciseIds.length === 0) {
+        return;
+      }
+
+      setExpandedExerciseIds((current) => {
+        const next = current.filter(
+          (exerciseId) => !newlyCompletedExerciseIds.includes(exerciseId)
+        );
+
+        if (
+          firstIncompleteExercise &&
+          !next.includes(firstIncompleteExercise.id)
+        ) {
+          next.push(firstIncompleteExercise.id);
+        }
+
+        return next;
+      });
+
+      return;
+    }
+
     const initiallyExpandedExercise =
-      firstIncompleteExercise ??
-      session.exercises[0];
+      firstIncompleteExercise;
 
     expansionSessionId.current =
       session.id;
+
+    completedExerciseIdsRef.current = completedExerciseIds;
 
     setExpandedExerciseIds(
       initiallyExpandedExercise

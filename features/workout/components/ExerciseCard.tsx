@@ -388,6 +388,18 @@ export default function ExerciseCard({
     completedSetCount ===
       exercise.sets.length;
 
+  const completedSetSummary = exercise.sets
+    .filter((set) => set.completed)
+    .map((set) => {
+      if (isWeightDuration) return `${set.weight} lb × ${set.reps} sec`;
+      if (isDuration) return `${set.reps} sec`;
+      if (isBand && isReps) return `${set.weight} lb band × ${set.reps}`;
+      if (isAssistance) return `${set.weight} lb assist × ${set.reps}`;
+      if (isReps && !isBand) return `${set.reps} ${repsUnitLabel}`;
+      return `${set.weight} lb × ${set.reps}`;
+    })
+    .join(" · ");
+
   // ----------------------------------------------------------
   // Today's Target
   // ----------------------------------------------------------
@@ -542,8 +554,8 @@ export default function ExerciseCard({
     <Card
       className={
         exerciseComplete
-          ? "rounded-2xl border border-green-300 bg-green-50 p-6 shadow-sm"
-          : "rounded-2xl border bg-white p-6 shadow-sm"
+          ? `rounded-2xl border border-green-300 bg-green-50 shadow-sm ${expanded ? "p-4 sm:p-6" : "p-3"}`
+          : `rounded-2xl border bg-white shadow-sm ${expanded ? "p-4 sm:p-6" : "p-3"}`
       }
     >
       {/* ----------------------------------------------------
@@ -560,11 +572,11 @@ export default function ExerciseCard({
           onClick={
             onToggleExpanded
           }
-          className="flex min-w-0 flex-1 items-center gap-3 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
 
           <ChevronDown
-            size={20}
+            size={18}
             className={
               expanded
                 ? "shrink-0 rotate-180 text-slate-500 transition-transform"
@@ -574,16 +586,19 @@ export default function ExerciseCard({
 
           <span className="min-w-0">
 
-            <span className="block truncate text-lg font-semibold text-slate-900">
+            <span className={`block truncate font-semibold text-slate-900 ${expanded ? "text-lg" : "text-base"}`}>
               {exercise.name}
             </span>
 
-            <span className="mt-0.5 block text-xs text-slate-500">
+            <span className="mt-0.5 block truncate text-xs text-slate-500">
               Exercise {exerciseNumber} of {exerciseCount}
               {" · "}
               {completedSetCount}/{exercise.sets.length} sets
               {exerciseComplete
                 ? " · Complete"
+                : ""}
+              {!expanded && completedSetSummary
+                ? ` · ${completedSetSummary}`
                 : ""}
             </span>
 
