@@ -38,6 +38,10 @@ export interface Exercise {
   // work never enters prescribed working-set completion or analysis.
   rampUpSets?: ExerciseSet[];
 
+  // A prescribed ramp-up can be intentionally skipped for this exercise
+  // occurrence without removing ramp-up behavior from future workouts.
+  rampUpSkipped?: boolean;
+
   sets: ExerciseSet[];
 }
 

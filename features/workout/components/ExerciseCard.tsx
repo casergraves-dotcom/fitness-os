@@ -5,6 +5,7 @@
 // ============================================================
 
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -46,6 +47,7 @@ import {
   getExerciseSubstitutions,
 } from "../exerciseSubstitutions";
 import { getReviewedGuidanceImages } from "../guidanceMedia";
+import { supportsExerciseRampUp } from "../rampUp";
 
 import type {
   ExerciseSubstitutionEnvironment,
@@ -54,7 +56,6 @@ import type {
 import type {
   WorkoutEquipment,
   WorkoutSetupCapability,
-  StrengthMovementRole,
 } from "../types";
 
 // ============================================================
@@ -131,6 +132,8 @@ interface ExerciseCardProps {
 
   onRemoveRampUpSet: (exerciseId: string, setId: string) => void;
 
+  onSkipRampUpSets: (exerciseId: string) => void;
+
   onRemoveExercise: (
     exerciseId: string
   ) => void;
@@ -159,17 +162,6 @@ const BAND_RESISTANCE_OPTIONS = [
   50,
 ] as const;
 
-const RAMP_UP_MOVEMENT_ROLES = new Set<StrengthMovementRole>([
-  "Squat",
-  "SquatGlute",
-  "HipHinge",
-  "HipExtension",
-  "HorizontalPush",
-  "HorizontalPull",
-  "VerticalPush",
-  "VerticalPull",
-]);
-
 
 // ============================================================
 // Exercise Card
@@ -197,6 +189,7 @@ export default function ExerciseCard({
   onUpdateRampUpSet,
   onToggleRampUpSet,
   onRemoveRampUpSet,
+  onSkipRampUpSets,
   onRemoveExercise,
   onReplaceExercise,
 }: ExerciseCardProps) {
@@ -226,7 +219,9 @@ export default function ExerciseCard({
 
   const [focusedSetId, setFocusedSetId] = useState<string | null>(null);
 
-  const [rampUpOpen, setRampUpOpen] = useState(false);
+  const [rampUpOpen, setRampUpOpen] = useState(
+    () => exercise.rampUpSets?.some((set) => !set.completed) === true
+  );
 
   const [targetDetailsOpen, setTargetDetailsOpen] = useState(false);
 
@@ -382,12 +377,7 @@ export default function ExerciseCard({
     !progressionType ||
     (isLoad && !isWeightDuration);
 
-  const supportsRampUpSets =
-    exerciseDefinition?.resistanceType === "Weight" &&
-    exerciseDefinition?.performanceType !== "Duration" &&
-    exerciseDefinition.movementRoles?.some((role) =>
-      RAMP_UP_MOVEMENT_ROLES.has(role)
-    ) === true;
+  const supportsRampUpSets = supportsExerciseRampUp(exerciseDefinition);
 
   const rampUpSets = exercise.rampUpSets ?? [];
   const completedRampUpSetCount = rampUpSets.filter((set) => set.completed).length;
@@ -396,6 +386,31 @@ export default function ExerciseCard({
         .map((set) => `${set.weight} lb × ${set.reps}`)
         .join(" · ")}`
     : "Optional · none added";
+  const pendingRampUpSet = rampUpSets.find((set) => !set.completed);
+  const showPreliminaryRampUp =
+    focusedLogging &&
+    supportsRampUpSets &&
+    !exercise.rampUpSkipped &&
+    Boolean(pendingRampUpSet);
+  const rampUpExpanded = rampUpOpen || showPreliminaryRampUp;
+
+  useEffect(() => {
+    if (
+      focusedLogging &&
+      supportsRampUpSets &&
+      rampUpSets.length === 0 &&
+      !exercise.rampUpSkipped
+    ) {
+      onAddRampUpSet(exercise.id);
+    }
+  }, [
+    exercise.id,
+    exercise.rampUpSkipped,
+    focusedLogging,
+    onAddRampUpSet,
+    rampUpSets.length,
+    supportsRampUpSets,
+  ]);
 
   // Repetition values for unilateral exercises are stored as the
   // number completed on each side. The numeric value itself stays
@@ -1044,11 +1059,11 @@ export default function ExerciseCard({
         </div>
       )}
 
-      {supportsRampUpSets && (!focusedLogging || rampUpOpen) && (
+      {supportsRampUpSets && (!focusedLogging || rampUpExpanded) && (
         <div className={`${focusedLogging ? "mt-2" : "mt-4"} overflow-hidden rounded-xl border border-amber-200 bg-amber-50`}>
           <button
             type="button"
-            aria-expanded={rampUpOpen}
+            aria-expanded={rampUpExpanded}
             onClick={() => setRampUpOpen((open) => !open)}
             className="flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left"
           >
@@ -1056,14 +1071,29 @@ export default function ExerciseCard({
               <span className="block text-xs font-semibold uppercase tracking-wider text-amber-700">Ramp-up sets</span>
               <span className="block truncate text-xs text-slate-600">{rampUpSummary}</span>
             </span>
-            <ChevronDown size={18} className={`shrink-0 text-amber-700 transition-transform ${rampUpOpen ? "rotate-180" : ""}`} />
+            <ChevronDown size={18} className={`shrink-0 text-amber-700 transition-transform ${rampUpExpanded ? "rotate-180" : ""}`} />
           </button>
 
-          {rampUpOpen && (
+          {rampUpExpanded && (
             <div className="border-t border-amber-200 px-3 pb-3 pt-2">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-xs leading-5 text-slate-600">Optional practice; excluded from volume, completion, and PRs.</p>
-                {rampUpSets.length < 3 && (
+                <p className="text-xs leading-5 text-slate-600">
+                  {showPreliminaryRampUp
+                    ? "Complete this preparation set before Set 1, or skip it for today."
+                    : "Practice sets are excluded from volume, completion, and PRs."}
+                </p>
+                {showPreliminaryRampUp ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSkipRampUpSets(exercise.id);
+                      setRampUpOpen(false);
+                    }}
+                    className="min-h-10 shrink-0 rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-semibold text-amber-900"
+                  >
+                    Skip
+                  </button>
+                ) : rampUpSets.length < 3 && (
                   <button
                     type="button"
                     onClick={() => onAddRampUpSet(exercise.id)}
@@ -1091,7 +1121,15 @@ export default function ExerciseCard({
                       </button>
                     ) : (
                       <div key={set.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-white p-2">
-                        <button type="button" onClick={() => onToggleRampUpSet(exercise.id, set.id)} aria-label={`Complete ramp-up set ${index + 1}`} className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-amber-500 bg-amber-50" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onToggleRampUpSet(exercise.id, set.id);
+                            if (focusedLogging) setRampUpOpen(false);
+                          }}
+                          aria-label={`Complete ramp-up set ${index + 1}`}
+                          className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-amber-500 bg-amber-50"
+                        />
                         <span className="text-sm font-medium text-slate-700">Warm-up {index + 1}</span>
                         <div className="ml-auto flex items-center gap-1.5">
                           <input type="number" inputMode="decimal" min={0} value={getNumericInputValue(set.weight)} onChange={(event) => onUpdateRampUpSet(exercise.id, set.id, "weight", parseWeightInput(event.target.value))} className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-2 text-center text-base" />
@@ -1104,6 +1142,19 @@ export default function ExerciseCard({
                   )}
                 </div>
               )}
+
+              {showPreliminaryRampUp && pendingRampUpSet && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onToggleRampUpSet(exercise.id, pendingRampUpSet.id);
+                    setRampUpOpen(false);
+                  }}
+                  className="mt-3 min-h-12 w-full rounded-xl bg-amber-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-amber-700"
+                >
+                  Complete warm-up set
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -1113,7 +1164,7 @@ export default function ExerciseCard({
           Exercise Sets
       ----------------------------------------------------- */}
 
-      <div className={focusedLogging ? "mt-3" : "mt-4"}>
+      {!showPreliminaryRampUp && <div className={focusedLogging ? "mt-3" : "mt-4"}>
 
         {!focusedLogging && <div className="mb-2 flex items-center justify-between gap-3">
 
@@ -1923,7 +1974,7 @@ export default function ExerciseCard({
         )}
         </div>
 
-      </div>
+      </div>}
 
       {/* ----------------------------------------------------
           Add Set

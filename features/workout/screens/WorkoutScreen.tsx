@@ -274,6 +274,7 @@ export default function WorkoutScreen() {
     updateRampUpSet,
     toggleRampUpSet,
     removeRampUpSet,
+    skipRampUpSets,
 
     addExercise,
     replaceExercise,
@@ -1709,6 +1710,7 @@ const exerciseVolume =
               onUpdateRampUpSet={updateRampUpSet}
               onToggleRampUpSet={toggleRampUpSet}
               onRemoveRampUpSet={removeRampUpSet}
+              onSkipRampUpSets={skipRampUpSets}
               onRemoveExercise={(exerciseId) => {
                 setSelectedExerciseSelection(null);
                 removeExercise(exerciseId);

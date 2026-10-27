@@ -50,6 +50,11 @@ import {
 } from "../utils/trainingActivityCompletionStorage";
 
 import {
+  createRampUpSet,
+  supportsExerciseRampUp,
+} from "../rampUp";
+
+import {
   setFitnessOsStorage,
 } from "@/lib/storage/fitnessOsStorage";
 
@@ -844,6 +849,12 @@ export function useWorkoutSession() {
             // NOT definition.sets from the Exercise Library.
             prescribedSetCount,
 
+            rampUpSets: supportsExerciseRampUp(definition)
+              ? [createRampUpSet(createId(), startingWeight)]
+              : undefined,
+
+            rampUpSkipped: undefined,
+
             sets:
               exercise.sets
                 .slice(
@@ -1324,25 +1335,38 @@ function updateSet(
           if (rampUpSets.length >= 3) return exercise;
 
           const workingWeight = exercise.sets[0]?.weight ?? 0;
-          const factors = [0.5, 0.7, 0.85];
-          const reps = [8, 5, 3];
           const index = rampUpSets.length;
 
           return {
             ...exercise,
             rampUpSets: [
               ...rampUpSets,
-              {
-                id: createId(),
-                weight: Math.round((workingWeight * factors[index]) / 5) * 5,
-                reps: reps[index],
-                completed: false,
-              },
+              createRampUpSet(createId(), workingWeight, index),
             ],
+            rampUpSkipped: undefined,
           };
         }),
       };
     });
+  }
+
+  function skipRampUpSets(exerciseId: string) {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            exercises: previous.exercises.map((exercise) =>
+              exercise.id === exerciseId
+                ? {
+                    ...exercise,
+                    rampUpSets: [],
+                    rampUpSkipped: true,
+                  }
+                : exercise
+            ),
+          }
+        : previous
+    );
   }
 
   function updateRampUpSet(
@@ -1521,6 +1545,10 @@ function updateSet(
           // initial set count becomes today's precription.
           prescribedSetCount:
             setCount,
+
+          rampUpSets: supportsExerciseRampUp(definition)
+            ? [createRampUpSet(createId(), startingWeight)]
+            : undefined,
 
           sets:
             Array.from(
@@ -1705,6 +1733,10 @@ function updateSet(
 
         prescribedSetCount:
           setCount,
+
+        rampUpSets: supportsExerciseRampUp(replacementDefinition)
+          ? [createRampUpSet(createId(), startingWeight)]
+          : undefined,
 
         sets:
           Array.from(
@@ -2226,6 +2258,7 @@ function dismissFinishedWorkout() {
     updateRampUpSet,
     toggleRampUpSet,
     removeRampUpSet,
+    skipRampUpSets,
 
     addExercise,
     replaceExercise,
