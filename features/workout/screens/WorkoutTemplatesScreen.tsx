@@ -50,6 +50,7 @@ import {
 } from "../backupWorkoutModel";
 import { evaluateWeeklyRecovery } from "../logic/evaluateWeeklyRecovery";
 import { applyStrengthProgrammingRecommendation } from "../logic/strengthProgrammingRecommendation";
+import { getWorkoutVolumeAudit } from "../getWorkoutVolumeAudit";
 
 import type {
     StrengthWorkoutType,
@@ -133,6 +134,8 @@ export default function WorkoutTemplatesScreen() {
 
   const exercises =
     templates[selectedWorkout];
+
+  const volumeAudit = getWorkoutVolumeAudit(exercises);
 
   const programmingProfile = currentGoal
     ? getStrengthProgrammingProfile({
@@ -383,6 +386,77 @@ export default function WorkoutTemplatesScreen() {
             );
           })}
         </div>
+
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
+                Volume &amp; reps review
+              </p>
+              <h2 className="mt-1 text-lg font-bold text-slate-900">
+                {selectedWorkout} prescription
+              </h2>
+            </div>
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+              volumeAudit.reviewCount > 0
+                ? "bg-amber-50 text-amber-800"
+                : "bg-emerald-50 text-emerald-700"
+            }`}>
+              {volumeAudit.reviewCount > 0
+                ? `${volumeAudit.reviewCount} item${volumeAudit.reviewCount === 1 ? "" : "s"} to review`
+                : "Baseline ranges look consistent"}
+            </span>
+          </div>
+
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <div className="rounded-xl bg-slate-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Total</p>
+              <p className="mt-1 text-xl font-bold text-slate-900">{volumeAudit.totalSets}</p>
+              <p className="text-xs text-slate-500">working sets</p>
+            </div>
+            <div className="rounded-xl bg-blue-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Primary</p>
+              <p className="mt-1 text-xl font-bold text-slate-900">{volumeAudit.primarySets}</p>
+              <p className="text-xs text-slate-500">main-lift sets</p>
+            </div>
+            <div className="rounded-xl bg-violet-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-violet-700">Accessory</p>
+              <p className="mt-1 text-xl font-bold text-slate-900">{volumeAudit.accessorySets}</p>
+              <p className="text-xs text-slate-500">support sets</p>
+            </div>
+          </div>
+
+          <p className="mt-3 text-xs leading-5 text-slate-500">
+            Direct muscles are the primary target of the set. Secondary muscles assist but are not counted as equivalent direct sets.
+          </p>
+
+          <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full min-w-[46rem] text-left text-sm">
+              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-3 py-2">Exercise</th>
+                  <th className="px-3 py-2">Role</th>
+                  <th className="px-3 py-2">Prescription</th>
+                  <th className="px-3 py-2">Direct</th>
+                  <th className="px-3 py-2">Secondary</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {volumeAudit.rows.map((row) => (
+                  <tr key={row.exerciseId} className={row.needsReview ? "bg-amber-50/60" : undefined}>
+                    <th className="px-3 py-2 font-semibold text-slate-800">{row.name}</th>
+                    <td className="px-3 py-2 text-slate-600">{row.role}</td>
+                    <td className="px-3 py-2 font-medium text-slate-800">
+                      {row.setCount} × {row.repRange}
+                    </td>
+                    <td className="px-3 py-2 text-slate-600">{row.directMuscles.join(", ") || "Unassigned"}</td>
+                    <td className="px-3 py-2 text-slate-600">{row.secondaryMuscles.join(", ") || "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         {/* --------------------------------------------------
             Selected Workout

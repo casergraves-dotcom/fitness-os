@@ -46,34 +46,37 @@ const ACCESSORY_EXERCISE_IDS = new Set([
   "glute-kickback-machine",
 ]);
 
-const MUSCLES_BY_MOVEMENT_ROLE: Record<StrengthMovementRole, ExerciseMuscleGroup[]> = {
-  Squat: ["Quads", "Glutes"],
-  SquatGlute: ["Glutes", "Quads"],
-  HipExtension: ["Glutes", "Hamstrings"],
-  KneeFlexion: ["Hamstrings"],
-  HipHinge: ["Hamstrings", "Glutes", "Spinal Erectors"],
-  HorizontalPush: ["Chest", "Triceps", "Front Delts"],
-  HorizontalPull: ["Upper Back", "Lats", "Biceps"],
-  VerticalPush: ["Front Delts", "Triceps"],
-  VerticalPull: ["Lats", "Upper Back", "Biceps", "Forearms / Grip"],
-  HipStability: ["Hip Abductors", "Glutes"],
-  Adduction: ["Hip Adductors"],
-  CoreRotation: ["Obliques", "Abs"],
-  CoreFlexion: ["Abs"],
-  CoreStability: ["Abs", "Obliques"],
-  CoreHipFlexion: ["Hip Flexors", "Abs"],
-  ChestIsolation: ["Chest"],
-  ShoulderAbduction: ["Side Delts"],
-  RearShoulder: ["Rear Delts", "Upper Back"],
-  ElbowFlexion: ["Biceps", "Forearms / Grip"],
-  ElbowExtension: ["Triceps"],
-  CalfRaise: ["Calves"],
-  TrapElevation: ["Traps"],
-  ShoulderExternalRotation: ["Rotator Cuff", "Rear Delts"],
-  KneeExtension: ["Quads"],
-  LatIsolation: ["Lats"],
-  SpinalExtension: ["Spinal Erectors", "Glutes", "Hamstrings"],
-  Dorsiflexion: ["Tibialis"],
+const MUSCLES_BY_MOVEMENT_ROLE: Record<StrengthMovementRole, {
+  direct: ExerciseMuscleGroup[];
+  secondary: ExerciseMuscleGroup[];
+}> = {
+  Squat: { direct: ["Quads", "Glutes"], secondary: [] },
+  SquatGlute: { direct: ["Glutes", "Quads"], secondary: [] },
+  HipExtension: { direct: ["Glutes"], secondary: ["Hamstrings"] },
+  KneeFlexion: { direct: ["Hamstrings"], secondary: [] },
+  HipHinge: { direct: ["Hamstrings", "Glutes"], secondary: ["Spinal Erectors"] },
+  HorizontalPush: { direct: ["Chest"], secondary: ["Triceps", "Front Delts"] },
+  HorizontalPull: { direct: ["Upper Back", "Lats"], secondary: ["Biceps"] },
+  VerticalPush: { direct: ["Front Delts"], secondary: ["Triceps"] },
+  VerticalPull: { direct: ["Lats", "Upper Back"], secondary: ["Biceps", "Forearms / Grip"] },
+  HipStability: { direct: ["Hip Abductors"], secondary: ["Glutes"] },
+  Adduction: { direct: ["Hip Adductors"], secondary: [] },
+  CoreRotation: { direct: ["Obliques"], secondary: ["Abs"] },
+  CoreFlexion: { direct: ["Abs"], secondary: [] },
+  CoreStability: { direct: ["Abs", "Obliques"], secondary: [] },
+  CoreHipFlexion: { direct: ["Hip Flexors", "Abs"], secondary: [] },
+  ChestIsolation: { direct: ["Chest"], secondary: [] },
+  ShoulderAbduction: { direct: ["Side Delts"], secondary: [] },
+  RearShoulder: { direct: ["Rear Delts"], secondary: ["Upper Back"] },
+  ElbowFlexion: { direct: ["Biceps"], secondary: ["Forearms / Grip"] },
+  ElbowExtension: { direct: ["Triceps"], secondary: [] },
+  CalfRaise: { direct: ["Calves"], secondary: [] },
+  TrapElevation: { direct: ["Traps"], secondary: [] },
+  ShoulderExternalRotation: { direct: ["Rotator Cuff"], secondary: ["Rear Delts"] },
+  KneeExtension: { direct: ["Quads"], secondary: [] },
+  LatIsolation: { direct: ["Lats"], secondary: [] },
+  SpinalExtension: { direct: ["Spinal Erectors"], secondary: ["Glutes", "Hamstrings"] },
+  Dorsiflexion: { direct: ["Tibialis"], secondary: [] },
 };
 
 const FALLBACK_MUSCLES_BY_CATEGORY: Record<ExerciseDefinition["category"], ExerciseMuscleGroup[]> = {
@@ -98,11 +101,32 @@ export function getExerciseProgrammingRole(
 export function getExerciseMuscleGroups(
   exercise: ExerciseDefinition
 ): ExerciseMuscleGroup[] {
-  const muscles = exercise.movementRoles?.flatMap(
-    (role) => MUSCLES_BY_MOVEMENT_ROLE[role]
-  ) ?? FALLBACK_MUSCLES_BY_CATEGORY[exercise.category];
+  const contribution = getExerciseMuscleContribution(exercise);
 
-  return [...new Set(muscles)];
+  return [...new Set([...contribution.direct, ...contribution.secondary])];
+}
+
+export function getExerciseMuscleContribution(
+  exercise: ExerciseDefinition
+) {
+  if (!exercise.movementRoles?.length) {
+    return {
+      direct: FALLBACK_MUSCLES_BY_CATEGORY[exercise.category],
+      secondary: [] as ExerciseMuscleGroup[],
+    };
+  }
+
+  const direct = exercise.movementRoles.flatMap(
+    (role) => MUSCLES_BY_MOVEMENT_ROLE[role].direct
+  );
+  const secondary = exercise.movementRoles.flatMap(
+    (role) => MUSCLES_BY_MOVEMENT_ROLE[role].secondary
+  );
+
+  return {
+    direct: [...new Set(direct)],
+    secondary: [...new Set(secondary)].filter((muscle) => !direct.includes(muscle)),
+  };
 }
 
 export function getExerciseCoverageMatrix(exercises: ExerciseDefinition[]) {
