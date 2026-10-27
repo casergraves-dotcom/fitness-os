@@ -1885,7 +1885,7 @@ export default function ExerciseCard({
                 onFocusedExerciseComplete?.();
               }
             }}
-            className="mt-3 min-h-12 w-full rounded-xl bg-blue-600 px-4 py-3 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+            className={`${focusedLogging ? "fixed left-[max(1rem,env(safe-area-inset-left))] right-[max(1rem,env(safe-area-inset-right))] bottom-[calc(var(--fitness-bottom-nav-height)+env(safe-area-inset-bottom)+0.5rem)] z-40 mx-auto max-w-[calc(56rem-2rem)] shadow-lg" : "mt-3 w-full"} min-h-12 rounded-xl bg-blue-600 px-4 py-3 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300`}
           >
             Complete Set {focusedSetIndex + 1}
           </button>

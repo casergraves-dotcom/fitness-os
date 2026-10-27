@@ -42,6 +42,7 @@ export default function BottomNav() {
           mx-auto
           grid
           max-w-5xl
+          min-h-[var(--fitness-bottom-nav-height)]
           grid-cols-5
           px-2
           py-3
