@@ -18,6 +18,7 @@ import {
   formatTrainingDate,
   readTrainingActivityCompletions,
   recordTrainingActivityCompletion,
+  subscribeToTrainingActivityCompletions,
   writeTrainingActivityCompletions,
 } from "../utils/trainingActivityCompletionStorage";
 
@@ -50,14 +51,16 @@ export function useTrainingActivityCompletions() {
   // ----------------------------------------------------------
 
   useEffect(() => {
-    const savedCompletions =
-      readTrainingActivityCompletions();
+    const refresh = () => {
+      setCompletions(
+        readTrainingActivityCompletions()
+      );
+      setLoaded(true);
+    };
 
-    setCompletions(
-      savedCompletions
-    );
+    refresh();
 
-    setLoaded(true);
+    return subscribeToTrainingActivityCompletions(refresh);
   }, []);
 
 

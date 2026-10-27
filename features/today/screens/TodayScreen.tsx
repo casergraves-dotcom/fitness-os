@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // ============================================================
 // Imports
@@ -43,6 +43,10 @@ import {
 import {
   getTrainingScheduleForDate,
 } from "@/features/workout/utils/getTrainingScheduleForDate";
+
+import {
+  restoreScheduledStrengthCompletionsFromHistory,
+} from "@/features/workout/utils/trainingActivityCompletionStorage";
 
 import {
   isCompletableTrainingActivity,
@@ -198,6 +202,30 @@ export default function TodayScreen() {
     loaded:
       runHistoryLoaded,
   } = useRunSession();
+
+  useEffect(() => {
+    if (
+      !trainingPlanState ||
+      !trainingPlanStateLoaded ||
+      !trainingActivityCompletionsLoaded ||
+      !workoutHistoryLoaded
+    ) {
+      return;
+    }
+
+    restoreScheduledStrengthCompletionsFromHistory(
+      workoutHistory,
+      trainingPlanState,
+      trainingActivityCompletions
+    );
+  }, [
+    trainingPlanState,
+    trainingPlanStateLoaded,
+    trainingActivityCompletions,
+    trainingActivityCompletionsLoaded,
+    workoutHistory,
+    workoutHistoryLoaded,
+  ]);
 
   const {
     loaded:

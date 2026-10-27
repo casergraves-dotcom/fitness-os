@@ -1,7 +1,12 @@
 import type {
   TrainingActivity,
   TrainingActivityCompletion,
+  TrainingPlanState,
+  WorkoutSession,
 } from "../types";
+
+import { fitnessOsTrainingPlan } from "../trainingPlan";
+import { getTrainingScheduleForDate } from "./getTrainingScheduleForDate";
 
 import {
   setFitnessOsStorage,
@@ -14,6 +19,9 @@ import {
 
 export const TRAINING_ACTIVITY_COMPLETIONS_STORAGE_KEY =
   "fitness-os-training-activity-completions";
+
+export const TRAINING_ACTIVITY_COMPLETIONS_CHANGED_EVENT =
+  "fitness-os-training-activity-completions-changed";
 
 
 // ============================================================
@@ -122,6 +130,34 @@ export function writeTrainingActivityCompletions(
     TRAINING_ACTIVITY_COMPLETIONS_STORAGE_KEY,
     JSON.stringify(completions)
   );
+
+  window.dispatchEvent(
+    new Event(TRAINING_ACTIVITY_COMPLETIONS_CHANGED_EVENT)
+  );
+}
+
+export function subscribeToTrainingActivityCompletions(
+  listener: () => void
+) {
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === TRAINING_ACTIVITY_COMPLETIONS_STORAGE_KEY) {
+      listener();
+    }
+  };
+
+  window.addEventListener(
+    TRAINING_ACTIVITY_COMPLETIONS_CHANGED_EVENT,
+    listener
+  );
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    window.removeEventListener(
+      TRAINING_ACTIVITY_COMPLETIONS_CHANGED_EVENT,
+      listener
+    );
+    window.removeEventListener("storage", handleStorage);
+  };
 }
 
 // ============================================================
@@ -231,4 +267,68 @@ export function recordTrainingActivityCompletion(
   ]);
 
   return completion;
+}
+
+export function restoreScheduledStrengthCompletionsFromHistory(
+  workoutHistory: WorkoutSession[],
+  planState: TrainingPlanState,
+  existingCompletions: TrainingActivityCompletion[]
+) {
+  let restored = 0;
+  const knownWorkoutSessionIds = new Set(
+    existingCompletions.flatMap((completion) =>
+      completion.workoutSessionId ? [completion.workoutSessionId] : []
+    )
+  );
+
+  for (const workout of workoutHistory) {
+    if (!workout.completedAt || knownWorkoutSessionIds.has(workout.id)) {
+      continue;
+    }
+
+    const completedAt = new Date(workout.completedAt);
+    if (Number.isNaN(completedAt.getTime())) {
+      continue;
+    }
+
+    const scheduledDate = workout.scheduledDate
+      ? new Date(`${workout.scheduledDate}T12:00:00`)
+      : completedAt;
+    const schedule = getTrainingScheduleForDate(
+      fitnessOsTrainingPlan,
+      planState,
+      scheduledDate
+    );
+    const scheduledActivity = schedule?.trainingDay.activities.find(
+      (activity) =>
+        activity.type === "Strength" &&
+        activity.strengthWorkout === workout.workoutType &&
+        (!workout.scheduledActivityId || activity.id === workout.scheduledActivityId)
+    );
+
+    if (!scheduledActivity) {
+      continue;
+    }
+
+    const date = formatTrainingDate(scheduledDate);
+    const alreadyCompleted = readTrainingActivityCompletions().some(
+      (completion) =>
+        completion.date === date &&
+        completion.trainingActivityId === scheduledActivity.id
+    );
+
+    if (alreadyCompleted) {
+      continue;
+    }
+
+    recordTrainingActivityCompletion(scheduledActivity, {
+      date: scheduledDate,
+      completedAt,
+      workoutSessionId: workout.id,
+    });
+    knownWorkoutSessionIds.add(workout.id);
+    restored += 1;
+  }
+
+  return restored;
 }
