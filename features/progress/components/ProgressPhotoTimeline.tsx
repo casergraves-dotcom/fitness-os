@@ -1,12 +1,18 @@
 "use client";
 
 import {
+  useState,
+} from "react";
+
+import {
   Eye,
 } from "lucide-react";
 
 import {
   useProgressCheckIns,
 } from "../hooks/useProgressCheckIns";
+
+import ProgressPhotoPreviewModal from "./ProgressPhotoPreviewModal";
 
 import type {
   ProgressPhotoReference,
@@ -59,10 +65,15 @@ function formatDisplayDate(
 // ============================================================
 
 export default function ProgressPhotoTimeline() {
+  const [preview, setPreview] = useState<{
+    photo: ProgressPhotoReference;
+    date: string;
+  } | null>(null);
+
   const {
     loaded,
     checkIns,
-    openProgressPhoto,
+    getProgressPhotoUrl,
   } =
     useProgressCheckIns();
 
@@ -207,24 +218,10 @@ export default function ProgressPhotoTimeline() {
                           photo
                         }
                         onOpen={
-                          async () => {
-                            try {
-                              await openProgressPhoto(
-                                photo
-                              );
-                            } catch (
-                              error
-                            ) {
-                              console.error(
-                                "Progress photo open failed:",
-                                error
-                              );
-
-                              window.alert(
-                                "This progress photo could not be opened."
-                              );
-                            }
-                          }
+                          () => setPreview({
+                            photo,
+                            date: entry.date,
+                          })
                         }
                       />
                     );
@@ -238,6 +235,15 @@ export default function ProgressPhotoTimeline() {
         )}
 
       </div>
+
+      {preview && (
+        <ProgressPhotoPreviewModal
+          photo={preview.photo}
+          date={preview.date}
+          getPhotoUrl={getProgressPhotoUrl}
+          onClose={() => setPreview(null)}
+        />
+      )}
 
     </div>
   );

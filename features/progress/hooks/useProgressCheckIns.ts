@@ -1001,13 +1001,22 @@ export function useProgressCheckIns() {
   // Open Progress Photo
   // ----------------------------------------------------------
 
+  async function getProgressPhotoUrl(
+    photo:
+      ProgressPhotoReference
+  ) {
+    return createPrivateFileSignedUrl(
+      photo.storagePath
+    );
+  }
+
   async function openProgressPhoto(
     photo:
       ProgressPhotoReference
   ) {
     const url =
-      await createPrivateFileSignedUrl(
-        photo.storagePath
+      await getProgressPhotoUrl(
+        photo
       );
 
     window.open(
@@ -1044,6 +1053,8 @@ export function useProgressCheckIns() {
     updateProgressCheckIn,
 
     deleteProgressCheckIn,
+
+    getProgressPhotoUrl,
 
     openProgressPhoto,
   };
