@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 import {
-  PageHeader,
   SectionCard,
 } from "@/components/ui";
 
@@ -55,41 +54,35 @@ export default function WorkoutHeader({
     totalSets === 0 ? 0 : (completedSets / totalSets) * 100;
 
   return (
-    <SectionCard>
-      <div className="flex items-center justify-between">
-        <div>
-          <PageHeader
-            title={
-              variantLabel
-                ? variantLabel.replace(
-                    " - ",
-                    " · "
-                  )
-                : `${workoutType} Workout`
-            }
-          />
+    <SectionCard className="p-4 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold leading-tight text-slate-950 sm:text-3xl">
+            {variantLabel
+              ? variantLabel.replace(" - ", " · ")
+              : `${workoutType} Workout`}
+          </h1>
 
           {variantLabel && (
-            <p className="mt-1 text-sm text-slate-500">
-              Alternative workout for{" "}
-              {workoutType}
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+              Alternative for {workoutType}
             </p>
           )}
         </div>
 
-        <div className="text-right">
+        <div className="shrink-0 text-right">
           <p className="text-xs text-slate-500">
             Elapsed
           </p>
 
-          <p className="font-mono text-xl font-bold">
+          <p className="font-mono text-lg font-bold leading-tight sm:text-xl">
             {elapsed}
           </p>
         </div>
       </div>
 
-      <div className="mt-4">
-        <div className="mb-2 flex justify-between text-sm">
+      <div className="mt-3">
+        <div className="mb-1.5 flex justify-between text-xs sm:text-sm">
           <span>
             {completedSets}/{totalSets} Sets
           </span>
@@ -97,7 +90,7 @@ export default function WorkoutHeader({
           <span>{Math.round(percent)}%</span>
         </div>
 
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-200">
           <div
             className="h-full rounded-full bg-blue-600 transition-all duration-300"
             style={{
