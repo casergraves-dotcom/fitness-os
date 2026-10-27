@@ -1628,7 +1628,7 @@ const exerciseVolume =
   // ----------------------------------------------------------
 
   return (
-    <AppShell>
+    <AppShell focused={Boolean(selectedExercise)}>
       <div className="mx-auto w-full max-w-4xl space-y-4">
         {/* Workout summary and progress */}
 

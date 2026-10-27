@@ -23,6 +23,7 @@ import PageContainer from "./PageContainer";
 
 interface AppShellProps {
   children: ReactNode;
+  focused?: boolean;
 }
 
 // ============================================================
@@ -31,6 +32,7 @@ interface AppShellProps {
 
 export default function AppShell({
   children,
+  focused = false,
 }: AppShellProps) {
   // ----------------------------------------------------------
   // Authentication
@@ -72,9 +74,9 @@ export default function AppShell({
         className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[env(safe-area-inset-top)] bg-white"
       />
 
-      <Header />
+      {!focused && <Header />}
 
-      <PageContainer>
+      <PageContainer focused={focused}>
         {children}
       </PageContainer>
 
