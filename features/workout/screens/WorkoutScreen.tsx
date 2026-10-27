@@ -23,7 +23,7 @@ import {
 import { useWorkoutSession } from "../hooks/useWorkoutSession";
 import { useTrainingPlanState } from "../hooks/useTrainingPlanState";
 import WorkoutWarmupCard from "../components/WorkoutWarmupCard";
-import WorkoutExerciseNavigator from "../components/WorkoutExerciseNavigator";
+import WorkoutExerciseDashboard from "../components/WorkoutExerciseDashboard";
 import MobilityRoutineSession from "@/features/mobility/components/MobilityRoutineSession";
 import { mobilityRoutines } from "@/features/mobility/mobilityLibrary";
 import { useMobilityPreferences } from "@/features/mobility/hooks/useMobilityPreferences";
@@ -240,18 +240,10 @@ export default function WorkoutScreen() {
     setSelectedMobilityRoutineId,
   ] = useState<MobilityRoutineId | "choose" | null>(null);
 
-  const [
-    expandedExerciseIds,
-    setExpandedExerciseIds,
-  ] = useState<string[]>([]);
-
-  const expansionSessionId =
-    useRef<string | null>(
-      null
-    );
-
-  const completedExerciseIdsRef =
-    useRef<string[]>([]);
+  const [selectedExerciseSelection, setSelectedExerciseSelection] = useState<{
+    sessionId: string;
+    exerciseId: string;
+  } | null>(null);
 
   // ----------------------------------------------------------
   // Workout Session
@@ -313,144 +305,6 @@ export default function WorkoutScreen() {
       capabilities: currentGymWorkoutCapabilities,
     }
   );
-
-  // ----------------------------------------------------------
-  // Exercise Card Expansion
-  // ----------------------------------------------------------
-
-  useEffect(() => {
-    if (!session) {
-      if (
-        expansionSessionId.current !==
-          null
-      ) {
-        expansionSessionId.current =
-          null;
-
-        setExpandedExerciseIds(
-          []
-        );
-
-        completedExerciseIdsRef.current = [];
-      }
-
-      return;
-    }
-
-    const firstIncompleteExercise =
-      session.exercises.find(
-        (
-          exercise
-        ) =>
-          exercise.sets.some(
-            (
-              set
-            ) =>
-              !set.completed
-          )
-      );
-
-    const completedExerciseIds =
-      session.exercises
-        .filter(
-          (exercise) =>
-            exercise.sets.length > 0 &&
-            exercise.sets.every((set) => set.completed)
-        )
-        .map((exercise) => exercise.id);
-
-    if (
-      expansionSessionId.current ===
-        session.id
-    ) {
-      const newlyCompletedExerciseIds =
-        completedExerciseIds.filter(
-          (exerciseId) =>
-            !completedExerciseIdsRef.current.includes(exerciseId)
-        );
-
-      completedExerciseIdsRef.current = completedExerciseIds;
-
-      if (newlyCompletedExerciseIds.length === 0) {
-        return;
-      }
-
-      setExpandedExerciseIds((current) => {
-        const next = current.filter(
-          (exerciseId) => !newlyCompletedExerciseIds.includes(exerciseId)
-        );
-
-        if (
-          firstIncompleteExercise &&
-          !next.includes(firstIncompleteExercise.id)
-        ) {
-          next.push(firstIncompleteExercise.id);
-        }
-
-        return next;
-      });
-
-      return;
-    }
-
-    const initiallyExpandedExercise =
-      firstIncompleteExercise;
-
-    expansionSessionId.current =
-      session.id;
-
-    completedExerciseIdsRef.current = completedExerciseIds;
-
-    setExpandedExerciseIds(
-      initiallyExpandedExercise
-        ? [
-            initiallyExpandedExercise
-              .id,
-          ]
-        : []
-    );
-  }, [
-    session,
-  ]);
-
-  function toggleExerciseExpanded(
-    exerciseId:
-      string
-  ) {
-    setExpandedExerciseIds(
-      (
-        current
-      ) =>
-        current.includes(
-          exerciseId
-        )
-          ? current.filter(
-              (
-                currentExerciseId
-              ) =>
-                currentExerciseId !==
-                exerciseId
-            )
-          : [
-              ...current,
-              exerciseId,
-            ]
-    );
-  }
-
-  function jumpToExercise(exerciseId: string) {
-    setExpandedExerciseIds((current) =>
-      current.includes(exerciseId)
-        ? current
-        : [...current, exerciseId]
-    );
-
-    window.requestAnimationFrame(() => {
-      document
-        .getElementById(`workout-exercise-${exerciseId}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }
 
   // ----------------------------------------------------------
   // Exercise Library
@@ -1707,6 +1561,68 @@ const exerciseVolume =
       0
     );
 
+  const recommendedExercise = session.exercises.find((exercise) =>
+    exercise.sets.some((set) => !set.completed)
+  );
+
+  const dashboardItems = session.exercises.map((exercise, index) => {
+    const definition = exerciseLibrary.find(
+      (item) =>
+        item.id === exercise.exerciseDefinitionId ||
+        (!exercise.exerciseDefinitionId &&
+          item.name.toLowerCase() === exercise.name.toLowerCase())
+    );
+    const completed = exercise.sets.filter((set) => set.completed);
+    const target = getExerciseTarget(
+      definition,
+      getPreviousExercise(exercise.exerciseDefinitionId, exercise.name),
+      {
+        recentFullExercise: getRecentFullExercise(
+          exercise.exerciseDefinitionId,
+          exercise.name,
+          definition?.sets
+        ),
+      }
+    );
+    const performanceSummary = completed
+      .map((set) => {
+        if (definition?.performanceType === "Duration") {
+          return definition.resistanceType === "Weight"
+            ? `${set.weight} lb × ${set.reps} sec`
+            : `${set.reps} sec`;
+        }
+        if (definition?.resistanceType === "Assistance") {
+          return `${set.weight} lb assist × ${set.reps}`;
+        }
+        if (definition?.resistanceType === "Band") {
+          return `${set.weight} lb band × ${set.reps}`;
+        }
+        if (definition?.resistanceType === "None") {
+          return `${set.reps} reps`;
+        }
+        return `${set.weight} lb × ${set.reps}`;
+      })
+      .join(" · ");
+
+    return {
+      id: exercise.id,
+      name: exercise.name,
+      order: index + 1,
+      completedSets: completed.length,
+      totalSets: exercise.sets.length,
+      targetLabel: target.action === "no-progression" ? undefined : target.label,
+      performanceSummary: performanceSummary || undefined,
+    };
+  });
+
+  const selectedExerciseId =
+    selectedExerciseSelection?.sessionId === session.id
+      ? selectedExerciseSelection.exerciseId
+      : null;
+  const selectedExercise = selectedExerciseId
+    ? session.exercises.find((exercise) => exercise.id === selectedExerciseId)
+    : undefined;
+
   // ----------------------------------------------------------
   // Active Workout
   // ----------------------------------------------------------
@@ -1734,128 +1650,79 @@ const exerciseVolume =
           }
         />
 
-        <WorkoutWarmupCard
-          completed={Boolean(session.warmupCompletedAt)}
-          skipped={Boolean(session.warmupSkippedAt)}
-          onComplete={completeWarmup}
-          onSkip={skipWarmup}
-          onReset={resetWarmup}
-        />
-
-        <WorkoutExerciseNavigator
-          exercises={session.exercises}
-          onSelect={jumpToExercise}
-        />
-
-        {/* Exercise cards */}
-
-        {session.exercises.map(
-          (exercise, index) => (
-            <div
-              key={exercise.id}
-              id={`workout-exercise-${exercise.id}`}
-              className="scroll-mt-24"
-            >
-            <ExerciseCard
-              exercise={
-                exercise
-              }
-              exerciseNumber={
-                index +
-                1
-              }
-              exerciseCount={
-                session.exercises
-                  .length
-              }
-              unavailableExerciseDefinitionIds={
-                session.exercises.flatMap(
-                  (sessionExercise) =>
-                    sessionExercise
-                      .exerciseDefinitionId
-                      ? [
-                          sessionExercise
-                            .exerciseDefinitionId,
-                        ]
-                      : []
-                )
-              }
-              substitutionEnvironment={
-                session.variantType === "Home"
-                  ? "Home"
-                  : "Gym"
-              }
-              availableEquipment={
-                session.variantType === "Home"
-                  ? homeEquipmentProfile.equipment
-                  : gymEquipmentProfile.equipment
-              }
-              availableCapabilities={
-                session.variantType === "Home"
-                  ? homeEquipmentProfile.capabilities
-                  : gymEquipmentProfile.capabilities
-              }
-              previousExercise={getPreviousExercise(
-                exercise.exerciseDefinitionId,
-                exercise.name
-              )}
-              recentFullExercise={getRecentFullExercise(
-                exercise.exerciseDefinitionId,
-                exercise.name,
-                exerciseLibrary.find(
-                  (definition) =>
-                    definition.id === exercise.exerciseDefinitionId ||
-                    (!exercise.exerciseDefinitionId &&
-                      definition.name.toLowerCase() === exercise.name.toLowerCase())
-                )?.sets
-              )}
-              expanded={
-                expandedExerciseIds.includes(
-                  exercise.id
-                )
-              }
-              onToggleExpanded={
-                () =>
-                  toggleExerciseExpanded(
-                    exercise.id
-                  )
-              }
-              onToggleSet={
-                toggleSet
-              }
-              onUpdateSet={
-                updateSet
-              }
-              onAddSet={
-                addSet
-              }
-              onRemoveSet={
-                removeSet
-              }
-              onAddRampUpSet={
-                addRampUpSet
-              }
-              onUpdateRampUpSet={
-                updateRampUpSet
-              }
-              onToggleRampUpSet={
-                toggleRampUpSet
-              }
-              onRemoveRampUpSet={
-                removeRampUpSet
-              }
-              onRemoveExercise={
-                removeExercise
-              }
-
-              onReplaceExercise={
-                replaceExercise
+        {!selectedExercise ? (
+          <>
+            <WorkoutExerciseDashboard
+              items={dashboardItems}
+              recommendedExerciseId={recommendedExercise?.id}
+              onSelect={(exerciseId) =>
+                setSelectedExerciseSelection({ sessionId: session.id, exerciseId })
               }
             />
-            </div>
-          )
+
+            <WorkoutWarmupCard
+              completed={Boolean(session.warmupCompletedAt)}
+              skipped={Boolean(session.warmupSkippedAt)}
+              onComplete={completeWarmup}
+              onSkip={skipWarmup}
+              onReset={resetWarmup}
+            />
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => setSelectedExerciseSelection(null)}
+              className="inline-flex min-h-11 items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+            >
+              ← Workout dashboard
+            </button>
+
+            <ExerciseCard
+              exercise={selectedExercise}
+              exerciseNumber={session.exercises.findIndex((exercise) => exercise.id === selectedExercise.id) + 1}
+              exerciseCount={session.exercises.length}
+              unavailableExerciseDefinitionIds={session.exercises.flatMap(
+                (exercise) => exercise.exerciseDefinitionId ? [exercise.exerciseDefinitionId] : []
+              )}
+              substitutionEnvironment={session.variantType === "Home" ? "Home" : "Gym"}
+              availableEquipment={session.variantType === "Home" ? homeEquipmentProfile.equipment : gymEquipmentProfile.equipment}
+              availableCapabilities={session.variantType === "Home" ? homeEquipmentProfile.capabilities : gymEquipmentProfile.capabilities}
+              previousExercise={getPreviousExercise(
+                selectedExercise.exerciseDefinitionId,
+                selectedExercise.name
+              )}
+              recentFullExercise={getRecentFullExercise(
+                selectedExercise.exerciseDefinitionId,
+                selectedExercise.name,
+                exerciseLibrary.find(
+                  (definition) =>
+                    definition.id === selectedExercise.exerciseDefinitionId ||
+                    (!selectedExercise.exerciseDefinitionId &&
+                      definition.name.toLowerCase() === selectedExercise.name.toLowerCase())
+                )?.sets
+              )}
+              expanded
+              onToggleExpanded={() => setSelectedExerciseSelection(null)}
+              onToggleSet={toggleSet}
+              onUpdateSet={updateSet}
+              onAddSet={addSet}
+              onRemoveSet={removeSet}
+              onAddRampUpSet={addRampUpSet}
+              onUpdateRampUpSet={updateRampUpSet}
+              onToggleRampUpSet={toggleRampUpSet}
+              onRemoveRampUpSet={removeRampUpSet}
+              onRemoveExercise={(exerciseId) => {
+                setSelectedExerciseSelection(null);
+                removeExercise(exerciseId);
+              }}
+              onReplaceExercise={replaceExercise}
+            />
+          </>
         )}
 
+        {!selectedExercise && (
+        <>
         {/* --------------------------------------------------
             Shorten Workout
         --------------------------------------------------- */}
@@ -1956,6 +1823,8 @@ const exerciseVolume =
         >
           Cancel Workout
         </button>
+        </>
+        )}
 
         {/* --------------------------------------------------
             Undo Exercise Removal
