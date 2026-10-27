@@ -213,6 +213,8 @@ export default function ExerciseCard({
 
   const [rampUpOpen, setRampUpOpen] = useState(false);
 
+  const [targetDetailsOpen, setTargetDetailsOpen] = useState(false);
+
   const [
     substitutionFeedback,
     setSubstitutionFeedback,
@@ -679,7 +681,7 @@ export default function ExerciseCard({
       ----------------------------------------------------- */}
 
       {substitutionOptions.length > 0 && (
-        <div className="mt-3">
+        <div className={substitutionsOpen ? "mt-2 block" : "mr-2 mt-2 inline-block"}>
           <button
             type="button"
             onClick={() => {
@@ -690,12 +692,12 @@ export default function ExerciseCard({
               setSubstitutionsOpen(
                 (open) => !open
               );
+              setGuidanceOpen(false);
             }}
-            className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700"
+            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"
           >
             <RefreshCw size={15} />
-
-            Need another option?
+            Alternatives
           </button>
 
           {substitutionsOpen && (
@@ -752,12 +754,15 @@ export default function ExerciseCard({
       )}
 
       {exerciseDefinition?.guidance && (
-        <div className="mt-3">
+        <div className={guidanceOpen ? "mt-2 block" : "mt-2 inline-block"}>
           <button
             type="button"
             aria-expanded={guidanceOpen}
-            onClick={() => setGuidanceOpen((open) => !open)}
-            className="flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700"
+            onClick={() => {
+              setGuidanceOpen((open) => !open);
+              setSubstitutionsOpen(false);
+            }}
+            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"
           >
             <BookOpen size={15} />
             How to
@@ -905,25 +910,35 @@ export default function ExerciseCard({
       ----------------------------------------------------- */}
 
       {showTarget && (
-        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-              <TrendingUp size={17} />
+        <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+              <TrendingUp size={16} />
             </div>
 
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
                 Today&apos;s Target
               </p>
 
-              <p className="mt-1 text-lg font-bold text-slate-900">
-                {targetDisplayLabel}
+              <p className="mt-0.5 truncate text-sm text-slate-900">
+                <span className="font-bold">{targetDisplayLabel}</span>
+                <span className="text-blue-700"> · {getTargetActionLabel()}</span>
               </p>
+            </div>
 
-              <p className="mt-1 text-sm font-medium text-blue-700">
-                {getTargetActionLabel()}
-              </p>
+            <button
+              type="button"
+              aria-expanded={targetDetailsOpen}
+              onClick={() => setTargetDetailsOpen((open) => !open)}
+              className="min-h-10 shrink-0 rounded-lg px-2 text-xs font-semibold text-blue-700"
+            >
+              {targetDetailsOpen ? "Hide" : "Details"}
+            </button>
+          </div>
 
+          {targetDetailsOpen && (
+            <div className="mt-2 border-t border-blue-100 pt-2 pl-11">
               <p className="mt-1 text-xs leading-relaxed text-slate-500">
                 {target.action === "next-variation" &&
                 nextVariation
@@ -946,7 +961,7 @@ export default function ExerciseCard({
                   </button>
                 )}
             </div>
-          </div>
+          )}
         </div>
       )}
 
