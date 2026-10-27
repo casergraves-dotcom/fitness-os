@@ -680,8 +680,10 @@ export default function ExerciseCard({
           Exercise Substitution
       ----------------------------------------------------- */}
 
+      {(substitutionOptions.length > 0 || exerciseDefinition?.guidance) && (
+        <div className="mt-2 flex flex-wrap gap-2">
       {substitutionOptions.length > 0 && (
-        <div className={substitutionsOpen ? "mt-2 block" : "mr-2 mt-2 inline-block"}>
+        <div className="contents">
           <button
             type="button"
             onClick={() => {
@@ -701,7 +703,7 @@ export default function ExerciseCard({
           </button>
 
           {substitutionsOpen && (
-            <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <div className="mt-1 basis-full rounded-xl border border-slate-200 bg-slate-50 p-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                 Swap Exercise
               </p>
@@ -754,7 +756,7 @@ export default function ExerciseCard({
       )}
 
       {exerciseDefinition?.guidance && (
-        <div className={guidanceOpen ? "mt-2 block" : "mt-2 inline-block"}>
+        <div className="contents">
           <button
             type="button"
             aria-expanded={guidanceOpen}
@@ -769,7 +771,7 @@ export default function ExerciseCard({
           </button>
 
           {guidanceOpen && (
-            <div className="mt-3 grid gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4 md:grid-cols-2">
+            <div className="mt-1 grid basis-full gap-4 rounded-xl border border-blue-100 bg-blue-50 p-4 md:grid-cols-2">
               {getReviewedGuidanceImages(exerciseDefinition.guidance.demoMedia).map((media) => (
                 <figure key={media.source} className="md:col-span-2">
                   <Image
@@ -904,6 +906,8 @@ export default function ExerciseCard({
           )}
         </div>
       )}
+        </div>
+      )}
 
       {/* ----------------------------------------------------
           Today's Target
@@ -921,9 +925,9 @@ export default function ExerciseCard({
                 Today&apos;s Target
               </p>
 
-              <p className="mt-0.5 truncate text-sm text-slate-900">
+              <p className="mt-0.5 flex flex-wrap gap-x-1 text-sm leading-5 text-slate-900">
                 <span className="font-bold">{targetDisplayLabel}</span>
-                <span className="text-blue-700"> · {getTargetActionLabel()}</span>
+                <span className="text-blue-700">· {getTargetActionLabel()}</span>
               </p>
             </div>
 
