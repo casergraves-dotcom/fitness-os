@@ -934,7 +934,20 @@ Exercises remain selectable in any order; opening one shows only that exercise's
 existing logger, and returning to the dashboard preserves all session data.
 Desktop and iPhone review confirmed the dashboard, tile selection, return
 navigation, safe-area clearance, and workout-level actions. The production build
-passed. Focused single-set logging remains the next guided-session step.
+passed.
+
+**Focused set logging checkpoint:** Selecting a dashboard exercise now opens one
+comfortable working-set editor at a time while retaining quick set navigation,
+completed-set correction, ramp-up logging, targets, substitutions, and guidance.
+Completing a set advances to the next incomplete set; completing the exercise
+returns to the canonical dashboard, where recorded results, completion progress,
+and the next recommended exercise update immediately. The secondary actions,
+target summary, and optional ramp-up controls use compact progressive disclosure
+without shrinking the active inputs. iPhone review confirmed set advancement,
+completed-set editing, ramp-up entry, final-set dashboard return, preserved
+results, and the updated next-exercise state. Lint and TypeScript passed; the
+production build remained unavailable only while the local development server
+held Next.js's trace file open.
 
 ---
 
