@@ -1707,6 +1707,7 @@ const exerciseVolume =
               focusedLogging
               onToggleExpanded={() => setSelectedExerciseSelection(null)}
               onToggleSet={toggleSet}
+              onFocusedExerciseComplete={() => setSelectedExerciseSelection(null)}
               onUpdateSet={updateSet}
               onAddSet={addSet}
               onRemoveSet={removeSet}

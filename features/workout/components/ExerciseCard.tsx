@@ -99,6 +99,8 @@ interface ExerciseCardProps {
     setId: string
   ) => void;
 
+  onFocusedExerciseComplete?: () => void;
+
   onUpdateSet: (
     exerciseId: string,
     setId: string,
@@ -175,6 +177,7 @@ export default function ExerciseCard({
   focusedLogging = false,
   onToggleExpanded,
   onToggleSet,
+  onFocusedExerciseComplete,
   onUpdateSet,
   onAddSet,
   onRemoveSet,
@@ -1183,6 +1186,12 @@ export default function ExerciseCard({
                     !canToggleSet
                   }
                   onClick={() => {
+                    const completesExercise =
+                      !set.completed &&
+                      exercise.sets.every(
+                        (candidate) => candidate.completed || candidate.id === set.id
+                      );
+
                     if (set.completed) {
                       setEditingCompletedSetIds((current) =>
                         current.filter((setId) => setId !== set.id)
@@ -1196,6 +1205,10 @@ export default function ExerciseCard({
 
                     if (!set.completed && focusedLogging) {
                       setFocusedSetId(null);
+
+                      if (completesExercise) {
+                        onFocusedExerciseComplete?.();
+                      }
                     }
                   }}
                   aria-label={
@@ -1817,8 +1830,16 @@ export default function ExerciseCard({
             type="button"
             disabled={!canCompleteFocusedSet}
             onClick={() => {
+              const completesExercise = exercise.sets.every(
+                (set) => set.completed || set.id === focusedSet.id
+              );
+
               onToggleSet(exercise.id, focusedSet.id);
               setFocusedSetId(null);
+
+              if (completesExercise) {
+                onFocusedExerciseComplete?.();
+              }
             }}
             className="mt-3 min-h-12 w-full rounded-xl bg-blue-600 px-4 py-3 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
