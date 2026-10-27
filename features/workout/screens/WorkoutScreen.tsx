@@ -1679,6 +1679,7 @@ const exerciseVolume =
             </button>
 
             <ExerciseCard
+              key={selectedExercise.id}
               exercise={selectedExercise}
               exerciseNumber={session.exercises.findIndex((exercise) => exercise.id === selectedExercise.id) + 1}
               exerciseCount={session.exercises.length}
@@ -1703,6 +1704,7 @@ const exerciseVolume =
                 )?.sets
               )}
               expanded
+              focusedLogging
               onToggleExpanded={() => setSelectedExerciseSelection(null)}
               onToggleSet={toggleSet}
               onUpdateSet={updateSet}

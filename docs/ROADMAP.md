@@ -926,6 +926,16 @@ share a compact wrapping utility line. The sticky Jump To navigator now uses a
 single-line exercise/progress treatment with 44-pixel targets. Lint, TypeScript,
 and the production build passed; final phone-width visual review remains open.
 
+**Guided workout dashboard checkpoint:** Active strength sessions now open on a
+mobile-first two-column dashboard derived entirely from the canonical workout
+session. Exercise tiles show order, Not Started/In Progress/Completed state,
+working-set progress, the existing progression target, and recorded performance.
+Exercises remain selectable in any order; opening one shows only that exercise's
+existing logger, and returning to the dashboard preserves all session data.
+Desktop and iPhone review confirmed the dashboard, tile selection, return
+navigation, safe-area clearance, and workout-level actions. The production build
+passed. Focused single-set logging remains the next guided-session step.
+
 ---
 
 # Phase 4 — Body Composition and Goal Progress

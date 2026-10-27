@@ -90,6 +90,8 @@ interface ExerciseCardProps {
 
   expanded: boolean;
 
+  focusedLogging?: boolean;
+
   onToggleExpanded: () => void;
 
   onToggleSet: (
@@ -170,6 +172,7 @@ export default function ExerciseCard({
   previousExercise,
   recentFullExercise,
   expanded,
+  focusedLogging = false,
   onToggleExpanded,
   onToggleSet,
   onUpdateSet,
@@ -205,6 +208,8 @@ export default function ExerciseCard({
     editingCompletedSetIds,
     setEditingCompletedSetIds,
   ] = useState<string[]>([]);
+
+  const [focusedSetId, setFocusedSetId] = useState<string | null>(null);
 
   const [
     substitutionFeedback,
@@ -399,6 +404,20 @@ export default function ExerciseCard({
       return `${set.weight} lb × ${set.reps}`;
     })
     .join(" · ");
+
+  const focusedSet = focusedLogging
+    ? exercise.sets.find((set) => set.id === focusedSetId) ??
+      exercise.sets.find((set) => !set.completed) ??
+      exercise.sets.at(-1)
+    : undefined;
+  const focusedSetIndex = focusedSet
+    ? exercise.sets.findIndex((set) => set.id === focusedSet.id)
+    : -1;
+  const canCompleteFocusedSet =
+    focusedSetIndex >= 0 &&
+    exercise.sets
+      .slice(0, focusedSetIndex)
+      .every((set) => set.completed);
 
   // ----------------------------------------------------------
   // Today's Target
@@ -976,8 +995,40 @@ export default function ExerciseCard({
         </div>
 
         <div className="space-y-2">
-        {exercise.sets.map(
-          (set, index) => {
+        {focusedLogging && (
+          <div className="mb-3 flex items-center gap-2 overflow-x-auto pb-1" aria-label="Working set selection">
+            {exercise.sets.map((set, index) => (
+              <button
+                key={set.id}
+                type="button"
+                onClick={() => {
+                  setFocusedSetId(set.id);
+                  setEditingCompletedSetIds((current) =>
+                    set.completed && !current.includes(set.id)
+                      ? [...current, set.id]
+                      : current
+                  );
+                }}
+                aria-current={focusedSet?.id === set.id ? "step" : undefined}
+                className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold ${
+                  focusedSet?.id === set.id
+                    ? "border-blue-500 bg-blue-50 text-blue-800"
+                    : set.completed
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                      : "border-slate-200 bg-white text-slate-600"
+                }`}
+              >
+                {set.completed && <Check size={15} />}
+                Set {index + 1}
+              </button>
+            ))}
+          </div>
+        )}
+        {exercise.sets
+          .filter((set) => !focusedLogging || set.id === focusedSet?.id)
+          .map(
+          (set) => {
+            const index = exercise.sets.findIndex((candidate) => candidate.id === set.id);
             // Match today's set with the same set number
             // from the most recent historical performance.
             const previousSet =
@@ -1084,6 +1135,10 @@ export default function ExerciseCard({
                       exercise.id,
                       set.id
                     );
+
+                    if (!set.completed && focusedLogging) {
+                      setFocusedSetId(null);
+                    }
                   }}
                   aria-label={
                     set.completed
@@ -1697,6 +1752,20 @@ export default function ExerciseCard({
               </div>
             );
           }
+        )}
+
+        {focusedLogging && focusedSet && !focusedSet.completed && (
+          <button
+            type="button"
+            disabled={!canCompleteFocusedSet}
+            onClick={() => {
+              onToggleSet(exercise.id, focusedSet.id);
+              setFocusedSetId(null);
+            }}
+            className="mt-3 min-h-12 w-full rounded-xl bg-blue-600 px-4 py-3 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+          >
+            Complete Set {focusedSetIndex + 1}
+          </button>
         )}
         </div>
 
