@@ -957,6 +957,15 @@ status with Reopen for correction. The canonical workout-session fields remain
 unchanged. iPhone review confirmed the compact, expanded, completed, and skipped
 states along with bottom-navigation clearance.
 
+**Primary-exercise ramp-up checkpoint:** Eligible primary loaded movements now
+begin with one prescribed preliminary ramp-up set before working Set 1. The
+athlete must complete that set or explicitly skip it for the current exercise;
+accessory movements proceed directly to working sets. Ramp-up completion and
+skipping persist on the canonical workout session while remaining excluded from
+working-set totals, volume, progression, PRs, and history. iPhone verification
+confirmed completion, skipping, persistence after reopening, and absence on an
+accessory movement.
+
 ---
 
 # Phase 4 — Body Composition and Goal Progress
