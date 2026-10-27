@@ -430,6 +430,30 @@ export default function WorkoutTemplatesScreen() {
             Direct muscles are the primary target of the set. Secondary muscles assist but are not counted as equivalent direct sets.
           </p>
 
+          <div className="mt-3 rounded-xl border border-slate-200 p-3">
+            <h3 className="text-sm font-bold text-slate-900">Muscle-volume summary</h3>
+            <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {volumeAudit.muscleVolume.map((item) => (
+                <div key={item.muscle} className="rounded-lg bg-slate-50 px-3 py-2">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="font-semibold text-slate-800">{item.muscle}</p>
+                    <p className="whitespace-nowrap text-sm font-semibold text-slate-900">
+                      {item.directSets} direct
+                    </p>
+                  </div>
+                  <p className="mt-0.5 text-xs text-slate-500">
+                    {item.repRanges.length > 0
+                      ? item.repRanges.join(" · ")
+                      : "No direct prescription"}
+                    {item.secondarySets > 0
+                      ? ` · ${item.secondarySets} secondary`
+                      : ""}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
             <table className="w-full min-w-[46rem] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">

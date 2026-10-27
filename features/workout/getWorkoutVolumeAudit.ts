@@ -7,6 +7,7 @@ import {
 import type {
   Exercise,
   ExerciseDefinition,
+  ExerciseMuscleGroup,
 } from "./types";
 
 export function getWorkoutVolumeAudit(
@@ -26,8 +27,8 @@ export function getWorkoutVolumeAudit(
         setCount,
         role: "Accessory" as const,
         repRange: "Needs setup",
-        directMuscles: [] as string[],
-        secondaryMuscles: [] as string[],
+        directMuscles: [] as ExerciseMuscleGroup[],
+        secondaryMuscles: [] as ExerciseMuscleGroup[],
         needsReview: true,
       };
     }
@@ -56,6 +57,26 @@ export function getWorkoutVolumeAudit(
     };
   });
 
+  const muscleVolume = [...new Set(
+    rows.flatMap((row) => [...row.directMuscles, ...row.secondaryMuscles])
+  )]
+    .map((muscle) => {
+      const directRows = rows.filter((row) => row.directMuscles.includes(muscle));
+      const secondaryRows = rows.filter((row) => row.secondaryMuscles.includes(muscle));
+
+      return {
+        muscle,
+        directSets: directRows.reduce((total, row) => total + row.setCount, 0),
+        secondarySets: secondaryRows.reduce((total, row) => total + row.setCount, 0),
+        repRanges: [...new Set(directRows.map((row) => row.repRange))],
+      };
+    })
+    .sort((first, second) =>
+      second.directSets - first.directSets
+      || second.secondarySets - first.secondarySets
+      || first.muscle.localeCompare(second.muscle)
+    );
+
   return {
     totalSets: rows.reduce((total, row) => total + row.setCount, 0),
     primarySets: rows
@@ -65,6 +86,7 @@ export function getWorkoutVolumeAudit(
       .filter((row) => row.role === "Accessory")
       .reduce((total, row) => total + row.setCount, 0),
     reviewCount: rows.filter((row) => row.needsReview).length,
+    muscleVolume,
     rows,
   };
 }

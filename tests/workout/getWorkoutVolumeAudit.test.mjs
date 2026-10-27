@@ -32,3 +32,29 @@ test("reports the current total-volume difference between templates", () => {
   assert.equal(getWorkoutVolumeAudit(workoutTemplates["Gym B"]).totalSets, 18);
   assert.equal(getWorkoutVolumeAudit(workoutTemplates["Gym C"]).totalSets, 21);
 });
+
+test("aggregates direct sets, secondary exposure, and direct rep ranges", () => {
+  const gymA = getWorkoutVolumeAudit(workoutTemplates["Gym A"]);
+  const chest = gymA.muscleVolume.find((row) => row.muscle === "Chest");
+  const triceps = gymA.muscleVolume.find((row) => row.muscle === "Triceps");
+  const quads = gymA.muscleVolume.find((row) => row.muscle === "Quads");
+
+  assert.deepEqual(chest, {
+    muscle: "Chest",
+    directSets: 3,
+    secondarySets: 0,
+    repRanges: ["8–12 reps"],
+  });
+  assert.deepEqual(triceps, {
+    muscle: "Triceps",
+    directSets: 0,
+    secondarySets: 5,
+    repRanges: [],
+  });
+  assert.deepEqual(quads, {
+    muscle: "Quads",
+    directSets: 3,
+    secondarySets: 0,
+    repRanges: ["8–12 reps"],
+  });
+});
