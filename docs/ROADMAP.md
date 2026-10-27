@@ -1139,12 +1139,18 @@ the Phase 4 core milestone.
 
 ### Progress-photo UX
 
-- [ ] Add in-app preview for progress photos.
+- [x] Add in-app preview for progress photos.
 - [ ] Show photo thumbnails in weekly check-in history.
 - [ ] Allow opening a larger photo preview without downloading the original file.
 - [ ] Support HEIC/HEIF photos with a browser-compatible preview representation.
 - [ ] Preserve the original uploaded photo in private storage.
 - [ ] Keep progress-photo previews private and authenticated.
+
+**In-app progress-photo preview checkpoint:** Timeline photos now open inside a
+shared mobile-safe modal instead of leaving Fitness OS for a separate browser
+tab. The viewer requests a short-lived signed URL from the existing private
+authenticated storage path, keeps the background locked, and provides close,
+backdrop, and Escape dismissal. Verified on mobile, Oct 26, 2026.
 
 ### Body-measurement UX
 

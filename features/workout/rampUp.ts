@@ -1,19 +1,11 @@
 import type {
   ExerciseDefinition,
   ExerciseSet,
-  StrengthMovementRole,
 } from "./types";
 
-const RAMP_UP_MOVEMENT_ROLES = new Set<StrengthMovementRole>([
-  "Squat",
-  "SquatGlute",
-  "HipHinge",
-  "HipExtension",
-  "HorizontalPush",
-  "HorizontalPull",
-  "VerticalPush",
-  "VerticalPull",
-]);
+import {
+  getExerciseProgrammingRole,
+} from "./exerciseClassification";
 
 export function supportsExerciseRampUp(
   definition: ExerciseDefinition | undefined
@@ -21,9 +13,7 @@ export function supportsExerciseRampUp(
   return (
     definition?.resistanceType === "Weight" &&
     definition.performanceType !== "Duration" &&
-    definition.movementRoles?.some((role) =>
-      RAMP_UP_MOVEMENT_ROLES.has(role)
-    ) === true
+    getExerciseProgrammingRole(definition) === "Primary"
   );
 }
 

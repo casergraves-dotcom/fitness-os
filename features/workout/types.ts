@@ -388,6 +388,34 @@ export type ExerciseCategory =
   | "Legs"
   | "Core";
 
+export type ExerciseProgrammingRole =
+  | "Primary"
+  | "Accessory";
+
+export type ExerciseMuscleGroup =
+  | "Chest"
+  | "Lats"
+  | "Upper Back"
+  | "Traps"
+  | "Front Delts"
+  | "Side Delts"
+  | "Rear Delts"
+  | "Rotator Cuff"
+  | "Biceps"
+  | "Triceps"
+  | "Forearms / Grip"
+  | "Quads"
+  | "Hamstrings"
+  | "Glutes"
+  | "Hip Abductors"
+  | "Hip Adductors"
+  | "Calves"
+  | "Tibialis"
+  | "Abs"
+  | "Obliques"
+  | "Hip Flexors"
+  | "Spinal Erectors";
+
 
 // ============================================================
 // Legacy Exercise Progression
