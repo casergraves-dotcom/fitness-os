@@ -1648,6 +1648,8 @@ const exerciseVolume =
           totalSets={
             totalSets
           }
+          compact={Boolean(selectedExercise)}
+          onBackToDashboard={() => setSelectedExerciseSelection(null)}
         />
 
         {!selectedExercise ? (
@@ -1670,14 +1672,6 @@ const exerciseVolume =
           </>
         ) : (
           <>
-            <button
-              type="button"
-              onClick={() => setSelectedExerciseSelection(null)}
-              className="inline-flex min-h-11 items-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
-            >
-              ← Workout dashboard
-            </button>
-
             <ExerciseCard
               key={selectedExercise.id}
               exercise={selectedExercise}

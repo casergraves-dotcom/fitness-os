@@ -15,6 +15,8 @@ interface WorkoutHeaderProps {
   restStartedAt?: string;
   completedSets: number;
   totalSets: number;
+  compact?: boolean;
+  onBackToDashboard?: () => void;
 }
 
 export default function WorkoutHeader({
@@ -24,6 +26,8 @@ export default function WorkoutHeader({
   restStartedAt,
   completedSets,
   totalSets,
+  compact = false,
+  onBackToDashboard,
 }: WorkoutHeaderProps) {
   const [elapsed, setElapsed] = useState("00:00");
 
@@ -52,6 +56,45 @@ export default function WorkoutHeader({
 
   const percent =
     totalSets === 0 ? 0 : (completedSets / totalSets) * 100;
+
+  if (compact) {
+    return (
+      <SectionCard className="p-3">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onBackToDashboard}
+            className="min-h-11 shrink-0 rounded-xl px-2 text-sm font-semibold text-blue-700"
+          >
+            ← Dashboard
+          </button>
+
+          <div className="min-w-0 flex-1 border-l border-slate-200 pl-3">
+            <p className="truncate text-sm font-bold text-slate-950">
+              {variantLabel
+                ? variantLabel.replace(" - ", " · ")
+                : workoutType}
+            </p>
+            <p className="text-xs text-slate-500">
+              {completedSets}/{totalSets} sets · {Math.round(percent)}%
+            </p>
+          </div>
+
+          <div className="shrink-0 text-right">
+            <p className="text-[11px] text-slate-500">Elapsed</p>
+            <p className="font-mono text-sm font-bold leading-tight">{elapsed}</p>
+          </div>
+        </div>
+
+        <div className="mt-2 h-1 overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full bg-blue-600 transition-all duration-300"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </SectionCard>
+    );
+  }
 
   return (
     <SectionCard className="p-4 sm:p-6">
