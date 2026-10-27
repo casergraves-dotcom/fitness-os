@@ -49,7 +49,6 @@
 }
 
 :root {
-  --fitness-bottom-nav-height: 4rem;
   --background: #f1f5f9;
   --foreground: #081320;
   --card: oklch(1 0 0);

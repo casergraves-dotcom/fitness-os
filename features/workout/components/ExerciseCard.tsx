@@ -54,6 +54,7 @@ import type {
 import type {
   WorkoutEquipment,
   WorkoutSetupCapability,
+  StrengthMovementRole,
 } from "../types";
 
 // ============================================================
@@ -157,6 +158,17 @@ const BAND_RESISTANCE_OPTIONS = [
   40,
   50,
 ] as const;
+
+const RAMP_UP_MOVEMENT_ROLES = new Set<StrengthMovementRole>([
+  "Squat",
+  "SquatGlute",
+  "HipHinge",
+  "HipExtension",
+  "HorizontalPush",
+  "HorizontalPull",
+  "VerticalPush",
+  "VerticalPull",
+]);
 
 
 // ============================================================
@@ -372,7 +384,10 @@ export default function ExerciseCard({
 
   const supportsRampUpSets =
     exerciseDefinition?.resistanceType === "Weight" &&
-    exerciseDefinition?.performanceType !== "Duration";
+    exerciseDefinition?.performanceType !== "Duration" &&
+    exerciseDefinition.movementRoles?.some((role) =>
+      RAMP_UP_MOVEMENT_ROLES.has(role)
+    ) === true;
 
   const rampUpSets = exercise.rampUpSets ?? [];
   const completedRampUpSetCount = rampUpSets.filter((set) => set.completed).length;
@@ -683,6 +698,19 @@ export default function ExerciseCard({
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
               >
                 <BookOpen size={16} /> How to
+              </button>
+            )}
+
+            {focusedLogging && supportsRampUpSets && (
+              <button
+                type="button"
+                onClick={() => {
+                  setRampUpOpen(true);
+                  setMenuOpen(false);
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+              >
+                <TrendingUp size={16} /> Ramp-up sets
               </button>
             )}
 
@@ -1016,7 +1044,7 @@ export default function ExerciseCard({
         </div>
       )}
 
-      {supportsRampUpSets && (
+      {supportsRampUpSets && (!focusedLogging || rampUpOpen) && (
         <div className={`${focusedLogging ? "mt-2" : "mt-4"} overflow-hidden rounded-xl border border-amber-200 bg-amber-50`}>
           <button
             type="button"
@@ -1087,7 +1115,7 @@ export default function ExerciseCard({
 
       <div className={focusedLogging ? "mt-3" : "mt-4"}>
 
-        <div className="mb-2 flex items-center justify-between gap-3">
+        {!focusedLogging && <div className="mb-2 flex items-center justify-between gap-3">
 
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
             Working Sets
@@ -1097,7 +1125,7 @@ export default function ExerciseCard({
             context="StrengthSet"
           />
 
-        </div>
+        </div>}
 
         <div className="space-y-2">
         {focusedLogging && (
@@ -1127,6 +1155,9 @@ export default function ExerciseCard({
                 Set {index + 1}
               </button>
             ))}
+            <div className="ml-auto shrink-0">
+              <RpeLegend context="StrengthSet" />
+            </div>
           </div>
         )}
         {exercise.sets
@@ -1885,7 +1916,7 @@ export default function ExerciseCard({
                 onFocusedExerciseComplete?.();
               }
             }}
-            className={`${focusedLogging ? "fixed left-[max(1rem,env(safe-area-inset-left))] right-[max(1rem,env(safe-area-inset-right))] bottom-[calc(var(--fitness-bottom-nav-height)+env(safe-area-inset-bottom)+0.5rem)] z-40 mx-auto max-w-[calc(56rem-2rem)] shadow-lg" : "mt-3 w-full"} min-h-12 rounded-xl bg-blue-600 px-4 py-3 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300`}
+            className="mt-3 min-h-12 w-full rounded-xl bg-blue-600 px-4 py-3 text-base font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
           >
             Complete Set {focusedSetIndex + 1}
           </button>
