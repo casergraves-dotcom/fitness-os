@@ -211,6 +211,8 @@ export default function ExerciseCard({
 
   const [focusedSetId, setFocusedSetId] = useState<string | null>(null);
 
+  const [rampUpOpen, setRampUpOpen] = useState(false);
+
   const [
     substitutionFeedback,
     setSubstitutionFeedback,
@@ -366,6 +368,14 @@ export default function ExerciseCard({
   const supportsRampUpSets =
     exerciseDefinition?.resistanceType === "Weight" &&
     exerciseDefinition?.performanceType !== "Duration";
+
+  const rampUpSets = exercise.rampUpSets ?? [];
+  const completedRampUpSetCount = rampUpSets.filter((set) => set.completed).length;
+  const rampUpSummary = rampUpSets.length > 0
+    ? `${completedRampUpSetCount}/${rampUpSets.length} complete · ${rampUpSets
+        .map((set) => `${set.weight} lb × ${set.reps}`)
+        .join(" · ")}`
+    : "Optional · none added";
 
   // Repetition values for unilateral exercises are stored as the
   // number completed on each side. The numeric value itself stays
@@ -941,36 +951,65 @@ export default function ExerciseCard({
       )}
 
       {supportsRampUpSets && (
-        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-amber-700">Ramp-up sets</p>
-              <p className="mt-1 text-xs text-slate-600">Optional light practice before working sets. Not counted in volume, completion, or PRs.</p>
-            </div>
-            {(exercise.rampUpSets?.length ?? 0) < 3 && (
-              <button type="button" onClick={() => onAddRampUpSet(exercise.id)} className="inline-flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-semibold text-amber-800">
-                <Plus size={14} /> Add ramp-up set
-              </button>
-            )}
-          </div>
+        <div className="mt-4 overflow-hidden rounded-xl border border-amber-200 bg-amber-50">
+          <button
+            type="button"
+            aria-expanded={rampUpOpen}
+            onClick={() => setRampUpOpen((open) => !open)}
+            className="flex min-h-12 w-full items-center gap-3 px-3 py-2 text-left"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-xs font-semibold uppercase tracking-wider text-amber-700">Ramp-up sets</span>
+              <span className="block truncate text-xs text-slate-600">{rampUpSummary}</span>
+            </span>
+            <ChevronDown size={18} className={`shrink-0 text-amber-700 transition-transform ${rampUpOpen ? "rotate-180" : ""}`} />
+          </button>
 
-          {(exercise.rampUpSets?.length ?? 0) > 0 && (
-            <div className="mt-3 space-y-2">
-              {exercise.rampUpSets?.map((set, index) => (
-                <div key={set.id} className={`flex flex-wrap items-center gap-3 rounded-xl border p-3 ${set.completed ? "border-emerald-300 bg-emerald-50" : "border-amber-200 bg-white"}`}>
-                  <button type="button" onClick={() => onToggleRampUpSet(exercise.id, set.id)} aria-label={`${set.completed ? "Uncomplete" : "Complete"} ramp-up set ${index + 1}`} className={`flex h-7 w-7 items-center justify-center rounded-full ${set.completed ? "bg-emerald-500 text-white" : "border-2 border-amber-500 bg-amber-50"}`}>
-                    {set.completed && <Check size={16} />}
+          {rampUpOpen && (
+            <div className="border-t border-amber-200 px-3 pb-3 pt-2">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs leading-5 text-slate-600">Optional practice; excluded from volume, completion, and PRs.</p>
+                {rampUpSets.length < 3 && (
+                  <button
+                    type="button"
+                    onClick={() => onAddRampUpSet(exercise.id)}
+                    className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-semibold text-amber-800"
+                  >
+                    <Plus size={14} /> Add
                   </button>
-                  <span className="text-sm font-medium text-slate-700">Warm-up {index + 1}</span>
-                  <div className="ml-auto flex items-center gap-2">
-                    <input type="number" inputMode="decimal" min={0} value={getNumericInputValue(set.weight)} disabled={set.completed} onChange={(event) => onUpdateRampUpSet(exercise.id, set.id, "weight", parseWeightInput(event.target.value))} className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base disabled:bg-transparent" />
-                    <span className="text-sm text-slate-500">lb ×</span>
-                    <input type="number" inputMode="numeric" min={0} step={1} value={getNumericInputValue(set.reps)} disabled={set.completed} onChange={(event) => onUpdateRampUpSet(exercise.id, set.id, "reps", parseRepsInput(event.target.value))} className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base disabled:bg-transparent" />
-                    <span className="text-sm text-slate-500">{repsUnitLabel}</span>
-                    <button type="button" onClick={() => onRemoveRampUpSet(exercise.id, set.id)} aria-label={`Remove ramp-up set ${index + 1}`} className="text-slate-400 hover:text-red-600"><Trash2 size={16} /></button>
-                  </div>
+                )}
+              </div>
+
+              {rampUpSets.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  {rampUpSets.map((set, index) =>
+                    set.completed ? (
+                      <button
+                        key={set.id}
+                        type="button"
+                        onClick={() => onToggleRampUpSet(exercise.id, set.id)}
+                        className="flex min-h-11 w-full items-center gap-3 rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2 text-left"
+                      >
+                        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-white"><Check size={16} /></span>
+                        <span className="text-sm font-semibold text-slate-700">Warm-up {index + 1}</span>
+                        <span className="ml-auto text-sm text-slate-600">{set.weight} lb × {set.reps}</span>
+                        <span className="text-xs font-semibold text-blue-700">Edit</span>
+                      </button>
+                    ) : (
+                      <div key={set.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-white p-2">
+                        <button type="button" onClick={() => onToggleRampUpSet(exercise.id, set.id)} aria-label={`Complete ramp-up set ${index + 1}`} className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-amber-500 bg-amber-50" />
+                        <span className="text-sm font-medium text-slate-700">Warm-up {index + 1}</span>
+                        <div className="ml-auto flex items-center gap-1.5">
+                          <input type="number" inputMode="decimal" min={0} value={getNumericInputValue(set.weight)} onChange={(event) => onUpdateRampUpSet(exercise.id, set.id, "weight", parseWeightInput(event.target.value))} className="w-16 rounded-lg border border-slate-300 bg-white px-2 py-2 text-center text-base" />
+                          <span className="text-sm text-slate-500">lb ×</span>
+                          <input type="number" inputMode="numeric" min={0} step={1} value={getNumericInputValue(set.reps)} onChange={(event) => onUpdateRampUpSet(exercise.id, set.id, "reps", parseRepsInput(event.target.value))} className="w-14 rounded-lg border border-slate-300 bg-white px-2 py-2 text-center text-base" />
+                          <button type="button" onClick={() => onRemoveRampUpSet(exercise.id, set.id)} aria-label={`Remove ramp-up set ${index + 1}`} className="flex h-9 w-9 items-center justify-center text-slate-400 hover:text-red-600"><Trash2 size={16} /></button>
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>
