@@ -32,11 +32,12 @@ test("maps compound movement roles to meaningfully trained muscle groups", () =>
   );
 });
 
-test("coverage matrix keeps explicit zero-coverage groups visible", () => {
+test("coverage additions close the direct trap, rotator cuff, and tibialis gaps", () => {
   const matrix = getExerciseCoverageMatrix(exerciseLibrary);
-  const rotatorCuff = matrix.find((row) => row.muscleGroup === "Rotator Cuff");
-
-  assert.ok(rotatorCuff);
-  assert.equal(rotatorCuff.primary.length, 0);
-  assert.equal(rotatorCuff.accessory.length, 0);
+  for (const muscleGroup of ["Traps", "Rotator Cuff", "Tibialis"]) {
+    const row = matrix.find((candidate) => candidate.muscleGroup === muscleGroup);
+    assert.ok(row, muscleGroup);
+    assert.equal(row.primary.length, 0, muscleGroup);
+    assert.equal(row.accessory.length, 2, muscleGroup);
+  }
 });

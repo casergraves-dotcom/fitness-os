@@ -90,7 +90,13 @@ export type StrengthMovementRole =
   | "RearShoulder"
   | "ElbowFlexion"
   | "ElbowExtension"
-  | "CalfRaise";
+  | "CalfRaise"
+  | "TrapElevation"
+  | "ShoulderExternalRotation"
+  | "KneeExtension"
+  | "LatIsolation"
+  | "SpinalExtension"
+  | "Dorsiflexion";
 
 
 // ============================================================

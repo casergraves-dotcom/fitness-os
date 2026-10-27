@@ -68,6 +68,12 @@ const MUSCLES_BY_MOVEMENT_ROLE: Record<StrengthMovementRole, ExerciseMuscleGroup
   ElbowFlexion: ["Biceps", "Forearms / Grip"],
   ElbowExtension: ["Triceps"],
   CalfRaise: ["Calves"],
+  TrapElevation: ["Traps"],
+  ShoulderExternalRotation: ["Rotator Cuff", "Rear Delts"],
+  KneeExtension: ["Quads"],
+  LatIsolation: ["Lats"],
+  SpinalExtension: ["Spinal Erectors", "Glutes", "Hamstrings"],
+  Dorsiflexion: ["Tibialis"],
 };
 
 const FALLBACK_MUSCLES_BY_CATEGORY: Record<ExerciseDefinition["category"], ExerciseMuscleGroup[]> = {

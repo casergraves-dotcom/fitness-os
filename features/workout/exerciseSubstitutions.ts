@@ -69,6 +69,18 @@ const PREFERRED_SUBSTITUTIONS: Record<string, string[]> = {
   "cable-crunch": ["ab-crunch-machine"],
   "hanging-leg-raise": ["lying-leg-raise"],
   "lying-leg-raise": ["hanging-leg-raise"],
+  "dumbbell-shrug": ["shrug-machine"],
+  "shrug-machine": ["dumbbell-shrug"],
+  "band-external-rotation": ["cable-external-rotation"],
+  "cable-external-rotation": ["band-external-rotation"],
+  "wall-tibialis-raise": ["tibialis-raise-machine"],
+  "tibialis-raise-machine": ["wall-tibialis-raise"],
+  "leg-extension-machine": ["band-leg-extension"],
+  "band-leg-extension": ["leg-extension-machine"],
+  "straight-arm-cable-pulldown": ["band-straight-arm-pulldown"],
+  "band-straight-arm-pulldown": ["straight-arm-cable-pulldown"],
+  "back-extension": ["back-extension-machine"],
+  "back-extension-machine": ["back-extension"],
 };
 
 const FALLBACK_SUBSTITUTIONS: Record<string, string[]> = {

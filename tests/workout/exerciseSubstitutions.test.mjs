@@ -258,6 +258,22 @@ test("knee-flexion substitutions exclude hip hinges", () => {
   assert.ok(!ids.includes("romanian-deadlift"));
 });
 
+test("new coverage exercises have same-intent alternatives", () => {
+  const pairs = [
+    ["dumbbell-shrug", "shrug-machine"],
+    ["band-external-rotation", "cable-external-rotation"],
+    ["wall-tibialis-raise", "tibialis-raise-machine"],
+    ["leg-extension-machine", "band-leg-extension"],
+    ["straight-arm-cable-pulldown", "band-straight-arm-pulldown"],
+    ["back-extension", "back-extension-machine"],
+  ];
+
+  for (const [source, alternative] of pairs) {
+    assert.ok(idsFor(source).includes(alternative), `${source} -> ${alternative}`);
+    assert.ok(idsFor(alternative).includes(source), `${alternative} -> ${source}`);
+  }
+});
+
 test("squat substitutions exclude hip-extension isolation", () => {
   const ids = idsFor("leg-press");
   assert.ok(ids.includes("barbell-squat"));
