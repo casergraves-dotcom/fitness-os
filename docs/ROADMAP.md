@@ -949,6 +949,14 @@ results, and the updated next-exercise state. Lint and TypeScript passed; the
 production build remained unavailable only while the local development server
 held Next.js's trace file open.
 
+**Guided warm-up density checkpoint:** The dashboard session warm-up now opens
+as a compact preparation summary with its primary completion and skip actions
+immediately available. The existing three-step instructions use optional
+disclosure, while completed and skipped warm-ups collapse to a single recorded
+status with Reopen for correction. The canonical workout-session fields remain
+unchanged. iPhone review confirmed the compact, expanded, completed, and skipped
+states along with bottom-navigation clearance.
+
 ---
 
 # Phase 4 — Body Composition and Goal Progress
