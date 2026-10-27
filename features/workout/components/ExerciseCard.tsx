@@ -657,6 +657,48 @@ export default function ExerciseCard({
 
         {menuOpen && (
           <div className="absolute right-0 top-11 z-20 w-48 rounded-xl border bg-white p-1 shadow-lg">
+            {focusedLogging && substitutionOptions.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSubstitutionFeedback(null);
+                  setSubstitutionsOpen(true);
+                  setGuidanceOpen(false);
+                  setMenuOpen(false);
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+              >
+                <RefreshCw size={16} /> Alternatives
+              </button>
+            )}
+
+            {focusedLogging && exerciseDefinition?.guidance && (
+              <button
+                type="button"
+                onClick={() => {
+                  setGuidanceOpen(true);
+                  setSubstitutionsOpen(false);
+                  setMenuOpen(false);
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+              >
+                <BookOpen size={16} /> How to
+              </button>
+            )}
+
+            {focusedLogging && (
+              <button
+                type="button"
+                onClick={() => {
+                  onAddSet(exercise.id);
+                  setMenuOpen(false);
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50"
+              >
+                <Plus size={16} /> Add working set
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => {
@@ -684,7 +726,7 @@ export default function ExerciseCard({
       ----------------------------------------------------- */}
 
       {(substitutionOptions.length > 0 || exerciseDefinition?.guidance) && (
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className={focusedLogging ? "" : "mt-2 flex flex-wrap gap-2"}>
       {substitutionOptions.length > 0 && (
         <div className="contents">
           <button
@@ -699,7 +741,7 @@ export default function ExerciseCard({
               );
               setGuidanceOpen(false);
             }}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            className={`${focusedLogging ? "hidden" : "inline-flex"} min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50`}
           >
             <RefreshCw size={15} />
             Alternatives
@@ -767,7 +809,7 @@ export default function ExerciseCard({
               setGuidanceOpen((open) => !open);
               setSubstitutionsOpen(false);
             }}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            className={`${focusedLogging ? "hidden" : "inline-flex"} min-h-10 items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50`}
           >
             <BookOpen size={15} />
             How to
@@ -917,18 +959,20 @@ export default function ExerciseCard({
       ----------------------------------------------------- */}
 
       {showTarget && (
-        <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 p-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+        <div className={`${focusedLogging ? "mt-2 p-2" : "mt-3 p-3"} rounded-xl border border-blue-100 bg-blue-50`}>
+          <div className="flex items-center gap-2">
+            <div className={`flex shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 ${focusedLogging ? "h-7 w-7" : "h-8 w-8"}`}>
               <TrendingUp size={16} />
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                Today&apos;s Target
-              </p>
+              {!focusedLogging && (
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+                  Today&apos;s Target
+                </p>
+              )}
 
-              <p className="mt-0.5 flex flex-wrap gap-x-1 text-sm leading-5 text-slate-900">
+              <p className={`${focusedLogging ? "" : "mt-0.5"} flex flex-wrap gap-x-1 text-sm leading-5 text-slate-900`}>
                 <span className="font-bold">{targetDisplayLabel}</span>
                 <span className="text-blue-700">· {getTargetActionLabel()}</span>
               </p>
@@ -973,7 +1017,7 @@ export default function ExerciseCard({
       )}
 
       {supportsRampUpSets && (
-        <div className="mt-4 overflow-hidden rounded-xl border border-amber-200 bg-amber-50">
+        <div className={`${focusedLogging ? "mt-2" : "mt-4"} overflow-hidden rounded-xl border border-amber-200 bg-amber-50`}>
           <button
             type="button"
             aria-expanded={rampUpOpen}
@@ -1041,7 +1085,7 @@ export default function ExerciseCard({
           Exercise Sets
       ----------------------------------------------------- */}
 
-      <div className="mt-4">
+      <div className={focusedLogging ? "mt-3" : "mt-4"}>
 
         <div className="mb-2 flex items-center justify-between gap-3">
 
@@ -1854,7 +1898,7 @@ export default function ExerciseCard({
           Add Set
       ----------------------------------------------------- */}
 
-      <button
+      {!focusedLogging && <button
         type="button"
         onClick={() =>
           onAddSet(
@@ -1864,7 +1908,7 @@ export default function ExerciseCard({
         className="mt-3 w-full rounded-xl border border-dashed border-slate-300 py-3 text-sm font-medium text-slate-600 transition hover:border-blue-500 hover:text-blue-600"
       >
         + Add Set
-      </button>
+      </button>}
 
         </>
       )}
