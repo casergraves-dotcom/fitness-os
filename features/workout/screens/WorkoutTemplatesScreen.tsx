@@ -135,7 +135,7 @@ export default function WorkoutTemplatesScreen() {
   const exercises =
     templates[selectedWorkout];
 
-  const volumeAudit = getWorkoutVolumeAudit(exercises);
+  const volumeAudit = getWorkoutVolumeAudit(exercises, undefined, selectedWorkout);
 
   const programmingProfile = currentGoal
     ? getStrengthProgrammingProfile({
@@ -430,6 +430,14 @@ export default function WorkoutTemplatesScreen() {
             Direct muscles are the primary target of the set. Secondary muscles assist but are not counted as equivalent direct sets.
           </p>
 
+          <p className="mt-2 rounded-xl bg-blue-50 px-3 py-2 text-sm leading-5 text-slate-700">
+            <span className="font-semibold text-slate-900">Why the volume differs:</span>{" "}
+            {volumeAudit.requiredSets} sets cover this workout&apos;s required movement patterns;
+            {" "}{volumeAudit.supportSets} sets provide optional or targeted support. Rep ranges follow
+            each exercise&apos;s canonical performance model, so main lifts and targeted accessories do not
+            all use the same repetition range.
+          </p>
+
           <div className="mt-3 rounded-xl border border-slate-200 p-3">
             <h3 className="text-sm font-bold text-slate-900">Muscle-volume summary</h3>
             <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -469,9 +477,13 @@ export default function WorkoutTemplatesScreen() {
                 {volumeAudit.rows.map((row) => (
                   <tr key={row.exerciseId} className={row.needsReview ? "bg-amber-50/60" : undefined}>
                     <th className="px-3 py-2 font-semibold text-slate-800">{row.name}</th>
-                    <td className="px-3 py-2 text-slate-600">{row.role}</td>
+                    <td className="px-3 py-2 text-slate-600">
+                      <span className="block">{row.role}</span>
+                      <span className="text-xs text-slate-400">{row.intent}</span>
+                    </td>
                     <td className="px-3 py-2 font-medium text-slate-800">
-                      {row.setCount} × {row.repRange}
+                      <span className="block">{row.setCount} × {row.repRange}</span>
+                      <span className="text-xs font-normal text-slate-500">{row.prescriptionFocus}</span>
                     </td>
                     <td className="px-3 py-2 text-slate-600">{row.directMuscles.join(", ") || "Unassigned"}</td>
                     <td className="px-3 py-2 text-slate-600">{row.secondaryMuscles.join(", ") || "—"}</td>

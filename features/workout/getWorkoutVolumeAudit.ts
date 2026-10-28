@@ -1,4 +1,5 @@
 import { exerciseLibrary } from "./exerciseLibrary.ts";
+import { strengthWorkoutIntents } from "./backupWorkoutModel.ts";
 import {
   getExerciseMuscleContribution,
   getExerciseProgrammingRole,
@@ -8,12 +9,23 @@ import type {
   Exercise,
   ExerciseDefinition,
   ExerciseMuscleGroup,
+  StrengthWorkoutType,
 } from "./types";
+
+function getPrescriptionFocus(definition: ExerciseDefinition) {
+  if (definition.performanceType === "Duration") return "Control / stability";
+  if (definition.repMax === undefined) return "Needs review";
+  if (definition.repMax <= 8) return "Strength emphasis";
+  if (definition.repMax <= 12) return "Strength + muscle";
+  return "Higher-rep support";
+}
 
 export function getWorkoutVolumeAudit(
   template: Exercise[],
-  definitions: ExerciseDefinition[] = exerciseLibrary
+  definitions: ExerciseDefinition[] = exerciseLibrary,
+  workoutType?: StrengthWorkoutType
 ) {
+  const intent = workoutType ? strengthWorkoutIntents[workoutType] : undefined;
   const rows = template.map((exercise) => {
     const definition = definitions.find(
       (candidate) => candidate.id === exercise.exerciseDefinitionId
@@ -26,7 +38,9 @@ export function getWorkoutVolumeAudit(
         name: exercise.name,
         setCount,
         role: "Accessory" as const,
+        intent: "Needs review" as const,
         repRange: "Needs setup",
+        prescriptionFocus: "Needs review",
         directMuscles: [] as ExerciseMuscleGroup[],
         secondaryMuscles: [] as ExerciseMuscleGroup[],
         needsReview: true,
@@ -35,6 +49,10 @@ export function getWorkoutVolumeAudit(
 
     const role = getExerciseProgrammingRole(definition);
     const contribution = getExerciseMuscleContribution(definition);
+    const isRequired = intent?.roles.some(
+      (intentRole) => intentRole.required
+        && definition.movementRoles?.includes(intentRole.role)
+    );
     const hasRepRange = definition.repMin !== undefined && definition.repMax !== undefined;
     const repRange = hasRepRange
       ? definition.repMin === definition.repMax
@@ -50,7 +68,9 @@ export function getWorkoutVolumeAudit(
       name: exercise.name,
       setCount,
       role,
+      intent: isRequired ? "Required" as const : "Support" as const,
       repRange,
+      prescriptionFocus: getPrescriptionFocus(definition),
       directMuscles: contribution.direct,
       secondaryMuscles: contribution.secondary,
       needsReview: !hasRepRange || setCountOutsideBaseline,
@@ -84,6 +104,12 @@ export function getWorkoutVolumeAudit(
       .reduce((total, row) => total + row.setCount, 0),
     accessorySets: rows
       .filter((row) => row.role === "Accessory")
+      .reduce((total, row) => total + row.setCount, 0),
+    requiredSets: rows
+      .filter((row) => row.intent === "Required")
+      .reduce((total, row) => total + row.setCount, 0),
+    supportSets: rows
+      .filter((row) => row.intent === "Support")
       .reduce((total, row) => total + row.setCount, 0),
     reviewCount: rows.filter((row) => row.needsReview).length,
     muscleVolume,
