@@ -45,3 +45,14 @@ test("incline chest press has one attributed example machine photo", () => {
   assert.equal(images[0].height, 624);
   assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
 });
+
+test("lat pulldown has one attributed example machine photo", () => {
+  const latPulldown = exerciseLibrary.find((exercise) => exercise.id === "lat-pulldown");
+  const images = getReviewedGuidanceImages(latPulldown?.guidance?.demoMedia);
+
+  assert.equal(images.length, 1);
+  assert.equal(images[0].source, "/exercise-guides/lat-pulldown-example.jpg");
+  assert.equal(images[0].width, 500);
+  assert.equal(images[0].height, 666);
+  assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
+});

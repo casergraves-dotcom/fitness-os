@@ -547,6 +547,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Use a grip and range that do not cause shoulder or elbow pain."],
       regressionExerciseIds: ["band-pulldown"],
       progressionExerciseIds: ["assisted-pull-up"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/lat-pulldown-example.jpg",
+        description: "Example selectorized lat pulldown machine with overhead cable bar, seat, and adjustable thigh restraint",
+        width: 500,
+        height: 666,
+        attribution: {
+          creator: "Santeri Viinamäki / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Lat_pulldown_machine_20180112.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {
