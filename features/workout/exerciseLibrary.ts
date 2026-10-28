@@ -171,13 +171,28 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     performanceType: "Reps",
     nextVariationId:
       "weighted-push-ups",
+    guidance: {
+      setup: [
+        "Place both feet on a stable bench and set the hands slightly wider than shoulder-width on the floor.",
+        "Walk the hands into a strong plank position with the body forming one line from shoulders through heels.",
+      ],
+      execution: [
+        "Lower the chest between the hands while the elbows travel at a comfortable angle from the torso.",
+        "Press the floor away and return to the plank without letting the hips sag or pike.",
+      ],
+      techniqueCues: ["Brace before each repetition.", "Move the shoulders and hips together."],
+      commonMistakes: ["Using an unstable foot support.", "Dropping the head or letting the lower back arch."],
+      safetyConsiderations: ["Use a lower platform or standard push-up if the elevated position causes shoulder discomfort."],
+      regressionExerciseIds: ["push-ups"],
+      progressionExerciseIds: ["weighted-push-ups"],
+    },
   },
   {
     id: "weighted-push-ups",
     name: "Weighted Push-Ups",
     category: "Chest",
     movementRoles: ["HorizontalPush"],
-    requiredEquipment: ["Bodyweight"],
+    requiredEquipment: ["Bodyweight", "WeightPlate"],
     sets: 3,
     repMin: 8,
     repMax: 12,
@@ -185,6 +200,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Have a partner center a weight plate securely across your upper back after you establish a stable push-up position.",
+        "Set the hands slightly wider than shoulder-width and brace in a straight line from shoulders through heels.",
+      ],
+      execution: [
+        "Lower the chest under control while keeping the plate stable and the elbows at a comfortable angle.",
+        "Press back to the top without letting the hips sag, rotate, or rise ahead of the shoulders.",
+      ],
+      techniqueCues: ["Keep the plate over the upper back, not the lower back.", "Move the torso as one unit."],
+      commonMistakes: ["Attempting to place or remove the plate without help.", "Using load that shortens the range or breaks the plank position."],
+      safetyConsiderations: ["Use a partner to place and remove the plate; stop if it shifts or cannot remain secure."],
+      regressionExerciseIds: ["feet-elevated-push-ups", "push-ups"],
+      progressionExerciseIds: ["barbell-bench-press"],
+    },
   },
 
   // Not defined in the spreadsheet.
@@ -433,6 +463,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "None",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Load a sturdy backpack evenly, close every zipper, and hold its top handle or both shoulder straps securely.",
+        "Hinge at the hips with a softly bent knee position, braced trunk, and the backpack hanging below the chest.",
+      ],
+      execution: [
+        "Pull the backpack toward the lower ribs while keeping the torso and hips still.",
+        "Lower it until the arms are long without losing the hinged position.",
+      ],
+      techniqueCues: ["Lead with the elbows.", "Keep the neck aligned with the spine."],
+      commonMistakes: ["Using a bag or handle that cannot support the load.", "Standing up and down to create momentum."],
+      safetyConsiderations: ["Inspect the bag and closures before loading it and keep fragile or sharp items out."],
+      progressionExerciseIds: ["band-row", "one-arm-dumbbell-row"],
+    },
   },
   {
     id: "band-row",
@@ -903,6 +947,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Load",
     resistanceType: "Weight",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand tall with a dumbbell in each hand, palms forward, wrists straight, and elbows close to your sides.",
+        "Brace lightly and let the arms begin fully extended without forcing the elbows backward.",
+      ],
+      execution: [
+        "Curl the dumbbells toward the shoulders while the upper arms remain mostly still.",
+        "Lower the weights slowly until the elbows are straight before beginning the next repetition.",
+      ],
+      techniqueCues: ["Keep the wrists stacked with the forearms.", "Control the lowering phase."],
+      commonMistakes: ["Swinging the torso to lift the weights.", "Letting the elbows travel far forward."],
+      safetyConsiderations: ["Use a lighter load if you cannot keep the trunk and wrists controlled."],
+      regressionExerciseIds: ["band-biceps-curl", "biceps-curl-machine"],
+      progressionExerciseIds: ["barbell-curl"],
+    },
   },
   {
     id: "triceps-press-machine",
@@ -1283,6 +1342,21 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "Band",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Secure the band to a stable low anchor and loop it around one ankle while lying face down on a mat.",
+        "Move far enough from the anchor for light tension with the working leg straight and both hips level.",
+      ],
+      execution: [
+        "Bend the working knee to bring the heel toward the hip without lifting the thigh from the floor.",
+        "Straighten the knee slowly against the band's pull, complete the repetitions, then switch legs.",
+      ],
+      techniqueCues: ["Keep the pelvis heavy on the mat.", "Control both directions."],
+      commonMistakes: ["Arching the lower back as the heel rises.", "Allowing the band to snap the leg straight."],
+      safetyConsiderations: ["Use only a secure low anchor and a band without cracks or tears."],
+      regressionExerciseIds: ["hamstring-walkout"],
+      progressionExerciseIds: ["leg-curl", "lying-leg-curl"],
+    },
   },
   {
     id: "hamstring-walkout",

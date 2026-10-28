@@ -605,3 +605,16 @@ test("active home-template accessories expose full How-To guidance", () => {
     assert.ok(guidance.safetyConsiderations?.length, `${exerciseId} safety`);
   }
 });
+
+test("every canonical strength exercise exposes full How-To guidance", () => {
+  for (const exercise of exerciseLibrary) {
+    const guidance = exercise.guidance;
+
+    assert.ok(guidance, `${exercise.id} needs How-To guidance`);
+    assert.ok(guidance.setup.length > 0, `${exercise.id} setup`);
+    assert.ok(guidance.execution.length > 0, `${exercise.id} execution`);
+    assert.ok(guidance.techniqueCues?.length, `${exercise.id} technique cues`);
+    assert.ok(guidance.commonMistakes?.length, `${exercise.id} common mistakes`);
+    assert.ok(guidance.safetyConsiderations?.length, `${exercise.id} safety`);
+  }
+});
