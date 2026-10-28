@@ -15,9 +15,15 @@ test("reports gym and configured-home equivalent coverage", () => {
   assert.equal(chestPress?.status, "Gym + Home");
   assert.ok((chestPress?.gymEquivalentCount ?? 0) > 0);
   assert.ok((chestPress?.homeEquivalentCount ?? 0) > 0);
-  assert.equal(legCurl?.status, "Gym only");
+  assert.equal(legCurl?.status, "Gym + Home");
   assert.ok((legCurl?.gymEquivalentCount ?? 0) > 0);
-  assert.equal(legCurl?.homeEquivalentCount, 0);
+  assert.ok((legCurl?.homeEquivalentCount ?? 0) > 0);
+});
+
+test("the configured gym profile has no automatic substitution endpoint", () => {
+  const coverage = getExerciseSubstitutionCoverage(exerciseLibrary);
+
+  assert.equal(coverage.endpointCount, 0);
 });
 
 test("keeps useful fallbacks distinct from true equivalents", () => {

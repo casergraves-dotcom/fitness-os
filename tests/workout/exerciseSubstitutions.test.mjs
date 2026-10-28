@@ -253,7 +253,7 @@ test("every automatic substitution preserves a movement role and has complete me
 
 test("knee-flexion substitutions exclude hip hinges", () => {
   const ids = idsFor("leg-curl");
-  assert.deepEqual(ids, ["lying-leg-curl", "band-leg-curl"]);
+  assert.deepEqual(ids, ["lying-leg-curl", "band-leg-curl", "hamstring-walkout"]);
   assert.ok(!ids.includes("dumbbell-rdl"));
   assert.ok(!ids.includes("romanian-deadlift"));
 });
@@ -272,6 +272,18 @@ test("new coverage exercises have same-intent alternatives", () => {
     assert.ok(idsFor(source).includes(alternative), `${source} -> ${alternative}`);
     assert.ok(idsFor(alternative).includes(source), `${alternative} -> ${source}`);
   }
+});
+
+test("external rotation and knee flexion have executable equipment alternatives", () => {
+  assert.ok(idsFor("cable-external-rotation").includes("side-lying-dumbbell-external-rotation"));
+  assert.ok(idsFor("leg-curl").includes("hamstring-walkout"));
+
+  const homeContext = {
+    environment: "Home",
+    availableEquipment: ["Bodyweight", "YogaMat", "ResistanceBands"],
+    availableCapabilities: ["FloorSpace", "HighAnchor"],
+  };
+  assert.ok(idsFor("leg-curl", homeContext).includes("hamstring-walkout"));
 });
 
 test("squat substitutions exclude hip-extension isolation", () => {
