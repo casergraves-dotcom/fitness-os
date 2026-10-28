@@ -286,6 +286,18 @@ test("external rotation and knee flexion have executable equipment alternatives"
   assert.ok(idsFor("leg-curl", homeContext).includes("hamstring-walkout"));
 });
 
+test("scheduled accessory and core work have configured-home alternatives", () => {
+  const homeContext = {
+    environment: "Home",
+    availableEquipment: ["Bodyweight", "YogaMat", "ResistanceBands"],
+    availableCapabilities: ["FloorSpace", "HighAnchor"],
+  };
+
+  assert.ok(idsFor("lateral-raise-machine", homeContext).includes("band-lateral-raise"));
+  assert.ok(idsFor("reverse-pec-deck", homeContext).includes("band-face-pull"));
+  assert.ok(idsFor("ab-crunch-machine", homeContext).includes("band-kneeling-crunch"));
+});
+
 test("squat substitutions exclude hip-extension isolation", () => {
   const ids = idsFor("leg-press");
   assert.ok(ids.includes("barbell-squat"));
@@ -304,7 +316,7 @@ test("hip extension ranks equivalents before labeled fallbacks", () => {
 
 test("core substitutions remain within their specific movement patterns", () => {
   assert.deepEqual(idsFor("cable-woodchop"), ["band-woodchop"]);
-  assert.deepEqual(idsFor("ab-crunch-machine"), ["cable-crunch"]);
+  assert.deepEqual(idsFor("ab-crunch-machine"), ["cable-crunch", "band-kneeling-crunch"]);
   assert.deepEqual(idsFor("hanging-leg-raise"), ["lying-leg-raise"]);
   const plankIds = idsFor("plank");
   assert.ok(plankIds.includes("dead-bug"));

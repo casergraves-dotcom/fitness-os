@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { exerciseLibrary } from "../../features/workout/exerciseLibrary.ts";
+import { workoutTemplates } from "../../features/workout/data.ts";
 import { getExerciseSubstitutionCoverage } from "../../features/workout/getExerciseSubstitutionCoverage.ts";
 
 test("reports gym and configured-home equivalent coverage", () => {
@@ -24,6 +25,18 @@ test("the configured gym profile has no automatic substitution endpoint", () => 
   const coverage = getExerciseSubstitutionCoverage(exerciseLibrary);
 
   assert.equal(coverage.endpointCount, 0);
+});
+
+test("every exercise in the full A/B/C templates has a configured-home equivalent", () => {
+  const coverage = getExerciseSubstitutionCoverage(exerciseLibrary);
+  const templateExerciseIds = new Set(
+    Object.values(workoutTemplates).flat().map((exercise) => exercise.exerciseDefinitionId)
+  );
+  const uncovered = coverage.rows.filter(
+    (row) => templateExerciseIds.has(row.exerciseId) && row.homeEquivalentCount === 0
+  );
+
+  assert.deepEqual(uncovered, []);
 });
 
 test("keeps useful fallbacks distinct from true equivalents", () => {
