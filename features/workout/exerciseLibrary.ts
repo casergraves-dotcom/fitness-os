@@ -1295,6 +1295,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Confirm the safety stops and practice reracking before using a challenging load."],
       regressionExerciseIds: ["leg-press", "goblet-squat"],
       progressionExerciseIds: ["barbell-squat"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/hack-squat-example.jpg",
+        description: "Example plate-loaded hack squat variant in use, showing the shoulder pads, guided sled, loading pegs, foot platform, and spotter position",
+        width: 960,
+        height: 870,
+        attribution: {
+          creator: "Brett Jordan / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:David_Jobson_%26_Ziggy_Chima%3B_machine_hack_squat.jpg",
+          license: "CC BY 2.0",
+          licenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {
