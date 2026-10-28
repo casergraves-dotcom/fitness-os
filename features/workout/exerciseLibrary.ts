@@ -710,6 +710,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Stop or shorten the range if overhead pressing causes pinching or sharp pain."],
       regressionExerciseIds: ["band-shoulder-press"],
       progressionExerciseIds: ["dumbbell-shoulder-press", "overhead-press"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/shoulder-press-example.jpg",
+        description: "Example plate-loaded shoulder press machine with an adjustable supported seat, overhead pressing arms, handles, and weight pegs",
+        width: 500,
+        height: 664,
+        attribution: {
+          creator: "Aliva Sahoo / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Shoulder_Press.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {
