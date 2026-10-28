@@ -601,6 +601,12 @@ preference model before recommendations can be filtered or ranked responsibly.
 Do not expand the catalog with presumed rehabilitation or beginner substitutions
 without those inputs and exercise-specific guidance metadata.
 
+Home Gym A, B, and C now preserve every required canonical movement role rather
+than using a different-pattern compromise: Hamstring Walkout supplies knee
+flexion, Band Woodchop supplies rotation, and Band Kneeling Crunch supplies trunk
+flexion. Automated variant tests protect that boundary. The updated Home variants
+and production build were verified in app before this checkpoint was closed.
+
 ## 2.3 Coach-Recommended Modification — COMPLETE
 
 - [x] Allow low readiness to recommend reduced volume/intensity.

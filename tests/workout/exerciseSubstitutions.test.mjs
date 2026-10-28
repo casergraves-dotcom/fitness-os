@@ -585,3 +585,23 @@ test("remaining barbell movements expose full How-To guidance", () => {
     assert.ok(guidance.regressionExerciseIds?.length, `${exerciseId} regression`);
   }
 });
+
+test("active home-template accessories expose full How-To guidance", () => {
+  for (const exerciseId of [
+    "band-pulldown",
+    "band-biceps-curl",
+    "band-overhead-triceps-extension",
+    "side-lying-hip-abduction",
+    "side-lying-hip-adduction",
+    "band-woodchop",
+  ]) {
+    const guidance = exerciseLibrary.find((exercise) => exercise.id === exerciseId)?.guidance;
+
+    assert.ok(guidance, `${exerciseId} needs How-To guidance`);
+    assert.ok(guidance.setup.length >= 2, `${exerciseId} setup`);
+    assert.ok(guidance.execution.length >= 2, `${exerciseId} execution`);
+    assert.ok(guidance.techniqueCues?.length, `${exerciseId} technique cues`);
+    assert.ok(guidance.commonMistakes?.length, `${exerciseId} common mistakes`);
+    assert.ok(guidance.safetyConsiderations?.length, `${exerciseId} safety`);
+  }
+});

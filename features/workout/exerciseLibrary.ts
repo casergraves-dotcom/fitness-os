@@ -533,6 +533,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "Band",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Secure the band to a stable high anchor and kneel or sit far enough away to create light starting tension.",
+        "Take an overhand grip, brace your trunk, and begin with the arms reaching upward without shrugging.",
+      ],
+      execution: [
+        "Pull the elbows down toward your sides while keeping the ribs stacked over the pelvis.",
+        "Return the hands overhead under control until the shoulders are comfortably lengthened.",
+      ],
+      techniqueCues: ["Drive the elbows down, not the hands back.", "Keep the neck long and torso still."],
+      commonMistakes: ["Leaning backward to move a band that is too heavy.", "Letting the shoulders shrug at the bottom."],
+      safetyConsiderations: ["Use only an anchor and band that are secure and undamaged."],
+      progressionExerciseIds: ["lat-pulldown"],
+    },
   },
 
   // Not defined in the spreadsheet.
@@ -962,6 +976,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "Band",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Stand on the center of the band with even tension in both hands and the palms facing forward.",
+        "Stand tall with the elbows close to your sides and the wrists straight.",
+      ],
+      execution: [
+        "Curl the hands toward the shoulders without letting the elbows drift forward.",
+        "Lower slowly until the elbows are straight while keeping tension on the band.",
+      ],
+      techniqueCues: ["Keep the upper arms quiet.", "Control the band through the full lowering phase."],
+      commonMistakes: ["Rocking the torso to start each repetition.", "Allowing the wrists to bend backward."],
+      safetyConsiderations: ["Check the band for damage and keep it securely trapped under both feet."],
+      progressionExerciseIds: ["dumbbell-curl", "barbell-curl"],
+    },
   },
   {
     id: "band-overhead-triceps-extension",
@@ -977,6 +1005,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     progressionType: "Reps",
     resistanceType: "Band",
     performanceType: "Reps",
+    guidance: {
+      setup: [
+        "Secure the band to a stable high anchor, face away from it, and hold the band behind your head.",
+        "Step forward to create tension, brace your trunk, and point the elbows forward without forcing the shoulders.",
+      ],
+      execution: [
+        "Straighten the elbows until the arms are extended without arching the lower back.",
+        "Bend the elbows slowly to return the hands behind the head while the upper arms stay mostly still.",
+      ],
+      techniqueCues: ["Keep the ribs down.", "Move at the elbows rather than the shoulders."],
+      commonMistakes: ["Flaring the elbows excessively.", "Leaning forward or arching to finish the repetition."],
+      safetyConsiderations: ["Use only a secure anchor and a band without cracks or tears."],
+      progressionExerciseIds: ["cable-pressdown", "triceps-press-machine"],
+    },
   },
 
   {
@@ -1452,6 +1494,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     resistanceType: "None",
     performanceType: "Reps",
     repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Lie on one side with the bottom knee bent for balance and the top leg straight in line with your torso.",
+        "Stack the hips and point the top toes forward rather than turning them toward the ceiling.",
+      ],
+      execution: [
+        "Lift the top leg only as high as you can without rolling the pelvis backward.",
+        "Lower the leg under control, complete all prescribed repetitions, then switch sides.",
+      ],
+      techniqueCues: ["Lead with the heel.", "Keep the waist long and hips stacked."],
+      commonMistakes: ["Turning the toes upward to substitute with the hip flexors.", "Rolling backward to gain range."],
+      safetyConsiderations: ["Use a comfortable range if the outside of the hip feels pinched."],
+      progressionExerciseIds: ["hip-abductor"],
+    },
   },
   {
     id: "side-lying-hip-adduction",
@@ -1468,6 +1524,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     resistanceType: "None",
     performanceType: "Reps",
     repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Lie on one side, cross the top leg in front, and plant that foot for support.",
+        "Keep the bottom leg straight and aligned with your torso.",
+      ],
+      execution: [
+        "Lift the bottom leg toward the ceiling without rolling the pelvis forward or backward.",
+        "Lower slowly, complete all prescribed repetitions, then switch sides.",
+      ],
+      techniqueCues: ["Keep the kneecap facing forward.", "Use a small controlled range."],
+      commonMistakes: ["Swinging the bottom leg.", "Pushing through the planted foot instead of lifting with the inner thigh."],
+      safetyConsiderations: ["Stop if the groin feels sharp pain rather than normal muscular effort."],
+      progressionExerciseIds: ["hip-adductor"],
+    },
   },
   {
     id: "hip-adductor",
@@ -1688,6 +1758,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
     resistanceType: "Band",
     performanceType: "Reps",
     repCounting: "PerSide",
+    guidance: {
+      setup: [
+        "Secure the band to a stable high anchor and stand sideways to it with both hands holding the band.",
+        "Step away for tension, soften the knees, and begin with the hands near the anchored shoulder.",
+      ],
+      execution: [
+        "Draw the hands diagonally across the body toward the opposite hip while the trunk rotates as one controlled unit.",
+        "Return slowly to the start, finish the prescribed repetitions, then face the other direction.",
+      ],
+      techniqueCues: ["Rotate through the torso without yanking with the arms.", "Keep the hips and knees stable."],
+      commonMistakes: ["Using momentum to snap the band downward.", "Letting the knees collapse or the lower back overextend."],
+      safetyConsiderations: ["Use only a secure anchor and keep the band path clear of your face."],
+      progressionExerciseIds: ["cable-woodchop"],
+    },
   },
   {
     id: "ab-crunch-machine",
