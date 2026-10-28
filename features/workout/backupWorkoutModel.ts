@@ -214,14 +214,15 @@ StrengthWorkoutVariant[] = [
     ],
     requiredCapabilities: [
       "FloorSpace",
+      "HighAnchor",
     ],
     movementRoles: [
       "Squat",
       "HorizontalPush",
       "HorizontalPull",
-      "HipHinge",
+      "KneeFlexion",
       "VerticalPush",
-      "CoreStability",
+      "CoreRotation",
     ],
     exercises: [
       {
@@ -242,8 +243,8 @@ StrengthWorkoutVariant[] = [
           "Use a seated band row around the feet if no anchor is available.",
       },
       {
-        exerciseDefinitionId: "band-good-morning",
-        movementRole: "HipHinge",
+        exerciseDefinitionId: "hamstring-walkout",
+        movementRole: "KneeFlexion",
         sets: 3,
       },
       {
@@ -253,15 +254,15 @@ StrengthWorkoutVariant[] = [
         optional: true,
       },
       {
-        exerciseDefinitionId: "dead-bug",
-        movementRole: "CoreStability",
+        exerciseDefinitionId: "band-woodchop",
+        movementRole: "CoreRotation",
         sets: 3,
       },
     ],
     durationMin: 30,
     durationMax: 40,
     note:
-      "Bands + bodyweight substitute preserving most of Gym A's movement intent. Band Good Morning provides hip-hinge work but does not replace the scheduled knee-flexion pattern. Dead Bug provides practical core-stability work but does not replace the scheduled rotational pattern.",
+      "Bands + bodyweight substitute preserving Gym A's required squat, push, pull, knee-flexion, and rotational-core intent. Band Woodchop requires a secure high anchor.",
   },
 
   // ----------------------------------------------------------
@@ -334,7 +335,7 @@ StrengthWorkoutVariant[] = [
       "Squat",
       "VerticalPull",
       "HorizontalPush",
-      "HipHinge",
+      "KneeFlexion",
       "ElbowFlexion",
       "ElbowExtension",
     ],
@@ -357,8 +358,8 @@ StrengthWorkoutVariant[] = [
         sets: 3,
       },
       {
-        exerciseDefinitionId: "band-good-morning",
-        movementRole: "HipHinge",
+        exerciseDefinitionId: "hamstring-walkout",
+        movementRole: "KneeFlexion",
         sets: 3,
       },
       {
@@ -377,7 +378,7 @@ StrengthWorkoutVariant[] = [
     durationMin: 30,
     durationMax: 40,
     note:
-      "Bands + bodyweight substitute. Vertical pulling requires a safe high band anchor. Band Good Morning provides hip-hinge work but does not replace the scheduled knee-flexion pattern.",
+      "Bands + bodyweight substitute preserving Gym B's required squat, vertical-pull, push, and knee-flexion intent. Vertical pulling requires a safe high band anchor.",
   },
 
   // ----------------------------------------------------------
@@ -465,7 +466,7 @@ StrengthWorkoutVariant[] = [
       "HorizontalPush",
       "HipStability",
       "Adduction",
-      "CoreStability",
+      "CoreFlexion",
     ],
     exercises: [
       {
@@ -505,15 +506,15 @@ StrengthWorkoutVariant[] = [
         optional: true,
       },
       {
-        exerciseDefinitionId: "plank",
-        movementRole: "CoreStability",
+        exerciseDefinitionId: "band-kneeling-crunch",
+        movementRole: "CoreFlexion",
         sets: 3,
       },
     ],
     durationMin: 30,
     durationMax: 40,
     note:
-      "Bands + bodyweight substitute. Vertical pulling requires a safe high band anchor. Plank provides practical core-stability work but does not replace the scheduled trunk-flexion pattern.",
+      "Bands + bodyweight substitute preserving Gym C's required squat/glute, hinge, vertical-pull, push, and trunk-flexion intent. Anchored movements require a secure high anchor.",
   },
 ];
 
