@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { workoutTemplates } from "../../features/workout/data.ts";
-import { getWorkoutVolumeAudit } from "../../features/workout/getWorkoutVolumeAudit.ts";
+import {
+  getWorkoutRotationVolumeAudit,
+  getWorkoutVolumeAudit,
+} from "../../features/workout/getWorkoutVolumeAudit.ts";
 
 test("audits actual template sets and rep ranges", () => {
   const gymA = getWorkoutVolumeAudit(workoutTemplates["Gym A"], undefined, "Gym A");
@@ -73,4 +76,18 @@ test("separates required movement volume from support work", () => {
   assert.equal(biceps?.intent, "Support");
   assert.equal(biceps?.prescriptionFocus, "Higher-rep support");
   assert.equal(legCurl?.intent, "Required");
+});
+
+test("summarizes direct muscle volume across the full A/B/C rotation", () => {
+  const rotation = getWorkoutRotationVolumeAudit(workoutTemplates);
+  const chest = rotation.muscleVolume.find((row) => row.muscle === "Chest");
+  const hamstrings = rotation.muscleVolume.find((row) => row.muscle === "Hamstrings");
+
+  assert.equal(rotation.totalSets, 58);
+  assert.equal(chest?.directSets, 9);
+  assert.equal(chest?.directSessionCount, 3);
+  assert.deepEqual(chest?.repRanges, ["8–12 reps"]);
+  assert.equal(hamstrings?.directSets, 9);
+  assert.equal(hamstrings?.directSessionCount, 3);
+  assert.equal(hamstrings?.secondarySets, 0);
 });

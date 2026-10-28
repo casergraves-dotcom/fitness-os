@@ -116,3 +116,53 @@ export function getWorkoutVolumeAudit(
     rows,
   };
 }
+
+export function getWorkoutRotationVolumeAudit(
+  templates: Record<StrengthWorkoutType, Exercise[]>,
+  definitions: ExerciseDefinition[] = exerciseLibrary
+) {
+  const workoutTypes: StrengthWorkoutType[] = ["Gym A", "Gym B", "Gym C"];
+  const workouts = workoutTypes.map((workoutType) => ({
+    workoutType,
+    audit: getWorkoutVolumeAudit(templates[workoutType], definitions, workoutType),
+  }));
+  const muscles = [...new Set(
+    workouts.flatMap(({ audit }) => audit.muscleVolume.map((row) => row.muscle))
+  )];
+
+  const muscleVolume = muscles
+    .map((muscle) => {
+      const contributions = workouts.map(({ workoutType, audit }) => {
+        const contribution = audit.muscleVolume.find((row) => row.muscle === muscle);
+        return {
+          workoutType,
+          directSets: contribution?.directSets ?? 0,
+          secondarySets: contribution?.secondarySets ?? 0,
+          repRanges: contribution?.repRanges ?? [],
+        };
+      });
+
+      return {
+        muscle,
+        directSets: contributions.reduce((total, row) => total + row.directSets, 0),
+        secondarySets: contributions.reduce((total, row) => total + row.secondarySets, 0),
+        directSessionCount: contributions.filter((row) => row.directSets > 0).length,
+        repRanges: [...new Set(contributions.flatMap((row) => row.repRanges))],
+        workouts: contributions.filter(
+          (row) => row.directSets > 0 || row.secondarySets > 0
+        ),
+      };
+    })
+    .sort((first, second) =>
+      second.directSets - first.directSets
+      || second.directSessionCount - first.directSessionCount
+      || second.secondarySets - first.secondarySets
+      || first.muscle.localeCompare(second.muscle)
+    );
+
+  return {
+    totalSets: workouts.reduce((total, row) => total + row.audit.totalSets, 0),
+    muscleVolume,
+    workouts,
+  };
+}

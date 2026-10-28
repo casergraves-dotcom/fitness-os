@@ -50,7 +50,10 @@ import {
 } from "../backupWorkoutModel";
 import { evaluateWeeklyRecovery } from "../logic/evaluateWeeklyRecovery";
 import { applyStrengthProgrammingRecommendation } from "../logic/strengthProgrammingRecommendation";
-import { getWorkoutVolumeAudit } from "../getWorkoutVolumeAudit";
+import {
+  getWorkoutRotationVolumeAudit,
+  getWorkoutVolumeAudit,
+} from "../getWorkoutVolumeAudit";
 
 import type {
     StrengthWorkoutType,
@@ -136,6 +139,7 @@ export default function WorkoutTemplatesScreen() {
     templates[selectedWorkout];
 
   const volumeAudit = getWorkoutVolumeAudit(exercises, undefined, selectedWorkout);
+  const rotationVolumeAudit = getWorkoutRotationVolumeAudit(templates);
 
   const programmingProfile = currentGoal
     ? getStrengthProgrammingProfile({
@@ -353,6 +357,51 @@ export default function WorkoutTemplatesScreen() {
         {/* --------------------------------------------------
             Workout Selector
         --------------------------------------------------- */}
+
+        <details className="group rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3">
+            <div>
+              <p className="text-sm font-bold text-slate-900">Full A/B/C rotation review</p>
+              <p className="text-xs text-slate-500">
+                {rotationVolumeAudit.totalSets} working sets across three templates
+              </p>
+            </div>
+            <span className="text-sm font-semibold text-blue-600 group-open:hidden">View</span>
+            <span className="hidden text-sm font-semibold text-blue-600 group-open:inline">Hide</span>
+          </summary>
+          <div className="border-t border-slate-200 px-4 py-3">
+            <p className="text-xs leading-5 text-slate-500">
+              This summarizes the complete template rotation, not the activities scheduled in one calendar week.
+              Direct-session frequency counts how many of Gym A, B, and C train the muscle as a primary target.
+            </p>
+            <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[38rem] text-left text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-3 py-2">Muscle</th>
+                    <th className="px-3 py-2">Direct sets</th>
+                    <th className="px-3 py-2">Direct sessions</th>
+                    <th className="px-3 py-2">Secondary sets</th>
+                    <th className="px-3 py-2">Rep ranges</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {rotationVolumeAudit.muscleVolume.map((row) => (
+                    <tr key={row.muscle}>
+                      <th className="px-3 py-2 font-semibold text-slate-800">{row.muscle}</th>
+                      <td className="px-3 py-2 text-slate-700">{row.directSets}</td>
+                      <td className="px-3 py-2 text-slate-700">{row.directSessionCount} / 3</td>
+                      <td className="px-3 py-2 text-slate-700">{row.secondarySets}</td>
+                      <td className="px-3 py-2 text-slate-600">
+                        {row.repRanges.length > 0 ? row.repRanges.join(" · ") : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
 
         <div className="grid grid-cols-3 gap-2 rounded-2xl border bg-white p-2 shadow-sm">
           {(
