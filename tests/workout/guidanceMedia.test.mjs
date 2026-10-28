@@ -91,3 +91,16 @@ test("shoulder press has one attributed example machine photo", () => {
   assert.equal(images[0].height, 664);
   assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
 });
+
+test("biceps curl machine has one attributed example machine photo", () => {
+  const bicepsCurl = exerciseLibrary.find(
+    (exercise) => exercise.id === "biceps-curl-machine",
+  );
+  const images = getReviewedGuidanceImages(bicepsCurl?.guidance?.demoMedia);
+
+  assert.equal(images.length, 1);
+  assert.equal(images[0].source, "/exercise-guides/biceps-curl-machine-example.jpg");
+  assert.equal(images[0].width, 500);
+  assert.equal(images[0].height, 664);
+  assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
+});

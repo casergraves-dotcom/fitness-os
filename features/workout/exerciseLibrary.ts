@@ -1002,6 +1002,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Avoid forcefully locking the elbows at the bottom."],
       regressionExerciseIds: ["band-biceps-curl"],
       progressionExerciseIds: ["dumbbell-curl", "barbell-curl"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/biceps-curl-machine-example.jpg",
+        description: "Example selectorized biceps curl machine with a seat, angled preacher-style arm pad, handles, pivoting resistance arm, and weight stack",
+        width: 500,
+        height: 664,
+        attribution: {
+          creator: "Aliva Sahoo / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Bicep_curl_machine.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {
