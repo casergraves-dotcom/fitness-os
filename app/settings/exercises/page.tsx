@@ -27,6 +27,7 @@ import {
   getExerciseMuscleGroups,
   getExerciseProgrammingRole,
 } from "@/features/workout/exerciseClassification";
+import { getExerciseSubstitutionCoverage } from "@/features/workout/getExerciseSubstitutionCoverage";
 
 import type {
   ExerciseCategory,
@@ -180,6 +181,11 @@ export default function ExerciseLibraryPage() {
 
   const coverageMatrix = useMemo(
     () => getExerciseCoverageMatrix(exercises),
+    [exercises]
+  );
+
+  const substitutionCoverage = useMemo(
+    () => getExerciseSubstitutionCoverage(exercises),
     [exercises]
   );
 
@@ -342,6 +348,57 @@ export default function ExerciseLibraryPage() {
             </table>
           </div>
         </section>
+
+        <details className="group rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 sm:px-5">
+            <div>
+              <p className="text-sm font-bold text-slate-900">Alternative coverage</p>
+              <p className="text-xs text-slate-500">
+                {substitutionCoverage.gymCoveredCount} gym-ready · {substitutionCoverage.homeCoveredCount} home-ready · {substitutionCoverage.endpointCount} endpoints
+              </p>
+            </div>
+            <span className="text-sm font-semibold text-blue-600 group-open:hidden">Review</span>
+            <span className="hidden text-sm font-semibold text-blue-600 group-open:inline">Hide</span>
+          </summary>
+          <div className="border-t border-slate-200 px-4 py-3 sm:px-5">
+            <p className="text-xs leading-5 text-slate-500">
+              Equivalent options preserve at least one canonical movement role and have complete progression metadata.
+              Home coverage uses the configured bands, bodyweight, mat, floor space, and high anchor. A fallback is useful but not a true equivalent.
+            </p>
+            <div className="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[36rem] text-left text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-3 py-2">Exercise</th>
+                    <th className="px-3 py-2 text-center">Gym</th>
+                    <th className="px-3 py-2 text-center">Home</th>
+                    <th className="px-3 py-2">Coverage</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {substitutionCoverage.rows.map((row) => (
+                    <tr key={row.exerciseId}>
+                      <th className="px-3 py-2 font-semibold text-slate-800">{row.name}</th>
+                      <td className="px-3 py-2 text-center text-slate-700">{row.gymEquivalentCount}</td>
+                      <td className="px-3 py-2 text-center text-slate-700">{row.homeEquivalentCount}</td>
+                      <td className="px-3 py-2">
+                        <span className={`rounded-full px-2 py-1 text-xs font-semibold ${
+                          row.status === "Gym + Home"
+                            ? "bg-emerald-50 text-emerald-700"
+                            : row.status === "Endpoint"
+                              ? "bg-amber-50 text-amber-800"
+                              : "bg-blue-50 text-blue-700"
+                        }`}>
+                          {row.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
 
         {/* ------------------------------------------------
             Search
