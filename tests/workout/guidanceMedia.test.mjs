@@ -67,3 +67,14 @@ test("seated row has one attributed example machine photo", () => {
   assert.equal(images[0].height, 1143);
   assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
 });
+
+test("pec deck has one attributed example machine photo", () => {
+  const pecDeck = exerciseLibrary.find((exercise) => exercise.id === "chest-fly");
+  const images = getReviewedGuidanceImages(pecDeck?.guidance?.demoMedia);
+
+  assert.equal(images.length, 1);
+  assert.equal(images[0].source, "/exercise-guides/pec-deck-example.jpg");
+  assert.equal(images[0].width, 960);
+  assert.equal(images[0].height, 640);
+  assert.equal(images[0].attribution?.license, "CC BY 2.0");
+});

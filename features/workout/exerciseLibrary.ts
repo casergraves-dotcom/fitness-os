@@ -313,6 +313,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       techniqueCues: ["Keep the shoulders settled and elbows softly bent.", "Use a smooth arc rather than slamming the stack."],
       commonMistakes: ["Setting the seat too low or high for a comfortable shoulder path.", "Letting the arms travel too far behind the torso."],
       safetyConsiderations: ["Use a load and range that do not cause shoulder pain; adjust the machine before starting."],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/pec-deck-example.jpg",
+        description: "Example selectorized pec deck machine in use, showing the supported seat, weight stack, pivoting arms, and chest-height handles",
+        width: 960,
+        height: 640,
+        attribution: {
+          creator: "Tyler Read / PTPioneer",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Girl_doing_chest_press_machine_exercise.jpg",
+          license: "CC BY 2.0",
+          licenseUrl: "https://creativecommons.org/licenses/by/2.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {
