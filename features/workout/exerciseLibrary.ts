@@ -403,6 +403,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Reduce load or range if the front of the shoulder becomes irritated."],
       regressionExerciseIds: ["band-row"],
       progressionExerciseIds: ["one-arm-dumbbell-row", "barbell-row"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/seated-row-example.jpg",
+        description: "Example plate-loaded chest-supported seated row machine with a seat, torso pad, independent handles, and weight pegs",
+        width: 1280,
+        height: 1143,
+        attribution: {
+          creator: "Aliva Sahoo / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Back_Machine.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "No changes made to the original photo",
+        },
+      }],
     },
   },
   {

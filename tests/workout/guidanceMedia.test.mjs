@@ -56,3 +56,14 @@ test("lat pulldown has one attributed example machine photo", () => {
   assert.equal(images[0].height, 666);
   assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
 });
+
+test("seated row has one attributed example machine photo", () => {
+  const seatedRow = exerciseLibrary.find((exercise) => exercise.id === "seated-row");
+  const images = getReviewedGuidanceImages(seatedRow?.guidance?.demoMedia);
+
+  assert.equal(images.length, 1);
+  assert.equal(images[0].source, "/exercise-guides/seated-row-example.jpg");
+  assert.equal(images[0].width, 1280);
+  assert.equal(images[0].height, 1143);
+  assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
+});
