@@ -32,3 +32,16 @@ test("leg press has one attributed example machine photo", () => {
   assert.equal(images[0].source, "/exercise-guides/leg-press-example.jpg");
   assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
 });
+
+test("incline chest press has one attributed example machine photo", () => {
+  const inclinePress = exerciseLibrary.find(
+    (exercise) => exercise.id === "incline-chest-press-machine",
+  );
+  const images = getReviewedGuidanceImages(inclinePress?.guidance?.demoMedia);
+
+  assert.equal(images.length, 1);
+  assert.equal(images[0].source, "/exercise-guides/incline-chest-press-example.jpg");
+  assert.equal(images[0].width, 500);
+  assert.equal(images[0].height, 624);
+  assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
+});

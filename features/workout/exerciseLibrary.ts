@@ -90,6 +90,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Reduce the range or load if the front of the shoulder feels pinched."],
       regressionExerciseIds: ["chest-press-machine"],
       progressionExerciseIds: ["incline-dumbbell-press"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/incline-chest-press-example.jpg",
+        description: "Example plate-loaded incline chest press machine with an adjustable seat, back pad, handles, and angled pressing arms",
+        width: 500,
+        height: 624,
+        attribution: {
+          creator: "Aliva Sahoo / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Chest_Incline.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {

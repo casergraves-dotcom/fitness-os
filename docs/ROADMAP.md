@@ -2064,9 +2064,10 @@ workout execution rather than maintaining a separate exercise-guidance catalog.
 - [x] Show concise setup and execution instructions.
 - [x] Support richer optional guidance: technique cues, common mistakes,
   exercise-specific safety, and linked regressions/progressions.
-- [ ] Finish reviewed guidance coverage for the remaining canonical strength
-  exercises, then extend the same knowledge capability to warm-up, mobility,
-  running drills, and aerial conditioning without duplicating domain records.
+- [x] Finish reviewed guidance coverage for the remaining canonical strength
+  exercises.
+- [ ] Extend the same knowledge capability to warm-up, mobility, running drills,
+  and aerial conditioning without duplicating domain records.
 - [ ] Define and version the Circus Book skill-identity import contract before
   adding aerial apparatus skills to Fitness OS.
 - [ ] Add visual demonstrations where they materially improve exercise
@@ -2180,6 +2181,14 @@ safety, and regression guidance. The guidance emphasizes a stable hinge and
 trunk, rack-safe overhead pressing, controlled loading, and wrist-friendly
 alternatives without introducing separate exercise identities. The focused
 guidance test, lint, and production build passed.
+
+**Complete strength-guidance checkpoint:** Every canonical strength exercise now
+provides reviewed setup, execution, technique, common-mistake, and safety
+guidance through the existing exercise definition. The final coverage added the
+remaining Home accessories and advanced push-up, row, curl, and knee-flexion
+variations. One catalog-wide regression test prevents future strength exercises
+from shipping without the full How-To fields. The production build passed and
+the completed coverage was accepted before moving to broader visual guidance.
 
 **Visual-guidance display checkpoint:** The optional workout How-To panel can
 now display described, bundled image assets from canonical `demoMedia` metadata
