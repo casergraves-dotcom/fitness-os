@@ -1074,6 +1074,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       safetyConsiderations: ["Use a pain-free range and avoid forcefully snapping the elbows straight."],
       regressionExerciseIds: ["band-overhead-triceps-extension"],
       progressionExerciseIds: ["cable-pressdown", "seated-dip-machine"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/triceps-pushdown-machine-example.jpg",
+        description: "Example selectorized seated triceps pushdown machine with a supported seat, independent press handles, lever arms, and weight stack",
+        width: 500,
+        height: 555,
+        attribution: {
+          creator: "Aliva Sahoo / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Tricep_Pull_down.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {
