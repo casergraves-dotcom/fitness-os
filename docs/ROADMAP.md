@@ -1449,7 +1449,7 @@ existing training/cardio history rather than reimplementing their calculations.
 - [x] Summarize strength retention/progression during fat loss.
 - [x] Summarize cardiovascular progress.
 - [x] Summarize adherence over the review period.
-- [ ] Surface meaningful milestones and PR/history highlights.
+- [x] Surface meaningful milestones and PR/history highlights.
 - [x] Incorporate DEXA comparisons when available.
 - [ ] Incorporate progress-photo comparisons when useful.
 - [x] Evaluate whether the current approach appears to be moving toward the
@@ -1602,7 +1602,7 @@ production build were verified in the browser.
 - [x] Improve adherence trend visualization.
 - [x] Integrate Phase 4 body-composition views without duplicating them.
 - [x] Integrate Phase 5 nutrition/activity context where useful.
-- [ ] Add meaningful PR/history highlights.
+- [x] Add meaningful PR/history highlights.
 - [x] Make related progress signals easy to compare over the same time period.
 
 **Verified integration checkpoint:** Progress renders canonical Phase 4
@@ -1622,9 +1622,18 @@ them among general domain observations. Ordinary strength, running, recovery,
 adherence, and body-composition interpretations remain in Period Summary, and
 each exercise contributes only its latest period PR so an intermediate record
 does not crowd out a distinct achievement. No calculation or history store was
-duplicated. Keep the PR/history item open
-until a real later performance produces a period PR and the rendered mobile
-state is verified.
+duplicated.
+
+**Verified PR-highlight checkpoint:** Real production history rendered distinct
+Leg Press and Shoulder Press Machine estimated-strength PRs plus an eligible
+photo comparison on mobile. The later cleanup keeps only the newest period PR
+for each exercise so intermediate records do not crowd out distinct highlights.
+
+**Strength range-alignment checkpoint:** Exercise Progress now calculates its
+Current, Best, and Change tiles from the same selected 3M / 6M / 1Y / All window
+shown by the strength chart. The interpretation reports the number of visible
+performances, while the complete underlying performance history remains intact
+below the chart.
 
 ## 6.4 Guide Feedback Loop
 

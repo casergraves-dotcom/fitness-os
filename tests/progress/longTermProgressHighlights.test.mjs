@@ -5,6 +5,7 @@ import { getProgressReviewPersonalRecords } from "../../features/progress/utils/
 import { getProgressReviewPhotoComparison } from "../../features/progress/utils/getProgressReviewPhotoComparison.ts";
 import { partitionProgressReviewObservations } from "../../features/progress/utils/partitionProgressReviewObservations.ts";
 import { getPersonalRecordObservations } from "../../features/progress/utils/getPersonalRecordObservations.ts";
+import { getStrengthProgressTrend } from "../../features/progress/utils/getStrengthProgressTrend.ts";
 
 const period = {
   range: "4W",
@@ -144,4 +145,28 @@ test("PR highlights show only the latest achievement for each exercise", () => {
   assert.match(observations[0].message, /Shoulder Press Machine/);
   assert.match(observations[1].message, /364 lb/);
   assert.doesNotMatch(observations[1].message, /350 lb on/);
+});
+
+test("strength trend compares the first and latest performance chronologically", () => {
+  const trend = getStrengthProgressTrend([
+    { date: "2026-10-26", estimatedOneRepMax: 364 },
+    { date: "2026-08-10", estimatedOneRepMax: 320 },
+    { date: "2026-09-15", estimatedOneRepMax: 350 },
+  ]);
+
+  assert.equal(trend.firstEstimatedOneRepMax, 320);
+  assert.equal(trend.latestEstimatedOneRepMax, 364);
+  assert.equal(trend.sampleCount, 3);
+  assert.equal(trend.status, "Improving");
+  assert.equal(Math.round(trend.changePercent), 14);
+});
+
+test("one visible strength performance does not invent a trend", () => {
+  const trend = getStrengthProgressTrend([
+    { date: "2026-10-26", estimatedOneRepMax: 364 },
+  ]);
+
+  assert.equal(trend.status, "InsufficientData");
+  assert.equal(trend.changePercent, null);
+  assert.equal(trend.sampleCount, 1);
 });

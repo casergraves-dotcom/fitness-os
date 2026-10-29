@@ -10,6 +10,7 @@ import {
   isDateInProgressChartRange,
 } from "../utils/progressChartRange";
 import type { ProgressChartRange } from "../utils/progressChartRange";
+import { getStrengthProgressTrend } from "../utils/getStrengthProgressTrend";
 import ProgressChartRangeSelect from "./ProgressChartRangeSelect";
 import StrengthProgressChart from "./StrengthProgressChart";
 
@@ -40,26 +41,29 @@ export default function ExerciseProgress() {
   }, [chartRange, progress]);
 
   const summary = useMemo(() => {
-    if (progress.length === 0) {
+    if (visibleProgress.length === 0) {
       return null;
     }
 
-    const first = progress[0];
-    const current = progress[progress.length - 1];
-    const best = progress.reduce((bestEntry, entry) =>
+    const chronological = [...visibleProgress].sort(
+      (a, b) =>
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    const current = chronological[chronological.length - 1];
+    const best = chronological.reduce((bestEntry, entry) =>
       entry.estimatedOneRepMax > bestEntry.estimatedOneRepMax
         ? entry
         : bestEntry
     );
+    const trend = getStrengthProgressTrend(chronological);
     const change =
-      current.estimatedOneRepMax - first.estimatedOneRepMax;
-    const percentChange =
-      first.estimatedOneRepMax === 0
-        ? 0
-        : (change / first.estimatedOneRepMax) * 100;
+      trend.firstEstimatedOneRepMax === null ||
+      trend.latestEstimatedOneRepMax === null
+        ? null
+        : trend.latestEstimatedOneRepMax - trend.firstEstimatedOneRepMax;
 
-    return { current, best, change, percentChange };
-  }, [progress]);
+    return { current, best, change, trend };
+  }, [visibleProgress]);
 
   if (!loaded) {
     return (
@@ -119,20 +123,27 @@ export default function ExerciseProgress() {
               </p>
               <p
                 className={`mt-2 text-xl font-bold ${
-                  summary.change > 0
+                  summary.change !== null && summary.change > 0
                     ? "text-green-600"
-                    : summary.change < 0
+                    : summary.change !== null && summary.change < 0
                       ? "text-red-600"
                       : ""
                 }`}
               >
-                {summary.change > 0 ? "+" : ""}
-                {Math.round(summary.change)}
-                <span className="ml-1 text-sm font-medium">lb</span>
+                {summary.change === null ? (
+                  "—"
+                ) : (
+                  <>
+                    {summary.change > 0 ? "+" : ""}
+                    {Math.round(summary.change)}
+                    <span className="ml-1 text-sm font-medium">lb</span>
+                  </>
+                )}
               </p>
               <p className="mt-1 text-xs text-slate-500">
-                {summary.percentChange > 0 ? "+" : ""}
-                {summary.percentChange.toFixed(1)}% since first
+                {summary.trend.changePercent === null
+                  ? "Need another session"
+                  : `${summary.trend.changePercent > 0 ? "+" : ""}${summary.trend.changePercent.toFixed(1)}% in range`}
               </p>
             </div>
           </div>
@@ -145,7 +156,9 @@ export default function ExerciseProgress() {
                 Strength Trend
               </p>
               <p className="mt-1 text-xs text-slate-500">
-                The display range only changes the chart. Complete performance history remains below.
+                {summary
+                  ? `${summary.trend.sampleCount} performance${summary.trend.sampleCount === 1 ? "" : "s"} in the selected range. Complete history remains below.`
+                  : "Complete performance history remains below."}
               </p>
             </div>
             <ProgressChartRangeSelect
