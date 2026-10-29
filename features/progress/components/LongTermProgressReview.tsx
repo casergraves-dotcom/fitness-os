@@ -21,6 +21,9 @@ import type {
 import type {
   LongTermProgressReviewObservationType,
 } from "../utils/getLongTermProgressReview";
+import {
+  partitionProgressReviewObservations,
+} from "../utils/partitionProgressReviewObservations";
 
 
 // ============================================================
@@ -190,6 +193,9 @@ export default function LongTermProgressReview() {
     );
   }
 
+  const { highlights, summary } =
+    partitionProgressReviewObservations(review.observations);
+
 
   // ----------------------------------------------------------
   // Render
@@ -278,6 +284,44 @@ export default function LongTermProgressReview() {
       </div>
 
 
+      {highlights.length > 0 && (
+        <div className="mt-6 border-t border-slate-200 pt-5">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-700">
+              Progress Highlights
+            </p>
+            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+              {highlights.length}
+            </span>
+          </div>
+
+          <div className="mt-3 grid gap-3 lg:grid-cols-2">
+            {highlights.map((observation, index) => (
+              <div
+                key={`${observation.type}-${index}`}
+                className="rounded-xl border border-blue-100 bg-blue-50/70 p-4"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+                  {getObservationLabel(observation.type)}
+                </p>
+                <p className="mt-1 text-sm font-medium leading-6 text-slate-800">
+                  {observation.message}
+                </p>
+                {observation.actionHref && observation.actionLabel && (
+                  <a
+                    href={observation.actionHref}
+                    className="mt-3 inline-flex text-sm font-semibold text-blue-700 hover:text-blue-800"
+                  >
+                    {observation.actionLabel}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
       {/* ====================================================
           Review Observations
       ==================================================== */}
@@ -288,11 +332,11 @@ export default function LongTermProgressReview() {
           Period Summary
         </p>
 
-        {review.observations.length >
+        {summary.length >
         0 ? (
           <div className="mt-3 grid gap-3 lg:grid-cols-2">
 
-            {review.observations.map(
+            {summary.map(
               (
                 observation,
                 index

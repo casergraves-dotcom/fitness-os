@@ -1615,6 +1615,15 @@ strength, running, recovery, and adherence while preserving each domain's own
 evidence requirements. Production builds and the available period/range states
 were verified in the browser.
 
+**Progress-highlight presentation checkpoint:** Longer-Term Review now separates
+canonical milestones, estimated-strength PRs, and eligible progress-photo
+comparisons into a dedicated Progress Highlights section instead of burying
+them among general domain observations. Ordinary strength, running, recovery,
+adherence, and body-composition interpretations remain in Period Summary, and
+no calculation or history store was duplicated. Keep the PR/history item open
+until a real later performance produces a period PR and the rendered mobile
+state is verified.
+
 ## 6.4 Guide Feedback Loop
 
 Guide integration is the final stage of the evidence pipeline:

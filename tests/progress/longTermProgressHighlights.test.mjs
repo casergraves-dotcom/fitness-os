@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { getProgressReviewPersonalRecords } from "../../features/progress/utils/getProgressReviewPersonalRecords.ts";
 import { getProgressReviewPhotoComparison } from "../../features/progress/utils/getProgressReviewPhotoComparison.ts";
+import { partitionProgressReviewObservations } from "../../features/progress/utils/partitionProgressReviewObservations.ts";
 
 const period = {
   range: "4W",
@@ -98,4 +99,23 @@ test("photo comparison is absent without two check-ins sharing a view", () => {
   });
 
   assert.equal(comparison, null);
+});
+
+test("milestones, PRs, and photo comparisons are separated from trend summaries", () => {
+  const observations = [
+    { type: "Strength", message: "Strength remained stable." },
+    { type: "PersonalRecord", message: "Leg Press reached a new best." },
+    { type: "Milestone", message: "A weight milestone was reached." },
+    { type: "Recovery", message: "Recovery was stable." },
+    { type: "ProgressPhoto", message: "Two photo check-ins can be compared." },
+  ];
+
+  const result = partitionProgressReviewObservations(observations);
+
+  assert.deepEqual(result.highlights.map(({ type }) => type), [
+    "PersonalRecord", "Milestone", "ProgressPhoto",
+  ]);
+  assert.deepEqual(result.summary.map(({ type }) => type), [
+    "Strength", "Recovery",
+  ]);
 });
