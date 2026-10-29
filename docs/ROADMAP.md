@@ -1648,6 +1648,14 @@ therefore tailor repeated recovery- and adherence-hold context without parsing
 human-facing explanation text. Older records and mixed or manually overridden
 patterns retain the safe generic guidance. Broader strength, running, and
 lifestyle-pattern responses remain open.
+
+**Domain-aware persistent-pattern checkpoint:** Repeated strength-quality
+constraints now shape Guide only when strength is scheduled, emphasizing
+completion of the prescribed working sets with controlled effort. Repeated
+running-load constraints shape Guide only on run days, preserving the prescribed
+run structure without added distance or intensity. On unrelated days these
+patterns remain historical observations rather than producing irrelevant daily
+advice. Broader persistent lifestyle-pattern responses remain open.
 - [x] Avoid changing training from body-composition data alone.
 - [x] Require training/recovery evidence before body-composition trends influence
   training-load decisions.

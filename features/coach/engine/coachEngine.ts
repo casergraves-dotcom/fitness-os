@@ -1153,7 +1153,8 @@ export function getCoachRecommendation(
   const persistentPatternInfluence =
     patternContext
       ? getPersistentPatternRecommendationInfluence(
-          patternContext
+          patternContext,
+          activities.map((activity) => activity.type)
         )
       : null;
 

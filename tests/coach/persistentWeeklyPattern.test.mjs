@@ -81,6 +81,38 @@ test("mixed or overridden decisions do not invent a repeated driver", () => {
   assert.equal(overridden?.limitingDriver, undefined);
 });
 
+test("strength-quality patterns influence strength days only", () => {
+  const pattern = getWeeklyDecisionPattern([
+    decision("2026-10-18", false, "StrengthQuality"),
+    decision("2026-10-11", false, "StrengthQuality"),
+  ]);
+
+  assert.match(
+    getPersistentPatternRecommendationInfluence(pattern, ["Strength"]),
+    /completing today's prescribed working sets with controlled effort/i,
+  );
+  assert.equal(
+    getPersistentPatternRecommendationInfluence(pattern, ["Run"]),
+    null,
+  );
+});
+
+test("running-load patterns influence run days only", () => {
+  const pattern = getWeeklyDecisionPattern([
+    decision("2026-10-18", false, "RunningLoad"),
+    decision("2026-10-11", false, "RunningLoad"),
+  ]);
+
+  assert.match(
+    getPersistentPatternRecommendationInfluence(pattern, ["Run"]),
+    /without adding distance or intensity/i,
+  );
+  assert.equal(
+    getPersistentPatternRecommendationInfluence(pattern, ["Strength"]),
+    null,
+  );
+});
+
 test("consecutive advances remain context without manufacturing extra volume", () => {
   const pattern = getWeeklyDecisionPattern([
     decision("2026-10-18", true),

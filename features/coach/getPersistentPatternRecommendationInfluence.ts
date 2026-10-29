@@ -1,7 +1,9 @@
 import type { CoachPersistentPatternContext } from "./types";
+import type { TrainingActivityType } from "../workout/types";
 
 export function getPersistentPatternRecommendationInfluence(
-  pattern: CoachPersistentPatternContext
+  pattern: CoachPersistentPatternContext,
+  activityTypes: TrainingActivityType[] = []
 ) {
   if (
     pattern.finalShouldAdvance ||
@@ -16,6 +18,18 @@ export function getPersistentPatternRecommendationInfluence(
 
   if (pattern.limitingDriver === "Adherence") {
     return `Because adherence constrained the last ${pattern.consecutiveReviewCount} weekly reviews, focus on today's prescribed session rather than adding extra training volume.`;
+  }
+
+  if (pattern.limitingDriver === "StrengthQuality") {
+    return activityTypes.includes("Strength")
+      ? `Because strength-session quality constrained the last ${pattern.consecutiveReviewCount} weekly reviews, prioritize completing today's prescribed working sets with controlled effort rather than adding volume.`
+      : null;
+  }
+
+  if (pattern.limitingDriver === "RunningLoad") {
+    return activityTypes.includes("Run")
+      ? `Because running load constrained the last ${pattern.consecutiveReviewCount} weekly reviews, follow today's prescribed run structure without adding distance or intensity.`
+      : null;
   }
 
   return `Because the plan was held after ${pattern.consecutiveReviewCount} consecutive weekly reviews, stay within today's prescribed scope rather than adding extra training volume.`;
