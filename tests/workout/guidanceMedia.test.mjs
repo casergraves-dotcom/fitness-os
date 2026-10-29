@@ -133,3 +133,19 @@ test("triceps pushdown machine has one attributed example machine photo", () => 
   assert.equal(images[0].height, 555);
   assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
 });
+
+test("leg extension machine has one attributed example machine photo", () => {
+  const legExtension = exerciseLibrary.find(
+    (exercise) => exercise.id === "leg-extension-machine",
+  );
+  const images = getReviewedGuidanceImages(legExtension?.guidance?.demoMedia);
+
+  assert.equal(images.length, 1);
+  assert.equal(
+    images[0].source,
+    "/exercise-guides/leg-extension-machine-example.jpg",
+  );
+  assert.equal(images[0].width, 500);
+  assert.equal(images[0].height, 667);
+  assert.equal(images[0].attribution?.license, "CC BY-SA 4.0");
+});

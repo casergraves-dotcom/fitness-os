@@ -2421,6 +2421,20 @@ export const exerciseLibrary: ExerciseDefinition[] = [
       commonMistakes: ["Kicking the weight up or lifting the hips from the seat."],
       safetyConsiderations: ["Use a comfortable range and stop if the knee feels sharp or unstable."],
       regressionExerciseIds: ["band-leg-extension"],
+      demoMedia: [{
+        type: "Image",
+        source: "/exercise-guides/leg-extension-machine-example.jpg",
+        description: "Example seated leg extension machine with a backrest, knee-aligned pivot, and lower-leg roller pad",
+        width: 500,
+        height: 667,
+        attribution: {
+          creator: "Teemeah / Wikimedia Commons",
+          sourceUrl: "https://commons.wikimedia.org/wiki/File:Leg_extender_machine.jpg",
+          license: "CC BY-SA 4.0",
+          licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+          changes: "Resized by Wikimedia Commons from the original photo",
+        },
+      }],
     },
   },
   {
