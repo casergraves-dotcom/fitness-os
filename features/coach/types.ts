@@ -32,6 +32,13 @@ export interface CoachReviewContextSummary {
   message: string;
 }
 
+export interface CoachPersistentPatternContext
+  extends CoachReviewContextSummary {
+  consecutiveReviewCount: number;
+
+  finalShouldAdvance: boolean;
+}
+
 export interface CoachObservation {
   type:
     | "CompletedReview"

@@ -1632,6 +1632,14 @@ Guide integration is the final stage of the evidence pipeline:
   days.
 - [x] Avoid automatically increasing training load to compensate for nutrition
   adherence.
+
+**Persistent weekly-decision checkpoint:** Guide now uses two or more
+consecutive held weekly progression decisions as bounded recommendation context.
+It keeps the day's canonical schedule and recovery decision intact while
+explicitly advising the user to stay within the prescribed session instead of
+adding extra training volume. Consecutive advances remain visible historical
+context but do not manufacture an instruction to add work. Broader persistent
+strength, running, recovery, and lifestyle-pattern integration remains open.
 - [x] Avoid changing training from body-composition data alone.
 - [x] Require training/recovery evidence before body-composition trends influence
   training-load decisions.

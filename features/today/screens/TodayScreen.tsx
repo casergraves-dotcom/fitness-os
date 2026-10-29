@@ -433,6 +433,10 @@ export default function TodayScreen() {
         ? {
             label: weeklyDecisionPattern.label,
             message: weeklyDecisionPattern.message,
+            consecutiveReviewCount:
+              weeklyDecisionPattern.consecutiveReviewCount,
+            finalShouldAdvance:
+              weeklyDecisionPattern.finalShouldAdvance,
           }
         : undefined,
       lifestyleContext ?? undefined,

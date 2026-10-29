@@ -17,6 +17,7 @@ import {
 
 import type {
   CoachRecommendation,
+  CoachPersistentPatternContext,
   CoachReviewContext,
   CoachReviewContextSummary,
   CoachPreferenceContext,
@@ -25,6 +26,9 @@ import type {
 import {
   getCoachingPreferencePriority,
 } from "../coachingPreferences";
+import {
+  getPersistentPatternRecommendationInfluence,
+} from "../getPersistentPatternRecommendationInfluence";
 
 function getPreferenceArea(activity: TrainingActivity) {
   if (activity.type === "Strength") return "strength" as const;
@@ -70,8 +74,6 @@ function getPreferenceInfluenceMessage(preferences: CoachPreferenceContext) {
 
   return "Your coaching preferences prioritized this option among today's otherwise-safe optional activities.";
 }
-
-
 
 // ============================================================
 // Activity Helpers
@@ -1106,7 +1108,7 @@ export function getCoachRecommendation(
   activities: TrainingActivity[] = [],
   reviewContext?: CoachReviewContext,
   trainingContext?: CoachTrainingContext,
-  patternContext?: CoachReviewContextSummary,
+  patternContext?: CoachPersistentPatternContext,
   lifestyleContext?: CoachReviewContextSummary,
   preferenceContext?: CoachPreferenceContext
 ): CoachRecommendation {
@@ -1148,12 +1150,27 @@ export function getCoachRecommendation(
         }
       : recommendation;
 
+  const persistentPatternInfluence =
+    patternContext
+      ? getPersistentPatternRecommendationInfluence(
+          patternContext
+        )
+      : null;
+
+  const contextAwareRecommendation =
+    persistentPatternInfluence
+      ? {
+          ...explainedRecommendation,
+          message: `${explainedRecommendation.message} ${persistentPatternInfluence}`,
+        }
+      : explainedRecommendation;
+
   if (!reviewContext && !patternContext && !lifestyleContext) {
-    return explainedRecommendation;
+    return contextAwareRecommendation;
   }
 
   return {
-    ...explainedRecommendation,
+    ...contextAwareRecommendation,
 
     observations: [
       ...(reviewContext
