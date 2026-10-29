@@ -17,9 +17,9 @@ import {
 
 import type {
   CoachRecommendation,
+  CoachLifestylePatternContext,
   CoachPersistentPatternContext,
   CoachReviewContext,
-  CoachReviewContextSummary,
   CoachPreferenceContext,
   CoachTrainingContext,
 } from "../types";
@@ -29,6 +29,9 @@ import {
 import {
   getPersistentPatternRecommendationInfluence,
 } from "../getPersistentPatternRecommendationInfluence";
+import {
+  getLifestylePatternRecommendationInfluence,
+} from "../getLifestylePatternRecommendationInfluence";
 
 function getPreferenceArea(activity: TrainingActivity) {
   if (activity.type === "Strength") return "strength" as const;
@@ -1109,7 +1112,7 @@ export function getCoachRecommendation(
   reviewContext?: CoachReviewContext,
   trainingContext?: CoachTrainingContext,
   patternContext?: CoachPersistentPatternContext,
-  lifestyleContext?: CoachReviewContextSummary,
+  lifestyleContext?: CoachLifestylePatternContext,
   preferenceContext?: CoachPreferenceContext
 ): CoachRecommendation {
   const allScheduledTrainingComplete =
@@ -1166,12 +1169,27 @@ export function getCoachRecommendation(
         }
       : explainedRecommendation;
 
+  const lifestylePatternInfluence =
+    lifestyleContext
+      ? getLifestylePatternRecommendationInfluence(
+          lifestyleContext
+        )
+      : null;
+
+  const fullyContextAwareRecommendation =
+    lifestylePatternInfluence
+      ? {
+          ...contextAwareRecommendation,
+          message: `${contextAwareRecommendation.message} ${lifestylePatternInfluence}`,
+        }
+      : contextAwareRecommendation;
+
   if (!reviewContext && !patternContext && !lifestyleContext) {
-    return contextAwareRecommendation;
+    return fullyContextAwareRecommendation;
   }
 
   return {
-    ...contextAwareRecommendation,
+    ...fullyContextAwareRecommendation,
 
     observations: [
       ...(reviewContext

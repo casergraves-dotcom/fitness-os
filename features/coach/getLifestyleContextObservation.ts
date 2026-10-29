@@ -9,7 +9,7 @@ import {
 } from "../progress/utils/getAdaptiveNutritionTargetFeedback.ts";
 
 import type {
-  CoachReviewContextSummary,
+  CoachLifestylePatternContext,
 } from "./types";
 
 function formatWeightRate(rate: number) {
@@ -28,7 +28,7 @@ function formatWeightRate(rate: number) {
 
 export function getLifestyleContextObservation(
   evidence: LifestyleGoalProgressEvidence | null
-): CoachReviewContextSummary | null {
+): CoachLifestylePatternContext | null {
   if (!evidence) {
     return null;
   }
@@ -72,6 +72,7 @@ export function getLifestyleContextObservation(
 
     return {
       label: "Still learning",
+      recommendation: "None",
       message:
         signals.length > 0
           ? `Available 28-day consistency: ${signals.join("; ")}. Fitness OS cannot yet determine why progress is faster or slower than expected. ${missingEvidence}`
@@ -82,6 +83,7 @@ export function getLifestyleContextObservation(
   if (signals.length === 0) {
     return {
       label: "Still learning",
+      recommendation: "None",
       message:
         "The available history does not yet contain a reliable lifestyle signal that explains progress. Keep logging normally; no target or training change is recommended from this evidence.",
     };
@@ -110,6 +112,18 @@ export function getLifestyleContextObservation(
 
   return {
     label: `${evidence.windowStartDate} to ${evidence.windowEndDate}`,
+    recommendation:
+      adaptiveNutrition.status === "ReviewSuggested"
+        ? "ReviewNutritionTarget"
+        : "None",
+    adjustmentDirection:
+      adaptiveNutrition.status === "ReviewSuggested"
+        ? adaptiveNutrition.adjustmentDirection
+        : undefined,
+    suggestedAdjustmentCalories:
+      adaptiveNutrition.status === "ReviewSuggested"
+        ? adaptiveNutrition.suggestedAdjustmentCalories
+        : undefined,
     message: `Available 28-day context: ${signals.join("; ")}. ${nutritionFeedback} This does not prescribe compensatory exercise or a training-load change.`,
   };
 }

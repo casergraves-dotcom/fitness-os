@@ -42,6 +42,15 @@ export interface CoachPersistentPatternContext
   limitingDriver?: WeeklyProgressionDecisionDriver;
 }
 
+export interface CoachLifestylePatternContext
+  extends CoachReviewContextSummary {
+  recommendation: "None" | "ReviewNutritionTarget";
+
+  adjustmentDirection?: "Increase" | "Decrease";
+
+  suggestedAdjustmentCalories?: number;
+}
+
 export interface CoachObservation {
   type:
     | "CompletedReview"

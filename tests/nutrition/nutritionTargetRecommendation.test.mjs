@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { calculateNutritionTargetRecommendation } from "../../features/nutrition/utils/calculateNutritionTargetRecommendation.ts";
 import { getLifestyleContextObservation } from "../../features/coach/getLifestyleContextObservation.ts";
+import { getLifestylePatternRecommendationInfluence } from "../../features/coach/getLifestylePatternRecommendationInfluence.ts";
 import { getAdaptiveNutritionTargetFeedback } from "../../features/progress/utils/getAdaptiveNutritionTargetFeedback.ts";
 import { isDailyRecordSettled } from "../../features/dailyActivity/utils/isDailyRecordSettled.ts";
 import { getRequiredAdherenceToDate } from "../../features/progress/utils/getRequiredAdherenceToDate.ts";
@@ -104,11 +105,18 @@ test("adaptive feedback keeps the calorie target when observed progress is close
 });
 
 test("adaptive feedback suggests a conservative review when loss is slower than plan", () => {
-  const feedback = getAdaptiveNutritionTargetFeedback(getReadyLifestyleEvidence(-0.2));
+  const evidence = getReadyLifestyleEvidence(-0.2);
+  const feedback = getAdaptiveNutritionTargetFeedback(evidence);
+  const context = getLifestyleContextObservation(evidence);
 
   assert.equal(feedback.status, "ReviewSuggested");
   assert.equal(feedback.adjustmentDirection, "Decrease");
   assert.equal(feedback.suggestedAdjustmentCalories, 250);
+  assert.equal(context?.recommendation, "ReviewNutritionTarget");
+  assert.match(
+    getLifestylePatternRecommendationInfluence(context),
+    /keep today's training as prescribed rather than adding exercise/i,
+  );
 });
 
 test("adaptive feedback suggests more intake when loss is materially faster than plan", () => {
@@ -117,6 +125,18 @@ test("adaptive feedback suggests more intake when loss is materially faster than
   assert.equal(feedback.status, "ReviewSuggested");
   assert.equal(feedback.adjustmentDirection, "Increase");
   assert.equal(feedback.suggestedAdjustmentCalories, 250);
+});
+
+test("normal progress remains lifestyle context without changing the daily recommendation", () => {
+  const context = getLifestyleContextObservation(
+    getReadyLifestyleEvidence(-0.8),
+  );
+
+  assert.equal(context?.recommendation, "None");
+  assert.equal(
+    getLifestylePatternRecommendationInfluence(context),
+    null,
+  );
 });
 
 test("yesterday remains provisional until confirmed while older history settles", () => {

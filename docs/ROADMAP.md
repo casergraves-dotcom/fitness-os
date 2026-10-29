@@ -1625,7 +1625,7 @@ Guide integration is the final stage of the evidence pipeline:
 4. Guide uses appropriate persistent patterns as context for recommendations.
 
 - [x] Make Guide aware of the latest completed review.
-- [ ] Use persistent multi-week patterns as context for future recommendations.
+- [x] Use persistent multi-week patterns as context for future recommendations.
 - [x] Distinguish observations from actionable recommendations.
 - [x] Use nutrition/activity adherence as coaching context, not punishment.
 - [x] Avoid compensatory exercise recommendations for individual high-calorie
@@ -1656,6 +1656,15 @@ running-load constraints shape Guide only on run days, preserving the prescribed
 run structure without added distance or intensity. On unrelated days these
 patterns remain historical observations rather than producing irrelevant daily
 advice. Broader persistent lifestyle-pattern responses remain open.
+
+**Lifestyle-pattern recommendation checkpoint:** Guide now promotes the existing
+evidence-gated 28-day calorie-target review into bounded recommendation context
+only when observed goal progress materially differs from the expected rate.
+Guide keeps the day's training prescription unchanged and explicitly rejects
+adding exercise to compensate. Sparse evidence and progress close to plan remain
+observation-only. Together with the weekly adherence, recovery, strength-quality,
+and running-load patterns above, this completes the initial persistent-pattern
+feedback loop while leaving future evidence refinements incremental.
 - [x] Avoid changing training from body-composition data alone.
 - [x] Require training/recovery evidence before body-composition trends influence
   training-load decisions.
