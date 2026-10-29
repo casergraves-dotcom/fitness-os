@@ -1640,6 +1640,14 @@ explicitly advising the user to stay within the prescribed session instead of
 adding extra training volume. Consecutive advances remain visible historical
 context but do not manufacture an instruction to add work. Broader persistent
 strength, running, recovery, and lifestyle-pattern integration remains open.
+
+**Structured progression-driver checkpoint:** New weekly progression decisions
+now persist the canonical factor that made the final automatic decision more
+conservative: adherence, recovery, strength quality, or running load. Guide can
+therefore tailor repeated recovery- and adherence-hold context without parsing
+human-facing explanation text. Older records and mixed or manually overridden
+patterns retain the safe generic guidance. Broader strength, running, and
+lifestyle-pattern responses remain open.
 - [x] Avoid changing training from body-composition data alone.
 - [x] Require training/recovery evidence before body-composition trends influence
   training-load decisions.

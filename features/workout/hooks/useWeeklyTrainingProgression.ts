@@ -529,6 +529,9 @@ export function useWeeklyTrainingProgression({
           automaticReason:
             decision.reason,
 
+          automaticDriver:
+            decision.limitingDriver,
+
           automaticFactors: [
             ...decision.factors,
           ],

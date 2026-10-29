@@ -437,6 +437,8 @@ export default function TodayScreen() {
               weeklyDecisionPattern.consecutiveReviewCount,
             finalShouldAdvance:
               weeklyDecisionPattern.finalShouldAdvance,
+            limitingDriver:
+              weeklyDecisionPattern.limitingDriver,
           }
         : undefined,
       lifestyleContext ?? undefined,

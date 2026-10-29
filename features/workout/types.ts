@@ -1068,6 +1068,12 @@ export type WeeklyProgressionDecisionStatus =
   | "AdvanceWithWarning"
   | "Hold";
 
+export type WeeklyProgressionDecisionDriver =
+  | "Adherence"
+  | "Recovery"
+  | "StrengthQuality"
+  | "RunningLoad";
+
 
 export interface WeeklyProgressionDecisionRecord {
   // Start date of the calendar week that was evaluated.
@@ -1084,6 +1090,10 @@ export interface WeeklyProgressionDecisionRecord {
   automaticShouldAdvance: boolean;
 
   automaticReason: string;
+
+  // Optional for backward compatibility with decisions saved
+  // before structured progression drivers were introduced.
+  automaticDriver?: WeeklyProgressionDecisionDriver;
 
   automaticFactors: string[];
 

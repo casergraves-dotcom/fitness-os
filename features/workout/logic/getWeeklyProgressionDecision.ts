@@ -29,6 +29,12 @@ export type WeeklyProgressionStatus =
   | "AdvanceWithWarning"
   | "Hold";
 
+export type WeeklyProgressionDriver =
+  | "Adherence"
+  | "Recovery"
+  | "StrengthQuality"
+  | "RunningLoad";
+
 
 export interface WeeklyProgressionDecision {
   status: WeeklyProgressionStatus;
@@ -44,6 +50,11 @@ export interface WeeklyProgressionDecision {
   requiredStrengthCount: number;
 
   reason: string;
+
+  // Structured source of the final conservative decision.
+  // This is persisted alongside the human-readable reason so
+  // later coaching does not need to parse display copy.
+  limitingDriver?: WeeklyProgressionDriver;
 
   // Concrete evidence shown with the decision. Keeping these
   // facts in the shared decision object prevents the UI from
@@ -144,6 +155,7 @@ function applyRecoveryContext(
       shouldAdvance: false,
       reason:
         "Recent recovery remained too low to increase weekly training load safely.",
+      limitingDriver: "Recovery",
       factors,
     };
   }
@@ -159,6 +171,7 @@ function applyRecoveryContext(
       shouldAdvance: true,
       reason:
         "Training adherence met the target, but recent recovery supports a more conservative advance.",
+      limitingDriver: "Recovery",
       factors,
     };
   }
@@ -203,6 +216,7 @@ function applyStrengthQualityContext(
       shouldAdvance: false,
       reason:
         "Too little of the prescribed strength work was completed to increase weekly training load safely.",
+      limitingDriver: "StrengthQuality",
       factors,
     };
   }
@@ -217,6 +231,7 @@ function applyStrengthQualityContext(
       shouldAdvance: true,
       reason:
         "Training adherence met the target, but strength-session quality supports a more conservative advance.",
+      limitingDriver: "StrengthQuality",
       factors,
     };
   }
@@ -261,6 +276,7 @@ function applyRunningLoadContext(
       shouldAdvance: false,
       reason:
         "Scheduled running was completed at too little of the prescribed load to increase the overall training week safely.",
+      limitingDriver: "RunningLoad",
       factors,
     };
   }
@@ -275,6 +291,7 @@ function applyRunningLoadContext(
       shouldAdvance: true,
       reason:
         "Training adherence met the target, but running load supports a more conservative advance.",
+      limitingDriver: "RunningLoad",
       factors,
     };
   }
@@ -552,6 +569,8 @@ export function getWeeklyProgressionDecision(
     requiredStrengthCount,
 
     reason,
+
+    limitingDriver: "Adherence",
 
     factors,
   }, recovery, strengthQuality, runningLoad, aerialLoad);

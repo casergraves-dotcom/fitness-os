@@ -1,4 +1,5 @@
 import type {
+  WeeklyProgressionDecisionDriver,
   StrengthWorkoutType,
   StrengthWorkoutVariantType,
 } from "@/features/workout/types";
@@ -37,6 +38,8 @@ export interface CoachPersistentPatternContext
   consecutiveReviewCount: number;
 
   finalShouldAdvance: boolean;
+
+  limitingDriver?: WeeklyProgressionDecisionDriver;
 }
 
 export interface CoachObservation {
