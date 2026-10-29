@@ -1620,7 +1620,9 @@ canonical milestones, estimated-strength PRs, and eligible progress-photo
 comparisons into a dedicated Progress Highlights section instead of burying
 them among general domain observations. Ordinary strength, running, recovery,
 adherence, and body-composition interpretations remain in Period Summary, and
-no calculation or history store was duplicated. Keep the PR/history item open
+each exercise contributes only its latest period PR so an intermediate record
+does not crowd out a distinct achievement. No calculation or history store was
+duplicated. Keep the PR/history item open
 until a real later performance produces a period PR and the rendered mobile
 state is verified.
 

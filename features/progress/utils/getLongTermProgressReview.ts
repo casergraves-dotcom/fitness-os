@@ -30,6 +30,10 @@ import type {
   ProgressReviewPersonalRecord,
 } from "./getProgressReviewPersonalRecords";
 
+import {
+  getPersonalRecordObservations,
+} from "./getPersonalRecordObservations";
+
 import type {
   ProgressReviewPhotoComparison,
 } from "./getProgressReviewPhotoComparison";
@@ -421,29 +425,6 @@ function getMilestoneObservations(
         `${milestone.label} was reached${milestone.achievedDate ? ` on ${milestone.achievedDate}` : ""}.`,
     })
   );
-}
-
-
-function getPersonalRecordObservations(
-  personalRecords:
-    ProgressReviewPersonalRecord[]
-): LongTermProgressReviewObservation[] {
-  return personalRecords
-    .slice(
-      0,
-      3
-    )
-    .map(
-      (
-        record
-      ) => ({
-        type:
-          "PersonalRecord",
-
-        message:
-          `${record.exerciseName} reached a new estimated 1RM of ${record.estimatedOneRepMax} lb on ${record.achievedDate}, improving the previous best by ${record.improvement} lb.`,
-      })
-    );
 }
 
 

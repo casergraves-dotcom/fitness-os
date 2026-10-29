@@ -4,6 +4,7 @@ import test from "node:test";
 import { getProgressReviewPersonalRecords } from "../../features/progress/utils/getProgressReviewPersonalRecords.ts";
 import { getProgressReviewPhotoComparison } from "../../features/progress/utils/getProgressReviewPhotoComparison.ts";
 import { partitionProgressReviewObservations } from "../../features/progress/utils/partitionProgressReviewObservations.ts";
+import { getPersonalRecordObservations } from "../../features/progress/utils/getPersonalRecordObservations.ts";
 
 const period = {
   range: "4W",
@@ -118,4 +119,29 @@ test("milestones, PRs, and photo comparisons are separated from trend summaries"
   assert.deepEqual(result.summary.map(({ type }) => type), [
     "Strength", "Recovery",
   ]);
+});
+
+test("PR highlights show only the latest achievement for each exercise", () => {
+  const observations = getPersonalRecordObservations([
+    {
+      exerciseName: "Leg Press", estimatedOneRepMax: 350,
+      previousEstimatedOneRepMax: 336, improvement: 14,
+      workoutSessionId: "older-leg-press", achievedDate: "2026-10-23",
+    },
+    {
+      exerciseName: "Shoulder Press Machine", estimatedOneRepMax: 116,
+      previousEstimatedOneRepMax: 111, improvement: 5,
+      workoutSessionId: "shoulder-press", achievedDate: "2026-10-26",
+    },
+    {
+      exerciseName: "Leg Press", estimatedOneRepMax: 364,
+      previousEstimatedOneRepMax: 350, improvement: 14,
+      workoutSessionId: "latest-leg-press", achievedDate: "2026-10-26",
+    },
+  ]);
+
+  assert.equal(observations.length, 2);
+  assert.match(observations[0].message, /Shoulder Press Machine/);
+  assert.match(observations[1].message, /364 lb/);
+  assert.doesNotMatch(observations[1].message, /350 lb on/);
 });
