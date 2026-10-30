@@ -970,9 +970,12 @@ set behavior. The timer is stored on the canonical active workout session, so it
 remains accurate while backgrounded and stays available on both the workout
 dashboard and focused exercise view. Compact pause/resume, skip, ±30-second
 controls, canonical exercise-metadata defaults, an in-app completion state, and
-best-effort browser vibration are implemented. User-configurable rest defaults,
-sound/background-notification investigation, and final iPhone navigation and
-backgrounding verification remain open before this checkpoint is complete.
+best-effort browser vibration are implemented. Workout Preferences now provides
+cloud-synced, backward-compatible duration controls for primary compounds,
+general compound fallback, accessories/isolation, core, and bodyweight work;
+saved values affect only newly started countdowns. Sound/background-notification
+investigation and final iPhone navigation, preference, and backgrounding
+verification remain open before this checkpoint is complete.
 
 **Primary-exercise ramp-up checkpoint:** Eligible primary loaded movements now
 begin with one prescribed preliminary ramp-up set before working Set 1. The

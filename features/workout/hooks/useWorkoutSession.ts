@@ -12,6 +12,7 @@ import {
 import {
   useWorkoutTemplates,
 } from "./useWorkoutTemplates";
+import { useWorkoutPreferences } from "./useWorkoutPreferences";
 
 import {
   useExerciseLibrary,
@@ -408,6 +409,10 @@ export function useWorkoutSession() {
     exercises: exerciseLibrary,
     loaded: exerciseLibraryLoaded,
   } = useExerciseLibrary();
+
+  const {
+    preferences: workoutPreferences,
+  } = useWorkoutPreferences();
 
   // ----------------------------------------------------------
   // State
@@ -1118,7 +1123,10 @@ export function useWorkoutSession() {
                 nextRestTimer =
                   createWorkoutRestTimer({
                     durationSeconds:
-                      getExerciseRestDurationSeconds(definition),
+                      getExerciseRestDurationSeconds(
+                        definition,
+                        workoutPreferences
+                      ),
                     exerciseId: exercise.id,
                     exerciseName: exercise.name,
                   });

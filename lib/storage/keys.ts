@@ -24,6 +24,9 @@ export const STORAGE_KEYS = {
   mobilityPreferences:
     "fitness-os-mobility-preferences",
 
+  workoutPreferences:
+    "fitness-os-workout-preferences",
+
   customExercises:
     "fitness-os-custom-exercises",
 
@@ -84,6 +87,7 @@ export const CLOUD_SYNC_STORAGE_KEYS = [
   STORAGE_KEYS.trainingPreferences,
   STORAGE_KEYS.coachingPreferences,
   STORAGE_KEYS.mobilityPreferences,
+  STORAGE_KEYS.workoutPreferences,
   STORAGE_KEYS.customExercises,
   STORAGE_KEYS.workoutTemplates,
   STORAGE_KEYS.strengthProgrammingDecisions,

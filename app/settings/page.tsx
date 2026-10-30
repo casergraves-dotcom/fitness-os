@@ -11,6 +11,7 @@ import {
   Target,
   SlidersHorizontal,
   MessageCircle,
+  Timer,
 } from "lucide-react";
 
 import AppShell from "@/components/layout/AppShell";
@@ -125,6 +126,22 @@ export default function SettingsPage() {
 
             <div className="ml-[68px] border-t border-slate-100" />
 
+            <Link
+              href="/settings/workout"
+              className="flex items-center gap-3 px-4 py-4 transition hover:bg-slate-50"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <Timer size={20} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-slate-900">Workout Preferences</p>
+                <p className="mt-1 text-sm text-slate-500">Configure rest timer defaults.</p>
+              </div>
+              <ChevronRight size={20} className="shrink-0 text-slate-400" />
+            </Link>
+
+            <div className="ml-[68px] border-t border-slate-100" />
+
             {/* Edit Workouts */}
 
             <Link
@@ -198,8 +215,7 @@ export default function SettingsPage() {
             </p>
 
             <p className="mt-1 text-sm text-slate-400">
-              Rest timers, units, workout preferences,
-              and other options will live here.
+              Units and other app options will live here.
             </p>
           </div>
         </div>

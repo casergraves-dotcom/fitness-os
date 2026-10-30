@@ -11,6 +11,9 @@ import {
   pauseWorkoutRestTimer,
   resumeWorkoutRestTimer,
 } from "../../features/workout/logic/restTimer.ts";
+import {
+  normalizeWorkoutPreferences,
+} from "../../features/workout/workoutPreferences.ts";
 
 const definition = {
   id: "chest-press-machine",
@@ -107,6 +110,41 @@ test("rest starts between working sets but not after the final set", () => {
   assert.equal(hasRemainingWorkingSetAfter(sets, "set-1"), true);
   assert.equal(hasRemainingWorkingSetAfter(sets, "set-2"), true);
   assert.equal(hasRemainingWorkingSetAfter(sets, "set-3"), false);
+});
+
+test("saved rest preferences override defaults without changing classification", () => {
+  const preferences = normalizeWorkoutPreferences({
+    restDurations: {
+      heavyCompoundSeconds: 180,
+      moderateCompoundSeconds: 105,
+      isolationSeconds: 60,
+      coreSeconds: 45,
+      bodyweightSeconds: 75,
+    },
+  });
+
+  assert.equal(getExerciseRestDurationSeconds({
+    ...definition,
+    movementRoles: ["HorizontalPush"],
+  }, preferences), 180);
+  assert.equal(getExerciseRestDurationSeconds({
+    ...definition,
+    category: "Core",
+  }, preferences), 45);
+});
+
+test("rest preferences migrate missing and unsafe values conservatively", () => {
+  const preferences = normalizeWorkoutPreferences({
+    restDurations: {
+      heavyCompoundSeconds: 999,
+      isolationSeconds: 10,
+    },
+  });
+
+  assert.equal(preferences.restDurations.heavyCompoundSeconds, 600);
+  assert.equal(preferences.restDurations.isolationSeconds, 30);
+  assert.equal(preferences.restDurations.coreSeconds, 60);
+  assert.equal(preferences.restDurations.bodyweightSeconds, 90);
 });
 
 test("a lone lighter first set does not become the progression baseline", () => {

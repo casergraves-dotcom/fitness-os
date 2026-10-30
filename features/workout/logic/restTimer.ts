@@ -7,35 +7,39 @@ import type {
   ExerciseSet,
   WorkoutRestTimer,
 } from "../types.ts";
+import {
+  DEFAULT_WORKOUT_PREFERENCES,
+} from "../workoutPreferences.ts";
+import type {
+  WorkoutPreferences,
+} from "../workoutPreferences.ts";
 
-export const DEFAULT_REST_SECONDS = {
-  heavyCompound: 150,
-  moderateCompound: 120,
-  isolation: 75,
-  core: 60,
-  bodyweight: 90,
-} as const;
+export const DEFAULT_REST_SECONDS =
+  DEFAULT_WORKOUT_PREFERENCES.restDurations;
 
 export function getExerciseRestDurationSeconds(
-  definition?: ExerciseDefinition
+  definition?: ExerciseDefinition,
+  preferences: WorkoutPreferences = DEFAULT_WORKOUT_PREFERENCES
 ) {
+  const durations = preferences.restDurations;
+
   if (!definition) {
-    return DEFAULT_REST_SECONDS.moderateCompound;
+    return durations.moderateCompoundSeconds;
   }
 
   if (definition.category === "Core") {
-    return DEFAULT_REST_SECONDS.core;
+    return durations.coreSeconds;
   }
 
   if (definition.resistanceType === "None") {
-    return DEFAULT_REST_SECONDS.bodyweight;
+    return durations.bodyweightSeconds;
   }
 
   if (getExerciseProgrammingRole(definition) === "Primary") {
-    return DEFAULT_REST_SECONDS.heavyCompound;
+    return durations.heavyCompoundSeconds;
   }
 
-  return DEFAULT_REST_SECONDS.isolation;
+  return durations.isolationSeconds;
 }
 
 export function hasRemainingWorkingSetAfter(
