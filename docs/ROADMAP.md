@@ -963,7 +963,7 @@ status with Reopen for correction. The canonical workout-session fields remain
 unchanged. iPhone review confirmed the compact, expanded, completed, and skipped
 states along with bottom-navigation clearance.
 
-**Guided rest-timer checkpoint (mobile verification open):** Completing a
+**Guided rest-timer checkpoint:** Completing a
 working set now starts a timestamp-based countdown only when a later working set
 remains, then the focused logger advances through its existing first-incomplete
 set behavior. The timer is stored on the canonical active workout session, so it
@@ -978,9 +978,19 @@ in-app completion tone and best-effort vibration, with test controls and
 backward-compatible defaults. Background-notification investigation confirmed
 that the current service worker has no Push subscription/scheduling path and the
 Capacitor container does not include local notifications, so Fitness OS does not
-present an unreliable background-alert toggle. Final iPhone navigation, cue,
-preference, and backgrounding verification remain open before this checkpoint
-is complete.
+present an unreliable background-alert toggle. iPhone verification confirmed
+the countdown, navigation persistence, controls, saved preferences, completion
+cues, and timestamp accuracy after backgrounding.
+
+**Band-combination data checkpoint:** Working sets can now retain an optional
+canonical list of individual resistance-band ratings, including repeated bands,
+while the existing `weight` value remains the combined nominal rating for
+backward-compatible summaries. Historical single-band sets remain unchanged and
+are explicitly recognized as legacy single-band records rather than silently
+migrated. Model tests cover single-band history, multi-band combinations,
+duplicates, nominal totals, invalid ratings, and JSON persistence. The guided
+logger UI still uses its existing single-band selector until the next incremental
+step adds combination editing.
 
 **Primary-exercise ramp-up checkpoint:** Eligible primary loaded movements now
 begin with one prescribed preliminary ramp-up set before working Set 1. The

@@ -2,6 +2,12 @@
 // Workout Sets
 // ============================================================
 
+export interface ResistanceBandSelection {
+  // The resistance printed on the individual band. This is a nominal/rated
+  // value, not a measured force at a particular stretch length.
+  ratedResistanceLb: number;
+}
+
 export interface ExerciseSet {
   id: string;
   weight: number;
@@ -11,6 +17,16 @@ export interface ExerciseSet {
   // Optional rate of perceived exertion on a 1–10 scale.
   // Older saved sets do not contain this field.
   rpe?: number;
+
+  // Individual bands used for this set. Repeated entries intentionally
+  // represent repeated bands with the same rating. Older single-band records
+  // store only `weight`; keep that legacy value unchanged rather than silently
+  // migrating historical data.
+  //
+  // When present, `weight` remains the combined nominal resistance so existing
+  // workout summaries remain backward compatible while band-aware features can
+  // retain the exact configuration.
+  bandConfiguration?: ResistanceBandSelection[];
 }
 
 export interface WorkoutRestTimer {

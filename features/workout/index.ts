@@ -11,7 +11,15 @@ export type {
   WorkoutSession,
   Exercise,
   ExerciseSet,
+  ResistanceBandSelection,
 } from "./types";
+
+export {
+  getBandResistanceDetails,
+  getCombinedBandResistanceLb,
+  normalizeBandConfiguration,
+  withBandConfiguration,
+} from "./bandResistance";
 
 export { previousWorkout } from "./mock/history";
 

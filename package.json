@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "test:bands": "node --experimental-strip-types --test tests/workout/bandResistance.test.mjs",
     "dev": "next dev",
     "build": "next build",
     "build:ios-web": "cross-env FITNESS_OS_BUILD_TARGET=ios next build",
