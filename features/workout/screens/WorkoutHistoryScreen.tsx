@@ -32,6 +32,14 @@ import {
 } from "../utils/getWorkoutSessionLabel";
 
 import {
+  formatBandResistance,
+} from "../bandResistance";
+
+import type {
+  ExerciseSet,
+} from "../types";
+
+import {
   useRunSession,
 } from "../../running/hooks/useRunSession";
 
@@ -149,8 +157,7 @@ function formatPace(
 
 function formatStrengthSetPerformance(
   exerciseDefinitionId: string | undefined,
-  weight: number,
-  reps: number
+  set: Pick<ExerciseSet, "weight" | "reps" | "bandConfiguration">
 ) {
   const definition =
     exerciseDefinitionId
@@ -172,8 +179,8 @@ function formatStrengthSetPerformance(
 
   const repsLabel =
     repCounting === "PerSide"
-      ? `${reps} reps / side`
-      : `${reps} reps`;
+      ? `${set.reps} reps / side`
+      : `${set.reps} reps`;
 
   if (
     performanceType ===
@@ -183,31 +190,31 @@ function formatStrengthSetPerformance(
       resistanceType ===
       "Weight"
     ) {
-      return `${weight} lb × ${reps} sec`;
+      return `${set.weight} lb × ${set.reps} sec`;
     }
 
-    return `${reps} sec`;
+    return `${set.reps} sec`;
   }
 
   if (
     resistanceType ===
     "Band"
   ) {
-    return `${weight} lb band × ${repsLabel}`;
+    return `${formatBandResistance(set)} × ${repsLabel}`;
   }
 
   if (
     resistanceType ===
     "Assistance"
   ) {
-    return `${weight} lb assist × ${repsLabel}`;
+    return `${set.weight} lb assist × ${repsLabel}`;
   }
 
   if (
     resistanceType ===
     "Weight"
   ) {
-    return `${weight} lb × ${repsLabel}`;
+    return `${set.weight} lb × ${repsLabel}`;
   }
 
   return repsLabel;
@@ -584,8 +591,7 @@ export default function WorkoutHistoryScreen() {
                                         <span className="font-medium">
                                           {formatStrengthSetPerformance(
                                             exercise.exerciseDefinitionId,
-                                            set.weight,
-                                            set.reps
+                                            set
                                           )}
 
                                           {set.rpe !== undefined && (

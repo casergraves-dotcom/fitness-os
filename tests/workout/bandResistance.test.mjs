@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  formatBandResistance,
   getBandResistanceDetails,
   getCombinedBandResistanceLb,
   normalizeBandConfiguration,
@@ -27,6 +28,7 @@ test("keeps a historical single-band set as an explicit legacy value", () => {
     source: "legacy-single-band",
   });
   assert.equal("bandConfiguration" in historicalSet, false);
+  assert.equal(formatBandResistance(historicalSet), "30 lb band");
 });
 
 test("preserves individual bands and their combined nominal resistance", () => {
@@ -48,6 +50,7 @@ test("preserves individual bands and their combined nominal resistance", () => {
     nominalResistanceLb: 50,
     source: "configuration",
   });
+  assert.equal(formatBandResistance(updated), "30 + 20 lb bands");
 });
 
 test("keeps duplicate bands and distinguishes a combination from one band", () => {

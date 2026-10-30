@@ -992,6 +992,17 @@ duplicates, nominal totals, invalid ratings, and JSON persistence. The guided
 logger UI still uses its existing single-band selector until the next incremental
 step adds combination editing.
 
+**Band-combination logger checkpoint (mobile verification open):** Band-based
+working sets now expose compact per-band selectors with add, repeat, change, and
+remove controls. The combined nominal rating is shown only as a summary; each
+individual rating remains stored on the canonical set, and newly added working
+sets carry the preceding set's exact configuration. Completed-set summaries,
+the workout dashboard, and workout history distinguish combinations such as
+30 + 20 lb from a single 50 lb band while legacy single-band history continues
+to render without migration. TypeScript, focused model tests, lint on the
+changed presentation files, and the production build must pass before phone
+verification closes this checkpoint.
+
 **Primary-exercise ramp-up checkpoint:** Eligible primary loaded movements now
 begin with one prescribed preliminary ramp-up set before working Set 1. The
 athlete must complete that set or explicitly skip it for the current exercise;

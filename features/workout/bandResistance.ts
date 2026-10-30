@@ -42,6 +42,22 @@ export function getCombinedBandResistanceLb(
   );
 }
 
+export function formatBandResistance(
+  set: Pick<ExerciseSet, "weight" | "bandConfiguration">
+): string {
+  const details = getBandResistanceDetails(set);
+
+  if (details.source === "configuration" && details.selections.length > 1) {
+    return `${details.selections
+      .map((selection) => selection.ratedResistanceLb)
+      .join(" + ")} lb bands`;
+  }
+
+  return details.nominalResistanceLb > 0
+    ? `${details.nominalResistanceLb} lb band`
+    : "Band";
+}
+
 export function getBandResistanceDetails(
   set: Pick<ExerciseSet, "weight" | "bandConfiguration">
 ): BandResistanceDetails {

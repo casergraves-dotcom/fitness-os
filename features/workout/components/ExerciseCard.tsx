@@ -33,7 +33,13 @@ import {
 
 import type {
   Exercise,
+  ResistanceBandSelection,
 } from "../types";
+
+import {
+  formatBandResistance,
+  getBandResistanceDetails,
+} from "../bandResistance";
 
 import {
   useExerciseLibrary,
@@ -110,6 +116,12 @@ interface ExerciseCardProps {
     value: number
   ) => void;
 
+  onUpdateBandConfiguration: (
+    exerciseId: string,
+    setId: string,
+    selections: readonly ResistanceBandSelection[]
+  ) => void;
+
   onAddSet: (
     exerciseId: string
   ) => void;
@@ -183,6 +195,7 @@ export default function ExerciseCard({
   onToggleSet,
   onFocusedExerciseComplete,
   onUpdateSet,
+  onUpdateBandConfiguration,
   onAddSet,
   onRemoveSet,
   onAddRampUpSet,
@@ -443,7 +456,7 @@ export default function ExerciseCard({
     .map((set) => {
       if (isWeightDuration) return `${set.weight} lb × ${set.reps} sec`;
       if (isDuration) return `${set.reps} sec`;
-      if (isBand && isReps) return `${set.weight} lb band × ${set.reps}`;
+      if (isBand && isReps) return `${formatBandResistance(set)} × ${set.reps}`;
       if (isAssistance) return `${set.weight} lb assist × ${set.reps}`;
       if (isReps && !isBand) return `${set.reps} ${repsUnitLabel}`;
       return `${set.weight} lb × ${set.reps}`;
@@ -1251,6 +1264,11 @@ export default function ExerciseCard({
                 ? !hasCompletedSetAfter
                 : previousSetsComplete;
 
+            const bandResistance = getBandResistanceDetails(set);
+            const editableBandSelections = bandResistance.selections.length > 0
+              ? bandResistance.selections
+              : [{ ratedResistanceLb: 0 }];
+
             const editingCompletedSet =
               set.completed &&
               editingCompletedSetIds.includes(set.id);
@@ -1261,7 +1279,7 @@ export default function ExerciseCard({
                 : isDuration
                   ? `${set.reps} sec`
                   : isBand && isReps
-                    ? `${set.weight} lb band × ${set.reps} ${repsUnitLabel}`
+                    ? `${formatBandResistance(set)} × ${set.reps} ${repsUnitLabel}`
                     : isAssistance
                       ? `${set.weight} lb assist × ${set.reps} ${repsUnitLabel}`
                       : isReps && !isBand
@@ -1418,59 +1436,89 @@ export default function ExerciseCard({
                   ----------------------------------------- */}
 
                   {isBand && isReps && (
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <select
-                          value={
-                            getNumericInputValue(
-                              set.weight
-                            )
-                          }
-                          aria-label={`Band resistance for set ${index + 1}`}
-                          onChange={(
-                            event
-                          ) =>
-                            onUpdateSet(
+                    <div className="w-full space-y-2">
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        {editableBandSelections.map((selection, bandIndex) => (
+                          <div
+                            key={`${set.id}-band-${bandIndex}`}
+                            className="flex min-h-10 items-center rounded-lg border border-slate-300 bg-white"
+                          >
+                            <select
+                              value={getNumericInputValue(selection.ratedResistanceLb)}
+                              aria-label={`Band ${bandIndex + 1} resistance for set ${index + 1}`}
+                              onChange={(event) => {
+                                const nextSelections = [...editableBandSelections];
+                                nextSelections[bandIndex] = {
+                                  ratedResistanceLb: parseWeightInput(event.target.value),
+                                };
+                                onUpdateBandConfiguration(
+                                  exercise.id,
+                                  set.id,
+                                  nextSelections
+                                );
+                              }}
+                              className="min-h-10 w-20 rounded-l-lg bg-transparent px-2 text-center text-base font-medium"
+                            >
+                              <option value="">Band</option>
+                              {BAND_RESISTANCE_OPTIONS.map((resistance) => (
+                                <option key={resistance} value={resistance}>
+                                  {resistance} lb
+                                </option>
+                              ))}
+                            </select>
+
+                            {bandResistance.selections.length > 0 && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  onUpdateBandConfiguration(
+                                    exercise.id,
+                                    set.id,
+                                    bandResistance.selections.filter(
+                                      (_, selectionIndex) => selectionIndex !== bandIndex
+                                    )
+                                  )
+                                }
+                                aria-label={`Remove band ${bandIndex + 1} from set ${index + 1}`}
+                                className="flex min-h-10 w-10 items-center justify-center border-l border-slate-200 text-slate-400 hover:text-red-600"
+                              >
+                                <Trash2 size={15} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onUpdateBandConfiguration(
                               exercise.id,
                               set.id,
-                              "weight",
-                              parseWeightInput(
-                                event.target.value
-                              )
+                              [
+                                ...bandResistance.selections,
+                                {
+                                  ratedResistanceLb:
+                                    bandResistance.selections.at(-1)?.ratedResistanceLb ?? 10,
+                                },
+                              ]
                             )
                           }
-                          className="w-24 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-base font-medium disabled:bg-transparent disabled:text-slate-400"
+                          className="min-h-10 rounded-lg border border-blue-200 bg-blue-50 px-3 text-sm font-semibold text-blue-700"
                         >
-                          <option value="">
-                            Band
-                          </option>
-
-                          {BAND_RESISTANCE_OPTIONS.map(
-                            (resistance) => (
-                              <option
-                                key={
-                                  resistance
-                                }
-                                value={
-                                  resistance
-                                }
-                              >
-                                {resistance}
-                              </option>
-                            )
-                          )}
-                        </select>
-
-                        <span className="text-sm text-slate-500">
-                          lb band
-                        </span>
+                          + Band
+                        </button>
                       </div>
 
-                      <span className="text-slate-400">
-                        ×
-                      </span>
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        {bandResistance.selections.length > 1 && (
+                          <span className="text-xs font-medium text-slate-500">
+                            Combined: {bandResistance.nominalResistanceLb} lb rated
+                          </span>
+                        )}
 
-                      <div className="flex items-center gap-1">
+                        <span className="text-slate-400">×</span>
+
+                        <div className="flex items-center gap-1">
                         <input
                           type="number"
                           inputMode="numeric"
@@ -1499,6 +1547,7 @@ export default function ExerciseCard({
                         <span className="text-sm text-slate-500">
                           {repsUnitLabel}
                         </span>
+                      </div>
                       </div>
                     </div>
                   )}

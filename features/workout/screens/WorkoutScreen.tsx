@@ -9,6 +9,7 @@ import AppShell from "@/components/layout/AppShell";
 import {
   AddExercise,
   ExerciseCard,
+  formatBandResistance,
   WorkoutHeader,
 } from "@/features/workout";
 
@@ -271,6 +272,7 @@ export default function WorkoutScreen() {
     adjustRestTimer,
     skipRestTimer,
     updateSet,
+    updateSetBandConfiguration,
     addSet,
     removeSet,
 
@@ -1600,7 +1602,7 @@ const exerciseVolume =
           return `${set.weight} lb assist × ${set.reps}`;
         }
         if (definition?.resistanceType === "Band") {
-          return `${set.weight} lb band × ${set.reps}`;
+          return `${formatBandResistance(set)} × ${set.reps}`;
         }
         if (definition?.resistanceType === "None") {
           return `${set.reps} reps`;
@@ -1713,6 +1715,7 @@ const exerciseVolume =
               onToggleSet={toggleSet}
               onFocusedExerciseComplete={() => setSelectedExerciseSelection(null)}
               onUpdateSet={updateSet}
+              onUpdateBandConfiguration={updateSetBandConfiguration}
               onAddSet={addSet}
               onRemoveSet={removeSet}
               onAddRampUpSet={addRampUpSet}

@@ -15,6 +15,7 @@ export type {
 } from "./types";
 
 export {
+  formatBandResistance,
   getBandResistanceDetails,
   getCombinedBandResistanceLb,
   normalizeBandConfiguration,

@@ -27,6 +27,14 @@ import {
 } from "../rpe";
 
 import {
+  withBandConfiguration,
+} from "../bandResistance";
+
+import type {
+  ResistanceBandSelection,
+} from "../types";
+
+import {
   strengthWorkoutVariants,
 } from "../backupWorkoutModel";
 
@@ -1306,6 +1314,32 @@ function updateSet(
   );
 }
 
+  function updateSetBandConfiguration(
+    exerciseId: string,
+    setId: string,
+    selections: readonly ResistanceBandSelection[]
+  ) {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            exercises: previous.exercises.map((exercise) =>
+              exercise.id !== exerciseId
+                ? exercise
+                : {
+                    ...exercise,
+                    sets: exercise.sets.map((set) =>
+                      set.id === setId
+                        ? withBandConfiguration(set, selections)
+                        : set
+                    ),
+                  }
+            ),
+          }
+        : previous
+    );
+  }
+
   // ----------------------------------------------------------
   // Set Management - Add Set
   // ----------------------------------------------------------
@@ -1355,6 +1389,11 @@ function updateSet(
                         lastSet
                           ?.weight ??
                         0,
+
+                      bandConfiguration:
+                        lastSet?.bandConfiguration?.map((selection) => ({
+                          ...selection,
+                        })),
 
                       reps: 0,
 
@@ -2351,6 +2390,7 @@ function dismissFinishedWorkout() {
     adjustRestTimer,
     skipRestTimer,
     updateSet,
+    updateSetBandConfiguration,
     addSet,
     removeSet,
 
