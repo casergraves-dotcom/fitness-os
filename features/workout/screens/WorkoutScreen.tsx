@@ -266,6 +266,10 @@ export default function WorkoutScreen() {
     resetWarmup,
 
     toggleSet,
+    pauseRestTimer,
+    resumeRestTimer,
+    adjustRestTimer,
+    skipRestTimer,
     updateSet,
     addSet,
     removeSet,
@@ -1643,6 +1647,11 @@ const exerciseVolume =
           startedAt={
             session.startedAt
           }
+          restTimer={session.restTimer}
+          onPauseRest={pauseRestTimer}
+          onResumeRest={resumeRestTimer}
+          onAdjustRest={adjustRestTimer}
+          onSkipRest={skipRestTimer}
           completedSets={
             completedSets
           }

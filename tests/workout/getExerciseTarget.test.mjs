@@ -2,6 +2,15 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { getExerciseTarget } from "../../features/workout/getExerciseTarget.ts";
+import {
+  adjustWorkoutRestTimer,
+  createWorkoutRestTimer,
+  getExerciseRestDurationSeconds,
+  getRestTimerRemainingSeconds,
+  hasRemainingWorkingSetAfter,
+  pauseWorkoutRestTimer,
+  resumeWorkoutRestTimer,
+} from "../../features/workout/logic/restTimer.ts";
 
 const definition = {
   id: "chest-press-machine",
@@ -36,6 +45,68 @@ test("same-load working sets carry the same load forward", () => {
   const target = getExerciseTarget(definition, previousExercise([[145, 10], [145, 10], [145, 10]]));
   assert.equal(target.action, "build-reps");
   assert.equal(target.targetWeight, 145);
+});
+
+test("rest countdown remains timestamp-based across elapsed background time", () => {
+  const timer = createWorkoutRestTimer({
+    durationSeconds: 120,
+    now: 1_000_000,
+  });
+
+  assert.equal(getRestTimerRemainingSeconds(timer, 1_045_000), 75);
+  assert.equal(getRestTimerRemainingSeconds(timer, 1_130_000), 0);
+});
+
+test("rest countdown can pause, resume, and adjust without losing time", () => {
+  const timer = createWorkoutRestTimer({
+    durationSeconds: 120,
+    now: 1_000_000,
+  });
+  const paused = pauseWorkoutRestTimer(timer, 1_030_000);
+  const adjusted = adjustWorkoutRestTimer(paused, 30, 1_060_000);
+  const resumed = resumeWorkoutRestTimer(adjusted, 1_090_000);
+
+  assert.equal(paused.pausedRemainingSeconds, 90);
+  assert.equal(adjusted.pausedRemainingSeconds, 120);
+  assert.equal(getRestTimerRemainingSeconds(resumed, 1_120_000), 90);
+});
+
+test("rest defaults use canonical exercise metadata", () => {
+  assert.equal(getExerciseRestDurationSeconds({
+    ...definition,
+    movementRoles: ["HorizontalPush"],
+  }), 150);
+  assert.equal(getExerciseRestDurationSeconds({
+    ...definition,
+    id: "plank",
+    category: "Core",
+    movementRoles: ["CoreStability"],
+    resistanceType: "None",
+  }), 60);
+  assert.equal(getExerciseRestDurationSeconds({
+    ...definition,
+    id: "push-up",
+    movementRoles: ["HorizontalPush"],
+    resistanceType: "None",
+  }), 90);
+  assert.equal(getExerciseRestDurationSeconds({
+    ...definition,
+    id: "lateral-raise-machine",
+    category: "Shoulders",
+    movementRoles: ["ShoulderAbduction"],
+  }), 75);
+});
+
+test("rest starts between working sets but not after the final set", () => {
+  const sets = [
+    { id: "set-1", weight: 100, reps: 10, completed: false },
+    { id: "set-2", weight: 100, reps: 10, completed: false },
+    { id: "set-3", weight: 100, reps: 10, completed: false },
+  ];
+
+  assert.equal(hasRemainingWorkingSetAfter(sets, "set-1"), true);
+  assert.equal(hasRemainingWorkingSetAfter(sets, "set-2"), true);
+  assert.equal(hasRemainingWorkingSetAfter(sets, "set-3"), false);
 });
 
 test("a lone lighter first set does not become the progression baseline", () => {

@@ -963,6 +963,17 @@ status with Reopen for correction. The canonical workout-session fields remain
 unchanged. iPhone review confirmed the compact, expanded, completed, and skipped
 states along with bottom-navigation clearance.
 
+**Guided rest-timer checkpoint (mobile verification open):** Completing a
+working set now starts a timestamp-based countdown only when a later working set
+remains, then the focused logger advances through its existing first-incomplete
+set behavior. The timer is stored on the canonical active workout session, so it
+remains accurate while backgrounded and stays available on both the workout
+dashboard and focused exercise view. Compact pause/resume, skip, ±30-second
+controls, canonical exercise-metadata defaults, an in-app completion state, and
+best-effort browser vibration are implemented. User-configurable rest defaults,
+sound/background-notification investigation, and final iPhone navigation and
+backgrounding verification remain open before this checkpoint is complete.
+
 **Primary-exercise ramp-up checkpoint:** Eligible primary loaded movements now
 begin with one prescribed preliminary ramp-up set before working Set 1. The
 athlete must complete that set or explicitly skip it for the current exercise;

@@ -1,58 +1,149 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import type { WorkoutRestTimer } from "../types";
+import { getRestTimerRemainingSeconds } from "../logic/restTimer";
 
 interface RestTimerProps {
-  startedAt?: string;
+  timer?: WorkoutRestTimer;
+  onPause: () => void;
+  onResume: () => void;
+  onAdjust: (seconds: number) => void;
+  onSkip: () => void;
+}
+
+function formatCountdown(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(
+    remainingSeconds
+  ).padStart(2, "0")}`;
 }
 
 export default function RestTimer({
-  startedAt,
+  timer,
+  onPause,
+  onResume,
+  onAdjust,
+  onSkip,
 }: RestTimerProps) {
-  const [elapsed, setElapsed] = useState("00:00");
+  const [now, setNow] = useState(() => Date.now());
+  const notifiedTimerRef = useRef<string>(undefined);
 
   useEffect(() => {
-    if (!startedAt) {
-      setElapsed("00:00");
+    if (!timer || timer.pausedRemainingSeconds !== undefined) {
       return;
     }
 
-    const updateElapsed = () => {
-      const start = new Date(startedAt).getTime();
+    const interval = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
 
-      const seconds = Math.max(
-        0,
-        Math.floor((Date.now() - start) / 1000)
-      );
+    return () => window.clearInterval(interval);
+  }, [timer]);
 
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = seconds % 60;
+  const remaining = timer
+    ? getRestTimerRemainingSeconds(timer, now)
+    : 0;
+  const complete = Boolean(timer) && remaining === 0;
+  const timerKey = timer ? `${timer.startedAt}-${timer.endsAt}` : undefined;
 
-      setElapsed(
-        `${String(minutes).padStart(2, "0")}:${String(
-          remainingSeconds
-        ).padStart(2, "0")}`
-      );
-    };
+  useEffect(() => {
+    if (!complete || !timerKey || notifiedTimerRef.current === timerKey) {
+      return;
+    }
 
-    updateElapsed();
+    notifiedTimerRef.current = timerKey;
 
-    const interval = setInterval(updateElapsed, 1000);
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      navigator.vibrate([150, 100, 150]);
+    }
+  }, [complete, timerKey]);
 
-    return () => clearInterval(interval);
-  }, [startedAt]);
+  if (!timer) {
+    return null;
+  }
 
-  if (!startedAt) return null;
+  const paused = timer.pausedRemainingSeconds !== undefined;
 
   return (
-    <div className="mt-4 flex items-center justify-between border-t pt-4">
-      <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-        Rest
-      </span>
+    <div
+      className={`mt-3 rounded-xl border px-3 py-2.5 ${
+        complete
+          ? "border-green-200 bg-green-50"
+          : "border-blue-200 bg-blue-50"
+      }`}
+      aria-live="polite"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className={`text-xs font-semibold uppercase tracking-wide ${
+            complete ? "text-green-700" : "text-blue-700"
+          }`}>
+            {complete ? "Rest complete" : paused ? "Rest paused" : "Resting"}
+          </p>
+          {timer.exerciseName && !complete && (
+            <p className="truncate text-xs text-slate-600">
+              After {timer.exerciseName}
+            </p>
+          )}
+        </div>
 
-      <span className="font-mono text-xl font-bold">
-        {elapsed}
-      </span>
+        <p className={`shrink-0 font-mono text-xl font-bold ${
+          complete ? "text-green-700" : "text-slate-950"
+        }`}>
+          {formatCountdown(remaining)}
+        </p>
+      </div>
+
+      <div className="mt-2 grid grid-cols-4 gap-1.5">
+        <button
+          type="button"
+          onClick={() => {
+            if (paused) {
+              setNow(Date.now());
+              onResume();
+              return;
+            }
+
+            onPause();
+          }}
+          disabled={complete}
+          className="min-h-10 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 disabled:opacity-50"
+        >
+          {paused ? "Resume" : "Pause"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setNow(Date.now());
+            onAdjust(-30);
+          }}
+          disabled={complete}
+          className="min-h-10 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 disabled:opacity-50"
+        >
+          −30s
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setNow(Date.now());
+            onAdjust(30);
+          }}
+          className="min-h-10 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700"
+        >
+          +30s
+        </button>
+        <button
+          type="button"
+          onClick={onSkip}
+          className="min-h-10 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700"
+        >
+          {complete ? "Dismiss" : "Skip"}
+        </button>
+      </div>
     </div>
   );
 }

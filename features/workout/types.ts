@@ -13,6 +13,15 @@ export interface ExerciseSet {
   rpe?: number;
 }
 
+export interface WorkoutRestTimer {
+  startedAt: string;
+  endsAt: string;
+  durationSeconds: number;
+  pausedRemainingSeconds?: number;
+  exerciseId?: string;
+  exerciseName?: string;
+}
+
 
 // ============================================================
 // Workout Exercise
@@ -281,6 +290,7 @@ export interface WorkoutSession {
 
   completedAt?: string;
   restStartedAt?: string;
+  restTimer?: WorkoutRestTimer;
 
   exercises: Exercise[];
 

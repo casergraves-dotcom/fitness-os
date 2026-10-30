@@ -7,12 +7,17 @@ import {
 } from "@/components/ui";
 
 import RestTimer from "./RestTimer";
+import type { WorkoutRestTimer } from "../types";
 
 interface WorkoutHeaderProps {
   workoutType: string;
   variantLabel?: string;
   startedAt: string;
-  restStartedAt?: string;
+  restTimer?: WorkoutRestTimer;
+  onPauseRest: () => void;
+  onResumeRest: () => void;
+  onAdjustRest: (seconds: number) => void;
+  onSkipRest: () => void;
   completedSets: number;
   totalSets: number;
   compact?: boolean;
@@ -23,7 +28,11 @@ export default function WorkoutHeader({
   workoutType,
   variantLabel,
   startedAt,
-  restStartedAt,
+  restTimer,
+  onPauseRest,
+  onResumeRest,
+  onAdjustRest,
+  onSkipRest,
   completedSets,
   totalSets,
   compact = false,
@@ -92,6 +101,14 @@ export default function WorkoutHeader({
             style={{ width: `${percent}%` }}
           />
         </div>
+
+        <RestTimer
+          timer={restTimer}
+          onPause={onPauseRest}
+          onResume={onResumeRest}
+          onAdjust={onAdjustRest}
+          onSkip={onSkipRest}
+        />
       </SectionCard>
     );
   }
@@ -143,7 +160,13 @@ export default function WorkoutHeader({
         </div>
       </div>
 
-      <RestTimer startedAt={restStartedAt} />
+      <RestTimer
+        timer={restTimer}
+        onPause={onPauseRest}
+        onResume={onResumeRest}
+        onAdjust={onAdjustRest}
+        onSkip={onSkipRest}
+      />
     </SectionCard>
   );
 }

@@ -55,6 +55,15 @@ import {
 } from "../rampUp";
 
 import {
+  adjustWorkoutRestTimer,
+  createWorkoutRestTimer,
+  getExerciseRestDurationSeconds,
+  hasRemainingWorkingSetAfter,
+  pauseWorkoutRestTimer,
+  resumeWorkoutRestTimer,
+} from "../logic/restTimer";
+
+import {
   setFitnessOsStorage,
 } from "@/lib/storage/fitnessOsStorage";
 
@@ -931,6 +940,9 @@ export function useWorkoutSession() {
       restStartedAt:
         undefined,
 
+      restTimer:
+        undefined,
+
       exercises,
 
       scheduledActivityId:
@@ -980,8 +992,8 @@ export function useWorkoutSession() {
           return previous;
         }
 
-        let startedRestTimer =
-          false;
+        let nextRestTimer =
+          previous.restTimer;
 
         const exercises =
           previous.exercises.map(
@@ -1041,6 +1053,12 @@ export function useWorkoutSession() {
                   return exercise;
                 }
 
+                if (
+                  nextRestTimer?.exerciseId === exercise.id
+                ) {
+                  nextRestTimer = undefined;
+                }
+
                 return {
                   ...exercise,
 
@@ -1083,8 +1101,32 @@ export function useWorkoutSession() {
                 return exercise;
               }
 
-              startedRestTimer =
-                true;
+              const hasRemainingWorkingSet =
+                hasRemainingWorkingSetAfter(
+                  exercise.sets,
+                  setId
+                );
+
+              if (hasRemainingWorkingSet) {
+                const definition =
+                  findExerciseDefinition(
+                    exerciseLibrary,
+                    exercise.exerciseDefinitionId,
+                    exercise.name
+                  );
+
+                nextRestTimer =
+                  createWorkoutRestTimer({
+                    durationSeconds:
+                      getExerciseRestDurationSeconds(definition),
+                    exerciseId: exercise.id,
+                    exerciseName: exercise.name,
+                  });
+              } else if (
+                nextRestTimer?.exerciseId === exercise.id
+              ) {
+                nextRestTimer = undefined;
+              }
 
               return {
                 ...exercise,
@@ -1111,16 +1153,53 @@ export function useWorkoutSession() {
 
           exercises,
 
-          // Only restart the rest timer when a new set was
-          // successfully completed.
-          restStartedAt:
-            startedRestTimer
-              ? new Date()
-                  .toISOString()
-              : previous
-                  .restStartedAt,
+          restTimer: nextRestTimer,
         };
       }
+    );
+  }
+
+  function pauseRestTimer() {
+    setSession((previous) =>
+      previous?.restTimer
+        ? {
+            ...previous,
+            restTimer: pauseWorkoutRestTimer(previous.restTimer),
+          }
+        : previous
+    );
+  }
+
+  function resumeRestTimer() {
+    setSession((previous) =>
+      previous?.restTimer
+        ? {
+            ...previous,
+            restTimer: resumeWorkoutRestTimer(previous.restTimer),
+          }
+        : previous
+    );
+  }
+
+  function adjustRestTimer(seconds: number) {
+    setSession((previous) =>
+      previous?.restTimer
+        ? {
+            ...previous,
+            restTimer: adjustWorkoutRestTimer(previous.restTimer, seconds),
+          }
+        : previous
+    );
+  }
+
+  function skipRestTimer() {
+    setSession((previous) =>
+      previous
+        ? {
+            ...previous,
+            restTimer: undefined,
+          }
+        : previous
     );
   }
 
@@ -1773,6 +1852,9 @@ function updateSet(
 
         restStartedAt:
           undefined,
+
+        restTimer:
+          undefined,
       };
     }
   );
@@ -1998,6 +2080,9 @@ function updateSet(
 
           restStartedAt:
             undefined,
+
+          restTimer:
+            undefined,
         };
       }
     );
@@ -2139,6 +2224,9 @@ function dismissFinishedWorkout() {
       restStartedAt:
         undefined,
 
+      restTimer:
+        undefined,
+
       exercises:
         completedExercises,
     };
@@ -2250,6 +2338,10 @@ function dismissFinishedWorkout() {
     resetWarmup,
 
     toggleSet,
+    pauseRestTimer,
+    resumeRestTimer,
+    adjustRestTimer,
+    skipRestTimer,
     updateSet,
     addSet,
     removeSet,
