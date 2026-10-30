@@ -973,9 +973,14 @@ controls, canonical exercise-metadata defaults, an in-app completion state, and
 best-effort browser vibration are implemented. Workout Preferences now provides
 cloud-synced, backward-compatible duration controls for primary compounds,
 general compound fallback, accessories/isolation, core, and bodyweight work;
-saved values affect only newly started countdowns. Sound/background-notification
-investigation and final iPhone navigation, preference, and backgrounding
-verification remain open before this checkpoint is complete.
+saved values affect only newly started countdowns. Users can also enable a short
+in-app completion tone and best-effort vibration, with test controls and
+backward-compatible defaults. Background-notification investigation confirmed
+that the current service worker has no Push subscription/scheduling path and the
+Capacitor container does not include local notifications, so Fitness OS does not
+present an unreliable background-alert toggle. Final iPhone navigation, cue,
+preference, and backgrounding verification remain open before this checkpoint
+is complete.
 
 **Primary-exercise ramp-up checkpoint:** Eligible primary loaded movements now
 begin with one prescribed preliminary ramp-up set before working Set 1. The

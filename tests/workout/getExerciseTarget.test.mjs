@@ -145,6 +145,21 @@ test("rest preferences migrate missing and unsafe values conservatively", () => 
   assert.equal(preferences.restDurations.isolationSeconds, 30);
   assert.equal(preferences.restDurations.coreSeconds, 60);
   assert.equal(preferences.restDurations.bodyweightSeconds, 90);
+  assert.equal(preferences.restCompletionCues.sound, false);
+  assert.equal(preferences.restCompletionCues.vibration, true);
+});
+
+test("rest completion cue choices remain explicit and backward compatible", () => {
+  const preferences = normalizeWorkoutPreferences({
+    restCompletionCues: {
+      sound: true,
+      vibration: false,
+    },
+  });
+
+  assert.equal(preferences.restCompletionCues.sound, true);
+  assert.equal(preferences.restCompletionCues.vibration, false);
+  assert.equal(preferences.restDurations.heavyCompoundSeconds, 150);
 });
 
 test("a lone lighter first set does not become the progression baseline", () => {

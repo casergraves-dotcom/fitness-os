@@ -3,6 +3,10 @@
 import { useState } from "react";
 
 import { useWorkoutPreferences } from "../hooks/useWorkoutPreferences";
+import {
+  playRestCompletionSound,
+  vibrateForRestCompletion,
+} from "../restCompletionCues";
 import type {
   RestDurationPreferenceKey,
   WorkoutPreferences,
@@ -126,11 +130,95 @@ function WorkoutPreferencesEditor({
         ))}
       </div>
 
+      <div className="mt-5 border-t border-slate-100 pt-5">
+        <p className="font-semibold text-slate-900">Completion cues</p>
+        <p className="mt-1 text-sm text-slate-500">
+          These cues play when Fitness OS detects that rest has finished while
+          the app is active. Device mute and browser permissions still apply.
+        </p>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <label className="flex min-h-14 items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+            <input
+              type="checkbox"
+              checked={draft.restCompletionCues.sound}
+              onChange={(event) => {
+                setSaved(false);
+                setDraft((current) => ({
+                  ...current,
+                  restCompletionCues: {
+                    ...current.restCompletionCues,
+                    sound: event.target.checked,
+                  },
+                }));
+              }}
+              className="h-5 w-5"
+            />
+            <span>
+              <span className="block font-semibold text-slate-900">Sound</span>
+              <span className="block text-sm text-slate-500">Two short tones</span>
+            </span>
+          </label>
+
+          <label className="flex min-h-14 items-center gap-3 rounded-xl border border-slate-200 px-4 py-3">
+            <input
+              type="checkbox"
+              checked={draft.restCompletionCues.vibration}
+              onChange={(event) => {
+                setSaved(false);
+                setDraft((current) => ({
+                  ...current,
+                  restCompletionCues: {
+                    ...current.restCompletionCues,
+                    vibration: event.target.checked,
+                  },
+                }));
+              }}
+              className="h-5 w-5"
+            />
+            <span>
+              <span className="block font-semibold text-slate-900">Vibration</span>
+              <span className="block text-sm text-slate-500">When supported</span>
+            </span>
+          </label>
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => void playRestCompletionSound()}
+            className="min-h-11 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-blue-700"
+          >
+            Test sound
+          </button>
+          <button
+            type="button"
+            onClick={vibrateForRestCompletion}
+            className="min-h-11 rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-blue-700"
+          >
+            Test vibration
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+        <p className="font-semibold text-slate-900">Background alerts</p>
+        <p className="mt-1 text-sm text-slate-600">
+          Not enabled in this build. Reliable alerts while Fitness OS is
+          suspended require native local-notification support or a complete Web
+          Push service. The timestamp countdown still catches up accurately when
+          you return.
+        </p>
+      </div>
+
       <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-5">
         <button
           type="button"
           onClick={() => {
-            savePreferences({ restDurations: draft.restDurations });
+            savePreferences({
+              restDurations: draft.restDurations,
+              restCompletionCues: draft.restCompletionCues,
+            });
             setSaved(true);
           }}
           className="min-h-11 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white"

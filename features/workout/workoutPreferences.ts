@@ -7,6 +7,10 @@ export type RestDurationPreferenceKey =
 
 export interface WorkoutPreferences {
   restDurations: Record<RestDurationPreferenceKey, number>;
+  restCompletionCues: {
+    sound: boolean;
+    vibration: boolean;
+  };
   updatedAt?: string;
 }
 
@@ -17,6 +21,10 @@ export const DEFAULT_WORKOUT_PREFERENCES: WorkoutPreferences = {
     isolationSeconds: 75,
     coreSeconds: 60,
     bodyweightSeconds: 90,
+  },
+  restCompletionCues: {
+    sound: false,
+    vibration: true,
   },
 };
 
@@ -64,6 +72,16 @@ export function normalizeWorkoutPreferences(
         durations?.bodyweightSeconds,
         defaults.bodyweightSeconds
       ),
+    },
+    restCompletionCues: {
+      sound:
+        typeof candidate.restCompletionCues?.sound === "boolean"
+          ? candidate.restCompletionCues.sound
+          : DEFAULT_WORKOUT_PREFERENCES.restCompletionCues.sound,
+      vibration:
+        typeof candidate.restCompletionCues?.vibration === "boolean"
+          ? candidate.restCompletionCues.vibration
+          : DEFAULT_WORKOUT_PREFERENCES.restCompletionCues.vibration,
     },
     updatedAt:
       typeof candidate.updatedAt === "string"

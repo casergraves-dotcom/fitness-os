@@ -4,6 +4,11 @@ import { useEffect, useRef, useState } from "react";
 
 import type { WorkoutRestTimer } from "../types";
 import { getRestTimerRemainingSeconds } from "../logic/restTimer";
+import { useWorkoutPreferences } from "../hooks/useWorkoutPreferences";
+import {
+  playRestCompletionSound,
+  vibrateForRestCompletion,
+} from "../restCompletionCues";
 
 interface RestTimerProps {
   timer?: WorkoutRestTimer;
@@ -29,6 +34,7 @@ export default function RestTimer({
   onAdjust,
   onSkip,
 }: RestTimerProps) {
+  const { preferences } = useWorkoutPreferences();
   const [now, setNow] = useState(() => Date.now());
   const notifiedTimerRef = useRef<string>(undefined);
 
@@ -57,10 +63,19 @@ export default function RestTimer({
 
     notifiedTimerRef.current = timerKey;
 
-    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-      navigator.vibrate([150, 100, 150]);
+    if (preferences.restCompletionCues.sound) {
+      void playRestCompletionSound();
     }
-  }, [complete, timerKey]);
+
+    if (preferences.restCompletionCues.vibration) {
+      vibrateForRestCompletion();
+    }
+  }, [
+    complete,
+    preferences.restCompletionCues.sound,
+    preferences.restCompletionCues.vibration,
+    timerKey,
+  ]);
 
   if (!timer) {
     return null;
