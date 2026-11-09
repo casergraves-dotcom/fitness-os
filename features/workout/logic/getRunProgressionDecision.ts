@@ -130,7 +130,8 @@ function makeDevelopmentEasyPrescription(
 
 function makeDevelopmentIntervalPrescription(
   step: DevelopmentIntervalStep,
-  note?: string
+  note?: string,
+  duration = DEVELOPMENT_INTERVAL_DURATION
 ): RunProgressionPrescription {
   return {
     role:
@@ -143,10 +144,10 @@ function makeDevelopmentIntervalPrescription(
       "Intervals",
 
     durationMin:
-      DEVELOPMENT_INTERVAL_DURATION,
+      duration,
 
     durationMax:
-      DEVELOPMENT_INTERVAL_DURATION,
+      duration,
 
     runIntervalMinutes:
       step.runMinutes,
@@ -350,6 +351,14 @@ function getDevelopmentIntervalDecision(
     evaluation.status ===
       "Strong"
   ) {
+    const nextDuration =
+      Math.min(
+        DEVELOPMENT_INTERVAL_DURATION,
+        (evaluation.prescribedDurationMinutes ??
+          DEVELOPMENT_INTERVAL_DURATION) +
+          DEVELOPMENT_EASY_STEP
+      );
+
     const nextStepIndex =
       Math.min(
         currentStepIndex + 1,
@@ -375,7 +384,8 @@ function getDevelopmentIntervalDecision(
         nextPrescription:
           makeDevelopmentIntervalPrescription(
             currentStep,
-            "Repeat the current interval structure. Further progression should depend on future running-goal logic rather than automatically increasing intensity."
+            "Repeat the current interval structure. Further progression should depend on future running-goal logic rather than automatically increasing intensity.",
+            nextDuration
           ),
       };
     }
@@ -388,7 +398,9 @@ function getDevelopmentIntervalDecision(
 
       nextPrescription:
         makeDevelopmentIntervalPrescription(
-          nextStep
+          nextStep,
+          undefined,
+          nextDuration
         ),
     };
   }
@@ -405,6 +417,14 @@ function getDevelopmentIntervalDecision(
     if (
       currentStepIndex === 0
     ) {
+      const reducedDuration =
+        clampDuration(
+          (evaluation.prescribedDurationMinutes ??
+            DEVELOPMENT_INTERVAL_DURATION) -
+            DEVELOPMENT_EASY_STEP,
+          DEVELOPMENT_MIN_EASY_DURATION
+        );
+
       return {
         status: "Reduce",
 
@@ -413,7 +433,7 @@ function getDevelopmentIntervalDecision(
 
         nextPrescription:
           makeDevelopmentEasyPrescription(
-            DEVELOPMENT_MAX_EASY_DURATION,
+            reducedDuration,
             "Return to comfortable easy running before reintroducing intervals."
           ),
       };
@@ -433,7 +453,9 @@ function getDevelopmentIntervalDecision(
       nextPrescription:
         makeDevelopmentIntervalPrescription(
           previousStep,
-          "Use the previous interval step and rebuild comfortable completion before progressing again."
+          "Use the previous interval step and rebuild comfortable completion before progressing again.",
+          evaluation.prescribedDurationMinutes ??
+            DEVELOPMENT_INTERVAL_DURATION
         ),
     };
   }
@@ -455,7 +477,9 @@ function getDevelopmentIntervalDecision(
     nextPrescription:
       makeDevelopmentIntervalPrescription(
         currentStep,
-        "Repeat the current interval structure."
+        "Repeat the current interval structure.",
+        evaluation.prescribedDurationMinutes ??
+          DEVELOPMENT_INTERVAL_DURATION
       ),
   };
 }

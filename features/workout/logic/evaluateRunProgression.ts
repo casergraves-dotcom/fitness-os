@@ -9,7 +9,7 @@ import {
   RPE_HIGH_EFFORT_MIN,
   RPE_MAXIMAL,
   RPE_SUSTAINABLE_MAX,
-} from "../rpe";
+} from "../rpe.ts";
 
 
 // ============================================================

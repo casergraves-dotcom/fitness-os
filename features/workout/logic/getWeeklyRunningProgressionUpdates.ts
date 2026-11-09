@@ -2,15 +2,16 @@ import type {
   RunProgressionPrescription,
   RunProgressionRole,
   RunSession,
+  TrainingActivity,
 } from "../types";
 
 import {
   evaluateRunProgression,
-} from "./evaluateRunProgression";
+} from "./evaluateRunProgression.ts";
 
 import {
   getRunProgressionDecision,
-} from "./getRunProgressionDecision";
+} from "./getRunProgressionDecision.ts";
 
 
 // ============================================================
@@ -24,6 +25,31 @@ export type WeeklyRunningProgressionUpdates =
       RunProgressionPrescription
     >
   >;
+
+export function getRunningProgressionPrescriptionFromActivity(
+  activity: TrainingActivity
+): RunProgressionPrescription | null {
+  if (
+    activity.type !== "Run" ||
+    !activity.runProgressionRole ||
+    !activity.cardioIntensity ||
+    activity.durationMin === undefined ||
+    activity.durationMax === undefined
+  ) {
+    return null;
+  }
+
+  return {
+    role: activity.runProgressionRole,
+    label: activity.label,
+    intensity: activity.cardioIntensity,
+    durationMin: activity.durationMin,
+    durationMax: activity.durationMax,
+    runIntervalMinutes: activity.runIntervalMinutes,
+    walkIntervalMinutes: activity.walkIntervalMinutes,
+    note: activity.note,
+  };
+}
 
 
 // ============================================================

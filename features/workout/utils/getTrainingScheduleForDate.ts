@@ -506,12 +506,12 @@ function applyAdaptiveRunningProgression(
   state: TrainingPlanState,
   weekType: TrainingWeekType
 ): TrainingDay {
-  // Adaptive running prescriptions apply only to normal
-  // steady-state training. Ramp and deload weeks retain their
-  // explicit template prescriptions.
+  // Adaptive prescriptions apply during Ramp and normal
+  // steady-state training. Deload keeps its explicit recovery
+  // prescription and never inherits normal running load.
   if (
-    weekType !==
-      "SteadyState"
+    weekType !== "Ramp" &&
+    weekType !== "SteadyState"
   ) {
     return trainingDay;
   }
@@ -868,7 +868,7 @@ function getBaseTrainingScheduleForDate(
   // ----------------------------------------------------------
   //
   // Persisted Development / Endurance prescriptions replace
-  // the matching steady-state Run activity fields for this
+  // matching Ramp or steady-state Run activity fields for this
   // resolved schedule only.
   //
   // The underlying imported training-plan template is never

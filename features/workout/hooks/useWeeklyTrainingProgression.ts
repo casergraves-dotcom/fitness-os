@@ -53,6 +53,7 @@ import {
 } from "../logic/evaluateWeeklyAerialLoad";
 
 import {
+  getRunningProgressionPrescriptionFromActivity,
   getWeeklyRunningProgressionUpdates,
 } from "../logic/getWeeklyRunningProgressionUpdates";
 
@@ -482,19 +483,53 @@ export function useWeeklyTrainingProgression({
       // Running Progression Updates
       // ------------------------------------------------------
       //
-      // Run-specific progression is independent from the
-      // overall weekly advance/hold decision. Only normal
-      // steady-state weeks are allowed to update the persistent
-      // Development / Endurance prescriptions here.
+      // Run-specific progression is independent from the overall
+      // weekly advance/hold result. Ramp and steady-state runs use
+      // the same canonical Development / Endurance prescriptions.
+      //
+      // Existing plans may not have a saved role prescription yet.
+      // Seed only a missing role from the prescription that was
+      // actually resolved for this week. A missed run then retains
+      // that prescription instead of inheriting the next template.
+      const supportsAdaptiveRunning =
+        trainingWeek.weekType === "Ramp" ||
+        trainingWeek.weekType === "SteadyState";
 
-      const runningProgressionUpdates =
-        trainingWeek.weekType ===
-          "SteadyState"
+      const earnedRunningUpdates =
+        supportsAdaptiveRunning
           ? getWeeklyRunningProgressionUpdates(
               weekStartDate,
               runHistory
             )
-          : undefined;
+          : {};
+
+      const runningProgressionUpdates:
+        Partial<Record<RunProgressionRole, RunProgressionPrescription>> =
+        { ...earnedRunningUpdates };
+
+      if (supportsAdaptiveRunning) {
+        for (const occurrence of resolvedOccurrences) {
+          const prescription =
+            getRunningProgressionPrescriptionFromActivity(
+              occurrence.activity
+            );
+
+          if (!prescription) {
+            continue;
+          }
+
+          const role = prescription.role;
+
+          if (
+            state.runningProgression?.[role] ||
+            runningProgressionUpdates[role]
+          ) {
+            continue;
+          }
+
+          runningProgressionUpdates[role] = prescription;
+        }
+      }
 
 
       // ------------------------------------------------------
