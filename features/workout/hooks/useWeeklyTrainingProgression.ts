@@ -65,6 +65,9 @@ import {
   getResolvedWeeklyActivityOccurrences,
 } from "../logic/getResolvedWeeklyActivityOccurrences";
 import {
+  getWeeklyEvaluationReadiness,
+} from "../logic/getWeeklyEvaluationReadiness";
+import {
   getTrainingWeekStart,
 } from "@/lib/date/trainingWeek";
 
@@ -450,6 +453,16 @@ export function useWeeklyTrainingProgression({
         );
 
       if (!adherence) {
+        return;
+      }
+
+      const evaluationReadiness =
+        getWeeklyEvaluationReadiness(
+          adherence,
+          formatLocalDate(today)
+        );
+
+      if (!evaluationReadiness.ready) {
         return;
       }
 

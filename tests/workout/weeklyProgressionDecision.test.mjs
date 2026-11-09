@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import { evaluateWeeklyAdherence } from "../../features/workout/logic/evaluateWeeklyAdherence.ts";
 import { getWeeklyProgressionDecision } from "../../features/workout/logic/getWeeklyProgressionDecision.ts";
+import { getWeeklyEvaluationReadiness } from "../../features/workout/logic/getWeeklyEvaluationReadiness.ts";
 import { fitnessOsTrainingPlan } from "../../features/workout/trainingPlan.ts";
 
 const WEEK_START_DATE = "2026-09-06";
@@ -181,4 +182,62 @@ test("supportive detailed evidence marks completed strength and cardio ready to 
   assert.equal(decision.domainOutcomes.cardio.status, "Progress");
   assert.deepEqual(decision.domainOutcomes.strength.missedActivityIds, []);
   assert.deepEqual(decision.domainOutcomes.cardio.missedActivityIds, []);
+});
+
+test("a required activity moved across the week boundary is not missed before its new date passes", () => {
+  const adherence = evaluateWeeklyAdherence(
+    rampWeek,
+    WEEK_START_DATE,
+    requiredActivities
+      .filter((activity) => activity.id !== "week-2-wednesday-run")
+      .map(completion)
+  );
+
+  assert.ok(adherence);
+
+  const movedRun = adherence.activities.find(
+    (item) => item.activity.id === "week-2-wednesday-run"
+  );
+  assert.ok(movedRun);
+  movedRun.date = "2026-09-13";
+
+  assert.deepEqual(
+    getWeeklyEvaluationReadiness(adherence, "2026-09-13"),
+    {
+      ready: false,
+      latestOutstandingRequirementDate: "2026-09-13",
+    }
+  );
+
+  assert.deepEqual(
+    getWeeklyEvaluationReadiness(adherence, "2026-09-14"),
+    {
+      ready: true,
+      latestOutstandingRequirementDate: "2026-09-13",
+    }
+  );
+});
+
+test("completion on a cross-week destination date allows evaluation without an extra-day delay", () => {
+  const adherence = evaluateWeeklyAdherence(
+    rampWeek,
+    WEEK_START_DATE,
+    requiredActivities.map(completion)
+  );
+
+  assert.ok(adherence);
+
+  const movedRun = adherence.activities.find(
+    (item) => item.activity.id === "week-2-wednesday-run"
+  );
+  assert.ok(movedRun);
+  movedRun.date = "2026-09-13";
+
+  assert.deepEqual(
+    getWeeklyEvaluationReadiness(adherence, "2026-09-13"),
+    {
+      ready: true,
+      latestOutstandingRequirementDate: null,
+    }
+  );
 });

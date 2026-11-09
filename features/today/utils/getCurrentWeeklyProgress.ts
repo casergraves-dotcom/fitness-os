@@ -69,6 +69,9 @@ import {
   getResolvedWeeklyActivityOccurrences,
 } from "@/features/workout/logic/getResolvedWeeklyActivityOccurrences";
 import {
+  getWeeklyEvaluationReadiness,
+} from "@/features/workout/logic/getWeeklyEvaluationReadiness";
+import {
   getTrainingWeekStart,
 } from "@/lib/date/trainingWeek";
 
@@ -154,57 +157,6 @@ function resolveTrainingWeek(
         week.id ===
         phaseId
     )
-  );
-}
-
-
-// ============================================================
-// Requirement Deadline
-// ============================================================
-
-function getLatestRequirementDate(
-  adherence: WeeklyAdherenceResult
-) {
-  const dates: string[] =
-    adherence.activities
-      .filter(
-        (item) =>
-          item.required
-      )
-      .map(
-        (item) =>
-          item.date
-      );
-
-  for (
-    const group
-    of adherence.substitutionGroups
-  ) {
-    const groupDates =
-      group.activities
-        .map(
-          (item) =>
-            item.date
-        )
-        .sort();
-
-    const latestGroupDate =
-      groupDates.at(
-        -1
-      );
-
-    if (latestGroupDate) {
-      dates.push(
-        latestGroupDate
-      );
-    }
-  }
-
-  return (
-    dates
-      .sort()
-      .at(-1) ??
-    null
   );
 }
 
@@ -330,20 +282,16 @@ export function getCurrentWeeklyProgress(
   // Evaluation Readiness
   // ----------------------------------------------------------
 
-  const latestRequirementDate =
-    getLatestRequirementDate(
-      adherence
-    );
-
   const todayDate =
     formatLocalDate(
       date
     );
 
   const evaluationReady =
-    latestRequirementDate === null ||
-    todayDate >=
-      latestRequirementDate;
+    getWeeklyEvaluationReadiness(
+      adherence,
+      todayDate
+    ).ready;
 
 
   // ----------------------------------------------------------
