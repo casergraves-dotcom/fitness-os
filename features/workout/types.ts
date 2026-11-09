@@ -1119,6 +1119,14 @@ export interface WeeklyProgressionDomainOutcomes {
   cardio: WeeklyProgressionDomainOutcome;
 }
 
+export interface WeeklyProgressionMissedActivity {
+  activityId: string;
+  label: string;
+  type: TrainingActivityType;
+  scheduledDate: string;
+  substitutionGroup?: string;
+}
+
 
 export interface WeeklyProgressionDecisionRecord {
   // Start date of the calendar week that was evaluated.
@@ -1126,6 +1134,13 @@ export interface WeeklyProgressionDecisionRecord {
 
   // Program week type whose progression was evaluated.
   weekType: TrainingWeekType;
+
+  // Optional for records saved before program-week identity was
+  // persisted. Calendar dates alone cannot tell Coach whether the
+  // same plan phase was repeated.
+  programWeekId?: string;
+  programWeekNumber?: number;
+  programWeekName?: string;
 
   // Automatic recommendation produced by the progression
   // engine before any manual override.
@@ -1145,6 +1160,10 @@ export interface WeeklyProgressionDecisionRecord {
   // Optional for decisions saved before strength and cardio
   // evidence were recorded independently.
   automaticDomainOutcomes?: WeeklyProgressionDomainOutcomes;
+
+  // Snapshot of required activities still incomplete when the
+  // automatic decision was finalized.
+  missedRequiredActivities?: WeeklyProgressionMissedActivity[];
 
   // Final result actually applied to the training plan.
   finalShouldAdvance: boolean;

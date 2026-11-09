@@ -20,6 +20,7 @@ import type {
   TrainingActivityCompletion,
   TrainingPlanState,
   TrainingWeek,
+  WeeklyProgressionMissedActivity,
   WeeklyProgressionDecisionRecord,
   WorkoutSession,
 } from "../types";
@@ -198,6 +199,37 @@ function resolveTrainingWeek(
         phaseId
     )
   );
+}
+
+function getMissedRequiredActivities(
+  adherence: ReturnType<typeof evaluateWeeklyAdherence>
+): WeeklyProgressionMissedActivity[] {
+  if (!adherence) {
+    return [];
+  }
+
+  const individual = adherence.activities
+    .filter((item) => item.required && !item.completed)
+    .map((item) => ({
+      activityId: item.activity.id,
+      label: item.activity.label,
+      type: item.activity.type,
+      scheduledDate: item.date,
+    }));
+
+  const grouped = adherence.substitutionGroups.flatMap((group) =>
+    group.completed
+      ? []
+      : group.activities.map((item) => ({
+          activityId: item.activity.id,
+          label: item.activity.label,
+          type: item.activity.type,
+          scheduledDate: item.date,
+          substitutionGroup: group.group,
+        }))
+  );
+
+  return [...individual, ...grouped];
 }
 
 
@@ -402,6 +434,15 @@ export function useWeeklyTrainingProgression({
             weekType:
               trainingWeek.weekType,
 
+            programWeekId:
+              trainingWeek.id,
+
+            programWeekNumber:
+              trainingWeek.weekNumber,
+
+            programWeekName:
+              trainingWeek.name,
+
             automaticStatus:
               "Advance",
 
@@ -568,6 +609,15 @@ export function useWeeklyTrainingProgression({
           weekType:
             trainingWeek.weekType,
 
+          programWeekId:
+            trainingWeek.id,
+
+          programWeekNumber:
+            trainingWeek.weekNumber,
+
+          programWeekName:
+            trainingWeek.name,
+
           automaticStatus:
             decision.status,
 
@@ -586,6 +636,11 @@ export function useWeeklyTrainingProgression({
 
           automaticDomainOutcomes:
             decision.domainOutcomes,
+
+          missedRequiredActivities:
+            getMissedRequiredActivities(
+              adherence
+            ),
 
           finalShouldAdvance:
             decision.shouldAdvance,

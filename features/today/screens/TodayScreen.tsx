@@ -439,6 +439,16 @@ export default function TodayScreen() {
               weeklyDecisionPattern.finalShouldAdvance,
             limitingDriver:
               weeklyDecisionPattern.limitingDriver,
+            programWeekId:
+              weeklyDecisionPattern.programWeekId,
+            repeatedProgramWeekCount:
+              weeklyDecisionPattern.repeatedProgramWeekCount,
+            repeatLevel:
+              weeklyDecisionPattern.repeatLevel,
+            recurringBlocker:
+              weeklyDecisionPattern.recurringBlocker,
+            intentionalRepeat:
+              weeklyDecisionPattern.intentionalRepeat,
           }
         : undefined,
       lifestyleContext ?? undefined,

@@ -4,7 +4,7 @@ import test from "node:test";
 import { getPersistentPatternRecommendationInfluence } from "../../features/coach/getPersistentPatternRecommendationInfluence.ts";
 import { getWeeklyDecisionPattern } from "../../features/coach/getWeeklyDecisionPattern.ts";
 
-function decision(weekStartDate, finalShouldAdvance, automaticDriver) {
+function decision(weekStartDate, finalShouldAdvance, automaticDriver, details = {}) {
   return {
     weekStartDate,
     weekType: "Progress",
@@ -18,7 +18,24 @@ function decision(weekStartDate, finalShouldAdvance, automaticDriver) {
     finalShouldAdvance,
     manuallyOverridden: false,
     decidedAt: `${weekStartDate}T12:00:00.000Z`,
+    ...details,
   };
+}
+
+function repeatedProgressWeek(weekStartDate, missedActivityId = "week-3-wednesday-run") {
+  return decision(weekStartDate, false, "Adherence", {
+    programWeekId: "week-3",
+    programWeekNumber: 3,
+    programWeekName: "Progress",
+    missedRequiredActivities: [
+      {
+        activityId: missedActivityId,
+        label: "Run / Walk",
+        type: "Run",
+        scheduledDate: weekStartDate,
+      },
+    ],
+  });
 }
 
 test("consecutive held reviews keep Guide within prescribed training scope", () => {
@@ -134,4 +151,61 @@ test("a single completed review does not create a persistent pattern", () => {
     ]),
     null,
   );
+});
+
+test("the first structured hold is identified as the first program-week repeat", () => {
+  const pattern = getWeeklyDecisionPattern([
+    repeatedProgressWeek("2026-10-18"),
+  ]);
+
+  assert.equal(pattern?.repeatLevel, "FirstRepeat");
+  assert.equal(pattern?.repeatedProgramWeekCount, 1);
+  assert.equal(pattern?.programWeekId, "week-3");
+  assert.equal(pattern?.recurringBlocker?.label, "Run / Walk");
+});
+
+test("the same phase and blocker escalate through second and persistent repeats", () => {
+  const second = getWeeklyDecisionPattern([
+    repeatedProgressWeek("2026-10-25"),
+    repeatedProgressWeek("2026-10-18"),
+  ]);
+  const third = getWeeklyDecisionPattern([
+    repeatedProgressWeek("2026-11-01"),
+    repeatedProgressWeek("2026-10-25"),
+    repeatedProgressWeek("2026-10-18"),
+  ]);
+
+  assert.equal(second?.repeatLevel, "SecondRepeat");
+  assert.equal(second?.recurringBlocker?.activityId, "week-3-wednesday-run");
+  assert.equal(third?.repeatLevel, "PersistentRepeat");
+  assert.equal(third?.repeatedProgramWeekCount, 3);
+  assert.match(third?.message ?? "", /incomplete in each review/i);
+});
+
+test("holds from a different program phase do not inflate the repeat count", () => {
+  const earlierPhase = repeatedProgressWeek("2026-10-18");
+  earlierPhase.programWeekId = "week-2";
+  earlierPhase.programWeekNumber = 2;
+  earlierPhase.programWeekName = "Consistency";
+
+  const pattern = getWeeklyDecisionPattern([
+    repeatedProgressWeek("2026-10-25"),
+    earlierPhase,
+  ]);
+
+  assert.equal(pattern?.repeatLevel, "FirstRepeat");
+  assert.equal(pattern?.repeatedProgramWeekCount, 1);
+});
+
+test("an intentional manual repeat is preserved without inventing a blocker", () => {
+  const intentional = repeatedProgressWeek("2026-10-18");
+  intentional.automaticShouldAdvance = true;
+  intentional.automaticStatus = "Advance";
+  intentional.manuallyOverridden = true;
+
+  const pattern = getWeeklyDecisionPattern([intentional]);
+
+  assert.equal(pattern?.intentionalRepeat, true);
+  assert.equal(pattern?.recurringBlocker, undefined);
+  assert.match(pattern?.message ?? "", /repeating by choice/i);
 });

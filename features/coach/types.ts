@@ -1,4 +1,5 @@
 import type {
+  TrainingActivityType,
   WeeklyProgressionDecisionDriver,
   StrengthWorkoutType,
   StrengthWorkoutVariantType,
@@ -40,6 +41,16 @@ export interface CoachPersistentPatternContext
   finalShouldAdvance: boolean;
 
   limitingDriver?: WeeklyProgressionDecisionDriver;
+
+  programWeekId?: string;
+  repeatedProgramWeekCount?: number;
+  repeatLevel?: "FirstRepeat" | "SecondRepeat" | "PersistentRepeat";
+  recurringBlocker?: {
+    activityId: string;
+    label: string;
+    type: TrainingActivityType;
+  };
+  intentionalRepeat?: boolean;
 }
 
 export interface CoachLifestylePatternContext
