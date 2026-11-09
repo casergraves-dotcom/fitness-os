@@ -1100,6 +1100,25 @@ export type WeeklyProgressionDecisionDriver =
   | "StrengthQuality"
   | "RunningLoad";
 
+export type WeeklyProgressionDomainStatus =
+  | "Progress"
+  | "Maintain"
+  | "InsufficientEvidence"
+  | "NotScheduled";
+
+export interface WeeklyProgressionDomainOutcome {
+  status: WeeklyProgressionDomainStatus;
+  scheduledCount: number;
+  completedCount: number;
+  missedActivityIds: string[];
+  reason: string;
+}
+
+export interface WeeklyProgressionDomainOutcomes {
+  strength: WeeklyProgressionDomainOutcome;
+  cardio: WeeklyProgressionDomainOutcome;
+}
+
 
 export interface WeeklyProgressionDecisionRecord {
   // Start date of the calendar week that was evaluated.
@@ -1122,6 +1141,10 @@ export interface WeeklyProgressionDecisionRecord {
   automaticDriver?: WeeklyProgressionDecisionDriver;
 
   automaticFactors: string[];
+
+  // Optional for decisions saved before strength and cardio
+  // evidence were recorded independently.
+  automaticDomainOutcomes?: WeeklyProgressionDomainOutcomes;
 
   // Final result actually applied to the training plan.
   finalShouldAdvance: boolean;

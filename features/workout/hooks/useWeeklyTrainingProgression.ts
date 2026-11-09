@@ -536,6 +536,9 @@ export function useWeeklyTrainingProgression({
             ...decision.factors,
           ],
 
+          automaticDomainOutcomes:
+            decision.domainOutcomes,
+
           finalShouldAdvance:
             decision.shouldAdvance,
 

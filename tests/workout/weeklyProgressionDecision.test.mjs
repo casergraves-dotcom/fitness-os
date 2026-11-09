@@ -81,6 +81,8 @@ test("a fully completed ramp week advances", () => {
   assert.equal(decision.status, "Advance");
   assert.equal(decision.shouldAdvance, true);
   assert.equal(decision.completedStrengthCount, 2);
+  assert.equal(decision.domainOutcomes.strength.status, "InsufficientEvidence");
+  assert.equal(decision.domainOutcomes.cardio.status, "InsufficientEvidence");
 });
 
 test("missing only Run / Walk advances with a warning when the other required work is complete", () => {
@@ -95,6 +97,14 @@ test("missing only Run / Walk advances with a warning when the other required wo
   assert.equal(decision.status, "AdvanceWithWarning");
   assert.equal(decision.shouldAdvance, true);
   assert.equal(decision.completedStrengthCount, 2);
+  assert.deepEqual(decision.domainOutcomes.cardio, {
+    status: "Maintain",
+    scheduledCount: 2,
+    completedCount: 1,
+    missedActivityIds: ["week-2-wednesday-run"],
+    reason:
+      "Cardio remains at its current level because 1 of 2 required sessions were completed.",
+  });
 });
 
 test("missing Run / Walk and Long Walk / Hike repeats the ramp week at 50% adherence", () => {
@@ -108,6 +118,8 @@ test("missing Run / Walk and Long Walk / Hike repeats the ramp week at 50% adher
   assert.equal(decision.status, "Hold");
   assert.equal(decision.shouldAdvance, false);
   assert.equal(decision.limitingDriver, "Adherence");
+  assert.equal(decision.domainOutcomes.strength.status, "InsufficientEvidence");
+  assert.equal(decision.domainOutcomes.cardio.status, "Maintain");
 });
 
 test("meeting 75% adherence does not advance when the minimum strength requirement is missed", () => {
@@ -123,4 +135,50 @@ test("meeting 75% adherence does not advance when the minimum strength requireme
   assert.equal(decision.status, "Hold");
   assert.equal(decision.shouldAdvance, false);
   assert.equal(decision.limitingDriver, "Adherence");
+  assert.equal(decision.domainOutcomes.strength.status, "Maintain");
+  assert.deepEqual(
+    decision.domainOutcomes.strength.missedActivityIds,
+    ["week-2-friday-gym-b"]
+  );
+});
+
+test("supportive detailed evidence marks completed strength and cardio ready to progress", () => {
+  const completions = requiredActivities.map(completion);
+  const adherence = evaluateWeeklyAdherence(
+    rampWeek,
+    WEEK_START_DATE,
+    completions
+  );
+
+  assert.ok(adherence);
+
+  const decision = getWeeklyProgressionDecision(
+    adherence,
+    null,
+    {
+      status: "Supported",
+      sessionCount: 2,
+      prescribedSetCount: 36,
+      completedSetCount: 36,
+      completionRate: 1,
+      ratedSetCount: 0,
+      highEffortSetCount: 0,
+      factor: "Two complete strength sessions were reviewed.",
+    },
+    {
+      status: "Supportive",
+      scheduledRunCount: 1,
+      completedRunCount: 1,
+      evaluatedRunCount: 1,
+      totalDurationMinutes: 25,
+      averageDurationCompletionRate: 1,
+      averageRpe: 6,
+      factor: "The scheduled run met its prescription.",
+    }
+  );
+
+  assert.equal(decision.domainOutcomes.strength.status, "Progress");
+  assert.equal(decision.domainOutcomes.cardio.status, "Progress");
+  assert.deepEqual(decision.domainOutcomes.strength.missedActivityIds, []);
+  assert.deepEqual(decision.domainOutcomes.cardio.missedActivityIds, []);
 });

@@ -1,5 +1,7 @@
 import type {
   TrainingActivityType,
+  WeeklyProgressionDomainOutcome,
+  WeeklyProgressionDomainOutcomes,
 } from "../types";
 
 import type {
@@ -61,6 +63,11 @@ export interface WeeklyProgressionDecision {
   // inventing a different explanation than the progression
   // engine actually used.
   factors: string[];
+
+  // Domain evidence is intentionally separate from the overall
+  // weekly result. This first step records what each domain earned
+  // without changing the existing advance/hold behavior.
+  domainOutcomes: WeeklyProgressionDomainOutcomes;
 }
 
 
@@ -86,6 +93,106 @@ function isStrengthActivity(
   type: TrainingActivityType
 ) {
   return type === "Strength";
+}
+
+function isCardioActivity(
+  type: TrainingActivityType
+) {
+  return type === "Run" || type === "Walk";
+}
+
+function getMissedActivityIds(
+  adherence: WeeklyAdherenceResult,
+  matchesType: (type: TrainingActivityType) => boolean
+) {
+  const individualIds = adherence.activities
+    .filter(
+      (item) =>
+        item.required &&
+        !item.completed &&
+        matchesType(item.activity.type)
+    )
+    .map((item) => item.activity.id);
+
+  const groupIds = adherence.substitutionGroups.flatMap(
+    (group) => {
+      if (group.completed) {
+        return [];
+      }
+
+      const matchingActivity = group.activities.find(
+        (item) => matchesType(item.activity.type)
+      );
+
+      return matchingActivity
+        ? [matchingActivity.activity.id]
+        : [];
+    }
+  );
+
+  return [...new Set([...individualIds, ...groupIds])];
+}
+
+function getDomainOutcome({
+  scheduledCount,
+  completedCount,
+  missedActivityIds,
+  qualityStatus,
+  domainLabel,
+}: {
+  scheduledCount: number;
+  completedCount: number;
+  missedActivityIds: string[];
+  qualityStatus: "Supportive" | "Supported" | "Limited" | "Poor" | "NoData";
+  domainLabel: "Strength" | "Cardio";
+}): WeeklyProgressionDomainOutcome {
+  if (scheduledCount === 0) {
+    return {
+      status: "NotScheduled",
+      scheduledCount,
+      completedCount,
+      missedActivityIds,
+      reason: `No required ${domainLabel.toLowerCase()} work was scheduled.`,
+    };
+  }
+
+  if (completedCount < scheduledCount) {
+    return {
+      status: "Maintain",
+      scheduledCount,
+      completedCount,
+      missedActivityIds,
+      reason: `${domainLabel} remains at its current level because ${completedCount} of ${scheduledCount} required sessions were completed.`,
+    };
+  }
+
+  if (qualityStatus === "Poor" || qualityStatus === "Limited") {
+    return {
+      status: "Maintain",
+      scheduledCount,
+      completedCount,
+      missedActivityIds,
+      reason: `${domainLabel} was completed, but the recorded quality supports maintaining the current level.`,
+    };
+  }
+
+  if (qualityStatus === "NoData") {
+    return {
+      status: "InsufficientEvidence",
+      scheduledCount,
+      completedCount,
+      missedActivityIds,
+      reason: `${domainLabel} completion was recorded without enough detailed performance evidence to increase its prescription.`,
+    };
+  }
+
+  return {
+    status: "Progress",
+    scheduledCount,
+    completedCount,
+    missedActivityIds,
+    reason: `${domainLabel} completion and quality support progression.`,
+  };
 }
 
 
@@ -447,6 +554,61 @@ export function getWeeklyProgressionDecision(
     completedRequiredStrengthActivities.length +
     completedStrengthSubstitutionGroups.length;
 
+  const requiredCardioActivities =
+    adherence.activities.filter(
+      (item) =>
+        item.required &&
+        isCardioActivity(item.activity.type)
+    );
+
+  const cardioSubstitutionGroups =
+    adherence.substitutionGroups.filter(
+      (group) =>
+        group.activities.some((item) =>
+          isCardioActivity(item.activity.type)
+        )
+    );
+
+  const scheduledCardioCount =
+    requiredCardioActivities.length +
+    cardioSubstitutionGroups.length;
+
+  const completedCardioCount =
+    requiredCardioActivities.filter(
+      (item) => item.completed
+    ).length +
+    cardioSubstitutionGroups.filter(
+      (group) =>
+        group.activities.some(
+          (item) =>
+            item.completed &&
+            isCardioActivity(item.activity.type)
+        )
+    ).length;
+
+  const domainOutcomes: WeeklyProgressionDomainOutcomes = {
+    strength: getDomainOutcome({
+      scheduledCount: scheduledStrengthCount,
+      completedCount: completedStrengthCount,
+      missedActivityIds: getMissedActivityIds(
+        adherence,
+        isStrengthActivity
+      ),
+      qualityStatus: strengthQuality?.status ?? "NoData",
+      domainLabel: "Strength",
+    }),
+    cardio: getDomainOutcome({
+      scheduledCount: scheduledCardioCount,
+      completedCount: completedCardioCount,
+      missedActivityIds: getMissedActivityIds(
+        adherence,
+        isCardioActivity
+      ),
+      qualityStatus: runningLoad?.status ?? "NoData",
+      domainLabel: "Cardio",
+    }),
+  };
+
 
   // Require up to two strength sessions, but never require
   // more than the current program week actually prescribes.
@@ -496,6 +658,8 @@ export function getWeeklyProgressionDecision(
         "Weekly training adherence met the progression target.",
 
       factors,
+
+      domainOutcomes,
     }, recovery, strengthQuality, runningLoad, aerialLoad);
   }
 
@@ -535,6 +699,8 @@ export function getWeeklyProgressionDecision(
         "The week had reduced adherence, but enough key training was completed to continue progressing.",
 
       factors,
+
+      domainOutcomes,
     }, recovery, strengthQuality, runningLoad, aerialLoad);
   }
 
@@ -573,5 +739,7 @@ export function getWeeklyProgressionDecision(
     limitingDriver: "Adherence",
 
     factors,
+
+    domainOutcomes,
   }, recovery, strengthQuality, runningLoad, aerialLoad);
 }
