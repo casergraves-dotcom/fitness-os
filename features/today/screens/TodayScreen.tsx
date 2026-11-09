@@ -644,6 +644,21 @@ export default function TodayScreen() {
             new Date()
           }
 
+          recurringBlocker={
+            weeklyDecisionPattern?.recurringBlocker &&
+            !weeklyDecisionPattern.intentionalRepeat
+              ? {
+                  activityId:
+                    weeklyDecisionPattern.recurringBlocker.activityId,
+                  label:
+                    weeklyDecisionPattern.recurringBlocker.label,
+                  reviewCount:
+                    weeklyDecisionPattern.repeatedProgramWeekCount ??
+                    weeklyDecisionPattern.consecutiveReviewCount,
+                }
+              : undefined
+          }
+
           onCompleteActivity={(activity, date) => {
             completeActivity(activity, {
               date: new Date(`${date}T12:00:00`),

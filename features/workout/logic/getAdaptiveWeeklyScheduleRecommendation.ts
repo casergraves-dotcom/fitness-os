@@ -202,6 +202,12 @@ export interface GetAdaptiveWeeklyScheduleRecommendationInput {
   reviewDate?: string;
 
   completions?: TrainingActivityCompletion[];
+
+  recurringBlocker?: {
+    trainingActivityId: string;
+    label: string;
+    reviewCount: number;
+  };
 }
 
 
@@ -360,6 +366,104 @@ function reviewExistingOverlap(
   };
 }
 
+function reviewRecurringBlocker(
+  state: TrainingPlanState,
+  weekStartDate: string,
+  reviewDate: string,
+  completions: TrainingActivityCompletion[],
+  blocker: NonNullable<GetAdaptiveWeeklyScheduleRecommendationInput["recurringBlocker"]>,
+): AdaptiveWeeklyScheduleRecommendation | null {
+  const weekStart = parseLocalDate(weekStartDate);
+  const occurrences = getResolvedWeeklyActivityOccurrences(state, weekStartDate);
+  if (!weekStart || !parseLocalDate(reviewDate) || !occurrences) return null;
+
+  const occurrence = occurrences.find(
+    (item) =>
+      item.activity.id === blocker.trainingActivityId &&
+      item.date >= reviewDate &&
+      item.placementSource !== "FixedAerialCommitment" &&
+      !completions.some(
+        (completion) =>
+          completion.trainingActivityId === item.activity.id &&
+          completion.date === item.date,
+      ),
+  );
+  if (!occurrence) return null;
+
+  const destinationDates = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart);
+    date.setDate(date.getDate() + index);
+    return formatLocalDate(date);
+  }).filter((date) => date >= reviewDate && date < occurrence.date);
+
+  const candidates = destinationDates.flatMap((date) => {
+    const evaluation = evaluateWeeklyScheduleRearrangement({
+      state,
+      weekStartDate,
+      moves: [
+        {
+          trainingActivityId: occurrence.activity.id,
+          originalDate: occurrence.originalDate,
+          scheduledDate: date,
+        },
+      ],
+    });
+    if (
+      !evaluation ||
+      evaluation.status === "Avoid" ||
+      evaluation.hasHighConflict ||
+      evaluation.unavailableViolations.length > 0
+    ) {
+      return [];
+    }
+
+    const destinationActivityCount = occurrences.filter(
+      (item) => item.date === date && item.activity.type !== "Rest",
+    ).length;
+    return [{ date, evaluation, destinationActivityCount }];
+  });
+
+  const statusRank: Record<WeeklyScheduleRearrangementStatus, number> = {
+    Recommended: 0,
+    Acceptable: 1,
+    Caution: 2,
+    Avoid: 3,
+  };
+  candidates.sort(
+    (a, b) =>
+      statusRank[a.evaluation.status] - statusRank[b.evaluation.status] ||
+      Number(a.evaluation.hasAnyConflict) - Number(b.evaluation.hasAnyConflict) ||
+      a.destinationActivityCount - b.destinationActivityCount ||
+      (a.evaluation.preferencePenalty ?? 0) -
+        (b.evaluation.preferencePenalty ?? 0) ||
+      a.date.localeCompare(b.date) ||
+      a.evaluation.score - b.evaluation.score,
+  );
+
+  const best = candidates[0];
+  if (!best) return null;
+
+  return {
+    status: best.evaluation.status,
+    summary: `Move ${occurrence.activity.label} to ${getDayLabel(best.date)} to create an earlier completion opportunity.`,
+    explanation: `${blocker.label} was incomplete in ${blocker.reviewCount} consecutive review${blocker.reviewCount === 1 ? "" : "s"}. This earlier compatible day keeps completed activities and fixed commitments in place. Review the proposed move before applying it.`,
+    moves: [
+      {
+        trainingActivityId: occurrence.activity.id,
+        label: occurrence.activity.label,
+        type: occurrence.activity.type,
+        originalDate: occurrence.originalDate,
+        scheduledDate: best.date,
+        originalDayLabel: getDayLabel(occurrence.date),
+        scheduledDayLabel: getDayLabel(best.date),
+      },
+    ],
+    optionalAdjustments: [],
+    variantRecommendations: [],
+    evaluation: best.evaluation,
+  };
+}
+
 
 // ============================================================
 // Recommendation Helpers
@@ -460,6 +564,7 @@ export function getAdaptiveWeeklyScheduleRecommendation({
   availableCapabilities = [],
   reviewDate,
   completions = [],
+  recurringBlocker,
 }: GetAdaptiveWeeklyScheduleRecommendationInput):
   AdaptiveWeeklyScheduleRecommendation | null {
 
@@ -480,9 +585,20 @@ export function getAdaptiveWeeklyScheduleRecommendation({
     normalizedConstraints.length ===
     0
   ) {
-    return reviewDate
-      ? reviewExistingOverlap(state, weekStartDate, reviewDate, completions)
-      : null;
+    if (!reviewDate) return null;
+
+    return (
+      (recurringBlocker
+        ? reviewRecurringBlocker(
+            state,
+            weekStartDate,
+            reviewDate,
+            completions,
+            recurringBlocker,
+          )
+        : null) ??
+      reviewExistingOverlap(state, weekStartDate, reviewDate, completions)
+    );
   }
 
 

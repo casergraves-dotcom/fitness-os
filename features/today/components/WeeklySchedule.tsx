@@ -73,6 +73,12 @@ interface WeeklyScheduleProps {
   currentDate:
     Date;
 
+  recurringBlocker?: {
+    activityId: string;
+    label: string;
+    reviewCount: number;
+  };
+
   onCompleteActivity: (activity: TrainingActivity, date: string) => void;
 
   onAddAdHocActivity: (
@@ -403,6 +409,7 @@ export default function WeeklySchedule({
   completions,
   loaded,
   currentDate,
+  recurringBlocker,
   onCompleteActivity,
   onAddAdHocActivity,
   onRemoveAdHocActivity,
@@ -899,6 +906,13 @@ export default function WeeklySchedule({
         unavailableDates,
         reviewDate: formatLocalDate(currentDate),
         completions,
+        recurringBlocker: recurringBlocker
+          ? {
+              trainingActivityId: recurringBlocker.activityId,
+              label: recurringBlocker.label,
+              reviewCount: recurringBlocker.reviewCount,
+            }
+          : undefined,
       });
 
     setRecommendation(nextRecommendation);
