@@ -17,7 +17,7 @@ import type {
 import type {
   WeeklyRunningLoadEvaluation,
 } from "./evaluateWeeklyRunningLoad";
-import { WeeklyAerialLoadEvaluation } from "./evaluateWeeklyAerialLoad";
+import type { WeeklyAerialLoadEvaluation } from "./evaluateWeeklyAerialLoad";
 
 
 // ============================================================
