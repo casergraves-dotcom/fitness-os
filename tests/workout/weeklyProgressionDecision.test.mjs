@@ -184,6 +184,70 @@ test("supportive detailed evidence marks completed strength and cardio ready to 
   assert.deepEqual(decision.domainOutcomes.cardio.missedActivityIds, []);
 });
 
+test("an intentionally shortened strength session is explained as reduced dose", () => {
+  const completions = requiredActivities.map(completion);
+  const adherence = evaluateWeeklyAdherence(
+    rampWeek,
+    WEEK_START_DATE,
+    completions
+  );
+
+  assert.ok(adherence);
+
+  const decision = getWeeklyProgressionDecision(adherence, null, {
+    status: "Limited",
+    sessionCount: 2,
+    prescribedSetCount: 28,
+    fullPrescriptionSetCount: 36,
+    completedSetCount: 28,
+    completionRate: 1,
+    fullDoseCompletionRate: 28 / 36,
+    fullSessionCount: 1,
+    validShortenedSessionCount: 1,
+    substantialPartialSessionCount: 0,
+    minimalSessionCount: 0,
+    ratedSetCount: 0,
+    highEffortSetCount: 0,
+    factor: "One full and one shortened session were reviewed.",
+  });
+
+  assert.equal(decision.status, "AdvanceWithWarning");
+  assert.match(decision.reason, /intentionally shortened/i);
+  assert.match(decision.reason, /reduced training dose/i);
+});
+
+test("a minimal session is not described as equivalent to full strength work", () => {
+  const completions = requiredActivities.map(completion);
+  const adherence = evaluateWeeklyAdherence(
+    rampWeek,
+    WEEK_START_DATE,
+    completions
+  );
+
+  assert.ok(adherence);
+
+  const decision = getWeeklyProgressionDecision(adherence, null, {
+    status: "Poor",
+    sessionCount: 2,
+    prescribedSetCount: 36,
+    fullPrescriptionSetCount: 36,
+    completedSetCount: 10,
+    completionRate: 10 / 36,
+    fullDoseCompletionRate: 10 / 36,
+    fullSessionCount: 0,
+    validShortenedSessionCount: 0,
+    substantialPartialSessionCount: 1,
+    minimalSessionCount: 1,
+    ratedSetCount: 0,
+    highEffortSetCount: 0,
+    factor: "Partial strength work was reviewed.",
+  });
+
+  assert.equal(decision.status, "Hold");
+  assert.match(decision.reason, /minimal strength session/i);
+  assert.match(decision.reason, /attendance credit/i);
+});
+
 test("a required activity moved across the week boundary is not missed before its new date passes", () => {
   const adherence = evaluateWeeklyAdherence(
     rampWeek,

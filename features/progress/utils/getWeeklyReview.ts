@@ -90,9 +90,21 @@ export interface WeeklyReviewStrengthSummary {
 
   prescribedSetCount: number;
 
+  fullPrescriptionSetCount: number;
+
   completedSetCount: number;
 
   completionRate: number;
+
+  fullDoseCompletionRate: number;
+
+  fullSessionCount: number;
+
+  validShortenedSessionCount: number;
+
+  substantialPartialSessionCount: number;
+
+  minimalSessionCount: number;
 
   ratedSetCount: number;
 
@@ -283,11 +295,29 @@ function getStrengthSummary(
     prescribedSetCount:
       strength.prescribedSetCount,
 
+    fullPrescriptionSetCount:
+      strength.fullPrescriptionSetCount,
+
     completedSetCount:
       strength.completedSetCount,
 
     completionRate:
       strength.completionRate,
+
+    fullDoseCompletionRate:
+      strength.fullDoseCompletionRate,
+
+    fullSessionCount:
+      strength.fullSessionCount,
+
+    validShortenedSessionCount:
+      strength.validShortenedSessionCount,
+
+    substantialPartialSessionCount:
+      strength.substantialPartialSessionCount,
+
+    minimalSessionCount:
+      strength.minimalSessionCount,
 
     ratedSetCount:
       strength.ratedSetCount,

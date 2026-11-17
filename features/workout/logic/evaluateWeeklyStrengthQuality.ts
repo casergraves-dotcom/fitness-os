@@ -137,6 +137,39 @@ function isStrengthSession(
 }
 
 
+function formatSessionComposition({
+  fullSessionCount,
+  validShortenedSessionCount,
+  substantialPartialSessionCount,
+  minimalSessionCount,
+}: Pick<
+  WeeklyStrengthQualityEvaluation,
+  | "fullSessionCount"
+  | "validShortenedSessionCount"
+  | "substantialPartialSessionCount"
+  | "minimalSessionCount"
+>) {
+  const parts: string[] = [];
+
+  if (fullSessionCount > 0) {
+    parts.push(`${fullSessionCount} full`);
+  }
+  if (validShortenedSessionCount > 0) {
+    parts.push(`${validShortenedSessionCount} intentionally shortened`);
+  }
+  if (substantialPartialSessionCount > 0) {
+    parts.push(`${substantialPartialSessionCount} substantial partial`);
+  }
+  if (minimalSessionCount > 0) {
+    parts.push(`${minimalSessionCount} minimal`);
+  }
+
+  return parts.length > 0
+    ? ` (${parts.join(", ")})`
+    : "";
+}
+
+
 // ============================================================
 // Evaluate Weekly Strength Quality
 // ============================================================
@@ -298,6 +331,12 @@ export function evaluateWeeklyStrengthQuality(
 
   const sessionLabel =
     `${sessions.length} strength session${sessions.length === 1 ? "" : "s"}`;
+  const sessionComposition = formatSessionComposition({
+    fullSessionCount,
+    validShortenedSessionCount,
+    substantialPartialSessionCount,
+    minimalSessionCount,
+  });
 
   // Completing less than half of the prescribed work is not
   // enough evidence to increase the next week's workload.
@@ -317,7 +356,7 @@ export function evaluateWeeklyStrengthQuality(
       ratedSetCount,
       highEffortSetCount,
       factor:
-        `${sessionLabel} reviewed; only ${completedSetCount} of ${fullPrescriptionSetCount} full-prescription working sets were completed.`,
+        `${sessionLabel}${sessionComposition} reviewed; only ${completedSetCount} of ${fullPrescriptionSetCount} full-prescription working sets were completed.`,
     };
   }
 
@@ -335,8 +374,8 @@ export function evaluateWeeklyStrengthQuality(
   ) {
     const factor =
       completionRate < 0.8 || fullDoseCompletionRate < 0.8
-        ? `${sessionLabel} reviewed; ${completedSetCount} of ${prescribedSetCount} assigned working sets were completed. The normal full prescription contains ${fullPrescriptionSetCount} sets.`
-        : `${sessionLabel} reviewed; ${highEffortSetCount} of ${ratedSetCount} rated working sets were logged at RPE ${RPE_HIGH_EFFORT_MIN} or higher.`;
+        ? `${sessionLabel}${sessionComposition} reviewed; ${completedSetCount} of ${prescribedSetCount} assigned working sets were completed. The normal full prescription contains ${fullPrescriptionSetCount} sets.`
+        : `${sessionLabel}${sessionComposition} reviewed; ${highEffortSetCount} of ${ratedSetCount} rated working sets were logged at RPE ${RPE_HIGH_EFFORT_MIN} or higher.`;
 
     return {
       status: "Limited",
@@ -371,6 +410,6 @@ export function evaluateWeeklyStrengthQuality(
     ratedSetCount,
     highEffortSetCount,
     factor:
-      `${sessionLabel} reviewed; ${completedSetCount} of ${prescribedSetCount} prescribed working sets were completed at sustainable effort.`,
+      `${sessionLabel}${sessionComposition} reviewed; ${completedSetCount} of ${prescribedSetCount} prescribed working sets were completed at sustainable effort.`,
   };
 }

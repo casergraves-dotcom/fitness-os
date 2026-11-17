@@ -317,12 +317,17 @@ function applyStrengthQualityContext(
     strengthQuality.status === "Poor" &&
     decision.shouldAdvance
   ) {
+    const reason = strengthQuality.minimalSessionCount > 0
+      ? "A minimal strength session earned attendance credit, but too little of the planned training dose was completed to increase weekly load safely."
+      : strengthQuality.substantialPartialSessionCount > 0
+        ? "A partially completed strength session provided useful training, but too little of the planned dose was completed to increase weekly load safely."
+        : "Too little of the prescribed strength work was completed to increase weekly training load safely.";
+
     return {
       ...decision,
       status: "Hold",
       shouldAdvance: false,
-      reason:
-        "Too little of the prescribed strength work was completed to increase weekly training load safely.",
+      reason,
       limitingDriver: "StrengthQuality",
       factors,
     };
@@ -332,12 +337,17 @@ function applyStrengthQualityContext(
     strengthQuality.status === "Limited" &&
     decision.status === "Advance"
   ) {
+    const reason = strengthQuality.validShortenedSessionCount > 0
+      ? "An intentionally shortened strength session was completed as assigned, but its reduced training dose supports a more conservative weekly advance."
+      : strengthQuality.substantialPartialSessionCount > 0
+        ? "Most of a strength session was completed, but the missed work supports a more conservative weekly advance."
+        : "Training adherence met the target, but strength-session quality supports a more conservative advance.";
+
     return {
       ...decision,
       status: "AdvanceWithWarning",
       shouldAdvance: true,
-      reason:
-        "Training adherence met the target, but strength-session quality supports a more conservative advance.",
+      reason,
       limitingDriver: "StrengthQuality",
       factors,
     };

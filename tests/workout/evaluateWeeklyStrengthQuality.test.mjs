@@ -76,6 +76,7 @@ test("a completed shortened session earns completion but not full-dose progressi
 
   assert.equal(result.status, "Limited");
   assert.equal(result.validShortenedSessionCount, 1);
+  assert.match(result.factor, /1 intentionally shortened/);
   assert.equal(result.completionRate, 1);
   assert.equal(result.fullDoseCompletionRate, 4 / 6);
 });
@@ -92,6 +93,7 @@ test("substantial partial work remains limited rather than fully supported", () 
 
   assert.equal(result.status, "Limited");
   assert.equal(result.substantialPartialSessionCount, 1);
+  assert.match(result.factor, /1 substantial partial/);
   assert.equal(result.fullDoseCompletionRate, 0.6);
 });
 
@@ -107,6 +109,7 @@ test("a single completed exercise cannot masquerade as a complete strength week"
 
   assert.equal(result.status, "Poor");
   assert.equal(result.minimalSessionCount, 1);
+  assert.match(result.factor, /1 minimal/);
   assert.equal(result.prescribedSetCount, 19);
   assert.equal(result.completedSetCount, 3);
 });

@@ -665,6 +665,17 @@ the normal set count; evidence at another load does not. Full-session,
 reduced-session, incomplete, high-effort, mixed-load, and ramp-up behavior is
 covered by focused automated tests, and the production build passed.
 
+**Session-quality progression checkpoint:** New strength sessions preserve a
+snapshot of assigned exercises, assigned working sets, normal full-session
+volume, and whether the prescription was intentionally reduced. The shared
+evaluator distinguishes full, valid shortened, substantial partial, minimal,
+and missed sessions without introducing a second completion engine. A complete
+exercise inside an unexpectedly partial or minimal workout now holds its current
+target instead of independently triggering a load increase, while a valid
+shortened session can still provide appropriate exercise evidence. Partial
+Full Gym records no longer count as full-session programming evidence. Legacy
+history remains readable without silently reinterpreting old records.
+
 ## 3.2 Weekly Training Decisions — COMPLETE
 
 - [x] Use required adherence and minimum strength-session counts to advance,
@@ -686,6 +697,17 @@ running load, and scheduled aerial participation.
 Advance, advance-with-warning, hold, and deload behavior use a unified decision
 model with persisted reasons and contributing factors. Manual overrides preserve
 the original automatic decision and remain auditable.
+
+**Training-dose explanation checkpoint:** Weekly strength quality now evaluates
+both assigned-prescription completion and the completed share of normal
+full-session volume. The coach and weekly review preserve the session mix—full,
+intentionally shortened, substantial partial, and minimal—and explain whether a
+hold or conservative advance is caused by missed work or an intentional dose
+reduction. A valid shortened session receives completion credit without being
+treated as equivalent to full training dose for every coaching decision. Full,
+shortened, partial, minimal, and missed-session classification, weekly dose,
+and exercise-progression safeguards are covered by automated tests; the full
+test suite and production build passed.
 
 ## 3.3 Steady-State Programming
 
