@@ -5,7 +5,10 @@ import type {
 import {
   isValidRpe,
   RPE_HIGH_EFFORT_MIN,
-} from "../rpe";
+} from "../rpe.ts";
+import {
+  evaluateStrengthSessionCompletion,
+} from "./evaluateStrengthSessionCompletion.ts";
 
 
 // ============================================================
@@ -26,9 +29,21 @@ export interface WeeklyStrengthQualityEvaluation {
 
   prescribedSetCount: number;
 
+  fullPrescriptionSetCount: number;
+
   completedSetCount: number;
 
   completionRate: number;
+
+  fullDoseCompletionRate: number;
+
+  fullSessionCount: number;
+
+  validShortenedSessionCount: number;
+
+  substantialPartialSessionCount: number;
+
+  minimalSessionCount: number;
 
   ratedSetCount: number;
 
@@ -144,8 +159,14 @@ export function evaluateWeeklyStrengthQuality(
       status: "NoData",
       sessionCount: 0,
       prescribedSetCount: 0,
+      fullPrescriptionSetCount: 0,
       completedSetCount: 0,
       completionRate: 0,
+      fullDoseCompletionRate: 0,
+      fullSessionCount: 0,
+      validShortenedSessionCount: 0,
+      substantialPartialSessionCount: 0,
+      minimalSessionCount: 0,
       ratedSetCount: 0,
       highEffortSetCount: 0,
       factor: null,
@@ -179,22 +200,37 @@ export function evaluateWeeklyStrengthQuality(
     );
 
   let prescribedSetCount = 0;
+  let fullPrescriptionSetCount = 0;
   let completedSetCount = 0;
   let ratedSetCount = 0;
   let highEffortSetCount = 0;
+  let fullSessionCount = 0;
+  let validShortenedSessionCount = 0;
+  let substantialPartialSessionCount = 0;
+  let minimalSessionCount = 0;
 
   for (const session of sessions) {
+    const completion = evaluateStrengthSessionCompletion(session);
+
+    prescribedSetCount += completion.prescribedWorkingSetCount;
+    fullPrescriptionSetCount += Math.max(
+      completion.prescribedWorkingSetCount,
+      session.prescriptionSnapshot?.fullPrescriptionWorkingSetCount ??
+        completion.prescribedWorkingSetCount,
+    );
+    completedSetCount += completion.completedWorkingSetCount;
+
+    if (completion.classification === "FullSession") {
+      fullSessionCount += 1;
+    } else if (completion.classification === "ValidShortenedSession") {
+      validShortenedSessionCount += 1;
+    } else if (completion.classification === "SubstantialPartialSession") {
+      substantialPartialSessionCount += 1;
+    } else if (completion.classification === "MinimalSession") {
+      minimalSessionCount += 1;
+    }
+
     for (const exercise of session.exercises) {
-      const prescribedSets =
-        exercise.prescribedSetCount ??
-        exercise.sets.length;
-
-      prescribedSetCount +=
-        Math.max(
-          0,
-          prescribedSets
-        );
-
       for (const set of exercise.sets) {
         if (
           !set.completed ||
@@ -202,9 +238,6 @@ export function evaluateWeeklyStrengthQuality(
         ) {
           continue;
         }
-
-        completedSetCount += 1;
-
         if (
           isValidRpe(
             set.rpe
@@ -231,8 +264,14 @@ export function evaluateWeeklyStrengthQuality(
       status: "NoData",
       sessionCount: sessions.length,
       prescribedSetCount,
+      fullPrescriptionSetCount,
       completedSetCount,
       completionRate: 0,
+      fullDoseCompletionRate: 0,
+      fullSessionCount,
+      validShortenedSessionCount,
+      substantialPartialSessionCount,
+      minimalSessionCount,
       ratedSetCount,
       highEffortSetCount,
       factor: null,
@@ -246,6 +285,11 @@ export function evaluateWeeklyStrengthQuality(
         prescribedSetCount
     );
 
+  const fullDoseCompletionRate =
+    fullPrescriptionSetCount > 0
+      ? Math.min(1, completedSetCount / fullPrescriptionSetCount)
+      : 0;
+
   const highEffortRate =
     ratedSetCount > 0
       ? highEffortSetCount /
@@ -257,17 +301,23 @@ export function evaluateWeeklyStrengthQuality(
 
   // Completing less than half of the prescribed work is not
   // enough evidence to increase the next week's workload.
-  if (completionRate < 0.5) {
+  if (fullDoseCompletionRate < 0.5) {
     return {
       status: "Poor",
       sessionCount: sessions.length,
       prescribedSetCount,
+      fullPrescriptionSetCount,
       completedSetCount,
       completionRate,
+      fullDoseCompletionRate,
+      fullSessionCount,
+      validShortenedSessionCount,
+      substantialPartialSessionCount,
+      minimalSessionCount,
       ratedSetCount,
       highEffortSetCount,
       factor:
-        `${sessionLabel} reviewed; only ${completedSetCount} of ${prescribedSetCount} prescribed working sets were completed.`,
+        `${sessionLabel} reviewed; only ${completedSetCount} of ${fullPrescriptionSetCount} full-prescription working sets were completed.`,
     };
   }
 
@@ -277,22 +327,29 @@ export function evaluateWeeklyStrengthQuality(
   // not contain it.
   if (
     completionRate < 0.8 ||
+    fullDoseCompletionRate < 0.8 ||
     (
       ratedSetCount >= 2 &&
       highEffortRate >= 0.5
     )
   ) {
     const factor =
-      completionRate < 0.8
-        ? `${sessionLabel} reviewed; ${completedSetCount} of ${prescribedSetCount} prescribed working sets were completed.`
+      completionRate < 0.8 || fullDoseCompletionRate < 0.8
+        ? `${sessionLabel} reviewed; ${completedSetCount} of ${prescribedSetCount} assigned working sets were completed. The normal full prescription contains ${fullPrescriptionSetCount} sets.`
         : `${sessionLabel} reviewed; ${highEffortSetCount} of ${ratedSetCount} rated working sets were logged at RPE ${RPE_HIGH_EFFORT_MIN} or higher.`;
 
     return {
       status: "Limited",
       sessionCount: sessions.length,
       prescribedSetCount,
+      fullPrescriptionSetCount,
       completedSetCount,
       completionRate,
+      fullDoseCompletionRate,
+      fullSessionCount,
+      validShortenedSessionCount,
+      substantialPartialSessionCount,
+      minimalSessionCount,
       ratedSetCount,
       highEffortSetCount,
       factor,
@@ -303,8 +360,14 @@ export function evaluateWeeklyStrengthQuality(
     status: "Supported",
     sessionCount: sessions.length,
     prescribedSetCount,
+    fullPrescriptionSetCount,
     completedSetCount,
     completionRate,
+    fullDoseCompletionRate,
+    fullSessionCount,
+    validShortenedSessionCount,
+    substantialPartialSessionCount,
+    minimalSessionCount,
     ratedSetCount,
     highEffortSetCount,
     factor:
