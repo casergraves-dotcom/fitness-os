@@ -1960,8 +1960,19 @@ rules rather than an Aerial-only assumption, and Today/weekly schedule cards
 label fixed commitments and required flexible work. Completion identity,
 weekly ownership, adherence, and existing reschedule behavior remain unchanged.
 Focused legacy, optionality, and non-Aerial fixed-commitment regressions, all
-193 automated tests, and the production build passed. Choice-based daily
-recommendations remain the next incremental layer.
+193 automated tests, and the production build passed. This classification now
+supports choice-based daily recommendations without changing plan ownership.
+
+**Daily training-choice checkpoint:** Today now keeps the existing Guide
+recommendation as the default answer while offering an expandable set of up to
+three unfinished flexible activities from the current training week. Choices
+prioritize work already scheduled today, then required weekly work, and exclude
+fixed commitments, completed sessions, past opportunities, and moves that
+introduce any schedule conflict. Choosing a future option uses the canonical
+one-occurrence reschedule action, so activity identity, original week ownership,
+completion, and progression behavior remain intact rather than creating a
+duplicate session or parallel plan. All 193 automated tests and the production
+build passed; live mobile interaction verification remains pending.
 
 ## 7.2 Coaching and Interaction Preferences — COMPLETE
 

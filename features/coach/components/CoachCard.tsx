@@ -4,23 +4,29 @@ import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 import type {
   CoachRecommendation,
 } from "../types";
+import type { DailyTrainingChoice } from "../getDailyTrainingChoices";
 
 interface CoachCardProps {
   recommendation: CoachRecommendation;
   showAction?: boolean;
+  dailyChoices?: DailyTrainingChoice[];
+  onChooseTraining?: (choice: DailyTrainingChoice) => void;
 }
 
 export default function CoachCard({
   recommendation,
   showAction = true,
+  dailyChoices = [],
+  onChooseTraining,
 }: CoachCardProps) {
   const [observationsOpen, setObservationsOpen] = useState(false);
+  const [choicesOpen, setChoicesOpen] = useState(false);
   const actionHref = (() => {
     if (
       recommendation.strengthWorkout &&
@@ -58,6 +64,69 @@ export default function CoachCard({
       <p className="mt-3 text-slate-600">
         {recommendation.message}
       </p>
+
+      {dailyChoices.length > 0 && (
+        <div className="mt-5 border-t border-slate-200 pt-4">
+          <button
+            type="button"
+            aria-expanded={choicesOpen}
+            onClick={() => setChoicesOpen((open) => !open)}
+            className="flex w-full items-center justify-between gap-3 text-left"
+          >
+            <span>
+              <span className="block text-sm font-semibold text-blue-600">
+                Give me some choices
+              </span>
+              <span className="mt-1 block text-xs text-slate-500">
+                Pick from safe, flexible training still available this week.
+              </span>
+            </span>
+            <ChevronDown
+              size={18}
+              className={
+                choicesOpen
+                  ? "rotate-180 text-slate-500 transition-transform"
+                  : "text-slate-500 transition-transform"
+              }
+            />
+          </button>
+
+          {choicesOpen && (
+            <div className="mt-3 space-y-2">
+              {dailyChoices.map((choice) => (
+                <div
+                  key={`${choice.activityId}-${choice.originalDate}`}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 p-3"
+                >
+                  <div className="min-w-0">
+                    <p className="font-semibold text-slate-900">{choice.label}</p>
+                    <p className="text-xs text-slate-500">
+                      {choice.isScheduledToday
+                        ? "Already scheduled today"
+                        : `Move from ${new Date(`${choice.scheduledDate}T12:00:00`).toLocaleDateString(undefined, { weekday: "long" })}`}
+                      {choice.optional ? " · Optional" : " · Weekly priority"}
+                    </p>
+                  </div>
+                  {!choice.isScheduledToday && onChooseTraining && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => onChooseTraining(choice)}
+                    >
+                      Choose
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <p className="text-xs text-slate-500">
+                Choosing moves the existing activity to today; it does not add
+                another session.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {recommendation.observations && recommendation.observations.length > 0 && (
         <div className="mt-5 border-t border-slate-200 pt-4">

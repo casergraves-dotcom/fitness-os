@@ -14,6 +14,7 @@ import {
   CoachCard,
   getCoachRecommendation,
 } from "@/features/coach";
+import { getDailyTrainingChoices } from "@/features/coach/getDailyTrainingChoices";
 import {
   getWeeklyDecisionPattern,
 } from "@/features/coach/getWeeklyDecisionPattern";
@@ -455,6 +456,17 @@ export default function TodayScreen() {
       coachingPreferences
     );
 
+  const dailyTrainingChoices =
+    trainingPlanState &&
+    trainingActivityCompletionsLoaded
+      ? getDailyTrainingChoices({
+          state: trainingPlanState,
+          weekStartDate: getTrainingWeekStartDate(new Date()),
+          todayDate,
+          completions: trainingActivityCompletions,
+        })
+      : [];
+
 
   // ----------------------------------------------------------
   // Start Plan
@@ -512,6 +524,14 @@ export default function TodayScreen() {
             recommendation
           }
           showAction={false}
+          dailyChoices={dailyTrainingChoices}
+          onChooseTraining={(choice) => {
+            rescheduleTrainingActivity(
+              choice.activityId,
+              choice.originalDate,
+              todayDate
+            );
+          }}
         />
 
         <TodaysTrainingCard
