@@ -184,7 +184,7 @@ export default function CoachingPreferencesForm() {
       </div>
 
       <div className="mt-6 flex items-center gap-3">
-        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, trainingEmphasis: draft.trainingEmphasis, adjustmentStyle: draft.adjustmentStyle, checkInPrompt: draft.checkInPrompt, modalityBalance: draft.modalityBalance }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
+        <button type="button" onClick={() => { savePreferences({ focus: draft.focus, trainingEmphasis: draft.trainingEmphasis, adjustmentStyle: draft.adjustmentStyle, checkInPrompt: draft.checkInPrompt, modalityBalance: draft.modalityBalance, activityBarrierFeedback: draft.activityBarrierFeedback }); setSaved(true); }} className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white">Save Coaching Preferences</button>
         {saved && <span className="text-sm font-medium text-emerald-700">Saved</span>}
       </div>
     </section>

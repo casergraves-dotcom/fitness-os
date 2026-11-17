@@ -1974,6 +1974,18 @@ completion, and progression behavior remain intact rather than creating a
 duplicate session or parallel plan. All 193 automated tests and the production
 build passed; live mobile interaction verification remains pending.
 
+**Motivation-barrier checkpoint:** Guide now asks one optional, targeted question
+only when the same concrete required activity has blocked at least two weekly
+reviews. The user can identify repetition, scheduling, limited time, excessive
+difficulty, fatigue, a preferred alternative, or changed priorities; Guide does
+not infer a motivation problem from missed training alone. Feedback is stored in
+the existing cloud-synced Coaching Preferences record and produces reason-
+specific guidance without silently changing the schedule, weekly requirements,
+or progression. Choosing “Not now” suppresses repeat prompting for that
+activity. Legacy preference data defaults safely to no feedback, malformed
+records are ignored, all 197 automated tests passed, and the production build
+passed. Live mobile interaction verification remains pending.
+
 ## 7.2 Coaching and Interaction Preferences — COMPLETE
 
 Coaching preferences influence recommendation ranking, explanation, and

@@ -8,6 +8,7 @@ import {
   normalizeCoachingPreferences,
 } from "../coachingPreferences";
 import type { CoachingPreferences } from "../coachingPreferences";
+import type { ActivityBarrierReason } from "../coachingPreferences";
 
 const STORAGE_KEY = "fitness-os-coaching-preferences";
 
@@ -35,5 +36,35 @@ export function useCoachingPreferences() {
     setFitnessOsStorage(STORAGE_KEY, JSON.stringify(saved));
   }
 
-  return { preferences, loaded, savePreferences };
+  function recordActivityBarrierFeedback(
+    activityId: string,
+    activityLabel: string,
+    reason: ActivityBarrierReason
+  ) {
+    const saved: CoachingPreferences = {
+      ...preferences,
+      activityBarrierFeedback: [
+        ...preferences.activityBarrierFeedback.filter(
+          (feedback) => feedback.activityId !== activityId
+        ),
+        {
+          activityId,
+          activityLabel,
+          reason,
+          recordedAt: new Date().toISOString(),
+        },
+      ],
+      updatedAt: new Date().toISOString(),
+    };
+
+    setPreferences(saved);
+    setFitnessOsStorage(STORAGE_KEY, JSON.stringify(saved));
+  }
+
+  return {
+    preferences,
+    loaded,
+    savePreferences,
+    recordActivityBarrierFeedback,
+  };
 }

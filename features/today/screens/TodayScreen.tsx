@@ -15,6 +15,7 @@ import {
   getCoachRecommendation,
 } from "@/features/coach";
 import { getDailyTrainingChoices } from "@/features/coach/getDailyTrainingChoices";
+import { getActivityBarrierPrompt } from "@/features/coach/getActivityBarrierGuidance";
 import {
   getWeeklyDecisionPattern,
 } from "@/features/coach/getWeeklyDecisionPattern";
@@ -110,7 +111,10 @@ function formatLocalDate(date: Date) {
 }
 
 export default function TodayScreen() {
-  const { preferences: coachingPreferences } = useCoachingPreferences();
+  const {
+    preferences: coachingPreferences,
+    recordActivityBarrierFeedback,
+  } = useCoachingPreferences();
   const [showManualCheckIn, setShowManualCheckIn] = useState(false);
   const [showWeeklySchedule, setShowWeeklySchedule] = useState(false);
   const [showWeeklyProgress, setShowWeeklyProgress] = useState(false);
@@ -467,6 +471,11 @@ export default function TodayScreen() {
         })
       : [];
 
+  const activityBarrierPrompt = getActivityBarrierPrompt(
+    weeklyDecisionPattern,
+    coachingPreferences.activityBarrierFeedback
+  );
+
 
   // ----------------------------------------------------------
   // Start Plan
@@ -532,6 +541,8 @@ export default function TodayScreen() {
               todayDate
             );
           }}
+          activityBarrierPrompt={activityBarrierPrompt}
+          onActivityBarrierResponse={recordActivityBarrierFeedback}
         />
 
         <TodaysTrainingCard

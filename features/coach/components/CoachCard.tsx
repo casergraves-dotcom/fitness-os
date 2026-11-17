@@ -11,12 +11,24 @@ import type {
   CoachRecommendation,
 } from "../types";
 import type { DailyTrainingChoice } from "../getDailyTrainingChoices";
+import type { ActivityBarrierReason } from "../coachingPreferences";
+import {
+  ACTIVITY_BARRIER_OPTIONS,
+  getActivityBarrierGuidance,
+} from "../getActivityBarrierGuidance";
+import type { ActivityBarrierPrompt } from "../getActivityBarrierGuidance";
 
 interface CoachCardProps {
   recommendation: CoachRecommendation;
   showAction?: boolean;
   dailyChoices?: DailyTrainingChoice[];
   onChooseTraining?: (choice: DailyTrainingChoice) => void;
+  activityBarrierPrompt?: ActivityBarrierPrompt | null;
+  onActivityBarrierResponse?: (
+    activityId: string,
+    activityLabel: string,
+    reason: ActivityBarrierReason
+  ) => void;
 }
 
 export default function CoachCard({
@@ -24,6 +36,8 @@ export default function CoachCard({
   showAction = true,
   dailyChoices = [],
   onChooseTraining,
+  activityBarrierPrompt,
+  onActivityBarrierResponse,
 }: CoachCardProps) {
   const [observationsOpen, setObservationsOpen] = useState(false);
   const [choicesOpen, setChoicesOpen] = useState(false);
@@ -124,6 +138,68 @@ export default function CoachCard({
                 another session.
               </p>
             </div>
+          )}
+        </div>
+      )}
+
+      {activityBarrierPrompt && (
+        <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">
+            Help Guide adjust
+          </p>
+          {activityBarrierPrompt.feedback ? (
+            <>
+              <p className="mt-1 text-sm font-semibold text-slate-900">
+                Thanks—Guide saved what is getting in the way for {activityBarrierPrompt.activityLabel}.
+              </p>
+              {getActivityBarrierGuidance(activityBarrierPrompt.feedback.reason) && (
+                <p className="mt-2 text-sm text-slate-600">
+                  {getActivityBarrierGuidance(activityBarrierPrompt.feedback.reason)}
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <p className="mt-1 text-sm font-semibold text-slate-900">
+                {activityBarrierPrompt.question}
+              </p>
+              <p className="mt-1 text-xs text-slate-600">
+                Optional. Your answer guides recommendations but does not change the plan automatically.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {ACTIVITY_BARRIER_OPTIONS.map((option) => (
+                  <Button
+                    key={option.reason}
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      onActivityBarrierResponse?.(
+                        activityBarrierPrompt.activityId,
+                        activityBarrierPrompt.activityLabel,
+                        option.reason
+                      )
+                    }
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() =>
+                    onActivityBarrierResponse?.(
+                      activityBarrierPrompt.activityId,
+                      activityBarrierPrompt.activityLabel,
+                      "NotNow"
+                    )
+                  }
+                >
+                  Not now
+                </Button>
+              </div>
+            </>
           )}
         </div>
       )}

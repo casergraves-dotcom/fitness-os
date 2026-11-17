@@ -26,6 +26,23 @@ export type CoachingCheckInPrompt =
   | "TrainingDays"
   | "Manual";
 
+export type ActivityBarrierReason =
+  | "Boredom"
+  | "Scheduling"
+  | "LimitedTime"
+  | "Difficulty"
+  | "Fatigue"
+  | "PreferAlternative"
+  | "PrioritiesChanged"
+  | "NotNow";
+
+export interface ActivityBarrierFeedback {
+  activityId: string;
+  activityLabel: string;
+  reason: ActivityBarrierReason;
+  recordedAt: string;
+}
+
 export interface CoachingPreferences {
   focus: CoachingFocus;
   trainingEmphasis: CoachingTrainingEmphasis;
@@ -36,6 +53,7 @@ export interface CoachingPreferences {
     running: CoachingBalanceLevel;
     activeHobbies: CoachingBalanceLevel;
   };
+  activityBarrierFeedback: ActivityBarrierFeedback[];
   updatedAt: string;
 }
 
@@ -49,8 +67,44 @@ export const DEFAULT_COACHING_PREFERENCES: CoachingPreferences = {
     running: "Standard",
     activeHobbies: "Standard",
   },
+  activityBarrierFeedback: [],
   updatedAt: "",
 };
+
+function normalizeActivityBarrierFeedback(value: unknown): ActivityBarrierFeedback[] {
+  if (!Array.isArray(value)) return [];
+
+  const reasons: ActivityBarrierReason[] = [
+    "Boredom",
+    "Scheduling",
+    "LimitedTime",
+    "Difficulty",
+    "Fatigue",
+    "PreferAlternative",
+    "PrioritiesChanged",
+    "NotNow",
+  ];
+
+  return value.flatMap((item) => {
+    if (typeof item !== "object" || item === null) return [];
+    const candidate = item as Partial<ActivityBarrierFeedback>;
+    if (
+      typeof candidate.activityId !== "string" ||
+      typeof candidate.activityLabel !== "string" ||
+      typeof candidate.recordedAt !== "string" ||
+      !reasons.includes(candidate.reason as ActivityBarrierReason)
+    ) {
+      return [];
+    }
+
+    return [{
+      activityId: candidate.activityId,
+      activityLabel: candidate.activityLabel,
+      reason: candidate.reason as ActivityBarrierReason,
+      recordedAt: candidate.recordedAt,
+    }];
+  });
+}
 
 export function normalizeCoachingPreferences(value: unknown): CoachingPreferences {
   if (typeof value !== "object" || value === null) {
@@ -87,6 +141,9 @@ export function normalizeCoachingPreferences(value: unknown): CoachingPreference
         ? balance!.activeHobbies
         : "Standard",
     },
+    activityBarrierFeedback: normalizeActivityBarrierFeedback(
+      candidate.activityBarrierFeedback
+    ),
     updatedAt: typeof candidate.updatedAt === "string" ? candidate.updatedAt : "",
   };
 }
