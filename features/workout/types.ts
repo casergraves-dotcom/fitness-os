@@ -38,6 +38,19 @@ export interface WorkoutRestTimer {
   exerciseName?: string;
 }
 
+export interface StrengthSessionPrescriptionSnapshot {
+  // Prescription captured when the session was created or intentionally
+  // shortened. These totals remain available even when an entirely
+  // unperformed exercise is omitted from completed workout history.
+  prescribedExerciseCount: number;
+  prescribedWorkingSetCount: number;
+
+  // Normal Full Gym reference dose before an intentional Short Gym or
+  // schedule-level volume reduction was applied.
+  fullPrescriptionWorkingSetCount: number;
+  intentionallyReduced: boolean;
+}
+
 
 // ============================================================
 // Workout Exercise
@@ -309,6 +322,10 @@ export interface WorkoutSession {
   restTimer?: WorkoutRestTimer;
 
   exercises: Exercise[];
+
+  // Optional for backward compatibility with history recorded before session
+  // completion quality was audited.
+  prescriptionSnapshot?: StrengthSessionPrescriptionSnapshot;
 
   // Scheduled training-plan activity that launched this workout.
   //

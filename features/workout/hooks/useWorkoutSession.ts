@@ -929,6 +929,30 @@ export function useWorkoutSession() {
         }
       );
 
+    const fullPrescriptionWorkingSetCount =
+      workoutTemplates[workoutType].reduce(
+        (total, exercise) =>
+          total +
+          Math.max(
+            0,
+            exercise.prescribedSetCount ?? exercise.sets.length
+          ),
+        0
+      );
+
+    const prescriptionSnapshot = {
+      prescribedExerciseCount: exercises.length,
+      prescribedWorkingSetCount: exercises.reduce(
+        (total, exercise) =>
+          total + Math.max(0, exercise.prescribedSetCount ?? exercise.sets.length),
+        0
+      ),
+      fullPrescriptionWorkingSetCount,
+      intentionallyReduced:
+        selectedVariant?.variantType === "ShortGym" ||
+        strengthVolumeMultiplier < 1,
+    };
+
     const newSession:
       WorkoutSession = {
       id: createId(),
@@ -957,6 +981,8 @@ export function useWorkoutSession() {
         undefined,
 
       exercises,
+
+      prescriptionSnapshot,
 
       scheduledActivityId:
         scheduledContext?.activityId,
@@ -2111,6 +2137,18 @@ function updateSet(
             }
           );
 
+        const fullPrescriptionWorkingSetCount =
+          previous.prescriptionSnapshot?.fullPrescriptionWorkingSetCount ??
+          previous.exercises.reduce(
+            (total, exercise) =>
+              total +
+              Math.max(
+                0,
+                exercise.prescribedSetCount ?? exercise.sets.length
+              ),
+            0
+          );
+
         return {
           ...previous,
 
@@ -2124,6 +2162,21 @@ function updateSet(
             shortVariant.label,
 
           exercises,
+
+          prescriptionSnapshot: {
+            prescribedExerciseCount: exercises.length,
+            prescribedWorkingSetCount: exercises.reduce(
+              (total, exercise) =>
+                total +
+                Math.max(
+                  0,
+                  exercise.prescribedSetCount ?? exercise.sets.length
+                ),
+              0
+            ),
+            fullPrescriptionWorkingSetCount,
+            intentionallyReduced: true,
+          },
 
           restStartedAt:
             undefined,
