@@ -1,5 +1,6 @@
 import type { TrainingActivityCompletion } from "../types";
 import type { ResolvedWeeklyActivityOccurrence } from "./getResolvedWeeklyActivityOccurrences";
+import { getOccurrenceScheduleConstraint } from "./getTrainingActivityScheduleConstraint.ts";
 import type { ScheduleConflict } from "./evaluateScheduleConflicts";
 
 export interface ReviewMoveCandidate {
@@ -21,7 +22,7 @@ export function getReviewMoveCandidates(
       const occurrence = occurrences.find((item) =>
         item.activity.id === side.activity.id && item.date === side.date
       );
-      if (!occurrence || occurrence.placementSource === "FixedAerialCommitment" ||
+      if (!occurrence || getOccurrenceScheduleConstraint(occurrence) === "Fixed" ||
         completions.some((completion) =>
           completion.trainingActivityId === occurrence.activity.id && completion.date === occurrence.date
         )) return [];

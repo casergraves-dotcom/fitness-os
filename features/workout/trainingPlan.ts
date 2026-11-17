@@ -14,7 +14,10 @@ import type {
 function activity(
   values: TrainingActivity
 ): TrainingActivity {
-  return values;
+  return {
+    scheduleConstraint: "Flexible",
+    ...values,
+  };
 }
 
 

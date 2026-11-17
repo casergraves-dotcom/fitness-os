@@ -960,6 +960,15 @@ export interface TrainingActivity {
   // Schedule Behavior
   // ----------------------------------------------------------
 
+  // Fixed activities represent real commitments whose date should normally be
+  // preserved. Flexible activities retain a recommended date but may move
+  // within their owning training week. This is intentionally separate from
+  // `optional`: required work can have flexible timing, and a fixed commitment
+  // can still be optional for weekly progression.
+  //
+  // Older saved activities omit this field and resolve as Flexible.
+  scheduleConstraint?: TrainingPreferenceConstraint;
+
   // Optional activities can be skipped without treating the
   // day's required training as missed.
   optional?: boolean;

@@ -1949,6 +1949,20 @@ recovery-driven modifications remain separate overlays. Existing preferences
 survived migration, save, and refresh in the browser; 26 tests, TypeScript, and
 the production build passed.
 
+**Flexible-timing foundation checkpoint:** Canonical training activities now
+distinguish timing constraints from optionality. Required strength, running,
+walking, and recovery prescriptions retain recommended dates while resolving as
+flexible weekly work; projected recurring commitments such as Lyra resolve as
+fixed. Legacy activities safely default to flexible, and ad-hoc activities use
+the same canonical field. Resolved occurrences carry the classification through
+schedule rearrangement, fixed activities are protected by general scheduling
+rules rather than an Aerial-only assumption, and Today/weekly schedule cards
+label fixed commitments and required flexible work. Completion identity,
+weekly ownership, adherence, and existing reschedule behavior remain unchanged.
+Focused legacy, optionality, and non-Aerial fixed-commitment regressions, all
+193 automated tests, and the production build passed. Choice-based daily
+recommendations remain the next incremental layer.
+
 ## 7.2 Coaching and Interaction Preferences — COMPLETE
 
 Coaching preferences influence recommendation ranking, explanation, and

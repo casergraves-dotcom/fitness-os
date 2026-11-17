@@ -10,6 +10,7 @@ import type {
 import {
   getResolvedWeeklyActivityOccurrences,
 } from "./getResolvedWeeklyActivityOccurrences";
+import { getOccurrenceScheduleConstraint } from "./getTrainingActivityScheduleConstraint";
 
 import {
   getWeeklyScheduleRearrangementOptions,
@@ -381,7 +382,7 @@ function reviewRecurringBlocker(
     (item) =>
       item.activity.id === blocker.trainingActivityId &&
       item.date >= reviewDate &&
-      item.placementSource !== "FixedAerialCommitment" &&
+      getOccurrenceScheduleConstraint(item) !== "Fixed" &&
       !completions.some(
         (completion) =>
           completion.trainingActivityId === item.activity.id &&

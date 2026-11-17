@@ -9,6 +9,7 @@ import type {
 import {
   getResolvedWeeklyActivityOccurrences,
 } from "./getResolvedWeeklyActivityOccurrences";
+import { getOccurrenceScheduleConstraint } from "./getTrainingActivityScheduleConstraint";
 
 
 // ============================================================
@@ -215,8 +216,8 @@ export function getWeeklyScheduleRearrangementOptions({
         unavailableSet.has(
           occurrence.date
         ) &&
-        occurrence.placementSource !==
-          "FixedAerialCommitment"
+        getOccurrenceScheduleConstraint(occurrence) !==
+          "Fixed"
     );
 
 
@@ -248,6 +249,9 @@ export function getWeeklyScheduleRearrangementOptions({
         occurrence.activity.type ===
           "Strength" &&
 
+        getOccurrenceScheduleConstraint(occurrence) !==
+          "Fixed" &&
+
         !unavailableSet.has(
           occurrence.date
         )
@@ -258,8 +262,8 @@ export function getWeeklyScheduleRearrangementOptions({
     includeReviewActivities
       ? occurrences.filter(
           (occurrence) =>
-            occurrence.placementSource !==
-              "FixedAerialCommitment" &&
+            getOccurrenceScheduleConstraint(occurrence) !==
+              "Fixed" &&
             (occurrence.activity.type ===
               "Strength" ||
               occurrence.activity.type ===

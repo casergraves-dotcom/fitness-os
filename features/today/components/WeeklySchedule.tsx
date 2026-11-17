@@ -325,9 +325,15 @@ function ActivityRow({
             </span>
           )}
 
-          {occurrence.placementSource === "FixedAerialCommitment" && (
+          {occurrence.scheduleConstraint === "Fixed" && (
             <span className="text-xs font-medium text-blue-600">
               Fixed commitment
+            </span>
+          )}
+
+          {occurrence.scheduleConstraint === "Flexible" && !occurrence.activity.optional && (
+            <span className="text-xs font-medium text-slate-500">
+              Flexible timing
             </span>
           )}
 
@@ -1121,7 +1127,7 @@ export default function WeeklySchedule({
                 canMove={
                   !historical &&
                   !isCompleted(occurrence) &&
-                  occurrence.placementSource !== "FixedAerialCommitment"
+                  occurrence.scheduleConstraint !== "Fixed"
                 }
                 onMarkComplete={setConfirmingCompletion}
                 onRemoveAdHoc={setConfirmingRemoval}

@@ -1288,9 +1288,11 @@ function applyFixedAerialCommitmentProjection(
       continue;
     }
 
-    const activity = placement.session.name
-      ? { ...placement.activity, label: placement.session.name }
-      : placement.activity;
+    const activity = {
+      ...placement.activity,
+      ...(placement.session.name ? { label: placement.session.name } : {}),
+      scheduleConstraint: "Fixed" as const,
+    };
 
     activities.push(activity);
     activityContexts[activity.id] = {

@@ -1,5 +1,6 @@
 import type { TrainingActivityCompletion } from "../types";
 import type { ResolvedWeeklyActivityOccurrence } from "./getResolvedWeeklyActivityOccurrences";
+import { getOccurrenceScheduleConstraint } from "./getTrainingActivityScheduleConstraint.ts";
 
 export interface DaySwapTargets {
   targets: ResolvedWeeklyActivityOccurrence[];
@@ -27,7 +28,7 @@ export function getDaySwapTargets(
     )
   )) return { targets: [], blockedBy: "Completed" };
 
-  if (targets.some((occurrence) => occurrence.placementSource === "FixedAerialCommitment")) {
+  if (targets.some((occurrence) => getOccurrenceScheduleConstraint(occurrence) === "Fixed")) {
     return { targets: [], blockedBy: "FixedCommitment" };
   }
 

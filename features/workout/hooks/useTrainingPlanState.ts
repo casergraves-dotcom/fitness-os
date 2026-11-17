@@ -566,7 +566,13 @@ export function useTrainingPlanState() {
     if (type === "Strength" || type === "Run" || type === "Rest") return null;
 
     const id = `ad-hoc-${crypto.randomUUID()}`;
-    const activity: TrainingActivity = { id, type, label: label.trim(), optional: true };
+    const activity: TrainingActivity = {
+      id,
+      type,
+      label: label.trim(),
+      optional: true,
+      scheduleConstraint: "Flexible",
+    };
     saveState({
       ...state,
       adHocActivities: [

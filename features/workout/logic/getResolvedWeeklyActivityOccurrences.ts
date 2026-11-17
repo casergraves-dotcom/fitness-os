@@ -11,6 +11,7 @@ import type {
 import {
   getTrainingScheduleForDate,
 } from "../utils/getTrainingScheduleForDate";
+import { getOccurrenceScheduleConstraint } from "./getTrainingActivityScheduleConstraint";
 
 
 export interface ResolvedWeeklyActivityOccurrence {
@@ -26,6 +27,10 @@ export interface ResolvedWeeklyActivityOccurrence {
   originalDate: string;
 
   placementSource?: "FixedAerialCommitment" | "AdHoc";
+
+  // Canonical timing intent after recurring commitments and legacy defaults
+  // have been resolved. Optionality remains a separate property on activity.
+  scheduleConstraint: "Fixed" | "Flexible";
 
   // Destination weekday after any rescheduling.
   day: TrainingDay["day"];
@@ -387,6 +392,12 @@ export function getResolvedWeeklyActivityOccurrences(
 
           placementSource,
 
+          scheduleConstraint:
+            getOccurrenceScheduleConstraint({
+              activity: originalActivity,
+              placementSource,
+            }),
+
           day:
             originalSchedule
               .dayOfWeek,
@@ -421,6 +432,12 @@ export function getResolvedWeeklyActivityOccurrences(
             occurrenceOriginalDate,
 
           placementSource,
+
+          scheduleConstraint:
+            getOccurrenceScheduleConstraint({
+              activity: originalActivity,
+              placementSource,
+            }),
 
           day:
             originalSchedule
@@ -473,6 +490,12 @@ export function getResolvedWeeklyActivityOccurrences(
 
           placementSource,
 
+          scheduleConstraint:
+            getOccurrenceScheduleConstraint({
+              activity: originalActivity,
+              placementSource,
+            }),
+
           day:
             originalSchedule
               .dayOfWeek,
@@ -500,6 +523,12 @@ export function getResolvedWeeklyActivityOccurrences(
         activity:
           movedActivity,
 
+        scheduleConstraint:
+          getOccurrenceScheduleConstraint({
+            activity: movedActivity,
+            placementSource,
+          }),
+
         strengthWorkoutVariantId,
       });
     }
@@ -518,6 +547,10 @@ export function getResolvedWeeklyActivityOccurrences(
       date: entry.date,
       originalDate: entry.date,
       placementSource: "AdHoc",
+      scheduleConstraint: getOccurrenceScheduleConstraint({
+        activity: entry.activity,
+        placementSource: "AdHoc",
+      }),
       day: getDayName(date),
       activity: entry.activity,
     });

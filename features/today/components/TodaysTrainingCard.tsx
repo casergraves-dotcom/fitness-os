@@ -1025,6 +1025,18 @@ export default function TodaysTrainingCard({
                         </span>
                       )}
 
+                      {activity.scheduleConstraint === "Fixed" && (
+                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+                          Fixed commitment
+                        </span>
+                      )}
+
+                      {activity.scheduleConstraint !== "Fixed" && !activity.optional && (
+                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                          Flexible timing
+                        </span>
+                      )}
+
                     </div>
 
 
