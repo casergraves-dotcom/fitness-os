@@ -1,5 +1,6 @@
 import type { StrengthWorkoutType, WorkoutSession } from "../types";
 import type { AppliedStrengthProgrammingDecision } from "./strengthProgrammingRecommendation.ts";
+import { evaluateStrengthSessionCompletion } from "./evaluateStrengthSessionCompletion.ts";
 
 export interface StrengthProgrammingEvidence {
   completedFullSessionsTotal: number;
@@ -16,7 +17,11 @@ export function getStrengthProgrammingEvidence(
     (session) =>
       session.workoutType === workoutType &&
       Boolean(session.completedAt) &&
-      (session.variantType === undefined || session.variantType === "FullGym")
+      (session.variantType === undefined || session.variantType === "FullGym") &&
+      // Old records predate prescription snapshots, so retain their historical
+      // meaning. New records must demonstrate the complete assigned session.
+      (!session.prescriptionSnapshot ||
+        evaluateStrengthSessionCompletion(session).classification === "FullSession")
   ).length;
 
   const latestDecision =

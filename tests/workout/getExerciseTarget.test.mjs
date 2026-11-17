@@ -181,6 +181,29 @@ test("top-of-range working sets increase the representative load", () => {
   assert.equal(target.targetWeight, 150);
 });
 
+test("a complete exercise in a partial session does not trigger a load increase", () => {
+  const target = getExerciseTarget(
+    definition,
+    previousExercise([[145, 12], [145, 12], [145, 12]]),
+    { previousSessionClassification: "MinimalSession" }
+  );
+
+  assert.equal(target.action, "confirm-full-session");
+  assert.equal(target.targetWeight, 145);
+  assert.match(target.message, /overall workout was only partially completed/i);
+});
+
+test("a completed intentional shortened session can still use normal exercise evidence", () => {
+  const target = getExerciseTarget(
+    definition,
+    previousExercise([[145, 12], [145, 12], [145, 12]]),
+    { previousSessionClassification: "ValidShortenedSession" }
+  );
+
+  assert.equal(target.action, "increase-load");
+  assert.equal(target.targetWeight, 150);
+});
+
 test("top-of-range reduced prescription holds until a full session confirms progression", () => {
   const exercise = previousExercise([[145, 12], [145, 12]]);
   exercise.prescribedSetCount = 2;

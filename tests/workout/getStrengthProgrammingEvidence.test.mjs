@@ -14,6 +14,35 @@ function session(id, workoutType, variantType, completed = true) {
   };
 }
 
+function snapshottedSession(id, workoutType, completedSets, prescribedSets) {
+  return {
+    id,
+    workoutType,
+    variantType: "FullGym",
+    startedAt: "2026-09-01T12:00:00.000Z",
+    completedAt: "2026-09-01T13:00:00.000Z",
+    prescriptionSnapshot: {
+      prescribedExerciseCount: 2,
+      prescribedWorkingSetCount: prescribedSets,
+      fullPrescriptionWorkingSetCount: prescribedSets,
+      intentionallyReduced: false,
+    },
+    exercises: [
+      {
+        id: `${id}-exercise`,
+        name: "Exercise",
+        prescribedSetCount: prescribedSets,
+        sets: Array.from({ length: completedSets }, (_, index) => ({
+          id: `${id}-set-${index}`,
+          weight: 100,
+          reps: 10,
+          completed: true,
+        })),
+      },
+    ],
+  };
+}
+
 function decision(id, workoutType, baseline, appliedAt) {
   return {
     id,
@@ -75,4 +104,25 @@ test("never reports negative evidence after history cleanup", () => {
   );
 
   assert.equal(evidence.completedFullSessionsSinceDecision, 0);
+});
+
+test("new partial Full Gym records do not count as programming evidence", () => {
+  const evidence = getStrengthProgrammingEvidence(
+    "Gym A",
+    [
+      snapshottedSession("minimal", "Gym A", 1, 6),
+      {
+        ...snapshottedSession("full", "Gym A", 6, 6),
+        prescriptionSnapshot: {
+          prescribedExerciseCount: 1,
+          prescribedWorkingSetCount: 6,
+          fullPrescriptionWorkingSetCount: 6,
+          intentionallyReduced: false,
+        },
+      },
+    ],
+    []
+  );
+
+  assert.equal(evidence.completedFullSessionsTotal, 1);
 });

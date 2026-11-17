@@ -47,6 +47,7 @@ import {
 import {
   getExerciseTarget,
 } from "../getExerciseTarget";
+import { evaluateStrengthSessionCompletion } from "../logic/evaluateStrengthSessionCompletion";
 import {
   getEquipmentProfileForDate,
 } from "../logic/getTrainingParticipationPreferenceForDate";
@@ -289,6 +290,7 @@ export default function WorkoutScreen() {
     removedExercise,
 
     getPreviousExercise,
+    getPreviousExerciseSessionClassification,
     getRecentFullExercise,
   } = useWorkoutSession();
 
@@ -566,6 +568,8 @@ startWorkout(
                   exercise.name,
                   definition?.sets
                 ),
+                previousSessionClassification:
+                  evaluateStrengthSessionCompletion(session).classification,
               }
             );
 
@@ -1589,6 +1593,11 @@ const exerciseVolume =
           exercise.name,
           definition?.sets
         ),
+        previousSessionClassification:
+          getPreviousExerciseSessionClassification(
+            exercise.exerciseDefinitionId,
+            exercise.name
+          ),
       }
     );
     const performanceSummary = completed
@@ -1696,6 +1705,10 @@ const exerciseVolume =
               availableEquipment={session.variantType === "Home" ? homeEquipmentProfile.equipment : gymEquipmentProfile.equipment}
               availableCapabilities={session.variantType === "Home" ? homeEquipmentProfile.capabilities : gymEquipmentProfile.capabilities}
               previousExercise={getPreviousExercise(
+                selectedExercise.exerciseDefinitionId,
+                selectedExercise.name
+              )}
+              previousSessionClassification={getPreviousExerciseSessionClassification(
                 selectedExercise.exerciseDefinitionId,
                 selectedExercise.name
               )}

@@ -21,6 +21,12 @@ import {
 import {
   getExerciseTarget,
 } from "../getExerciseTarget";
+import {
+  evaluateStrengthSessionCompletion,
+} from "../logic/evaluateStrengthSessionCompletion";
+import type {
+  StrengthSessionCompletionClassification,
+} from "../logic/evaluateStrengthSessionCompletion";
 
 import {
   normalizeRpe,
@@ -188,7 +194,8 @@ function findExerciseDefinition(
 function getStartingWeight(
   definition: ExerciseDefinition | undefined,
   previousExercise: Exercise | undefined,
-  recentFullExercise?: Exercise
+  recentFullExercise?: Exercise,
+  previousSessionClassification?: StrengthSessionCompletionClassification
 ) {
   // No previous workout means we don't have a load
   // recommendation yet.
@@ -202,7 +209,7 @@ function getStartingWeight(
     getExerciseTarget(
       definition,
       previousExercise,
-      { recentFullExercise }
+      { recentFullExercise, previousSessionClassification }
     );
 
   // Load and assistance progression both return the
@@ -610,6 +617,29 @@ export function useWorkoutSession() {
     return undefined;
   }
 
+  function getPreviousExerciseSessionClassification(
+    exerciseDefinitionId: string | undefined,
+    exerciseName: string
+  ): StrengthSessionCompletionClassification | undefined {
+    for (const workout of workoutHistory) {
+      const includesExercise = workout.exercises.some((item) => {
+        if (exerciseDefinitionId && item.exerciseDefinitionId) {
+          return item.exerciseDefinitionId === exerciseDefinitionId;
+        }
+
+        return item.name.toLowerCase() === exerciseName.toLowerCase();
+      });
+
+      if (includesExercise) {
+        return workout.prescriptionSnapshot
+          ? evaluateStrengthSessionCompletion(workout).classification
+          : undefined;
+      }
+    }
+
+    return undefined;
+  }
+
   function getRecentFullExercise(
     exerciseDefinitionId: string | undefined,
     exerciseName: string,
@@ -629,6 +659,13 @@ export function useWorkoutSession() {
       });
 
       if (!exercise) {
+        continue;
+      }
+
+      if (
+        workout.prescriptionSnapshot &&
+        evaluateStrengthSessionCompletion(workout).classification !== "FullSession"
+      ) {
         continue;
       }
 
@@ -843,6 +880,10 @@ export function useWorkoutSession() {
                 exercise.exerciseDefinitionId,
                 exercise.name,
                 definition?.sets
+              ),
+              getPreviousExerciseSessionClassification(
+                exercise.exerciseDefinitionId,
+                exercise.name
               )
             );
 
@@ -1663,6 +1704,10 @@ function updateSet(
               exerciseDefinitionId,
               exerciseName,
               definition?.sets
+            ),
+            getPreviousExerciseSessionClassification(
+              exerciseDefinitionId,
+              exerciseName
             )
           );
 
@@ -1858,6 +1903,10 @@ function updateSet(
             replacementDefinition.id,
             replacementDefinition.name,
             replacementDefinition.sets
+          ),
+          getPreviousExerciseSessionClassification(
+            replacementDefinition.id,
+            replacementDefinition.name
           )
         );
 
@@ -2460,6 +2509,7 @@ function dismissFinishedWorkout() {
     removedExercise,
 
     getPreviousExercise,
+    getPreviousExerciseSessionClassification,
     getRecentFullExercise,
   };
 }

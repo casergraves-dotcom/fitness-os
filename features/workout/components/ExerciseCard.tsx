@@ -35,6 +35,7 @@ import type {
   Exercise,
   ResistanceBandSelection,
 } from "../types";
+import type { StrengthSessionCompletionClassification } from "../logic/evaluateStrengthSessionCompletion";
 
 import {
   formatBandResistance,
@@ -90,6 +91,8 @@ interface ExerciseCardProps {
   // Most recent historical performance for this exercise.
   // Undefined means the exercise has never been logged before.
   previousExercise?: Exercise;
+
+  previousSessionClassification?: StrengthSessionCompletionClassification;
 
   // Most recent complete normal-volume performance. Reduced sessions can use
   // this as supporting progression evidence without treating omitted sets as
@@ -188,6 +191,7 @@ export default function ExerciseCard({
   availableEquipment,
   availableCapabilities,
   previousExercise,
+  previousSessionClassification,
   recentFullExercise,
   expanded,
   focusedLogging = false,
@@ -487,11 +491,12 @@ export default function ExerciseCard({
         getExerciseTarget(
           exerciseDefinition,
           previousExercise,
-          { recentFullExercise }
+          { recentFullExercise, previousSessionClassification }
         ),
       [
         exerciseDefinition,
         previousExercise,
+        previousSessionClassification,
         recentFullExercise,
       ]
     );

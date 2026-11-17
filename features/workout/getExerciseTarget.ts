@@ -2,6 +2,7 @@ import type {
   Exercise,
   ExerciseDefinition,
 } from "./types";
+import type { StrengthSessionCompletionClassification } from "./logic/evaluateStrengthSessionCompletion";
 
 import {
   isValidRpe,
@@ -51,6 +52,11 @@ export interface ExerciseProgressionEvidence {
   // working-set prescription. This lets a reduced session add evidence without
   // erasing an already demonstrated full-session result.
   recentFullExercise?: Exercise;
+
+  // Classification of the session that supplied `previousExercise`. A fully
+  // completed exercise inside an unexpectedly partial workout is useful
+  // training, but it should not independently trigger a difficulty increase.
+  previousSessionClassification?: StrengthSessionCompletionClassification;
 }
 
 // ============================================================
@@ -383,6 +389,11 @@ export function getExerciseTarget(
     highestReportedRpe >=
       RPE_HIGH_EFFORT_MIN;
 
+  const previousSessionWasUnexpectedlyIncomplete =
+    evidence?.previousSessionClassification === "SubstantialPartialSession" ||
+    evidence?.previousSessionClassification === "MinimalSession" ||
+    evidence?.previousSessionClassification === "MissedSession";
+
   // A reduced prescription can be completed exactly as assigned without
   // proving that the normal working-set prescription is ready to progress.
   // Keep workout completion and progression evidence separate: omitted sets
@@ -427,6 +438,39 @@ export function getExerciseTarget(
       recentFullHighestRpe !== undefined &&
       recentFullHighestRpe >= RPE_HIGH_EFFORT_MIN
     );
+
+  if (
+    reachedTopOfRange &&
+    previousSessionWasUnexpectedlyIncomplete &&
+    !reachedTopWithHighEffort
+  ) {
+    let label = getBaseTargetLabel();
+
+    if (usesWeight && usesDuration) {
+      label = `${previousWeight} lb × ${repMin}–${repMax} sec`;
+    } else if (usesWeight && usesReps) {
+      label = `${previousWeight} lb × ${repMin}–${repMax}`;
+    } else if (usesBand && usesReps) {
+      label = previousWeight > 0
+        ? `${previousWeight} lb band × ${repMin}–${repMax}`
+        : `${repMin}–${repMax} reps`;
+    } else if (usesAssistance && usesReps) {
+      label = `${previousWeight} lb assist × ${repMin}–${repMax}`;
+    }
+
+    return {
+      action: "confirm-full-session",
+      label,
+      message:
+        "The exercise reached the top of its range, but the overall workout was only partially completed. Hold the current target until it is confirmed in a fully completed prescription.",
+      targetWeight:
+        usesWeight || usesBand || usesAssistance
+          ? previousWeight
+          : undefined,
+      repMin,
+      repMax,
+    };
+  }
 
   if (
     reachedTopOfRange &&
