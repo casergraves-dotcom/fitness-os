@@ -10,6 +10,7 @@ import {
   getResolvedWeeklyActivityOccurrences,
 } from "@/features/workout/logic/getResolvedWeeklyActivityOccurrences";
 import { isCompletableTrainingActivity } from "@/features/workout/utils/isCompletableTrainingActivity";
+import { isRecoveryCompatibleTrainingType } from "./isRecoveryCompatibleTrainingType";
 
 export interface DailyTrainingChoice {
   kind: "Scheduled" | "RecoveryOption";
@@ -61,6 +62,8 @@ export function getDailyTrainingChoices({
       (occurrence) =>
         occurrence.scheduleConstraint === "Flexible" &&
         occurrence.date >= todayDate &&
+        (!includeRecoveryOptions ||
+          isRecoveryCompatibleTrainingType(occurrence.activity.type)) &&
         isCompletableTrainingActivity(occurrence.activity) &&
         !isOccurrenceCompleted(
           occurrence.activity.id,

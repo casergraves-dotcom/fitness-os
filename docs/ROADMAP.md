@@ -1995,6 +1995,15 @@ completion flow records the session without reclassifying it as strength or
 cardio progression. The production build and all 197 automated tests passed;
 live phone verification remains pending.
 
+**Recovery-choice safety checkpoint:** Recovery-focused choice sets now retain
+only recovery-compatible scheduled work (Walk, Mobility, Recovery, or Rest)
+alongside the Full Body Recovery routine. Future Strength, Run, and Aerial
+sessions are excluded even when they are otherwise movable and conflict-free,
+so a reduced-readiness recommendation cannot offer additional training stress
+as an immediate recovery option. The production build, all 198 automated tests,
+and 2 focused recovery-compatibility scenarios passed; live phone verification
+remains pending.
+
 **Motivation-barrier checkpoint:** Guide now asks one optional, targeted question
 only when the same concrete required activity has blocked at least two weekly
 reviews. The user can identify repetition, scheduling, limited time, excessive
