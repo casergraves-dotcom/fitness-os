@@ -55,6 +55,7 @@ import {
 } from "../exerciseSubstitutions";
 import { getReviewedGuidanceImages } from "../guidanceMedia";
 import { supportsExerciseRampUp } from "../rampUp";
+import { getExerciseVarietyRole } from "../exerciseClassification";
 
 import type {
   ExerciseSubstitutionEnvironment,
@@ -331,6 +332,10 @@ export default function ExerciseCard({
         substitutionContext,
       ]
     );
+
+  const varietyRole = exerciseDefinition
+    ? getExerciseVarietyRole(exerciseDefinition)
+    : null;
 
   function handleExerciseReplacement(
     replacementExerciseDefinitionId: string
@@ -676,6 +681,11 @@ export default function ExerciseCard({
               Exercise {exerciseNumber} of {exerciseCount}
               {" · "}
               {completedSetCount}/{exercise.sets.length} sets
+              {varietyRole === "ProgressionAnchor"
+                ? " · Progression anchor"
+                : varietyRole === "FlexibleAccessory"
+                  ? " · Flexible accessory"
+                  : ""}
               {exerciseComplete
                 ? " · Complete"
                 : ""}
@@ -811,7 +821,15 @@ export default function ExerciseCard({
           {substitutionsOpen && (
             <div className="mt-1 basis-full rounded-xl border border-slate-200 bg-slate-50 p-3">
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Swap Exercise
+                {varietyRole === "FlexibleAccessory"
+                  ? "Flexible Accessory Options"
+                  : "Exercise Alternatives"}
+              </p>
+
+              <p className="mt-1 text-xs leading-5 text-slate-600">
+                {varietyRole === "FlexibleAccessory"
+                  ? "Rotate among compatible movement-pattern options when variety would help. Each exercise keeps its own history and progression evidence."
+                  : "This is a progression anchor. Keep it stable when practical; use an alternative when equipment, comfort, or recovery makes the planned movement unsuitable."}
               </p>
 
               <div className="mt-2 space-y-2">

@@ -441,6 +441,10 @@ export type ExerciseProgrammingRole =
   | "Primary"
   | "Accessory";
 
+export type ExerciseVarietyRole =
+  | "ProgressionAnchor"
+  | "FlexibleAccessory";
+
 export type ExerciseMuscleGroup =
   | "Chest"
   | "Lats"

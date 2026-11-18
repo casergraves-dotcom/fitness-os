@@ -2,6 +2,7 @@ import type {
   ExerciseDefinition,
   ExerciseMuscleGroup,
   ExerciseProgrammingRole,
+  ExerciseVarietyRole,
   StrengthMovementRole,
 } from "./types";
 
@@ -96,6 +97,14 @@ export function getExerciseProgrammingRole(
   return exercise.movementRoles?.some((role) => PRIMARY_MOVEMENT_ROLES.has(role))
     ? "Primary"
     : "Accessory";
+}
+
+export function getExerciseVarietyRole(
+  exercise: ExerciseDefinition
+): ExerciseVarietyRole {
+  return getExerciseProgrammingRole(exercise) === "Primary"
+    ? "ProgressionAnchor"
+    : "FlexibleAccessory";
 }
 
 export function getExerciseMuscleGroups(

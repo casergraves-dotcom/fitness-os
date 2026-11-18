@@ -2215,6 +2215,17 @@ training emphasis. Recommendations preserve progression history, respect
 recovery, adherence, equipment, shortened sessions, and fixed commitments, and
 require an explained user-reviewed approval before changing a saved template.
 
+**Controlled-variety foundation checkpoint:** Canonical primary movements now
+resolve as progression anchors, while targeted and core accessory movements
+resolve as flexible accessories. The guided logger labels that role and explains
+the tradeoff inside the existing Alternatives flow: anchors should remain stable
+when practical, while accessories may rotate among compatible movement-pattern
+options for variety. No exercise is replaced randomly, equipment/setup filters
+remain authoritative, and every selected definition retains its own history and
+progression evidence. The production build, all 197 project tests, and the four-
+scenario classification suite passed. Automated rotation remains intentionally
+out of scope until preference and block-duration rules are agreed.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by

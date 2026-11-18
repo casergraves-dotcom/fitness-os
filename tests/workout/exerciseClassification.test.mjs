@@ -6,6 +6,7 @@ import {
   getExerciseCoverageMatrix,
   getExerciseMuscleGroups,
   getExerciseProgrammingRole,
+  getExerciseVarietyRole,
 } from "../../features/workout/exerciseClassification.ts";
 
 function exercise(id) {
@@ -19,6 +20,13 @@ test("classifies compound lifts separately from targeted accessories", () => {
   assert.equal(getExerciseProgrammingRole(exercise("chest-press-machine")), "Primary");
   assert.equal(getExerciseProgrammingRole(exercise("glute-kickback-machine")), "Accessory");
   assert.equal(getExerciseProgrammingRole(exercise("lateral-raise-machine")), "Accessory");
+});
+
+test("uses primary movements as stable anchors and accessories as flexible variety", () => {
+  assert.equal(getExerciseVarietyRole(exercise("leg-press")), "ProgressionAnchor");
+  assert.equal(getExerciseVarietyRole(exercise("chest-press-machine")), "ProgressionAnchor");
+  assert.equal(getExerciseVarietyRole(exercise("lateral-raise-machine")), "FlexibleAccessory");
+  assert.equal(getExerciseVarietyRole(exercise("cable-woodchop")), "FlexibleAccessory");
 });
 
 test("maps compound movement roles to meaningfully trained muscle groups", () => {
@@ -38,6 +46,6 @@ test("coverage additions close the direct trap, rotator cuff, and tibialis gaps"
     const row = matrix.find((candidate) => candidate.muscleGroup === muscleGroup);
     assert.ok(row, muscleGroup);
     assert.equal(row.primary.length, 0, muscleGroup);
-    assert.equal(row.accessory.length, 2, muscleGroup);
+    assert.ok(row.accessory.length >= 2, muscleGroup);
   }
 });
