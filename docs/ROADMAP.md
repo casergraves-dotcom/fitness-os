@@ -2246,6 +2246,19 @@ progression evidence. The production build, all 197 project tests, and the four-
 scenario classification suite passed. Automated rotation remains intentionally
 out of scope until preference and block-duration rules are agreed.
 
+**Training-style foundation checkpoint:** The canonical exercise and strength-
+variant models now support optional Traditional Strength, Calisthenics,
+Suspension, Functional Strength, and Aerial Support classifications without
+changing stored workout identity or progression behavior. Suspension trainers
+and kettlebells are represented in the existing equipment vocabulary, while
+legacy exercises and variants resolve safely to Traditional Strength rather than
+requiring a history rewrite. A shared intent-coverage evaluator compares any
+future themed prescription with the required movement roles of its source Gym
+A/B/C objective; all existing Home and Short variants retain complete required-
+role coverage. The production build, all 198 existing automated tests, and 4
+focused compatibility/coverage scenarios passed. Exercise-library expansion is
+the next incremental step; no themed sessions or discovery UI are exposed yet.
+
 ## 7.3 Exercise Guidance
 
 Exercise guidance should extend canonical exercise definitions/metadata used by

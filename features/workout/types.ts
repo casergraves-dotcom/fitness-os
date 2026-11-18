@@ -158,6 +158,8 @@ export type WorkoutEquipment =
   | "BarbellRack"
   | "WeightPlate"
   | "Bench"
+  | "SuspensionTrainer"
+  | "Kettlebell"
   | "GymMachines";
 
 
@@ -201,6 +203,18 @@ export type StrengthWorkoutVariantType =
   | "FullGym"
   | "ShortGym"
   | "Home";
+
+export type StrengthTrainingStyle =
+  | "TraditionalStrength"
+  | "Calisthenics"
+  | "Suspension"
+  | "FunctionalStrength"
+  | "AerialSupport";
+
+export type StrengthWorkoutDifficulty =
+  | "Beginner"
+  | "Intermediate"
+  | "Advanced";
 
 
 export interface StrengthWorkoutIntentRole {
@@ -246,6 +260,14 @@ export interface StrengthWorkoutVariant {
 
   variantType:
     StrengthWorkoutVariantType;
+
+  // Optional discovery/coaching metadata. Existing variants omit these fields
+  // and resolve to TraditionalStrength so persisted sessions remain unchanged.
+  trainingStyle?: StrengthTrainingStyle;
+
+  objective?: string;
+
+  difficulty?: StrengthWorkoutDifficulty;
 
   requiredEquipment:
     WorkoutEquipment[];
@@ -640,6 +662,11 @@ export interface ExerciseDefinition {
   // Equipment/setup needed to perform this exercise.
   requiredEquipment?: WorkoutEquipment[];
   requiredCapabilities?: WorkoutSetupCapability[];
+
+  // One exercise can participate in more than one coherent training style.
+  // Omitted legacy definitions resolve to TraditionalStrength without rewriting
+  // stored exercise or workout history.
+  trainingStyles?: StrengthTrainingStyle[];
 
   // ----------------------------------------------------------
   // Programming

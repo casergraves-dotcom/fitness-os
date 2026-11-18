@@ -45,9 +45,17 @@ export type {
   StrengthWorkoutVariant,
   StrengthWorkoutVariantExercise,
   StrengthWorkoutVariantType,
+  StrengthTrainingStyle,
+  StrengthWorkoutDifficulty,
   WorkoutEquipment,
   WorkoutSetupCapability,
 } from "./types";
+
+export {
+  evaluateStrengthWorkoutIntentCoverage,
+  getExerciseTrainingStyles,
+  getStrengthWorkoutVariantStyle,
+} from "./trainingStyle";
 
 
 export {
