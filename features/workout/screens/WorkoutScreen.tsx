@@ -354,6 +354,24 @@ useEffect(() => {
   const requestedWorkout =
     searchParams.get("start");
 
+  const requestedMobility =
+    searchParams.get("mobility");
+
+  if (requestedMobility) {
+    const matchingRoutine =
+      requestedMobility === "choose"
+        ? "choose"
+        : mobilityRoutines.find(
+            (routine) => routine.id === requestedMobility
+          )?.id;
+
+    if (matchingRoutine) {
+      scheduledStartHandled.current = true;
+      setSelectedMobilityRoutineId(matchingRoutine);
+      return;
+    }
+  }
+
   const scheduledActivityId =
   searchParams.get(
     "activityId"

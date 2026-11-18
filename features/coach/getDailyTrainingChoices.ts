@@ -12,6 +12,7 @@ import {
 import { isCompletableTrainingActivity } from "@/features/workout/utils/isCompletableTrainingActivity";
 
 export interface DailyTrainingChoice {
+  kind: "Scheduled" | "RecoveryOption";
   activityId: string;
   label: string;
   type: TrainingActivityType;
@@ -19,6 +20,8 @@ export interface DailyTrainingChoice {
   scheduledDate: string;
   isScheduledToday: boolean;
   optional: boolean;
+  description?: string;
+  href?: string;
 }
 
 interface GetDailyTrainingChoicesInput {
@@ -26,6 +29,7 @@ interface GetDailyTrainingChoicesInput {
   weekStartDate: string;
   todayDate: string;
   completions: TrainingActivityCompletion[];
+  includeRecoveryOptions?: boolean;
   limit?: number;
 }
 
@@ -46,12 +50,13 @@ export function getDailyTrainingChoices({
   weekStartDate,
   todayDate,
   completions,
+  includeRecoveryOptions = false,
   limit = 3,
 }: GetDailyTrainingChoicesInput): DailyTrainingChoice[] {
   const occurrences =
     getResolvedWeeklyActivityOccurrences(state, weekStartDate) ?? [];
 
-  return occurrences
+  const scheduledChoices = occurrences
     .filter(
       (occurrence) =>
         occurrence.scheduleConstraint === "Flexible" &&
@@ -79,6 +84,7 @@ export function getDailyTrainingChoices({
       }
 
       return [{
+        kind: "Scheduled",
         activityId: occurrence.activity.id,
         label: occurrence.activity.label,
         type: occurrence.activity.type,
@@ -98,6 +104,30 @@ export function getDailyTrainingChoices({
       }
 
       return left.scheduledDate.localeCompare(right.scheduledDate);
-    })
+    });
+
+  const recoveryChoices: DailyTrainingChoice[] = includeRecoveryOptions
+    ? [{
+        kind: "RecoveryOption",
+        activityId: "anytime-full-body-recovery",
+        label: "Full Body Recovery",
+        type: "Mobility",
+        originalDate: todayDate,
+        scheduledDate: todayDate,
+        isScheduledToday: true,
+        optional: true,
+        description: "10–20 min of gentle stretching and mobility",
+        href: "/workout?mobility=full-body-recovery",
+      }]
+    : [];
+
+  return [...scheduledChoices, ...recoveryChoices]
+    .filter(
+      (choice, index, choices) =>
+        choices.findIndex(
+          (candidate) =>
+            candidate.activityId === choice.activityId
+        ) === index
+    )
     .slice(0, limit);
 }

@@ -468,6 +468,8 @@ export default function TodayScreen() {
           weekStartDate: getTrainingWeekStartDate(new Date()),
           todayDate,
           completions: trainingActivityCompletions,
+          includeRecoveryOptions:
+            recommendation.trainingDecision === "recovery",
         })
       : [];
 
@@ -533,6 +535,7 @@ export default function TodayScreen() {
             recommendation
           }
           showAction={false}
+          showDailyChoices
           dailyChoices={dailyTrainingChoices}
           onChooseTraining={(choice) => {
             rescheduleTrainingActivity(

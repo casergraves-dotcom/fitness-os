@@ -22,6 +22,7 @@ interface CoachCardProps {
   recommendation: CoachRecommendation;
   showAction?: boolean;
   dailyChoices?: DailyTrainingChoice[];
+  showDailyChoices?: boolean;
   onChooseTraining?: (choice: DailyTrainingChoice) => void;
   activityBarrierPrompt?: ActivityBarrierPrompt | null;
   onActivityBarrierResponse?: (
@@ -35,6 +36,7 @@ export default function CoachCard({
   recommendation,
   showAction = true,
   dailyChoices = [],
+  showDailyChoices = false,
   onChooseTraining,
   activityBarrierPrompt,
   onActivityBarrierResponse,
@@ -79,7 +81,7 @@ export default function CoachCard({
         {recommendation.message}
       </p>
 
-      {dailyChoices.length > 0 && (
+      {showDailyChoices && (
         <div className="mt-5 border-t border-slate-200 pt-4">
           <button
             type="button"
@@ -107,7 +109,13 @@ export default function CoachCard({
 
           {choicesOpen && (
             <div className="mt-3 space-y-2">
-              {dailyChoices.map((choice) => (
+              {dailyChoices.length === 0 ? (
+                <p className="rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
+                  No additional safe options are available right now. Guide will
+                  keep the current recommendation visible rather than hiding
+                  this choice.
+                </p>
+              ) : dailyChoices.map((choice) => (
                 <div
                   key={`${choice.activityId}-${choice.originalDate}`}
                   className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 p-3"
@@ -115,13 +123,22 @@ export default function CoachCard({
                   <div className="min-w-0">
                     <p className="font-semibold text-slate-900">{choice.label}</p>
                     <p className="text-xs text-slate-500">
-                      {choice.isScheduledToday
-                        ? "Already scheduled today"
-                        : `Move from ${new Date(`${choice.scheduledDate}T12:00:00`).toLocaleDateString(undefined, { weekday: "long" })}`}
-                      {choice.optional ? " · Optional" : " · Weekly priority"}
+                      {choice.description ?? (
+                        choice.isScheduledToday
+                          ? "Already scheduled today"
+                          : `Move from ${new Date(`${choice.scheduledDate}T12:00:00`).toLocaleDateString(undefined, { weekday: "long" })}`
+                      )}
+                      {!choice.description && (choice.optional ? " · Optional" : " · Weekly priority")}
                     </p>
                   </div>
-                  {!choice.isScheduledToday && onChooseTraining && (
+                  {choice.href ? (
+                    <Link
+                      href={choice.href}
+                      className={cn(buttonVariants({ size: "sm", variant: "outline" }))}
+                    >
+                      Choose
+                    </Link>
+                  ) : !choice.isScheduledToday && onChooseTraining ? (
                     <Button
                       type="button"
                       size="sm"
@@ -130,13 +147,15 @@ export default function CoachCard({
                     >
                       Choose
                     </Button>
-                  )}
+                  ) : null}
                 </div>
               ))}
-              <p className="text-xs text-slate-500">
-                Choosing moves the existing activity to today; it does not add
-                another session.
-              </p>
+              {dailyChoices.some((choice) => choice.kind === "Scheduled" && !choice.isScheduledToday) && (
+                <p className="text-xs text-slate-500">
+                  Moving a scheduled choice keeps its existing identity and does
+                  not add another session.
+                </p>
+              )}
             </div>
           )}
         </div>

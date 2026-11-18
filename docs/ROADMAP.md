@@ -1974,6 +1974,16 @@ completion, and progression behavior remain intact rather than creating a
 duplicate session or parallel plan. All 193 automated tests and the production
 build passed; live mobile interaction verification remains pending.
 
+**Recovery-choice correction:** The Today recommendation now keeps “Give me
+some choices” visible even when no movable weekly activity survives the safety
+filter, rather than silently hiding the control. When Guide recommends recovery,
+the choice set includes the existing Full Body Recovery mobility routine
+alongside compatible scheduled work such as an Easy Walk. Selecting mobility
+deep-links directly into the canonical 10–20 minute routine, whose normal
+completion flow records the session without reclassifying it as strength or
+cardio progression. The production build and all 197 automated tests passed;
+live phone verification remains pending.
+
 **Motivation-barrier checkpoint:** Guide now asks one optional, targeted question
 only when the same concrete required activity has blocked at least two weekly
 reviews. The user can identify repetition, scheduling, limited time, excessive
