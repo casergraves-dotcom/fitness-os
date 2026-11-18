@@ -7,6 +7,10 @@ import {
 import type {
   WeeklyProgressionDecisionRecord,
 } from "@/features/workout/types";
+import {
+  getDomainProgressionStatusLabel,
+  getSplitProgressionSummary,
+} from "@/features/coach/getDomainProgressionPresentation";
 
 
 // ============================================================
@@ -66,6 +70,14 @@ export default function WeeklyDecisionRecord({
     !currentDecision
       .finalShouldAdvance;
 
+  const domainOutcomes = currentDecision.automaticDomainOutcomes;
+  const splitProgressionSummary = domainOutcomes
+    ? getSplitProgressionSummary(
+        domainOutcomes,
+        currentDecision.finalShouldAdvance
+      )
+    : null;
+
 
   function applyOverride() {
     onOverride(
@@ -121,6 +133,38 @@ export default function WeeklyDecisionRecord({
             .automaticReason
         }
       </p>
+
+      {domainOutcomes && (
+        <div className="mt-4 space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+            Progress by training area
+          </p>
+          {([
+            ["Strength", domainOutcomes.strength],
+            ["Cardio", domainOutcomes.cardio],
+          ] as const).map(([label, outcome]) => (
+            <div
+              key={label}
+              className="rounded-lg border border-slate-200 bg-slate-50 p-3"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm font-semibold text-slate-900">{label}</p>
+                <span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-slate-700">
+                  {getDomainProgressionStatusLabel(outcome)}
+                </span>
+              </div>
+              <p className="mt-1 text-xs leading-5 text-slate-600">
+                {outcome.reason}
+              </p>
+            </div>
+          ))}
+          {splitProgressionSummary && (
+            <p className="rounded-lg bg-blue-50 p-3 text-xs leading-5 text-blue-900">
+              {splitProgressionSummary}
+            </p>
+          )}
+        </div>
+      )}
 
 
       {currentDecision

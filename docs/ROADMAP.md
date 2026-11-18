@@ -709,6 +709,17 @@ shortened, partial, minimal, and missed-session classification, weekly dose,
 and exercise-progression safeguards are covered by automated tests; the full
 test suite and production build passed.
 
+**Domain-progression transparency checkpoint:** Weekly reviews now present the
+already-persisted Strength and Cardio outcomes separately instead of reducing
+every result to only “Advance” or “Repeat week.” When cardio adherence holds the
+overall phase but full strength evidence supports progression, the review states
+that exercise-specific strength progress remains valid while cardio maintains
+its current level; the inverse is explained for earned running progress. This
+does not create a second progression engine or let cross-training masquerade as
+running-specific evidence. A cardio-driven repeat with two supported full
+strength sessions is covered explicitly, all 198 tests passed, and the
+production build passed.
+
 ## 3.3 Steady-State Programming
 
 ### 3.3.1 Steady-State Strength Programming — COMPLETE

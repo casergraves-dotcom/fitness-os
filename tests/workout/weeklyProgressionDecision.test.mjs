@@ -123,6 +123,40 @@ test("missing Run / Walk and Long Walk / Hike repeats the ramp week at 50% adher
   assert.equal(decision.domainOutcomes.cardio.status, "Maintain");
 });
 
+test("a cardio-driven repeat preserves supported strength progression evidence", () => {
+  const completions = requiredActivities
+    .filter((activity) => activity.type === "Strength")
+    .map(completion);
+  const adherence = evaluateWeeklyAdherence(
+    rampWeek,
+    WEEK_START_DATE,
+    completions
+  );
+
+  assert.ok(adherence);
+
+  const decision = getWeeklyProgressionDecision(adherence, null, {
+    status: "Supported",
+    sessionCount: 2,
+    prescribedSetCount: 36,
+    fullPrescriptionSetCount: 36,
+    completedSetCount: 36,
+    completionRate: 1,
+    fullDoseCompletionRate: 1,
+    fullSessionCount: 2,
+    validShortenedSessionCount: 0,
+    substantialPartialSessionCount: 0,
+    minimalSessionCount: 0,
+    ratedSetCount: 0,
+    highEffortSetCount: 0,
+    factor: "Two full strength sessions were reviewed.",
+  });
+
+  assert.equal(decision.status, "Hold");
+  assert.equal(decision.domainOutcomes.strength.status, "Progress");
+  assert.equal(decision.domainOutcomes.cardio.status, "Maintain");
+});
+
 test("meeting 75% adherence does not advance when the minimum strength requirement is missed", () => {
   const { adherence, decision } = evaluate([
     "week-2-monday-gym-a",
